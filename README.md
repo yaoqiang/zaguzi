@@ -1,4 +1,4 @@
-zgz
+大同扎股子-基于Pomelo
 ===
 
-zgz
+run npm install

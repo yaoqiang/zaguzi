@@ -1,0 +1,13 @@
+{
+    "name": "zgz",
+    "version": "0.0.1",
+    "private": false,
+    "dependencies": {
+        "express": "3.4.8",
+        "ejs": "*",
+        "everyauth": "0.4.9",
+        "connect": "3.3.3",
+        "generic-pool": "2.1.1",
+        "mysql": "2.5.3"
+    }
+}

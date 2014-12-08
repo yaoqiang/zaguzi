@@ -1,0 +1,10 @@
+{
+    "weibo": {
+        "appId": "3174132933",
+        "appSecret": "08c432a4e2f94e78789d3f0add136d52"
+    },
+
+    "hostname" : "http://pomelo.netease.com/lordofpomelo",
+
+    "redirectPath": "/zagoz/auth_success"
+}

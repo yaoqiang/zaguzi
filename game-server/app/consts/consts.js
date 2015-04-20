@@ -25,5 +25,18 @@ module.exports = {
         leave: 'onLeave',
         talk: 'onTalk',
         action: 'onAction'
+    },
+
+    GAME: {
+        TYPE: {
+            FIVE: 1,
+            SIX: 2,
+            SEVEN: 3
+        },
+        IDENTITY: {
+            GUZI: 1,
+            HONG3: 2
+        }
+
     }
 }

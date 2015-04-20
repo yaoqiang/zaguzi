@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(__filename);
 
 var GamePhase = {
@@ -75,7 +76,7 @@ GameLogic.prototype.initialCards = function(type)
         k = k + j;
     }
     //如果是5人局，移除各种6；
-    if (type == 1)
+    if (type == consts.GAME.TYPE.FIVE)
     {
         result = _.without(result, 106, 206, 306, 406);
     }

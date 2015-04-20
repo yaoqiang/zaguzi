@@ -79,7 +79,7 @@ GameStatus.prototype.removeHoldingCards = function(cards)
 {
     for (var v in cards)
     {
-        this.currentHoldingCards.remove(cards[v]);
+        this.currentHoldingCards = _.without(this.currentHoldingCards, cards[v]);
     }
 }
 
@@ -115,18 +115,5 @@ GameStatus.prototype.hasCards = function(cards)
     return true;
 }
 
-
-Array.prototype.indexOf = function(val) {
-    for (var i = 0; i < this.length; i++) {
-        if (this[i] == val) return i;
-    }
-    return -1;
-};
-Array.prototype.remove = function(val) {
-    var index = this.indexOf(val);
-    if (index > -1) {
-        this.splice(index, 1);
-    }
-};
 
 module.exports = GameStatus;

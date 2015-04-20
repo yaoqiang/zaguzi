@@ -11,9 +11,9 @@ var Game = function(roomId, gameId)
 {
     this.roomId = roomId;
     this.gameId = gameId;
-    this.maxActor = roomId < 20 ? 5 : 7;
+    this.maxActor = roomId > 10 ? (roomId > 20 ? 7 : 6) : 5;
     this.currentActorNum = 0;
-    this.type = roomId < 20 ? 1 : 2;
+    this.type = roomId > 10 ? (roomId > 20 ? consts.GAME.TYPE.SEVEN : consts.GAME.TYPE.SIX) : consts.GAME.TYPE.FIVE;
     this.actors = new Array(this.maxActor);
     this.isFull = false;
     this.isAllReady = false;

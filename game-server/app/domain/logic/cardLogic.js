@@ -1,5 +1,6 @@
 var _ = require('underscore');
-var CardRecognization = require('./cardRecoginzation')
+var CardRecognization = require('./cardRecoginzation');
+var consts = require('../consts/consts');
 
 
 var CardSeriesCode = {
@@ -17,10 +18,11 @@ var CardLogic = {}
 /**
  * 牌型识别
  * @param cards 当前出牌
- * @param type  当前牌桌类型（1：5人、2：7人）
+ * @param type  当前牌桌类型（1：5人、2：6人、3：7人）
+ * @param liang3 当前牌局亮3情况，决定片3是否能打4；决定双三是否可满天飞
  * @returns {CardRecognization}
  */
-CardLogic.recognizeSeries = function(cards, type)
+CardLogic.recognizeSeries = function(cards, type, liang3)
 {
     if (!! cards || cards.length < 1 || cards.length > 4)
         return new CardRecognization(CardSeriesCode.cardSeries_99, 0);
@@ -43,9 +45,10 @@ CardLogic.recognizeSeries = function(cards, type)
                 var result = _.sortBy(cards, function(v){
                     return v;
                 });
-                if ((result[0] == 116 && result[1] == 216))
+                //如果当前是5人局，出牌是双三，并且方块3亮了，即是双三满天飞
+                if ((result[0] == 116 && result[1] == 216) && _.contains(liang3, 116))
                 {
-                    if (type == 5)
+                    if (type == consts.GAME.TYPE.FIVE)
                     {
                         return new CardRecognization(CardSeriesCode.cardSeries_6, null);
                     }
@@ -104,10 +107,11 @@ CardLogic.recognizeSeries = function(cards, type)
  * 牌型比较
  * @param cr1   当前牌型
  * @param cr2   上手牌型
- * @param type  牌桌类型（1：5人、2：7人）
+ * @param type  当前牌桌类型（1：5人、2：6人、3：7人）
+ * @param liang3 当前牌局亮3情况，决定片3是否能打4；决定双三是否可满天飞
  * @returns {boolean}
  */
-CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
+CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
 {
     if ( !! cr1) {
         return false;
@@ -126,10 +130,31 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
         //如果是单牌
         if (cr1.cardSeries == CardSeriesCode.cardSeries_1)
         {
-            //如果当前出牌是肉3（红桃3）并且上手出牌不是大小王
-            if (cr1.cardSeries.originalCard[0] == 216 && cr2.cardSeries.maxCardPoint < 18)
+            //如果是5人和7人场，计算3的特殊大小；6人平3
+            if (type == consts.GAME.TYPE.FIVE || type == consts.GAME.TYPE.SEVEN)
             {
-                return true;
+                //如果当前出牌是肉3（红桃3）并且上手出牌不是大小王
+                if (cr1.cardSeries.originalCard[0] == 216 && cr2.cardSeries.maxCardPoint < 18)
+                {
+                    return true;
+                }
+
+                if (type == consts.GAME.TYPE.FIVE)
+                {
+                    //如果当前出牌是块3
+                    if (cr1.cardSeries.originalCard[0] == 116)
+                    {
+                        //如果方块3亮了
+                        if (_.contains(liang3, cr1.cardSeries.originalCard[0]))
+                        {
+                            //如果上手牌不是肉3和大小王
+                            if (cr2.cardSeries.originalCard[0] != 216 || cr2.cardSeries.originalCard[0] != 18 || cr2.cardSeries.originalCard[0] != 19)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
         }
         if (cr1.maxCardPoint > cr2.maxCardPoint)
@@ -152,11 +177,7 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
         else
         {
             //如果上手牌型是双三，并且牌桌不是5人局，则最大
-            if (type != 1)
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
     }
 
@@ -164,7 +185,7 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
     if (cr1.cardSeries == CardSeriesCode.cardSeries_6)
     {
         //如果上手牌型不是双王，则最大
-        if (cr2.cardSeries != CardSeriesCode.cardSeries_5 && type == 5)
+        if (cr2.cardSeries != CardSeriesCode.cardSeries_5 && type == consts.GAME.TYPE.FIVE)
         {
             return true;
         }
@@ -174,12 +195,15 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
         }
     }
 
-    //如果是炸弹
+    //如果是炸弹(3张相同牌）
     if (cr1.cardSeries == CardSeriesCode.cardSeries_2)
     {
         if (cr2.cardSeries != CardSeriesCode.cardSeries_3 || cr2.cardSeries != CardSeriesCode.cardSeries_4 || cr2.cardSeries != CardSeriesCode.cardSeries_5)
         {
-            return true;
+            if (cr1.maxCardPoint > cr2.maxCardPoint)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -189,7 +213,10 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type)
     {
         if (cr2.cardSeries != CardSeriesCode.cardSeries_4 || cr2.cardSeries != CardSeriesCode.cardSeries_5)
         {
-            return true;
+            if (cr1.maxCardPoint > cr2.maxCardPoint)
+            {
+                return true;
+            }
         }
         return false;
     }

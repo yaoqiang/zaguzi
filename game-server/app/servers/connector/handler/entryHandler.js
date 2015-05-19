@@ -113,29 +113,3 @@ var onUserLeave = function (app, session, reason) {
     utils.myPrint('1 ~ OnUserLeave is running ...');
 
 };
-
-
-handler.join = function (msg, session, next) {
-    msg.serverId = this.app.get('serverId');
-    msg.uid = session.uid;
-
-    var roomId = msg.roomId, self = this;
-
-    // join game
-    self.app.rpc.manager.gameRemote.join(session, msg, function (err, data) {
-        console.log('data=', data);
-        if (data.code === Code.FAIL)
-        {
-            next(null, {code: Code.FAIL});
-            return;
-        }
-
-        session.set('roomId', roomId);
-        session.set('gameId', data.gameId);
-        session.pushAll();
-
-        next(null, {code: Code.OK});
-    });
-
-
-};

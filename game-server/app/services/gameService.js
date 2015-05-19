@@ -17,7 +17,7 @@ var gGameList = [];
 
 
 
-exp.join = function(data)
+exp.join = function(data, cb)
 {
     //根据加入场次查找空闲牌局
     var emptyGame = _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
@@ -33,7 +33,8 @@ exp.join = function(data)
         game = this.getGameById(emptyGame.gameId);
         if (!game)
         {
-            return {code: Code.FAIL, gameId: undefined};
+            cb({code: Code.FAIL, gameId: undefined});
+            return;
         }
 
     }
@@ -41,9 +42,10 @@ exp.join = function(data)
 
     if (ret === consts.ROOM.JOIN_RET_CODE.OK)
     {
-        return {code: Code.OK, gameId: game.gameId};
+        cb({code: Code.OK, gameId: game.gameId});
+        return;
     }
-    return {code: Code.FAIL, gameId: undefined};
+    cb({code: Code.FAIL, gameId: undefined});
 
 }
 

@@ -50,8 +50,6 @@ handler.join = function (msg, session, next) {
 
         next(null, {code: Code.OK});
     });
-//    next(null);
-
 
 };
 

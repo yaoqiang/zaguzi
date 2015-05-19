@@ -18,8 +18,9 @@ var GameRemote = function(app) {
  *
  */
 GameRemote.prototype.join = function(msg, cb) {
-    var ret = gameService.join(msg);
-    utils.invokeCallback(cb, null, ret);
+    gameService.join(msg, function(ret) {
+        utils.invokeCallback(cb, null, ret);
+    });
 };
 
 /**

@@ -18,8 +18,6 @@ var UserRemote = function(app) {
  *
  */
 UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
-    console.log('msg=> ',msg)
-
     playerService.getUserCacheByUid(msg, function(ret) {
         utils.invokeCallback(cb, null, ret);
     });
@@ -43,7 +41,6 @@ UserRemote.prototype.getUserInfo = function (data, cb) {
 };
 
 UserRemote.prototype.onUserEnter = function (data, cb) {
-    console.log('data =>',data)
     playerService.onUserEnter(data.uid, data.serverId, data.sessionId, data.player, cb);
 };
 

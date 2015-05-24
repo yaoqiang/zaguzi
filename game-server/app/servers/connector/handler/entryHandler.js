@@ -3,6 +3,7 @@ var userDao = require('../../../dao/userDao');
 var async = require('async');
 var channelUtil = require('../../../util/channelUtil');
 var utils = require('../../../util/utils');
+var rooms = require('../../../../config/data/room');
 var playerService = require('../../../services/playerService');
 var logger = require('pomelo-logger').getLogger(__filename);
 
@@ -76,30 +77,47 @@ handler.enter = function (msg, session, next) {
             return;
         }
 
-        var u = playerService.getUserCacheByUid(uid);
-        //如果缓存中有用户信息
-        if (u)
-        {
-            //如果用户正常在线，踢掉原连接
-            if (!!u.sessionId)
-            {
-                //
-                sessionService.kickBySessionId(u.sessionId);
-            }
-            //如果用户在游戏中，则告诉客户端需发送重回游戏指令
-            if (!!u.gameId)
-            {
+        self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
+            //如果缓存中有用户信息
+            if (u) {
+                //如果用户正常在线，踢掉原连接
+                if (!!u.sessionId) {
+                    //
+                    sessionService.kickBySessionId(u.sessionId, null);
+                }
+                //如果用户在游戏中，则告诉客户端需发送重回游戏指令
+                if (!!u.gameId) {
+
+                }
+
+                u.sessionId = session.id;
+
+                next(null, {code: Code.OK, player: player});
 
             }
+            else {
+                self.app.rpc.manager.userRemote.onUserEnter(session, {
+                    uid: uid,
+                    serverId: msg.serverId,
+                    sessionId: session.id,
+                    player: player
+                }, function () {
+                    next(null, {code: Code.OK, player: player});
 
-            u.sessionId = session.id;
-        }
-        playerService.onUserEnter(uid, msg.serverId, session.id, player);
-        next(null, {code: Code.OK, player: player});
+                });
+            }
+        });
+
     });
 };
 
 
+handler.enterLobby = function (msg, session, next) {
+
+    var lobbyId = msg.lobbyId;
+    next(null, {code: Code.OK, rooms: rooms[lobbyId]});
+
+};
 
 
 var onUserLeave = function (app, session, reason) {

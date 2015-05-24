@@ -1,8 +1,8 @@
 var tokenService = require('../../../../../shared/token');
 var userDao = require('../../../dao/userDao');
 var Code = require('../../../../../shared/code');
+var secret = require('../../../../../shared/config/session').secret
 
-var DEFAULT_SECRET = 'zgz_session_secret';
 var DEFAULT_EXPIRE = 6 * 60 * 60 * 1000;	// default session expire time: 6 hours
 
 module.exports = function(app) {
@@ -12,7 +12,7 @@ module.exports = function(app) {
 var Remote = function(app) {
     this.app = app;
     var session = app.get('session') || {};
-    this.secret = session.secret || DEFAULT_SECRET;
+    this.secret = session.secret || secret;
     this.expire = session.expire || DEFAULT_EXPIRE;
 };
 

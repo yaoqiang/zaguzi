@@ -22,13 +22,6 @@ var handler = Handler.prototype;
 
 
 
-handler.enterLobby = function (msg, session, next) {
-
-    var lobbyId = msg.lobbyId;
-    next(null, {code: Code.OK, rooms: rooms[lobbyId]});
-
-};
-
 handler.join = function (msg, session, next) {
     msg.serverId = session.get('serverId');
     msg.uid = session.uid;

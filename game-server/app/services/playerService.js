@@ -14,7 +14,7 @@ exp.getUserInfo = function (uid, cb) {
 }
 
 
-exp.onUserEnter = function (uid, serverId, sessionId, player) {
+exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (u)
     {
@@ -25,9 +25,10 @@ exp.onUserEnter = function (uid, serverId, sessionId, player) {
     {
         pomelo.app.userCache.push({uid: uid, serverId: serverId, sessionId: sessionId, player: player});
     }
+    cb();
 }
 
-exp.onUserLeave = function (uid) {
+exp.onUserLeave = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (!!u.gameId)
     {
@@ -38,14 +39,15 @@ exp.onUserLeave = function (uid) {
     {
         pomelo.app.userCache = _.without(pomelo.app.userCache, u);
     }
+    cb();
 }
 
-exp.getUserCacheByUid = function (uid) {
+exp.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
-    return u;
+    cb(u);
 }
 
-exp.getUserCacheBySessionId = function (sessionId) {
+exp.getUserCacheBySessionId = function (sessionId, cb) {
     var u = _.findWhere(pomelo.app.userCache, {sessionId: sessionId});
-    return u;
+    cb(u);
 }

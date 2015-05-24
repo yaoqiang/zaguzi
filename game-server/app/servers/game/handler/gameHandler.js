@@ -30,7 +30,6 @@ handler.join = function (msg, session, next) {
 
     // join game
     self.app.rpc.manager.gameRemote.join(session, msg, function (err, data) {
-        console.log('data=', data);
         if (data.code === Code.FAIL)
         {
             next(null, {code: Code.FAIL});

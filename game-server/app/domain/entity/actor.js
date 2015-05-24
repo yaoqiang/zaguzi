@@ -1,13 +1,13 @@
 var GameStatus = require('../logic/gameStatus');
 
 
-var Actor = function(actorNr, userId)
+var Actor = function(actorNr, uid)
 {
     this.gameStatus = new GameStatus();
     this.properties = {};
     this.isReady = false;
     this.actorNr = actorNr;
-    this.userId = userId;
+    this.uid = uid;
 }
 
 Actor.prototype.setActorNr = function(actorNr)
@@ -20,15 +20,24 @@ Actor.prototype.getActorNr = function()
     return this.actorNr;
 }
 
-Actor.prototype.setUserId = function(userId)
+Actor.prototype.setUid = function(uid)
 {
-    this.userId = userId;
+    this.uid = uid;
 }
 
-Actor.prototype.getUserId = function()
+Actor.prototype.getUid = function()
 {
-    return this.userId;
+    return this.uid;
 }
+
+Actor.prototype.setProperties = function (properties) {
+    this.properties = properties;
+}
+
+Actor.prototype.getProperties = function () {
+    return this.properties;
+}
+
 
 
 module.exports = Actor;

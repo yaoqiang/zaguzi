@@ -70,7 +70,14 @@ Game.prototype.join = function(data)
     {
         return consts.ROOM.JOIN_RET_CODE.ERR;
     }
-    this.channel.pushMessage('onJoin', {msg: 'xxoo join game..'}, data.serverId, null);
+
+    var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
+
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+
+    actor.setProperties(u.player);
+
+    this.channel.pushMessage('onJoin', {actor: actor}, data.serverId, null);
     return consts.ROOM.JOIN_RET_CODE.OK;
 }
 

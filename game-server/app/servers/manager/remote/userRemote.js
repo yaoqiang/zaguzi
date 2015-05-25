@@ -18,7 +18,6 @@ var UserRemote = function(app) {
  *
  */
 UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
-    console.log('userRemote => ', msg);
     playerService.getUserCacheByUid(msg, function(ret) {
         utils.invokeCallback(cb, null, ret);
     });

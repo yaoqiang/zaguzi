@@ -43,6 +43,7 @@ exp.onUserLeave = function (uid, cb) {
 }
 
 exp.getUserCacheByUid = function (uid, cb) {
+    console.log('user cache => ', pomelo.app.userCache);
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     cb(u);
 }

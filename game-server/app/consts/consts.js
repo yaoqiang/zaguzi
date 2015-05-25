@@ -28,10 +28,12 @@ module.exports = {
     },
 
     GAME: {
-        TYPE: {
-            FIVE: 1,
-            SIX: 2,
-            SEVEN: 3
+        LOBBY: {
+            FIVE: 0,
+            SIX: 1,
+            SEVEN: 2,
+            PRIVATE: 3,
+            MATCH: 4
         },
         IDENTITY: {
             GUZI: 1,

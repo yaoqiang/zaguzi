@@ -44,14 +44,8 @@ app.configure('production|development', 'auth', function(){
 app.configure('production|development', function() {
     // route configures
     app.route('chat', routeUtil.chat);
-    app.route('game', routeUtil.game);
 
-    app.gameManager = [];
     app.userCache = [];
-
-
-    app.test = [1, 2];
-
 
     // filter configures
     app.filter(pomelo.filters.timeout());
@@ -65,6 +59,9 @@ app.configure('production|development', 'game', function(){
             connector : pomelo.connectors.hybridconnector,
             useProtobuf : true
         });
+
+    app.route('game', routeUtil.game);
+
 });
 
 

@@ -1,5 +1,6 @@
 var exp = module.exports;
 var dispatcher = require('./dispatcher');
+var consts = require('../consts/consts');
 
 exp.chat = function(session, msg, app, cb) {
     var chatServers = app.getServersByType('chat');
@@ -22,7 +23,7 @@ exp.game = function(session, msg, app, cb) {
         return;
     }
 
-    var res = dispatcher.dispatch(session.uid, gameServers);
+    var lobbyId = msg.args[0].lobbyId;
 
-    cb(null, res.id);
+    cb(null, gameServers[lobbyId] == undefined ? gameServers[0].id : gameServers[lobbyId].id);
 };

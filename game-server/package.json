@@ -16,6 +16,7 @@
         , "pomelo-logger": "0.0.3"
         , "pomelo-monitor": ">=0.3.3"
         , "pomelo-sync-plugin": "0.0.2"
+        , "pomelo-scheduler": "*"
         , "date-utils": "1.2.16"
     }
 }

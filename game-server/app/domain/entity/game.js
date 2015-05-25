@@ -7,13 +7,13 @@ var utils = require('../../util/utils');
 
 
 
-var Game = function(roomId, gameId)
+var Game = function(lobbyId, roomId, gameId)
 {
+    this.lobbyId = lobbyId;
     this.roomId = roomId;
     this.gameId = gameId;
     this.maxActor = roomId > 10 ? (roomId > 20 ? 7 : 6) : 5;
     this.currentActorNum = 0;
-    this.type = roomId > 10 ? (roomId > 20 ? consts.GAME.TYPE.SEVEN : consts.GAME.TYPE.SIX) : consts.GAME.TYPE.FIVE;
     this.actors = new Array(this.maxActor);
     this.isFull = false;
     this.isAllReady = false;
@@ -51,14 +51,9 @@ Game.prototype.createChannel = function()
 
 Game.prototype.join = function(data)
 {
+    console.log('join => ', data);
     if (!data || typeof data !== 'object') {
         return consts.ROOM.JOIN_RET_CODE.ERR;
-    }
-
-    for (var i in data) {
-        if(!data[i] || data[i] <= 0) {
-            return consts.ROOM.JOIN_RET_CODE.ERR;
-        }
     }
 
     if (!doAddActor(this, data))
@@ -71,11 +66,9 @@ Game.prototype.join = function(data)
         return consts.ROOM.JOIN_RET_CODE.ERR;
     }
 
-    var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
-
     var actor = _.findWhere(this.actors, {uid: data.uid});
 
-    actor.setProperties(u.player);
+    actor.setProperties(data.player);
 
     this.channel.pushMessage('onJoin', {actor: actor}, data.serverId, null);
     return consts.ROOM.JOIN_RET_CODE.OK;

@@ -29,7 +29,7 @@ handler.join = function (msg, session, next) {
     var roomId = msg.roomId, self = this;
 
     // join game
-    self.app.rpc.manager.gameRemote.join(session, msg, function (err, data) {
+    self.app.rpc.game.gameRemote.join(session, msg, function (err, data) {
         if (data.code === Code.FAIL)
         {
             next(null, {code: Code.FAIL});
@@ -46,6 +46,10 @@ handler.join = function (msg, session, next) {
 };
 
 handler.ready = function (msg, session, next) {
+
+};
+
+handler.talk = function (msg, session, next) {
 
 };
 

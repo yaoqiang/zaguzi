@@ -4,17 +4,20 @@ var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
 var Actor = require('./actor');
 var utils = require('../../util/utils');
+var gameUtil = require('../../util/gameUtil');
 
 
 
-var Game = function(lobbyId, roomId, gameId)
+var Game = function(roomId, gameId)
 {
-    this.lobbyId = lobbyId;
+    var room = gameUtil.getRoomById(roomId);
+
+    this.lobbyId = room.lobbyId;
     this.roomId = roomId;
     this.gameId = gameId;
-    this.maxActor = roomId > 10 ? (roomId > 20 ? 7 : 6) : 5;
+    this.maxActor = room.maxActor;
     this.currentActorNum = 0;
-    this.actors = new Array(this.maxActor);
+    this.actors = [];
     this.isFull = false;
     this.isAllReady = false;
     this.seatList = [];   //{seatNr:xx, uid:xx}
@@ -49,21 +52,21 @@ Game.prototype.createChannel = function()
 
 
 
-Game.prototype.join = function(data)
+Game.prototype.join = function(data, cb)
 {
-    console.log('join => ', data);
     if (!data || typeof data !== 'object') {
-        return consts.ROOM.JOIN_RET_CODE.ERR;
+        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
+        return;
     }
 
     if (!doAddActor(this, data))
     {
-        return consts.ROOM.JOIN_RET_CODE.ERR;
+        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
     }
 
     if (!this.addActor2Channel(data))
     {
-        return consts.ROOM.JOIN_RET_CODE.ERR;
+        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
     }
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
@@ -71,7 +74,9 @@ Game.prototype.join = function(data)
     actor.setProperties(data.player);
 
     this.channel.pushMessage('onJoin', {actor: actor}, data.serverId, null);
-    return consts.ROOM.JOIN_RET_CODE.OK;
+    cb({code: consts.ROOM.JOIN_RET_CODE.OK, actors: _.filter(this.actors, function (act) {
+        return act.uid != data.uid;
+    })});
 }
 
 

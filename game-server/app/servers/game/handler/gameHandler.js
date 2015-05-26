@@ -40,7 +40,7 @@ handler.join = function (msg, session, next) {
         session.set('gameId', data.gameId);
         session.pushAll();
 
-        next(null, {code: Code.OK});
+        next(null, {code: Code.OK, actors: data.actors});
     });
 
 };

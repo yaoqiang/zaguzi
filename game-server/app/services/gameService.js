@@ -38,14 +38,16 @@ exp.join = function(data, cb)
         }
 
     }
-    var ret = game.join(data);
+    game.join(data, function (result) {
+        if (result.code === consts.ROOM.JOIN_RET_CODE.OK)
+        {
+            cb({code: Code.OK, gameId: game.gameId, actors: result.actors});
+            return;
+        }
+        cb({code: Code.FAIL, gameId: undefined});
+    });
 
-    if (ret === consts.ROOM.JOIN_RET_CODE.OK)
-    {
-        cb({code: Code.OK, gameId: game.gameId});
-        return;
-    }
-    cb({code: Code.FAIL, gameId: undefined});
+
 
 }
 

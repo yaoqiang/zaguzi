@@ -30,7 +30,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
 
 exp.onUserLeave = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
-    if (!!u.gameId)
+    if (!!u.player.gameId)
     {
         u.serverId = undefined;
         u.sessionId = undefined;

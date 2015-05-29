@@ -10,12 +10,11 @@ var gameUtil = require('../../util/gameUtil');
 
 var Game = function(roomId, gameId)
 {
-    var room = gameUtil.getRoomById(roomId);
+    this.room = gameUtil.getRoomById(roomId);
 
-    this.lobbyId = room.lobbyId;
-    this.roomId = roomId;
+    this.lobbyId = this.room.lobbyId;
     this.gameId = gameId;
-    this.maxActor = room.maxActor;
+    this.maxActor = this.room.maxActor;
     this.currentActorNum = 0;
     this.actors = [];
     this.isFull = false;
@@ -73,10 +72,24 @@ Game.prototype.join = function(data, cb)
 
     actor.setProperties(data.player);
 
-    this.channel.pushMessage('onJoin', {actor: actor}, data.serverId, null);
-    cb({code: consts.ROOM.JOIN_RET_CODE.OK, actors: _.filter(this.actors, function (act) {
+    //push all 包括自己
+    //this.channel.pushMessage('onJoin', {actor: actor}, data.serverId, null);
+
+    var otherActors = _.filter(this.actors, function (act) {
         return act.uid != data.uid;
-    })});
+    })
+
+    //push其他玩家，除自己外
+    if (otherActors.length > 0) {
+        var receiver = _.map(otherActors, function (act) {
+            return _.pick(act, 'uid', 'sid')
+        });
+
+        this.channelService.pushMessageByUids('onJoin', {actor: actor}, receiver, null)
+    }
+
+
+    cb({code: consts.ROOM.JOIN_RET_CODE.OK, actors: otherActors});
 }
 
 
@@ -104,7 +117,7 @@ function doAddActor(gameObj, data)
 
     var seat = _.findWhere(gameObj.seatList, {uid: undefined});
 
-    var actor = new Actor(seat.seatNr, data.uid);
+    var actor = new Actor(seat.seatNr, data.uid, data.sid);
     gameObj.actors.push(actor);
     gameObj.currentActorNum++;
     seat.uid = data.uid;
@@ -123,7 +136,7 @@ Game.prototype.addActor2Channel = function(data)
         return false;
     }
     if(data) {
-        this.channel.add(data.uid, data.serverId);
+        this.channel.add(data.uid, data.sid);
         return true;
     }
     return false;

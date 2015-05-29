@@ -23,7 +23,7 @@ var handler = Handler.prototype;
 
 
 handler.join = function (msg, session, next) {
-    msg.serverId = session.get('serverId');
+    msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
     var roomId = msg.roomId, self = this;

@@ -12,3 +12,13 @@ GameUtil.getRoomsByLobbyId = function (lobbyId) {
 GameUtil.getRoomById = function (id) {
     return _.find(_.flatten(rooms), {id: id});
 }
+
+GameUtil.getJoinAvailable = function (roomId, player) {
+    if (player.gameId && player.gameId != undefined) {
+        return false;
+    }
+
+    var room = this.getRoomById(roomId);
+    //some check..
+
+}

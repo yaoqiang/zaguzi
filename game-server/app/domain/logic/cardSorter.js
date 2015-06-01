@@ -1,6 +1,6 @@
 var CardSorter = function(){}
 
-CardSorter.prototype.Sort = function(cards)
+CardSorter.sort = function(cards)
 {
     for (var i = 1; i < cards.length; i++)
     {
@@ -13,6 +13,7 @@ CardSorter.prototype.Sort = function(cards)
         }
         cards[j] = t;
     }
+    return cards;
 }
 
 module.exports = CardSorter;

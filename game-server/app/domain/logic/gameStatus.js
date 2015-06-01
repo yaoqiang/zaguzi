@@ -7,7 +7,7 @@ var GameStatus = function(){
     this.outCards = [];
     this.isTrusteeship = false;
     this.isLastFanOutTimeout = false;
-    this.identity = 0;  //身份（0：未知、1：3、2：股子）
+    this.identity = 0;  //身份（0：未知、1：股子、2：红3）
 }
 
 /**

@@ -11,13 +11,11 @@ var GamePhase = {
 }
 
 var GameLogic = function (game) {
-    logger.log("game will start..");
+    logger.log("game||start||游戏即将开始..");
     this.game = game; //game
     this.cards = [];    //牌
 
     this.currentPhase = null;
-    this.actorOfG = []; //股子玩家
-    this.actorOf3 = []; //红3玩家
 
     this.currentBoss = null;    //本回合Boss
     this.currentRound = 0;
@@ -71,7 +69,8 @@ GameLogic.prototype.newGame = function () {
             this.currentTalker = this.getRedAActor();
         }
 
-        this.firstFanActor = this.getRed5Actor();
+        var redAActor = this.getRed5Actor();
+        this.firstFanActor = {uid: redAActor.uid, actorNr: redAActor.actorNr};
 
         this.currentPhase = GamePhase.Talking;
 

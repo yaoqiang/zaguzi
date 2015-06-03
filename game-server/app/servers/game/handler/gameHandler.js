@@ -29,10 +29,10 @@ handler.join = function (msg, session, next) {
     var roomId = msg.roomId, self = this;
 
     // join game
-    self.app.rpc.game.gameRemote.join(session, msg, function (err, data) {
+    self.app.rpc.game.gameRemote.join(session, msg, function (data) {
         if (data.code === Code.FAIL)
         {
-            next(null, {code: Code.FAIL});
+            next(null, {code: Code.FAIL, err: data.err});
             return;
         }
 

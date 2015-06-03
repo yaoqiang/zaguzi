@@ -69,7 +69,7 @@ handler.enter = function (msg, session, next) {
             player = res[0];
             session.bind(uid);
             session.set('serverId', msg.serverId);
-            session.on('closed', onUserLeave.bind(null, self.app));
+            session.on('closed', onUserDisconnect.bind(null, self.app));
             session.pushAll(cb);
         }], function (err) {
         if (err) {
@@ -78,34 +78,28 @@ handler.enter = function (msg, session, next) {
         }
 
         self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
-            //如果缓存中有用户信息
-            if (u) {
-                //如果用户正常在线，踢掉原连接
-                if (!!u.sessionId) {
-                    //
-                    sessionService.kickBySessionId(u.sessionId, null);
-                }
-                //如果用户在游戏中，则告诉客户端需发送重回游戏指令
-                if (!!u.gameId) {
 
-                }
+            //如果用户正常在线，踢掉原连接
+            if (u && !!u.sessionId) {
+                //
+                sessionService.kickBySessionId(u.sessionId, null);
 
-                u.sessionId = session.id;
+            }
 
+            self.app.rpc.manager.userRemote.onUserEnter(session, {
+                uid: uid,
+                serverId: msg.serverId,
+                sessionId: session.id,
+                player: player
+            }, function () {
                 next(null, {code: Code.OK, player: player});
+            });
+
+            //如果用户在游戏中，则告诉客户端需发送重回游戏指令
+            if (u && !!u.gameId) {
 
             }
-            else {
-                self.app.rpc.manager.userRemote.onUserEnter(session, {
-                    uid: uid,
-                    serverId: msg.serverId,
-                    sessionId: session.id,
-                    player: player
-                }, function () {
-                    next(null, {code: Code.OK, player: player});
 
-                });
-            }
         });
 
     });
@@ -120,14 +114,15 @@ handler.enterLobby = function (msg, session, next) {
 };
 
 
-var onUserLeave = function (app, session, reason) {
-
-    if (!!session, !!session.uid) {
+var onUserDisconnect = function (app, session, reason) {
+    if (session.uid == undefined) {
         return;
     }
 
-    var sessionService = self.app.get('sessionService');
+    app.rpc.manager.userRemote.onUserDisconnect(null, {uid: session.uid}, function () {
 
-    utils.myPrint('1 ~ OnUserLeave is running ...');
+    });
+
+
 
 };

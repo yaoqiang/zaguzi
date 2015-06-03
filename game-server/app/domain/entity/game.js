@@ -2,6 +2,7 @@ var pomelo = require('pomelo');
 var _ = require('underscore');
 var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
+var Code = require('../../../../shared/code');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var schedule = require('pomelo-scheduler');
 var GameLogic = require('../logic/gameLogic');
@@ -22,7 +23,7 @@ var Game = function (roomId, gameId) {
     this.isAllReady = false;
     this.seatList = [];   //{seatNr:xx, uid:xx}
     this.gameLogic = undefined;
-    this.actorsWithLastGame = [];   //上局玩家
+    this.actorsWithLastGame = [];   //上局玩家;{uid:xx, actorNr: xx}
     this.bigActorWithLastGame = undefined;  //上把大油
     this.channel = null;
     this.channelService = pomelo.app.get('channelService');
@@ -55,24 +56,21 @@ Game.prototype.createChannel = function () {
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
-        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
         return;
     }
 
     if (!doAddActor(this, data)) {
-        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
     }
 
     if (!this.addActor2Channel(data)) {
-        cb({code: consts.ROOM.JOIN_RET_CODE.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
     }
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
 
     actor.setProperties(data.player);
-
-    //push all 包括自己
-    //this.channel.pushMessage('onJoin', {actor: actor}, data.sid, null);
 
     var otherActors = _.filter(this.actors, function (act) {
         return act.uid != data.uid;
@@ -85,7 +83,7 @@ Game.prototype.join = function (data, cb) {
         this.channelService.pushMessageByUids(consts.EVENT.JOIN, {actor: actor}, receiver, null)
     }
 
-    cb({code: consts.ROOM.JOIN_RET_CODE.OK, actors: otherActors});
+    cb({code: Code.OK, actors: otherActors});
 }
 
 
@@ -147,7 +145,7 @@ Game.prototype.ready = function (data, cb) {
 
     for (var i in data) {
         if (!data[i] || data[i] <= 0) {
-            cb({code: consts.ROOM.READY_RET_CODE.ERR});
+            cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ERR});
             return;
         }
     }
@@ -155,7 +153,7 @@ Game.prototype.ready = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
         logger.error('game||ready||离开游戏失败, 玩家不在游戏中||用户&ID: %j', data.uid);
-        cb({code: consts.ROOM.READY_RET_CODE.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_INT_GAME});
         return;
     }
 
@@ -181,7 +179,7 @@ Game.prototype.ready = function (data, cb) {
         }, receiver, null)
     }
 
-    cb({code: consts.ROOM.READY_RET_CODE.OK});
+    cb({code: Code.OK});
 
 
     //全部准备，开始游戏
@@ -194,8 +192,22 @@ Game.prototype.ready = function (data, cb) {
 }
 
 Game.prototype.start = function () {
-    //todo 开始游戏之前判断玩家是否与上局相同, 如果一样则对bigActorWithLastGame赋值
+    //标识当前游戏局与上把局玩家是否变化
+    var isActorsChanged = false;
+    for (var i in this.actors) {
+        if (!_.contains(this.actorsWithLastGame, {uid: this.actors[i].uid, actorNr: this.actors[i].actorNr})) {
+            isActorsChanged = true;
+        }
+    }
+    //如果有变化，清空上把大油
+    if (isActorsChanged) {
+        this.bigActorWithLastGame = undefined;
+    }
 
+    //重置玩家牌局状态
+    for (var i in this.actors) {
+        this.actors[i].gameStatus.reset()
+    }
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor};
     this.gameLogic = new GameLogic(gameInfo);
@@ -220,9 +232,9 @@ Game.prototype.talkCountdown = function () {
         talker: this.gameLogic.currentTalker,
         second: consts.GAME.TIMER.TALK
     }, null, function () {
-        var talkTimeoutReceiver = {uid: this.gameLogic.currentTalker.uid, sid: this.gameLogic.currentTalker.sid};
+        var talkTimeoutActor = {uid: this.gameLogic.currentTalker.uid, sid: this.gameLogic.currentTalker.actorNr};
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function () {
-            this.talkTimeout(talkTimeoutReceiver);
+            this.talkTimeout(talkTimeoutActor);
         });
         this.jobQueue.push({uid: this.gameLogic.currentTalker.uid, jobId: jobId});
 
@@ -232,11 +244,15 @@ Game.prototype.talkCountdown = function () {
 }
 
 /**
- * 如果玩家说话超时，向超时玩家发送 说话超时 事件，客户端接受到事件后，直接向服务器端发送talk请求，并且goal=0（即：没话）
+ * 如果玩家说话超时，告知所有人该玩家超时没说话
  * @param receiver
  */
-Game.prototype.talkTimeout = function (receiver) {
-    this.channelService.pushMessageByUids(consts.EVENT.TALK_COUNTDOWN_TIMEOUT, {}, receiver, this.talkCountdown)
+Game.prototype.talkTimeout = function (actor) {
+    this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN_TIMEOUT, {actor: actor}, null, null);
+    var act = _.findWhere(this.actors, {uid: actor.uid});
+    act.gameStatus.identity = consts.GAME.IDENTITY.UNKNOW;
+    this.talkCountdown();
+
 }
 
 /**
@@ -248,48 +264,205 @@ Game.prototype.talk = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
         logger.error('game||talk||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid);
-        cb({code: consts.ROOM.TALK_RET_CODE.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME});
+        return;
+    }
+
+    if (!_.isArray(data.append) || !!data.append) {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+        logger.error('game||talk||说话失败, 参数错误||用户&ID: %j', data.uid);
         return;
     }
 
     var job = _.findWhere(this.jobQueue, {uid: data.uid});
-    schedule.cancelJob(job.jobId);
 
     switch (data.goal) {
         case consts.GAME.IDENTITY.UNKNOW:
+
             actor.gameStatus.identity = data.goal;
             this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
-            //talker response
-            cb({code: consts.ROOM.TALK_RET_CODE.OK, goal: data.goal});
-            //push message
-            var otherActors = _.filter(this.actors, function (act) {
-                return act.uid != data.uid;
-            });
-            var receiver = this.getReceiver(otherActors);
-            this.channelService.pushMessageByUids(consts.EVENT.TALK, {
-                uid: data.uid,
-                actorNr: actor.actorNr,
-                goal: data.goal
-            }, receiver, this.gameLogic.talkNumber == this.maxActor ? null : this.talkCountdown)
             break;
         case consts.GAME.IDENTITY.GUZI:
+            var cards = actor.gameStatus.getHoldingCards();
+            if (this.maxActor == consts.GAME.TYPE.FIVE) {
+                if (_.contains(cards, 116) || _.contains(cards, 216)) {
+                    logger.error('game||talk||说话失败, 有3叫股子||用户&ID: %j', data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_WITH3, goal: data.goal, append: data.append})
+                    return;
+                }
+                //如果亮巴3
+                if (data.append && !!data.append && data.append.length > 0) {
+                    for (var i in data.append) {
+                        if (data.append[i] != 316 || data.append[i] != 416) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                        if (!_.contains(cards, append[i])) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                    }
 
+                }
+            }
+            else {
+                if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_WITH3, goal: data.goal, append: data.append})
+                    return;
+                }
+
+                //如果亮巴3
+                if (data.append && !!data.append && data.append.length > 0) {
+                    for (var i in data.append) {
+                        if (data.append[i] != 416) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                        if (!_.contains(cards, append[i])) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                    }
+
+                }
+
+            }
+
+            actor.gameStatus.identity = data.goal;
+            this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
+            this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
+
+            actor.gameStatus.append = data.append;
+            this.gameLogic.base = this.gameLogic.base + data.append.length + 1;
+            this.gameLogic.hasTalk = true;
             break;
 
         case consts.GAME.IDENTITY.HONG3:
+            var cards = actor.gameStatus.getHoldingCards();
+            if (this.maxActor == consts.GAME.TYPE.FIVE) {
+                if (!_.contains(cards, 116) || !_.contains(cards, 216)) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_WITHOUT3, goal: data.goal, append: data.append})
+                    return;
+                }
+                //
+                if (data.append && !!data.append && data.append.length > 0) {
+                    for (var i in data.append) {
+                        if (data.append[i] != 316 || data.append[i] != 416) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                        if (!_.contains(cards, append[i])) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                    }
+                }
+            }
+            else {
+                if (!_.contains(cards, 116) || !_.contains(cards, 216) || !_.contains(cards, 216)) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                    return;
+                }
+                //如果亮巴3
+                if (data.append && !!data.append && data.append.length > 0) {
+                    for (var i in data.append) {
+                        if (data.append[i] != 416) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                        if (!_.contains(cards, append[i])) {
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            return;
+                        }
+                    }
+                }
+            }
+
+            actor.gameStatus.append = data.append;
+            this.gameLogic.base = this.gameLogic.base + data.append.length;
+            if (_.contains(data.append), 216) this.gameLogic.base = this.gameLogic.base + 1;
+            if (_.contains(data.append), 416) this.gameLogic.base = this.gameLogic.base + 1;
+            this.gameLogic.hasTalk = true;
+
             break;
     }
+    //说话成功, 取消talkCountdown schedule
+    schedule.cancelJob(job.jobId);
+
+    cb({code: Code.OK, goal: data.goal, append: data.append});
+
+    //push message
+    var otherActors = _.filter(this.actors, function (act) {
+        return act.uid != data.uid;
+    });
+    var receiver = this.getReceiver(otherActors);
+    this.channelService.pushMessageByUids(consts.EVENT.TALK, {
+        uid: data.uid,
+        actorNr: actor.actorNr,
+        goal: data.goal,
+        append: data.append
+    }, receiver, this.gameLogic.talkNumber == this.maxActor - 1 ? this.afterTalk : this.talkCountdown)
+
+};
+
+Game.prototype.afterTalk = function () {
+    //如果没人说话，则重新发牌；如果有人说话，则第一个出牌人出牌。
+    if (!this.gameLogic.hasTalk) {
+        //重新开始
+        this.start();
+        return;
+    }
+    this.fanCountdown();
+}
+
+
+Game.prototype.fanCountdown = function () {
+
+
+}
+
+Game.prototype.fanTimeout = function () {
+
 
 }
 
 
-Game.prototype.leave = function (data) {
+Game.prototype.fan = function () {
+
+}
+
+Game.prototype.leave = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||ready||离开游戏失败, 玩家不在游戏中||用户&ID: %j', data.uid);
-        return false;
+        logger.error('game||leave||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
+        return;
     }
+
+    if (this.gameLogic != undefined && this.gameLogic.currentPhase != 3) {
+        logger.error('game||leave||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING})
+        return;
+    }
+
+    var otherActors = _.filter(this.actors, function (act) {
+        return act.uid != data.uid;
+    })
+
+    //push其他玩家，除自己外
+    if (otherActors.length > 0) {
+        var receiver = this.getReceiver(otherActors);
+
+        this.channelService.pushMessageByUids(consts.EVENT.LEAVE, {actor: actor}, receiver, null)
+    }
+
+    this.actors = _.without(this.actors, actor);
+
+    delete actor;
+
+    cb({code: Code.OK});
+
 }
 
 

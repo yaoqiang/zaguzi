@@ -2,9 +2,10 @@
  * Module dependencies
  */
 var Game = require('../domain/entity/game');
-var logger = require('pomelo-logger').getLogger(__filename);
-var pomelo = require('pomelo');
 var consts = require('../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var pomelo = require('pomelo');
+
 var Code = require('../../../shared/code');
 var _ = require('underscore');
 
@@ -39,7 +40,7 @@ exp.join = function(data, cb)
 
     }
     game.join(data, function (result) {
-        if (result.code === consts.ROOM.JOIN_RET_CODE.OK)
+        if (result.code === Code.OK)
         {
             cb({code: Code.OK, gameId: game.gameId, actors: result.actors});
             return;
@@ -52,10 +53,10 @@ exp.join = function(data, cb)
 }
 
 
-exp.ready = function(data)
+exp.ready = function(data, cb)
 {
     var game = this.getGameById(data.gameId).game;
-    game.ready(data);
+    game.ready(data, cb);
 }
 
 exp.kick = function()

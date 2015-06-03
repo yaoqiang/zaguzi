@@ -19,7 +19,7 @@ var UserRemote = function(app) {
  */
 UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
     playerService.getUserCacheByUid(msg, function(ret) {
-        utils.invokeCallback(cb, null, ret);
+        cb(ret);
     });
 };
 
@@ -32,7 +32,7 @@ UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
  */
 UserRemote.prototype.getUserCacheBySessionId = function(msg, cb) {
     playerService.getUserCacheBySessionId(msg, function(ret) {
-        utils.invokeCallback(cb, null, ret);
+        cb(ret);
     });
 };
 
@@ -44,6 +44,16 @@ UserRemote.prototype.onUserEnter = function (data, cb) {
     playerService.onUserEnter(data.uid, data.serverId, data.sessionId, data.player, cb);
 };
 
-UserRemote.prototype.onUserLeave = function (data, cb) {
-    playerService.onUserLeave(data.uid, cb);
+UserRemote.prototype.onUserDisconnect = function (data, cb) {
+    playerService.onUserDisconnect(data, cb);
+};
+
+UserRemote.prototype.onUserJoin = function (uid, roomId, gameId, cb) {
+    playerService.setGameReference(uid, roomId, gameId);
+    cb();
+};
+
+UserRemote.prototype.onUserLeave = function (uid, cb) {
+    playerService.setGameReference(uid, null, null);
+    cb();
 };

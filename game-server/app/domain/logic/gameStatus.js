@@ -8,6 +8,7 @@ var GameStatus = function(){
     this.isTrusteeship = false;
     this.isLastFanOutTimeout = false;
     this.identity = 0;  //身份（0：未知、1：股子、2：红3）
+    this.append = undefined;
 }
 
 /**
@@ -20,6 +21,7 @@ GameStatus.prototype.reset = function()
     this.isTrusteeship = false;
     this.isLastFanOutTimeout = false;
     this.identity = 0;  //身份（0：未知、1：3、2：股子）
+    this.append = undefined;
 }
 
 /**

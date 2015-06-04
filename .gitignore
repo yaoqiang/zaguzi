@@ -1,2 +1,7 @@
 game-server/node_modules
 web-server/node_modules
+game-server/logs
+/.idea
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/zgz.iml

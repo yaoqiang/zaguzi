@@ -50,7 +50,7 @@ GameLogic.prototype.newGame = function () {
 
         var firstGetPokerActorNr;
         //如果当前牌局玩家和上局玩家一样，则先发牌的是上局大油
-        if (!!this.game.bigActorWithLastGame) {
+        if (this.game.bigActorWithLastGame != null) {
             firstGetPokerActorNr = this.game.bigActorWithLastGame.actorNr;
         }
         else {
@@ -62,7 +62,7 @@ GameLogic.prototype.newGame = function () {
         this.deal(actor);
 
         //计算谁先说话
-        if (!!this.game.bigActorWithLastGame) {
+        if (this.game.bigActorWithLastGame != null) {
             this.currentTalker = this.game.bigActorWithLastGame
         }
         else {

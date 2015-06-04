@@ -22,9 +22,9 @@ var Game = function (roomId, gameId) {
     this.isFull = false;
     this.isAllReady = false;
     this.seatList = [];   //{seatNr:xx, uid:xx}
-    this.gameLogic = undefined;
+    this.gameLogic = null;
     this.actorsWithLastGame = [];   //上局玩家;{uid:xx, actorNr: xx}
-    this.bigActorWithLastGame = undefined;  //上把大油
+    this.bigActorWithLastGame = null;  //上把大油
     this.channel = null;
     this.channelService = pomelo.app.get('channelService');
 
@@ -201,7 +201,7 @@ Game.prototype.start = function () {
     }
     //如果有变化，清空上把大油
     if (isActorsChanged) {
-        this.bigActorWithLastGame = undefined;
+        this.bigActorWithLastGame = null;
     }
 
     //重置玩家牌局状态

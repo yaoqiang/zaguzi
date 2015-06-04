@@ -63,7 +63,7 @@ GameRemote.prototype.leave = function(data, cb) {
 
         var game = gameService.getGameById(user.gameId);
         //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
-        if (game.gameLogic != undefined && game.gameLogic.currentPhase != 3) {
+        if (game.gameLogic != null && game.gameLogic.currentPhase != 3) {
             logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING});
         }
@@ -88,5 +88,5 @@ GameRemote.prototype.leave = function(data, cb) {
 
 GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
-    cb(!!game.gameLogic ? game.gameLogic.currentPhase : null);
+    cb(game.gameLogic != null ? game.gameLogic.currentPhase : null);
 }

@@ -63,7 +63,7 @@ GameRemote.prototype.leave = function(data, cb) {
 
         var game = gameService.getGameById(user.gameId);
         //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
-        if (game.gameLogic != null && game.gameLogic.currentPhase != 3) {
+        if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
             logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING});
         }
@@ -74,17 +74,27 @@ GameRemote.prototype.leave = function(data, cb) {
                 cb(result);
                 return;
             }
-            pomelo.app.rpc.manager.userRemote.onUserLeave(null, data.uid, function () {
-                cb(result);
-            });
-
+            cb(result);
         });
+
+        //如果房间没人
+        if (game.currentActorNum == 0) {
+
+        }
 
 
     });
 
-
 };
+
+/**
+ * ready
+ * @param data {uid: xx, gameId:xx}
+ * @param cb
+ */
+GameRemote.prototype.ready = function (data, cb) {
+    gameService.ready(data, cb);
+}
 
 GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);

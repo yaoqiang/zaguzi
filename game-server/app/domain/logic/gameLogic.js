@@ -3,26 +3,24 @@ var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 
-var GamePhase = {
-    Starting: 0,
-    Talking: 1,
-    Fan: 2,
-    Finished: 3
-}
 
 var GameLogic = function (game) {
     logger.log("game||start||游戏即将开始..");
     this.game = game; //game
     this.cards = [];    //牌
 
+    this.red = [];  //3家 {uid:xx, actorNr:xx}
+    this.black = [];    //股家 {uid:xx, actorNr:xx}
+
     this.currentPhase = null;
 
     this.currentBoss = null;    //本回合Boss
     this.currentRound = 0;
+    this.currentFanActor = null;
 
-    this.lastFanOutCards = [];
-    this.lastFanOutActor = null;
-    this.lastFanOutCardRecognization = null;
+    this.lastFanCards = [];
+    this.lastFanActor = null;
+    this.lastFanCardRecognization = null;
 
     this.hasTalk = false;
 
@@ -30,7 +28,7 @@ var GameLogic = function (game) {
     this.firstFanActor = null;    //第一个出牌的
     this.talkNumber = 0;
 
-    this.base = 0;  //基数（每个人亮3数或股子数）
+    this.share = 0;  //基数（每个人亮3数或股子数）
 
 }
 
@@ -38,7 +36,7 @@ GameLogic.prototype.constructor = function () {
 
     this.cards = this.initialCards();
     this.cards = this.shuffleCards();
-    this.currentPhase = GamePhase.Starting;
+    this.currentPhase = consts.GAME.PHASE.STARTING;
 }
 
 GameLogic.prototype.reset = function () {
@@ -72,7 +70,7 @@ GameLogic.prototype.newGame = function () {
         var redAActor = this.getRed5Actor();
         this.firstFanActor = {uid: redAActor.uid, actorNr: redAActor.actorNr};
 
-        this.currentPhase = GamePhase.Talking;
+        this.currentPhase = consts.GAME.PHASE.TALKING;
 
     } catch (e) {
         logger.error('game||start||游戏开始异常:%j', e);

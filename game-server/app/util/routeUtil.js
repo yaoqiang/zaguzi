@@ -1,6 +1,8 @@
 var exp = module.exports;
 var dispatcher = require('./dispatcher');
+var gameUtil = require('./gameUtil');
 var consts = require('../consts/consts');
+var _ = require('underscore');
 
 exp.chat = function(session, msg, app, cb) {
     var chatServers = app.getServersByType('chat');
@@ -23,7 +25,9 @@ exp.game = function(session, msg, app, cb) {
         return;
     }
 
-    var lobbyId = msg.args[0].lobbyId;
+    var roomId = msg.args[0].roomId;
 
-    cb(null, gameServers[lobbyId] == undefined ? gameServers[0].id : gameServers[lobbyId].id);
+    var serverId = gameUtil.getRoomById(roomId).serverId;
+
+    cb(null, serverId);
 };

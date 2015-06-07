@@ -48,6 +48,7 @@ module.exports = {
         FAN_COUNTDOWN: 'onFanCountdown',
         FAN_COUNTDOWN_TIMEOUT: 'onFanCountdownTimeout',
         FAN: 'onFan',
+        TRUSTEESHIP: 'onTrusteeship',
         OVER: 'onOver'
 
     },
@@ -64,9 +65,20 @@ module.exports = {
             HONG3: 2
         },
         TIMER: {
+            NOT_READY: 10,
             TALK: 10,
-            FAN: 15
+            FAN: 10
+        },
+        PHASE: {
+            STARTING: 0,
+            TALKING: 1,
+            FAN: 2,
+            OVER: 3
+        },
+        TRUSTEESHIP: {
+            TIMEOUT_TIMES: 2
         }
+
 
     },
 

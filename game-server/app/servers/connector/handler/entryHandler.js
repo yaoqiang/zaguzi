@@ -7,6 +7,8 @@ var rooms = require('../../../../config/data/room');
 var playerService = require('../../../services/playerService');
 var logger = require('pomelo-logger').getLogger(__filename);
 
+var schedule = require('pomelo-scheduler');
+
 module.exports = function (app) {
     return new Handler(app);
 };
@@ -107,10 +109,8 @@ handler.enter = function (msg, session, next) {
 
 
 handler.enterLobby = function (msg, session, next) {
-
     var lobbyId = msg.lobbyId;
     next(null, {code: Code.OK, rooms: rooms[lobbyId]});
-
 };
 
 
@@ -119,10 +119,8 @@ var onUserDisconnect = function (app, session, reason) {
         return;
     }
 
-    app.rpc.manager.userRemote.onUserDisconnect(null, {uid: session.uid}, function () {
+    app.rpc.manager.userRemote.onUserDisconnect(null, {roomId: session.settings.roomId, uid: session.uid}, function () {
 
     });
-
-
 
 };

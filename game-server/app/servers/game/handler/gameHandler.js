@@ -46,7 +46,14 @@ handler.join = function (msg, session, next) {
 };
 
 handler.ready = function (msg, session, next) {
-
+    this.app.rpc.game.gameRemote.ready(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK, actors: data.actors})
+    })
 };
 
 handler.talk = function (msg, session, next) {

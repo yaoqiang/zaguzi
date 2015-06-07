@@ -4,31 +4,49 @@
       "id": 11,
       "title": "新手体验 - 初来乍到，到此一游",
       "icon": "imgId",
-      "base": 300,
+      "base": 100,
       "min": 1000,
-      "max": 50000,
+      "max": 30000,
+      "fax": 50,
       "lobbyId": 0,
-      "maxActor": 5
+      "maxActor": 5,
+      "serverId": "game-server-1"
     },
     {
       "id": 12,
       "title": "进阶对决 - 小有成就，到此一游",
       "icon": "imgId",
-      "base": 1000,
+      "base": 500,
       "min": 20000,
       "max": 300000,
+      "fax": 200,
       "lobbyId": 0,
-      "maxActor": 5
+      "maxActor": 5,
+      "serverId": "game-server-1"
     },
     {
       "id": 13,
-      "title": "巅峰之战 - 巅峰对决，谁与争锋",
+      "title": "大师对决 - 巅峰对决，谁与争锋",
       "icon": "imgId",
-      "base": 10000,
+      "base": 1000,
       "min": 50000,
       "max": 99999999,
+      "fax": 400,
       "lobbyId": 0,
-      "maxActor": 5
+      "maxActor": 5,
+      "serverId": "game-server-1"
+    },
+    {
+      "id": 14,
+      "title": "巅峰之战 - 巅峰对决，谁与争锋",
+      "icon": "imgId",
+      "base": 2000,
+      "min": 100000,
+      "max": 99999999,
+      "fax": 400,
+      "lobbyId": 0,
+      "maxActor": 5,
+      "serverId": "game-server-1"
     }
   ],
   [
@@ -39,8 +57,10 @@
       "base": 300,
       "min": 1000,
       "max": 50000,
+      "fax": 100,
       "lobbyId": 1,
-      "maxActor": 6
+      "maxActor": 6,
+      "serverId": "game-server-2"
     },
     {
       "id": 22,
@@ -49,8 +69,10 @@
       "base": 1000,
       "min": 20000,
       "max": 300000,
+      "fax": 100,
       "lobbyId": 1,
-      "maxActor": 6
+      "maxActor": 6,
+      "serverId": "game-server-2"
     },
     {
       "id": 23,
@@ -59,8 +81,22 @@
       "base": 10000,
       "min": 50000,
       "max": 99999999,
+      "fax": 100,
       "lobbyId": 1,
-      "maxActor": 6
+      "maxActor": 6,
+      "serverId": "game-server-2"
+    },
+    {
+      "id": 24,
+      "title": "巅峰之战 - 巅峰对决，谁与争锋",
+      "icon": "imgId",
+      "base": 10000,
+      "min": 50000,
+      "max": 99999999,
+      "fax": 100,
+      "lobbyId": 1,
+      "maxActor": 6,
+      "serverId": "game-server-2"
     }
   ],
   [
@@ -71,8 +107,10 @@
       "base": 300,
       "min": 1000,
       "max": 50000,
+      "fax": 100,
       "lobbyId": 2,
-      "maxActor": 7
+      "maxActor": 7,
+      "serverId": "game-server-3"
     },
     {
       "id": 32,
@@ -81,8 +119,10 @@
       "base": 1000,
       "min": 20000,
       "max": 300000,
+      "fax": 100,
       "lobbyId": 2,
-      "maxActor": 7
+      "maxActor": 7,
+      "serverId": "game-server-3"
     },
     {
       "id": 33,
@@ -91,8 +131,22 @@
       "base": 10000,
       "min": 50000,
       "max": 999999999,
+      "fax": 100,
       "lobbyId": 2,
-      "maxActor": 7
+      "maxActor": 7,
+      "serverId": "game-server-3"
+    },
+    {
+      "id": 34,
+      "title": "巅峰之战 - 巅峰对决，谁与争锋",
+      "icon": "imgId",
+      "base": 10000,
+      "min": 50000,
+      "max": 999999999,
+      "fax": 100,
+      "lobbyId": 2,
+      "maxActor": 7,
+      "serverId": "game-server-3"
     }
   ]
 ]

@@ -6,6 +6,7 @@ var Code = require('../../../../shared/code');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var schedule = require('pomelo-scheduler');
 var GameLogic = require('../logic/gameLogic');
+var CardLogic = require('../logic/cardLogic');
 var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
@@ -72,9 +73,23 @@ Game.prototype.join = function (data, cb) {
 
     actor.setProperties(data.player);
 
+    var self = this;
+
+    //如果玩家加入牌桌[?]秒内没准备则自动离开
+    var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.NOT_READY * 1000}, function (jobData) {
+        logger.info('game||leave||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', consts.GAME.TIMER.NOT_READY, jobData.uid);
+            self.jobQueue = _.filter(self.jobQueue, function (j) {
+                return j.uid != jobData.uid;
+            });
+        self.leave({uid: jobData.uid}, function (result) {
+        });
+    }, {uid: data.uid});
+
+    this.jobQueue.push({uid: data.uid, jobId: jobId});
+
     var otherActors = _.filter(this.actors, function (act) {
         return act.uid != data.uid;
-    })
+    });
 
     //push其他玩家，除自己外
     if (otherActors.length > 0) {
@@ -159,11 +174,26 @@ Game.prototype.ready = function (data, cb) {
 
     actor.isReady = true;
 
-    var isAllReady = true;
-    for (var act in this.actors) {
-        if (!this.actors[act].isReady) {
-            isAllReady = false;
+    var job = _.findWhere(this.jobQueue, {uid: data.uid});
+    if (!!job) {
+        schedule.cancelJob(job.jobId);
+        this.jobQueue = _.filter(this.jobQueue, function (j) {
+            return j.jobId != job.jobId;
+        });
+    }
+
+
+    if (this.isFull) {
+        var exceptedAllReady = true;
+
+        for (var act in this.actors) {
+            if (!this.actors[act].isReady) {
+                exceptedAllReady = false;
+            }
         }
+
+        this.isAllReady = exceptedAllReady;
+
     }
 
     var otherActors = _.filter(this.actors, function (act) {
@@ -183,8 +213,7 @@ Game.prototype.ready = function (data, cb) {
 
 
     //全部准备，开始游戏
-    if (isAllReady) {
-        this.isAllReady = true;
+    if (this.isAllReady) {
         this.start();
     }
 
@@ -208,6 +237,21 @@ Game.prototype.start = function () {
     for (var i in this.actors) {
         this.actors[i].gameStatus.reset()
     }
+
+    //释放上局gameLogic
+    delete(this.gameLogic);
+
+    //标识玩家身份
+    _.each(this.actors, function (v) {
+        var cards = v.gameStatus.getHoldingCards();
+        if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
+            this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr});
+        }
+        else {
+            this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr});
+        }
+    })
+
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor};
     this.gameLogic = new GameLogic(gameInfo);
@@ -232,10 +276,15 @@ Game.prototype.talkCountdown = function () {
         talker: this.gameLogic.currentTalker,
         second: consts.GAME.TIMER.TALK
     }, null, function () {
-        var talkTimeoutActor = {uid: this.gameLogic.currentTalker.uid, sid: this.gameLogic.currentTalker.actorNr};
-        var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function () {
-            this.talkTimeout(talkTimeoutActor);
-        });
+        var self = this;
+        var talkTimeoutActor = {uid: this.gameLogic.currentTalker.uid, actorNr: this.gameLogic.currentTalker.actorNr};
+
+        //如果玩家加入牌桌[?]秒内没准备则自动离开
+        var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function (jobData) {
+            logger.info('game||talk||玩家[%j]秒内未说话, 说话超时, ||用户&ID: %j', consts.GAME.TIMER.TALK, jobData.uid);
+            self.talkTimeout(talkTimeoutActor);
+        }, {uid: data.uid});
+
         this.jobQueue.push({uid: this.gameLogic.currentTalker.uid, jobId: jobId});
 
         this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
@@ -334,7 +383,7 @@ Game.prototype.talk = function (data, cb) {
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
 
             actor.gameStatus.append = data.append;
-            this.gameLogic.base = this.gameLogic.base + data.append.length + 1;
+            this.gameLogic.share = this.gameLogic.share + data.append.length + 1;
             this.gameLogic.hasTalk = true;
             break;
 
@@ -360,7 +409,7 @@ Game.prototype.talk = function (data, cb) {
                 }
             }
             else {
-                if (!_.contains(cards, 116) || !_.contains(cards, 216) || !_.contains(cards, 216)) {
+                if (!_.contains(cards, 116) || !_.contains(cards, 216) || !_.contains(cards, 316)) {
                     cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                     return;
                 }
@@ -380,15 +429,20 @@ Game.prototype.talk = function (data, cb) {
             }
 
             actor.gameStatus.append = data.append;
-            this.gameLogic.base = this.gameLogic.base + data.append.length;
-            if (_.contains(data.append), 216) this.gameLogic.base = this.gameLogic.base + 1;
-            if (_.contains(data.append), 416) this.gameLogic.base = this.gameLogic.base + 1;
+            this.gameLogic.share = this.gameLogic.share + data.append.length;
+            if (_.contains(data.append), 216) this.gameLogic.share = this.gameLogic.share + 1;
+            if (_.contains(data.append), 416) this.gameLogic.share = this.gameLogic.share + 1;
             this.gameLogic.hasTalk = true;
 
             break;
     }
     //说话成功, 取消talkCountdown schedule
-    schedule.cancelJob(job.jobId);
+    if (!!job) {
+        schedule.cancelJob(job.jobId);
+        this.jobQueue = _.filter(this.jobQueue, function (j) {
+            return j.jobId != job.jobId;
+        });
+    }
 
     cb({code: Code.OK, goal: data.goal, append: data.append});
 
@@ -413,26 +467,228 @@ Game.prototype.afterTalk = function () {
         this.start();
         return;
     }
+
+    //开始出牌
+    var actor = _.findWhere(this.actors, {uid: this.gameLogic.firstFanActor.uid});
+    //当前BOSS设置为第一个出牌者
+    this.gameLogic.currentBoss = actor;
+    //设置当前出牌玩家
+    this.gameLogic.currentFanActor = actor;
+    //设置上手出牌玩家
+    this.gameLogic.lastFanActor = actor;
+    //设置游戏阶段
+    this.gameLogic.currentPhase = consts.GAME.PHASE.FAN
     this.fanCountdown();
 }
 
 
 Game.prototype.fanCountdown = function () {
 
+    //如果上手出牌玩家是当前出牌玩家，则该玩家为上轮Boss
+    var isBoss = this.gameLogic.lastFanActor.actorNr == this.currentFanActor.actorNr;
+    if (isBoss) {
+        this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.currentFanActor.actorNr});
+    }
+
+    var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
+
+    //如果玩家已托管
+    if (this.gameLogic.currentFanActor.isTrusteeship) {
+        this.fanTimeout(fanTimeoutActor);
+        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
+        while (this.gameLogic.getNextActor(this.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
+            this.gameLogic.currentFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor)
+
+        }
+        return;
+    }
+
+    this.channel.pushMessage(consts.EVENT.FAN_COUNTDOWN, {
+        fanActor: this.gameLogic.currentFanActor,
+        isBoss: isBoss,
+        second: consts.GAME.TIMER.FAN
+    }, null, function () {
+
+        var self = true;
+        //如果玩家加入牌桌[?]秒内没准备则自动离开
+        var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
+            logger.info('game||leave||玩家出牌超时[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
+            self.fanTimeout(fanTimeoutActor);
+        }, {uid: data.uid});
+
+
+        this.jobQueue.push({uid: fanTimeoutActor.uid, jobId: jobId});
+
+        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
+        while (this.gameLogic.getNextActor(this.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
+            this.gameLogic.currentFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor)
+
+        }
+    });
 
 }
 
-Game.prototype.fanTimeout = function () {
+Game.prototype.fanTimeout = function (actor) {
+
+    var act = _.findWhere(this.actors, {uid: actor.uid});
+    var cards = [];
+    //出牌超时，如果当前出牌者是本轮Boss，则出第一张，如果不是，则不出
+    if (this.gameLogic.currentBoss.actorNr == this.currentFanActor.actorNr) {
+        cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
+    }
+    //如果玩家已托管 - 智能出牌(后期完善)
+    if (act.gameStatus.isTrusteeship) {
+        //
+    }
+
+    act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
+    //如果玩家连续2次出牌超时，则托管
+    if (act.gameStatus.fanTimeoutTimes == consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES) {
+        act.gameStatus.isTrusteeship = true;
+        //push 托管消息
+        this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, {actor: actor}, null, null);
+    }
+    this.fan({uid: actor.uid, cards: cards, isTimeout: true}, function () {
+    });
+}
+
+
+/**
+ * 出牌
+ * @param data {uid:xx, cards:[], isTimeout: true/false}
+ * @param cb
+ */
+Game.prototype.fan = function (data, cb) {
+
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+
+    if (!!actor) {
+        logger.error('game||fan||出牌错误，非法玩家||用户&ID: %j', data.uid);
+        return;
+    }
+
+    var cards = data.cards;
+    if (!_.isArray(cards) || !!cards || !cards) {
+        logger.error('game||fan||出牌错误，非法出牌||用户&ID: %j', data.uid);
+        return;
+    }
+
+    //如果当前出牌玩家是上轮Boss，并且没有出牌，则非法
+    if (this.gameLogic.currentBoss.actorNr == actor.actorNr && cards.length == 0) {
+        logger.error('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
+        return;
+    }
+
+    var isTimeout = data.isTimeout;
+
+    //
+    //push message
+    var otherActors = _.filter(this.actors, function (act) {
+        return act.uid != data.uid;
+    });
+    var receiver = this.getReceiver(otherActors);
+
+    //玩家不出（传空数组）
+    if (cards.length == 0) {
+        if (!isTimeout) actor.gameStatus.fanTimeoutTimes = 0;
+        if (!isTimeout) actor.gameStatus.isTrusteeship = false;
+
+        //response
+        cb({code: Code.OK, cards: cards, series: null});
+
+        //push message
+        this.channelService.pushMessageByUids(consts.EVENT.FAN, {
+            uid: data.uid,
+            actorNr: actor.actorNr,
+            cards: cards,
+            series: null
+        }, receiver, this.fanCountdown);
+
+
+        return;
+    }
+
+    //识别牌型
+    var cardRecognization = CardLogic.recognizeSeries(cards, this.game.maxActor, actor.gameStatus.append);
+    switch(cardRecognization.cardSeries) {
+        case CardLogic.CardSeriesCode.cardSeries_99:
+            //错误牌型
+            logger.error('game||fan||出牌错误，错误牌型||用户&ID: %j', data.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
+            break;
+        default:
+            //玩家手牌中没有所出牌
+            if (!actor.gameStatus.hasCards(cards)) {
+                logger.error('game||fan||出牌错误，玩家没有该牌||用户&ID: %j', data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.WITHOUT_CARDS});
+                return;
+            }
+
+
+            //如果是Boss出牌，不需比较上手牌
+            if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
+                var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, actor.gameStatus.append);
+                if (!result) {
+                    logger.error('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});
+                    return;
+                }
+            }
+
+            //设置玩家相关属性
+            actor.gameStatus.fanCards(cards);
+            if (!isTimeout) actor.gameStatus.fanTimeoutTimes = 0;
+            if (!isTimeout) actor.gameStatus.isTrusteeship = false;
+
+            //设置游戏逻辑相关
+            this.gameLogic.lastFanActor = actor;
+            this.gameLogic.lastFanCards = cards;
+            this.gameLogic.lastFanCardRecognization = cardRecognization;
+
+
+            cb({code: Code.OK, cards: cards, series: cardRecognization.cardSeries});
+
+            this.channelService.pushMessageByUids(consts.EVENT.FAN, {
+                uid: data.uid,
+                actorNr: actor.actorNr,
+                cards: cards,
+                series: cardRecognization.cardSeries
+            }, receiver, this.fanCountdown);
+
+            //判断是否已结束
+            if (actor.gameStatus.getHoldingCards().length == 0) {
+                if (this.isOver()) {
+                    this.over();
+                }
+            }
+
+    }
 
 
 }
 
-
-Game.prototype.fan = function () {
+Game.prototype.isOver = function () {
 
 }
 
+Game.prototype.over = function () {
+
+}
+
+/**
+ *
+ * @param data {uid:xx}
+ * @param cb
+ */
 Game.prototype.leave = function (data, cb) {
+
+    console.log('execute leave...')
+
+    if (!data || typeof data !== 'object') {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.ERR});
+        return;
+    }
+
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
         logger.error('game||leave||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
@@ -440,15 +696,23 @@ Game.prototype.leave = function (data, cb) {
         return;
     }
 
-    if (this.gameLogic != undefined && this.gameLogic.currentPhase != 3) {
+    if (this.gameLogic != undefined && this.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
         logger.error('game||leave||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING})
         return;
     }
 
+    var job = _.findWhere(this.jobQueue, {uid: data.uid});
+    if (!!job) {
+        schedule.cancelJob(job.jobId);
+        this.jobQueue = _.filter(this.jobQueue, function (j) {
+            return j.jobId != job.jobId;
+        });
+    }
+
     var otherActors = _.filter(this.actors, function (act) {
         return act.uid != data.uid;
-    })
+    });
 
     //push其他玩家，除自己外
     if (otherActors.length > 0) {
@@ -457,11 +721,21 @@ Game.prototype.leave = function (data, cb) {
         this.channelService.pushMessageByUids(consts.EVENT.LEAVE, {actor: actor}, receiver, null)
     }
 
-    this.actors = _.without(this.actors, actor);
+    var seat = _.findWhere(this.seatList, {uid: data.uid});
+    seat.uid = undefined;
 
+    this.actors = _.without(this.actors, actor);
     delete actor;
 
-    cb({code: Code.OK});
+
+    this.currentActorNum = this.currentActorNum - 1;
+    this.isAllReady = false;
+    this.isFull = false;
+
+    pomelo.app.rpc.manager.userRemote.onUserLeave(null, data.uid, function () {
+        cb({code: Code.OK});
+    });
+
 
 }
 

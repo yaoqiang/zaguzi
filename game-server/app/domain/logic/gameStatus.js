@@ -6,9 +6,10 @@ var GameStatus = function(){
     this.currentHoldingCards = [];
     this.outCards = [];
     this.isTrusteeship = false;
-    this.isLastFanOutTimeout = false;
+    this.isLastFanTimeout = false;
+    this.fanTimeoutTimes = 0;
     this.identity = 0;  //身份（0：未知、1：股子、2：红3）
-    this.append = undefined;
+    this.append = [];
 }
 
 /**
@@ -19,16 +20,17 @@ GameStatus.prototype.reset = function()
     this.currentHoldingCards = [];
     this.outCards = [];
     this.isTrusteeship = false;
-    this.isLastFanOutTimeout = false;
+    this.isLastFanTimeout = false;
+    this.fanTimeoutTimes = 0;
     this.identity = 0;  //身份（0：未知、1：3、2：股子）
-    this.append = undefined;
+    this.append = [];
 }
 
 /**
  * 出牌
  * @param cards
  */
-GameStatus.prototype.fanOutCards = function(cards)
+GameStatus.prototype.fanCards = function(cards)
 {
     if (!! cards || cards.length < 1) return;
 

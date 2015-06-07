@@ -5,6 +5,7 @@ var pomelo = require('pomelo');
 var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
 var Code = require('../../../shared/code');
+var gameUtil = require('../util/gameUtil');
 
 var exp = module.exports;
 
@@ -34,33 +35,81 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
 }
 
 exp.onUserDisconnect = function (data, cb) {
+    console.log('data = ', data);
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
     if (u.gameId)
     {
-        pomelo.app.rpc.game.gameRemote.getGameStatusById(null, {roomId: u.roomId, gameId: u.gameId}, function (status) {
+        //rpc invoke
+        var getStatusParams = {
+            namespace : 'user',
+            service: 'gameRemote',
+            method: 'getGameStatusById',
+            args: [{
+                gameId: u.gameId
+            }]
+        };
+
+        var room = gameUtil.getRoomById(u.roomId);
+
+        pomelo.app.rpcInvoke(room.serverId, getStatusParams, function(status){
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
             if (status != null &&  status != 3)
             {
                 logger.info("user||disconnect||玩家掉线时还在游戏中, 用户ID:%j", data.uid)
                 //set user session id = null.
                 exp.setUserSessionId(data.uid, null);
-
             }
             else {
-                //当玩家掉线时，并且玩家在牌桌中，牌局不是游戏中，执行玩家离开牌桌指令
-                pomelo.app.rpc.game.gameRemote.leave(null, {uid: data.uid}, function (data) {
+                //rpc invoke
+                var leaveParams = {
+                    namespace : 'user',
+                    service: 'gameRemote',
+                    method: 'leave',
+                    args: [{
+                        uid: data.uid
+                    }]
+                };
+
+                pomelo.app.rpcInvoke(room.serverId, leaveParams, function(result) {
                     if (data.code == Code.FAIL) {
                         logger.info("game||leave||玩家掉线离开排钟失败, 用户ID:%j", data.uid)
                         cb();
                         return;
                     }
+                    logger.info("game||leave||OKOKOKOKOKOKOKOKOKOKOK, 用户ID:%j", data.uid)
                     pomelo.app.userCache = _.without(pomelo.app.userCache, u);
                     delete u;
                 });
+
             }
             cb();
 
-        })
+        });
+
+        //pomelo.app.rpc.game.gameRemote.getGameStatusById(null, {roomId: u.roomId, gameId: u.gameId}, function (status) {
+        //    //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
+        //    if (status != null &&  status != 3)
+        //    {
+        //        logger.info("user||disconnect||玩家掉线时还在游戏中, 用户ID:%j", data.uid)
+        //        //set user session id = null.
+        //        exp.setUserSessionId(data.uid, null);
+        //
+        //    }
+        //    else {
+        //        //当玩家掉线时，并且玩家在牌桌中，牌局不是游戏中，执行玩家离开牌桌指令
+        //        pomelo.app.rpc.game.gameRemote.leave(null, {roomId: u.roomId, uid: data.uid}, function (data) {
+        //            if (data.code == Code.FAIL) {
+        //                logger.info("game||leave||玩家掉线离开排钟失败, 用户ID:%j", data.uid)
+        //                cb();
+        //                return;
+        //            }
+        //            pomelo.app.userCache = _.without(pomelo.app.userCache, u);
+        //            delete u;
+        //        });
+        //    }
+        //    cb();
+        //
+        //})
     }
     else {
         pomelo.app.userCache = _.without(pomelo.app.userCache, u);

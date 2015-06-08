@@ -35,7 +35,6 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
 }
 
 exp.onUserDisconnect = function (data, cb) {
-    console.log('data = ', data);
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
     if (u.gameId)
     {

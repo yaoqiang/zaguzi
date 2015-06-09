@@ -64,6 +64,12 @@ module.exports = {
             GUZI: 1,
             HONG3: 2
         },
+        ACTUAL_IDENTITY: {
+            GUZI: 0,
+            Heart3: 1,
+            Diamond3: 2,
+            Spade3: 3
+        },
         TIMER: {
             NOT_READY: 10,
             TALK: 10,

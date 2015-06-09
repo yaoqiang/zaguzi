@@ -29,6 +29,7 @@ var GameLogic = function (game) {
     this.talkNumber = 0;
 
     this.share = 0;  //基数（每个人亮3数或股子数）
+    this.isRedWin = false;  //红3胜利
 
 }
 

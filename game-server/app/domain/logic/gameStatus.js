@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var consts = require('../../consts/consts');
 
 
 
@@ -8,7 +9,8 @@ var GameStatus = function(){
     this.isTrusteeship = false;
     this.isLastFanTimeout = false;
     this.fanTimeoutTimes = 0;
-    this.identity = 0;  //身份（0：未知、1：股子、2：红3）
+    this.identity = consts.GAME.IDENTITY.UNKNOW;  //牌面身份（0：未知、1：股子、2：红3）
+    this.actualIdentity = [];   //consts.GAME.ACTUAL_IDENTITY.xx    //真实身份
     this.append = [];
 }
 
@@ -23,7 +25,9 @@ GameStatus.prototype.reset = function()
     this.isLastFanTimeout = false;
     this.fanTimeoutTimes = 0;
     this.identity = 0;  //身份（0：未知、1：3、2：股子）
+    this.actualIdentity = [];
     this.append = [];
+
 }
 
 /**

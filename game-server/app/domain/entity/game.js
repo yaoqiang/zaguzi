@@ -245,13 +245,34 @@ Game.prototype.start = function () {
     //标识玩家身份
     _.each(this.actors, function (v) {
         var cards = v.gameStatus.getHoldingCards();
-        if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
-            this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr});
+        if (this.maxActor == consts.GAME.TYPE.FIVE) {
+            if (_.contains(cards, 116) || _.contains(cards, 216)) {
+                this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                //设置玩家真实身份
+                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
+                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+            }
+            else {
+                this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.GUZI);
+            }
         }
-        else {
-            this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr});
+        else
+        {
+            if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
+                this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                //设置玩家真实身份
+                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
+                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+                if (_.contains(cards, 316)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Spade3)
+            }
+            else {
+                this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.GUZI);
+            }
         }
-    })
+
+    });
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor};
@@ -385,7 +406,7 @@ Game.prototype.talk = function (data, cb) {
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
 
             actor.gameStatus.append = data.append;
-            this.gameLogic.share = this.gameLogic.share + data.append.length + 1;
+            this.gameLogic.share = this.gameLogic.share + data.append.length;
             this.gameLogic.hasTalk = true;
             break;
 
@@ -437,7 +458,7 @@ Game.prototype.talk = function (data, cb) {
 
             actor.gameStatus.append = data.append;
             this.gameLogic.share = this.gameLogic.share + data.append.length;
-            if (_.contains(data.append), 216) this.gameLogic.share = this.gameLogic.share + 1;
+            if (_.contains(data.append), 216 && this.maxActor != consts.GAME.TYPE.SIX) this.gameLogic.share = this.gameLogic.share + 1;
             if (_.contains(data.append), 416) this.gameLogic.share = this.gameLogic.share + 1;
             this.gameLogic.hasTalk = true;
 
@@ -452,7 +473,7 @@ Game.prototype.talk = function (data, cb) {
         });
     }
 
-    cb({code: Code.OK, goal: data.goal, append: data.append});
+    cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
 
     //push message
     var otherActors = _.filter(this.actors, function (act) {
@@ -463,7 +484,8 @@ Game.prototype.talk = function (data, cb) {
         uid: data.uid,
         actorNr: actor.actorNr,
         goal: data.goal,
-        append: data.append
+        append: data.append,
+        share: this.gameLogic.share
     }, receiver, this.gameLogic.talkNumber == this.maxActor - 1 ? this.afterTalk : this.talkCountdown)
 
 };
@@ -518,9 +540,9 @@ Game.prototype.fanCountdown = function () {
     }, null, function () {
 
         var self = true;
-        //如果玩家加入牌桌[?]秒内没准备则自动离开
+        //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.info('game||leave||玩家出牌超时[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
+            logger.info('game||leave||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
@@ -686,9 +708,14 @@ Game.prototype.fan = function (data, cb) {
 
             //判断是否已结束
             if (actor.gameStatus.getHoldingCards().length == 0) {
+                //设置当前玩家出牌结束，并设置gameLogic中3家和股家的完成情况
+                var actorIdentity = _.findWhere(this.gameLogic.red, {uid: actor.uid});
+                if (!!actorIdentity) {
+                    actorIdentity = _.findWhere(this.gameLogic.black, {uid: actor.uid});
+                }
+                actorIdentity.isFinished = true;
                 if (this.isOver()) {
                     this.over();
-                    //push over event
                 }
             }
 
@@ -698,11 +725,20 @@ Game.prototype.fan = function (data, cb) {
 }
 
 Game.prototype.isOver = function () {
+    var notFinishedByRed = _.contains(this.gameLogic.red, {isFinished: false});
+    var notFinishedByBlack = _.contains(this.gameLogic.black, {isFinished: false});
 
+    if (!notFinishedByRed) this.gameLogic.isRedWin = true;
+
+    return !notFinishedByRed || !notFinishedByBlack;
 }
 
 Game.prototype.over = function () {
+    this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
+    //计算结算结果，push结算消息
 
+
+    this.channel.pushMessage(consts.EVENT.OVER, {}, null, null);
 }
 
 /**

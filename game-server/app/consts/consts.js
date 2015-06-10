@@ -71,7 +71,7 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 10,
+            NOT_READY: 100,
             TALK: 10,
             FAN: 10
         },

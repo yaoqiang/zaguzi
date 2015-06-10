@@ -92,7 +92,17 @@ exp.onUserDisconnect = function (data, cb) {
 
 }
 
-exp.addGold = function (uid, gold) {
+exp.addGold = function (uid, gold, cb) {
+    var u = _.findWhere(pomelo.app.userCache, {uid: uid});
+}
+
+
+exp.win = function (data, cb) {
+    
+}
+
+exp.lose = function (data, cb) {
+
 
 }
 

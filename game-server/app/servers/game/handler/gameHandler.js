@@ -61,6 +61,16 @@ handler.talk = function (msg, session, next) {
 };
 
 handler.leave = function (msg, session, next) {
+    var self = this;
 
+    // join game
+    self.app.rpc.game.gameRemote.leave(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK})
+    });
 };
 

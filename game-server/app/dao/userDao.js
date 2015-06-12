@@ -21,7 +21,7 @@ var userDao = module.exports;
  * @param {function} cb
  */
 userDao.getUserInfo = function (username, passwd, cb) {
-    var sql = 'select * from	User where username = ?';
+    var sql = 'select * from user where username = ?';
     var args = [username];
 
     pomelo.app.get('dbclient').query(sql,args,function(err, res) {
@@ -48,7 +48,7 @@ userDao.getUserInfo = function (username, passwd, cb) {
  * @param {function} cb Callback function.
  */
 userDao.getPlayerByUid = function(uid, cb){
-    var sql = 'select * from Player where userId = ?';
+    var sql = 'select * from player where userId = ?';
     var args = [uid];
 
     pomelo.app.get('dbclient').query(sql,args,function(err, res) {
@@ -72,7 +72,7 @@ userDao.getPlayerByUid = function(uid, cb){
  * @param {function} cb Callback function
  */
 userDao.getUserById = function (uid, cb){
-    var sql = 'select * from	User where id = ?';
+    var sql = 'select * from user where id = ?';
     var args = [uid];
     pomelo.app.get('dbclient').query(sql,args,function(err, res){
         if(err !== null){
@@ -96,7 +96,7 @@ userDao.getUserById = function (uid, cb){
  * @param {function} cb Callback function
  */
 userDao.createPlayer = function (uid, cb){
-    var sql = 'insert into Player (userId, nickName, avatar, gold, rank, fragment, lastLogin, getBankruptNr, continuousLoginNr) values(?,?,?,?,?,?,?,?,?)';
+    var sql = 'insert into player (userId, nickName, avatar, gold, rank, fragment) values(?,?,?,?,?,?)';
 
     var nickName = globals[0][Math.floor(Math.random()*globals[0].length)];
     var avatar = Math.floor(Math.random()*globals[0].length);
@@ -115,10 +115,7 @@ userDao.createPlayer = function (uid, cb){
                 avatar: avatar,
                 gold:  consts.GLOBAL.GOLD_INIT,
                 rank: 1,
-                fragment: 0,
-                lastLogin: Date.now(),
-                getBankruptNr: 0,
-                continuousLoginNr: 1
+                fragment: 0
             });
             utils.invokeCallback(cb, null, [player]);
         }

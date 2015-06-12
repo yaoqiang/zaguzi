@@ -168,7 +168,7 @@ Game.prototype.ready = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
-        logger.error('game||ready||离开游戏失败, 玩家不在游戏中||用户&ID: %j', data.uid);
+        logger.error('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_INT_GAME});
         return;
     }

@@ -75,13 +75,12 @@ GameRemote.prototype.leave = function(data, cb) {
                 return;
             }
             cb(result);
+
+            //如果房间没人
+            if (game.currentActorNum == 0) {
+
+            }
         });
-
-        //如果房间没人
-        if (game.currentActorNum == 0) {
-
-        }
-
 
     });
 
@@ -93,7 +92,19 @@ GameRemote.prototype.leave = function(data, cb) {
  * @param cb
  */
 GameRemote.prototype.ready = function (data, cb) {
-    gameService.ready(data, cb);
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        if (user == undefined || user == null) {
+            logger.error('game||ready||准备失败, 玩家已下线||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_IN_GAME});
+            return;
+        }
+        if (user.gameId == null) {
+            logger.error('game||ready||准备失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_IN_GAME});
+            return;
+        }
+        gameService.ready(data, cb);
+    });
 }
 
 GameRemote.prototype.getGameStatusById = function (data, cb) {

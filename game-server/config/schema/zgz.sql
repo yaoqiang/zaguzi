@@ -24,24 +24,27 @@ CREATE TABLE `player` (
   `nickName` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `avatar` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `gold` bigint(20) DEFAULT NULL,
+  `winNr` int DEFAULT NULL,
+  `loseNr` int DEFAULT NULL,
   `rank` varchar(20) DEFAULT NULL,
   `fragment` varchar(20) DEFAULT NULL,
-  `userId` bigint(20) DEFAULT NULL,
-  `lastLogin` bigint(20) DEFAULT NULL,
-  `getBankruptNr` int(11) DEFAULT NULL,
-  `continuousLoginNr` int(11) DEFAULT NULL,
-  `isGetContinuousLogin` bit(1) DEFAULT NULL,
-  `isFirstPay` bit(1) DEFAULT NULL,
-  `taskJson` varchar(200) DEFAULT NULL,
-  `itemJson` varchar(200) DEFAULT NULL,
+  `userId` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of player
 -- ----------------------------
-INSERT INTO `player` VALUES ('24', '你说啥我说啥', '8', '5000', '1', '0', '1', '1417411425379', '0', '1', null, null, null, null);
-INSERT INTO `player` VALUES ('25', '西门吹雪', '4', '5000', '1', '0', '2', '1417678886833', '0', '1', null, null, null, null);
+INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, '1', '0', '1');
+INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, '1', '0', '3');
+INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, '1', '0', '4');
+INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, '1', '0', '5');
+INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, '1', '0', '6');
+INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, '1', '0', '7');
+INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, '1', '0', '8');
+INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, '1', '0', '9');
+INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, '1', '0', '10');
+INSERT INTO `player` VALUES ('10', '西门吹雪', '4', '5000', 0, 0, '1', '0', '2');
 
 -- ----------------------------
 -- Table structure for properties
@@ -49,14 +52,14 @@ INSERT INTO `player` VALUES ('25', '西门吹雪', '4', '5000', '1', '0', '2', '
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
-  `day_last_login` int(11) DEFAULT NULL,
-  `get_bankrupt_nr` int(11) DEFAULT NULL,
-  `continuous_login_nr` int(11) DEFAULT NULL,
-  `is_get_continuous_login` bit(1) DEFAULT NULL,
-  `is_first_pay` bit(1) DEFAULT NULL,
-  `task_json` varchar(200) DEFAULT NULL,
-  `item_json` varchar(200) DEFAULT NULL,
+  `userId` bigint(20) DEFAULT NULL,
+  `lastLogin` bigint(20) DEFAULT NULL,
+  `getBankruptNr` int(11) DEFAULT NULL,
+  `continuousLoginNr` int(11) DEFAULT NULL,
+  `isGetContinuousLogin` bit(1) DEFAULT NULL,
+  `isFirstPay` bit(1) DEFAULT NULL,
+  `taskJson` varchar(200) DEFAULT NULL,
+  `itemkJson` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -72,16 +75,26 @@ CREATE TABLE `user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_unicode_ci DEFAULT '',
-  `login_count` smallint(6) unsigned DEFAULT '0',
+  `loginCount` smallint(6) unsigned DEFAULT '0',
   `from` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `last_login_time` bigint(20) DEFAULT '0',
-  `created_at` bigint(20) DEFAULT '0',
+  `lastLoginTime` bigint(20) DEFAULT '0',
+  `createdAt` bigint(20) DEFAULT '0',
+  `mobile` varchar(20),
   PRIMARY KEY (`id`),
   UNIQUE KEY `INDEX_ACCOUNT_NAME` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'a', 'a', '0', null, '1416979185627', '0');
-INSERT INTO `user` VALUES ('2', 'c', 'c', '0', '', '1416979185627', '0');
+INSERT INTO `user` VALUES ('1', 'a', 'a', '0', null, '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('2', 'b', 'b', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('3', 'c', 'c', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('4', 'd', 'd', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('5', 'e', 'e', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('6', 'f', 'f', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('7', 'g', 'g', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('8', 'h', 'h', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('9', 'i', 'i', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('10', 'j', 'j', '0', '', '1416979185627', '0', '');
+

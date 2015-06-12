@@ -56,6 +56,13 @@ exp.join = function(data, cb)
 exp.ready = function(data, cb)
 {
     var game = this.getGameById(data.gameId).game;
+    //如果玩家已准备，则返回已准备
+    var actor = _.findWhere(game.actors, {uid: data.uid});
+    if (actor.isReady) {
+        logger.error('game||leave||准备失败, 玩家已准备||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ALREADY_READY});
+        return;
+    }
     game.ready(data, cb);
 }
 

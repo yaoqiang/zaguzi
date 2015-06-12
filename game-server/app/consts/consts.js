@@ -11,7 +11,8 @@ module.exports = {
         },
         READY: {
             NOT_INT_GAME: 1,
-            ERR: 2
+            ALREADY_READY: 2,
+            ERR: 3
         },
         TALK: {
             LIANG3_WITHOUT3: 1, //没3 亮3（非法操作）

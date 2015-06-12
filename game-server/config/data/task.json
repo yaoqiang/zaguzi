@@ -1,0 +1,67 @@
+{
+  "group": {
+    "id": "1", "roomId": "", "type": "battle", "tasks": {
+      "task": {
+        "id": "1010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "1012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "1013", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      }
+    }
+  },
+  "group": {
+    "id": "2", "roomId": "", "type": "win", "tasks": {
+      "task": {
+        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      }
+    }
+  },
+  "group": {
+    "id": "3", "roomId": "", "type": "win", "tasks": {
+      "task": {
+        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      }
+    }
+  },
+  "group": {
+    "id": "4", "roomId": "12", "type": "battle", "tasks": {
+      "task": {
+        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      }
+    }
+  },
+  "group": {
+    "id": "5", "roomId": "12", "type": "win", "tasks": {
+      "task": {
+        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      },
+      "task": {
+        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
+      }
+    }
+  }
+}

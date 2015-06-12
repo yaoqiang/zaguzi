@@ -52,7 +52,7 @@ handler.ready = function (msg, session, next) {
             next(null, {code: Code.FAIL, err: data.err});
             return;
         }
-        next(null, {code: Code.OK, actors: data.actors})
+        next(null, {code: Code.OK})
     })
 };
 

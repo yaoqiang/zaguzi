@@ -32,13 +32,10 @@ pro.auth = function(token, cb) {
         return;
     }
 
-    //for debug.
-    /*
     if(!checkExpire(res, this.expire)) {
         cb(null, Code.ENTRY.FA_TOKEN_EXPIRE);
         return;
     }
-    */
 
     userDao.getUserById(res.uid, function(err, user) {
         if(err) {

@@ -14,6 +14,9 @@ var Entity = require('./entity');
 var Item = function(opts) {
     Entity.call(this, opts);
 
+    this.id = opts.id;
+
+
 };
 
 util.inherits(Item, Entity);

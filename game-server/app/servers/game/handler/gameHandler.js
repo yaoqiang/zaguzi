@@ -46,6 +46,7 @@ handler.join = function (msg, session, next) {
 };
 
 handler.ready = function (msg, session, next) {
+    msg.uid = session.uid;
     this.app.rpc.game.gameRemote.ready(session, msg, function (data) {
         if (data.code === Code.FAIL)
         {
@@ -62,6 +63,7 @@ handler.talk = function (msg, session, next) {
 
 handler.leave = function (msg, session, next) {
     var self = this;
+    msg.uid = session.uid;
 
     // join game
     self.app.rpc.game.gameRemote.leave(session, msg, function (data) {

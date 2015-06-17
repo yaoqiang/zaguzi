@@ -1,5 +1,6 @@
 var pomelo = require('pomelo');
 var routeUtil = require('./app/util/routeUtil');
+var sync = require('pomelo-sync-plugin');
 
 
 /**
@@ -45,6 +46,13 @@ app.configure('production|development', function() {
     // route configures
     app.route('chat', routeUtil.chat);
 
+    var lobbyInfo = require('./app/modules/lobbyInfo');
+    var onlineUser = require('./app/modules/onlineUser');
+    if(typeof app.registerAdmin === 'function'){
+        app.registerAdmin(lobbyInfo, {app: app});
+        app.registerAdmin(onlineUser, {app: app});
+    }
+
     app.userCache = [];
 
     // filter configures
@@ -66,10 +74,12 @@ app.configure('production|development', 'game', function(){
 
 
 // configure database
-app.configure('production|development', 'auth|connector|game', function () {
+app.configure('production|development', 'auth|connector|game|master', function () {
     app.loadConfig('mysql', app.getBase() + '/../shared/config/mysql.json');
     var dbclient = require('./app/dao/mysql/mysql').init(app);
     app.set('dbclient', dbclient);
+
+    app.use(sync, {sync: {path:__dirname + '/app/dao/mapping', dbclient: dbclient}});
 })
 
 // start app

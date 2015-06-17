@@ -3,7 +3,7 @@ var _ = require('underscore');
 var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
 var Code = require('../../../../shared/code');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME, __filename);
 var schedule = require('pomelo-scheduler');
 var GameLogic = require('../logic/gameLogic');
 var CardLogic = require('../logic/cardLogic');
@@ -774,16 +774,11 @@ Game.prototype.leave = function (data, cb) {
         });
     }
 
-    var otherActors = _.filter(this.actors, function (act) {
-        return act.uid != data.uid;
-    });
+    //push leave event
+    var receiver = this.getReceiver(this.actors);
 
-    //push其他玩家，除自己外
-    if (otherActors.length > 0) {
-        var receiver = this.getReceiver(otherActors);
+    this.channelService.pushMessageByUids(consts.EVENT.LEAVE, {actor: actor}, receiver, null)
 
-        this.channelService.pushMessageByUids(consts.EVENT.LEAVE, {actor: actor}, receiver, null)
-    }
 
     var seat = _.findWhere(this.seatList, {uid: data.uid});
     seat.uid = undefined;

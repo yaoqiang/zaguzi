@@ -61,14 +61,14 @@ handler.enter = function (msg, session, next) {
             uid = user.id;
             userDao.getPlayerByUid(uid, cb);
         }, function (res, cb) {
-            if (res.length > 0) {
+            if (res != null) {
                 cb(null, res);
             }
             else {
                 userDao.createPlayer(uid, cb);
             }
         }, function (res, cb) {
-            player = res[0];
+            player = res;
             session.bind(uid);
             session.set('serverId', msg.serverId);
             session.on('closed', onUserDisconnect.bind(null, self.app));

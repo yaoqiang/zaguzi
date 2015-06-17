@@ -24,27 +24,29 @@ CREATE TABLE `player` (
   `nickName` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `avatar` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `gold` bigint(20) DEFAULT NULL,
-  `winNr` int DEFAULT NULL,
-  `loseNr` int DEFAULT NULL,
-  `rank` varchar(20) DEFAULT NULL,
-  `fragment` varchar(20) DEFAULT NULL,
+  `winNr` int DEFAULT 0,
+  `loseNr` int DEFAULT 0,
+  `rank` int DEFAULT 0,
+  `exp` int DEFAULT 0,
+  `fragment` int DEFAULT 0,
   `userId` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `INDEX_USER_ID` (`userId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of player
 -- ----------------------------
-INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, '1', '0', '1');
-INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, '1', '0', '3');
-INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, '1', '0', '4');
-INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, '1', '0', '5');
-INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, '1', '0', '6');
-INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, '1', '0', '7');
-INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, '1', '0', '8');
-INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, '1', '0', '9');
-INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, '1', '0', '10');
-INSERT INTO `player` VALUES ('10', '西门吹雪', '4', '5000', 0, 0, '1', '0', '2');
+INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, '1', '0', '0', '1');
+INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, '1', '0', '0', '3');
+INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, '1', '0', '0', '4');
+INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, '1', '0', '0', '5');
+INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, '1', '0', '0', '6');
+INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, '1', '0', '0', '7');
+INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, '1', '0', '0', '8');
+INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, '1', '0', '0', '9');
+INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, '1', '0', '0', '10');
+INSERT INTO `player` VALUES ('10', '西门吹雪', '4', '5000', 0, 0, '1', '0', '0', '2');
 
 -- ----------------------------
 -- Table structure for properties
@@ -53,19 +55,30 @@ DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `userId` bigint(20) DEFAULT NULL,
-  `lastLogin` bigint(20) DEFAULT NULL,
-  `getBankruptNr` int(11) DEFAULT NULL,
-  `continuousLoginNr` int(11) DEFAULT NULL,
-  `isGetContinuousLogin` bit(1) DEFAULT NULL,
-  `isFirstPay` bit(1) DEFAULT NULL,
+  `lastLogin` smallint DEFAULT 0,
+  `getBankruptNr` smallint DEFAULT 0,
+  `continuousLoginNr` smallint DEFAULT 0,
+  `isGetContinuousLogin` smallint DEFAULT 0,
+  `isFirstPay` smallint DEFAULT 0,
   `taskJson` varchar(200) DEFAULT NULL,
-  `itemkJson` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `itemJson` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `INDEX_USER_ID` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of properties
 -- ----------------------------
+INSERT INTO `properties` VALUES ('1', '1', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('2', '2', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('3', '3', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('4', '4', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('5', '5', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('6', '6', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('7', '7', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('8', '8', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('9', '9', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('10', '10', '0', '0', 0, 0, 0, '{}', '{}');
 
 -- ----------------------------
 -- Table structure for user

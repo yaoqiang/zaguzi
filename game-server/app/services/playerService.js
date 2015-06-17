@@ -3,9 +3,12 @@ var _ = require('underscore');
 var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
+var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var Code = require('../../../shared/code');
 var gameUtil = require('../util/gameUtil');
+var eventManager = require('../domain/event/eventManager');
+var Player = require('../domain/entity/player');
+var Properties = require('../domain/entity/properties');
 
 var exp = module.exports;
 
@@ -20,6 +23,12 @@ exp.getUserInfo = function (uid, cb) {
 
 
 exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
+    //add event
+    var playerObj = new Player(player);
+    var propObj = new Properties(player.properties);
+
+    playerObj.properties = propObj;
+    eventManager.addEvent(playerObj);
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (u)
     {
@@ -71,7 +80,6 @@ exp.onUserDisconnect = function (data, cb) {
 
                 pomelo.app.rpcInvoke(room.serverId, leaveParams, function(result) {
                     if (data.code == Code.FAIL) {
-                        logger.info("game||leave||玩家掉线离开排钟失败, 用户ID:%j", data.uid)
                         cb();
                         return;
                     }

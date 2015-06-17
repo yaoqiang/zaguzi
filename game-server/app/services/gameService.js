@@ -55,7 +55,7 @@ exp.join = function(data, cb)
 
 exp.ready = function(data, cb)
 {
-    var game = this.getGameById(data.gameId).game;
+    var game = this.getGameById(data.gameId);
     //如果玩家已准备，则返回已准备
     var actor = _.findWhere(game.actors, {uid: data.uid});
     if (actor.isReady) {

@@ -1,6 +1,13 @@
 module.exports = {
     GLOBAL: {
-        GOLD_INIT: 5000
+        GOLD_INIT: 5000,
+        ADD_GOLD_TYPE: {
+            RECHARGE: 1,
+            BATTLE: 2,
+            TASK: 3,
+            ACTIVITY: 4,
+            MATCH: 5
+        }
     },
     ERR_CODE: {
         JOIN: {
@@ -72,7 +79,7 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 100,
+            NOT_READY: 10,
             TALK: 10,
             FAN: 10
         },

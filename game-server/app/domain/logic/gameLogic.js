@@ -1,11 +1,11 @@
 var _ = require('underscore');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME, __filename);
 
 
 var GameLogic = function (game) {
-    logger.log("game||start||游戏即将开始..");
+    logger.info("game||start||初始化游戏逻辑,游戏ID:[%j]", game.gameId);
     this.game = game; //game
     this.cards = [];    //牌
 
@@ -27,13 +27,16 @@ var GameLogic = function (game) {
     this.currentTalker = null;    //第一个说话的
     this.firstFanActor = null;    //第一个出牌的
     this.talkNumber = 0;
+    this.talkTimeoutNumber = 0; //说话超时次数
 
     this.share = 0;  //基数（每个人亮3数或股子数）
     this.isRedWin = false;  //红3胜利
 
+    this.init();
+
 }
 
-GameLogic.prototype.constructor = function () {
+GameLogic.prototype.init = function () {
 
     this.cards = this.initialCards();
     this.cards = this.shuffleCards();
@@ -46,7 +49,7 @@ GameLogic.prototype.reset = function () {
 
 GameLogic.prototype.newGame = function () {
     try {
-
+        logger.info("game||start||游戏即将开始,游戏ID:[%j]", this.game.gameId);
         var firstGetPokerActorNr;
         //如果当前牌局玩家和上局玩家一样，则先发牌的是上局大油
         if (this.game.bigActorWithLastGame != null) {
@@ -85,7 +88,8 @@ GameLogic.prototype.newGame = function () {
  */
 GameLogic.prototype.deal = function (actor) {
     while (this.cards.length > 0) {
-        actor.gameStatus.addHoldingCards(_.rest(this.cards));
+        actor.gameStatus.addHoldingCards([_.first(this.cards)]);
+        this.cards = _.rest(this.cards);
         actor = this.getNextActor(actor);
     }
 }
@@ -105,7 +109,7 @@ GameLogic.prototype.randomFirstActor = function () {
 
 GameLogic.prototype.getRedAActor = function () {
     var redA = 214; //红桃A
-    return _.map(this.game.actors, function (actor) {
+    return _.reduce(this.game.actors, function (actor) {
         if (actor.gameStatus.hasCards(redA)) {
             return actor;
         }

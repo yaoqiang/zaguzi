@@ -5,20 +5,21 @@ module.exports = {
         var args = [val.gold, val.winNr, val.loseNr, val.rank, val.exp, val.fragment, val.id];
         dbclient.query(sql, args, function(err, res) {
             if (err) {
-                console.error('write mysql failed! ' + sql + JSON.stringify(val));
+                console.error(err)
+                console.error('write player to mysql failed! ' + sql + JSON.stringify(val));
             }
             if(!!cb && typeof cb == 'function') {
                 cb(!!err);
             }
         });
     },
-    updatePlayerInfo: function(dbclient, val, cb) {
+    updatePlayerProfile: function(dbclient, val, cb) {
         var sql = 'update player set nickName = ?, avatar = ? where userId = ?';
 
         var args = [val.nickName, val.avatar, val.id];
         dbclient.query(sql, args, function(err, res) {
             if (err) {
-                console.error('write mysql failed! ' + sql + JSON.stringify(val));
+                console.error('write player profile mysql failed! ' + sql + JSON.stringify(val));
             }
             if(!!cb && typeof cb == 'function') {
                 cb(!!err);

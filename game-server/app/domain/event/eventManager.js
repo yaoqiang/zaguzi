@@ -14,10 +14,9 @@ exp.addEvent = function (entity) {
  * @param {Object} player The player to add save event for.
  */
 function addSaveEvent(player) {
-    console.log(player);
     var app = pomelo.app;
-    player.on('saveInfo', function () {
-        app.get('sync').exec('playerSync.updatePlayerInfo', player.uid, player);
+    player.on('saveProfile', function () {
+        app.get('sync').exec('playerSync.updatePlayerProfile', player.uid, player);
     });
 
     player.on('save', function () {
@@ -35,5 +34,15 @@ function addSaveEvent(player) {
     player.properties.on('flush', function () {
         app.get('sync').flush('propertiesSync.update', player.uid, player.properties);
     });
+
+    player.on('saveAll', function () {
+        app.get('sync').exec('playerSync.update', player.uid, player);
+        app.get('sync').exec('propertiesSync.update', player.uid, player.properties);
+    });
+
+    player.on('flushAll', function () {
+        app.get('sync').flush('playerSync.update', player.uid, player);
+        app.get('sync').flush('propertiesSync.update', player.uid, player.properties);
+    })
 
 }

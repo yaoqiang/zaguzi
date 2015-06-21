@@ -8,7 +8,7 @@ var Actor = function(actorNr, uid, sid)
     this.isReady = false;
     this.actorNr = actorNr;
     this.uid = uid;
-    this.sid = sid;
+    this.sid = sid; //connector server id
 }
 
 Actor.prototype.setActorNr = function(actorNr)

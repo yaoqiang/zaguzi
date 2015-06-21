@@ -38,7 +38,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     }
     else
     {
-        pomelo.app.userCache.push({uid: uid, serverId: serverId, sessionId: sessionId, roomId: null, gameId: null, player: player});
+        pomelo.app.userCache.push({uid: uid, serverId: serverId, sessionId: sessionId, roomId: null, gameId: null, player: playerObj});
     }
     cb();
 }
@@ -83,6 +83,9 @@ exp.onUserDisconnect = function (data, cb) {
                         cb();
                         return;
                     }
+
+                    u.player.flushAll();
+
                     pomelo.app.userCache = _.without(pomelo.app.userCache, u);
                     delete u;
                 });
@@ -94,26 +97,70 @@ exp.onUserDisconnect = function (data, cb) {
 
     }
     else {
+        u.player.win(11, 1000, function () {
+            u.player.win(11, 1000, function () {
+                u.player.win(11, 1000, function () {
+                    u.player.flushAll();
+                })
+            })
+        })
+
+
         pomelo.app.userCache = _.without(pomelo.app.userCache, u);
         cb();
     }
 
 }
 
-exp.addGold = function (uid, gold, cb) {
-    var u = _.findWhere(pomelo.app.userCache, {uid: uid});
-}
 
 
 exp.win = function (data, cb) {
-    
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || !!user) {
+            logger.info("user||win||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        var player = user.player;
+        player.win(data.roomId, data.gold, function () {
+            player.save();
+            cb({code: Code.OK});
+        });
+    });
 }
 
 exp.lose = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || !!user) {
+            logger.info("user||lose||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
 
+        var player = user.player;
+        player.lose(data.roomId, data.gold, function () {
+            player.save();
+            cb({code: Code.OK});
+        });
+    });
+}
+
+exp.getSignInAward = function (data, cb) {
 
 }
 
+exp.getBankruptAward = function (data, cb) {
+
+}
+
+exp.addFragment = function (data, cb) {
+
+}
+
+exp.recharge = function (data, cb) {
+    
+}
 
 exp.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
@@ -123,6 +170,10 @@ exp.getUserCacheByUid = function (uid, cb) {
 exp.getUserCacheBySessionId = function (sessionId, cb) {
     var u = _.findWhere(pomelo.app.userCache, {sessionId: sessionId});
     cb(u);
+}
+
+exp.getReceiverByUid = function (uid, cb) {
+
 }
 
 exp.setGameReference = function (uid, roomId, gameId) {

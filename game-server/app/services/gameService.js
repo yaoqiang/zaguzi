@@ -42,7 +42,7 @@ exp.join = function(data, cb)
     game.join(data, function (result) {
         if (result.code === Code.OK)
         {
-            cb({code: Code.OK, lobbyId: game.lobbyId, gameId: game.gameId, base: game.base, actors: result.actors});
+            cb({code: Code.OK, lobbyId: game.lobbyId, roomId: data.roomId, gameId: game.gameId, base: game.base, actors: result.actors});
             return;
         }
         cb({code: Code.FAIL});

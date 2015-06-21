@@ -2,10 +2,12 @@
  * Module dependencies
  */
 var util = require('util');
-var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
 var underscore = require('underscore');
+var signInConf = require('../../../config/data/signin');
 require('date-utils');
 
 var Entity = require('./entity');
@@ -30,7 +32,21 @@ var Properties = function(opts)
 util.inherits(Properties, Entity);
 
 
+Properties.prototype.getSignInAward = function (cb) {
 
+}
+
+Properties.prototype.getBankruptAward = function (cb) {
+
+}
+
+Properties.prototype.save = function () {
+    this.emit('save')
+}
+
+Properties.prototype.flush = function () {
+    this.emit('flush')
+}
 
 
 module.exports = Properties;

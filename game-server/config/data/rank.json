@@ -1,0 +1,7 @@
+[
+  {"rank":1, "title": "临时工", "exp": "100", "icon": ""},
+  {"rank":2, "title": "矿工", "exp": "500", "icon": ""},
+  {"rank":3, "title": "队长", "exp": "2000", "icon": ""},
+  {"rank":4, "title": "局长", "exp": "5000", "icon": ""},
+  {"rank":5, "title": "矿长", "exp": "10000", "icon": ""}
+]

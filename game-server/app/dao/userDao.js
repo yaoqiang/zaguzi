@@ -70,13 +70,14 @@ userDao.getPlayerByUid = function(uid, cb){
 
             var player = new Player({
                 id: res.id,
-                uid: res.uid,
+                uid: res.userId,
                 nickName: res.nickName,
                 avatar: res.avatar,
                 gold:  res.gold,
                 winNr: res.winNr,
                 loseNr: res.loseNr,
                 rank: res.rank,
+                exp: res.exp,
                 fragment: res.fragment
             });
             pomelo.app.get('dbclient').query(sql4Properties,args,function(err, res) {
@@ -167,6 +168,7 @@ userDao.createPlayer = function (uid, cb){
                 winNr: 0,
                 loseNr: 0,
                 rank: 1,
+                exp: res.exp,
                 fragment: 0
             });
 
@@ -214,7 +216,7 @@ userDao.createPlayer = function (uid, cb){
 
 /**
  * Update a player
- * @param {Object} player The player need to update, all the propties will be update.
+ * @param {Object} player The player need to update, all the properties will be update.
  * @param {function} cb Callback function.
  */
 userDao.updatePlayer = function (player, cb){

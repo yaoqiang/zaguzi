@@ -46,6 +46,9 @@ app.configure('production|development', function() {
     // route configures
     app.route('chat', routeUtil.chat);
 
+    app.before(pomelo.filters.toobusy());
+    app.enable('systemMonitor');
+
     var lobbyInfo = require('./app/modules/lobbyInfo');
     var onlineUser = require('./app/modules/onlineUser');
     if(typeof app.registerAdmin === 'function'){
@@ -74,7 +77,7 @@ app.configure('production|development', 'game', function(){
 
 
 // configure database
-app.configure('production|development', 'auth|connector|game|master', function () {
+app.configure('production|development', 'auth|chat|connector|game|manager|master', function () {
     app.loadConfig('mysql', app.getBase() + '/../shared/config/mysql.json');
     var dbclient = require('./app/dao/mysql/mysql').init(app);
     app.set('dbclient', dbclient);

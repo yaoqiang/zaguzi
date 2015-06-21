@@ -10,6 +10,7 @@ var CardLogic = require('../logic/cardLogic');
 var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
+var async = require('async');
 
 
 var Game = function (roomId, gameId) {
@@ -42,19 +43,6 @@ Game.prototype.init = function () {
     this.createChannel();
 
 }
-
-Game.prototype.createChannel = function () {
-    if (this.channel) {
-        return this.channel;
-    }
-    var channelName = channelUtil.getGameChannelName(this.gameId);
-    this.channel = this.channelService.getChannel(channelName, true);
-    if (this.channel) {
-        return this.channel;
-    }
-    return null;
-}
-
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
@@ -102,60 +90,6 @@ Game.prototype.join = function (data, cb) {
     cb({code: Code.OK, actors: this.actors});
 }
 
-
-/**
- * 添加actor到game
- * @param gameObj
- * @param data
- * @returns {boolean}
- */
-function doAddActor(gameObj, data) {
-    //如果牌局已满
-    if (gameObj.maxActor == gameObj.currentActorNum) {
-        return false;
-    }
-
-    //如果玩家已加入
-    var actorExist = _.findWhere(gameObj.actors, {uid: data.uid});
-    if (actorExist && actorExist != undefined) {
-        return false;
-    }
-
-    var seat = _.findWhere(gameObj.seatList, {uid: undefined});
-
-    var actor = new Actor(seat.seatNr, data.uid, data.sid);
-    gameObj.actors.push(actor);
-    gameObj.currentActorNum++;
-    seat.uid = data.uid;
-
-    if (gameObj.maxActor == gameObj.currentActorNum) {
-        gameObj.isFull = true;
-    }
-
-    return true;
-}
-
-Game.prototype.addActor2Channel = function (data) {
-    if (!this.channel) {
-        return false;
-    }
-    if (data) {
-        this.channel.add(data.uid, data.sid);
-        return true;
-    }
-    return false;
-}
-
-Game.prototype.removeActorFromChannel = function (data) {
-    if (!this.channel) {
-        return false;
-    }
-    if (data) {
-        this.channel.leave(data.uid, data.serverId);
-        return true;
-    }
-    return false;
-};
 
 Game.prototype.ready = function (data, cb) {
 
@@ -210,13 +144,24 @@ Game.prototype.ready = function (data, cb) {
         }, receiver, null)
     }
 
-    cb({code: Code.OK});
-
-
-    //全部准备，开始游戏
-    if (this.isAllReady) {
-        this.start();
-    }
+    var self = this;
+    async.waterfall([
+        function (callback) {
+            cb({code: Code.OK});
+            callback()
+        }, function (callback) {
+            //全部准备，开始游戏
+            if (self.isAllReady) {
+                self.start();
+            }
+            callback();
+        }],
+        function (err) {
+            if (err) {
+                logger.error('user||ready||用户准备失败||用户&ID: %j', data.uid);
+                return;
+            }
+        });
 
 
 }
@@ -242,8 +187,18 @@ Game.prototype.start = function () {
     //释放上局gameLogic
     delete(this.gameLogic);
 
+
+    //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
+    var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor, gameId: this.gameId};
+    this.gameLogic = new GameLogic(gameInfo);
+    this.gameLogic.newGame();
+
+    this.gameLogic.cardsSort(this.actors);
+
+    var self = this;
+
     //标识玩家身份
-    _.each(this.actors, function (v) {
+    _.map(this.actors, function (v) {
         var cards = v.gameStatus.getHoldingCards();
         if (this.maxActor == consts.GAME.TYPE.FIVE) {
             if (_.contains(cards, 116) || _.contains(cards, 216)) {
@@ -260,32 +215,48 @@ Game.prototype.start = function () {
         else
         {
             if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
-                this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                self.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 //设置玩家真实身份
                 if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
                 if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
                 if (_.contains(cards, 316)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Spade3)
             }
             else {
-                this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                self.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.GUZI);
             }
         }
 
     });
 
-    //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
-    var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor};
-    this.gameLogic = new GameLogic(gameInfo);
-    this.gameLogic.newGame();
-
-    this.gameLogic.cardsSort(this.actors);
 
     //组织游戏开始消息数据结构
     var actors = this.actors;
 
     //将来改为分别单独为每个人发消息，保证牌底只有各自接受各自的
-    this.channel.pushMessage(consts.EVENT.START, {actors: actors}, null, this.talkCountdown);
+    //this.channel.pushMessage(consts.EVENT.START, {actors: actors}, null, this.talkCountdown);
+
+    //
+    async.waterfall([
+        function (cb) {
+            _.map(self.actors, function (actor) {
+                //push leave event
+                var receiver = _.pick(actor, 'uid', 'sid')
+                self.channelService.pushMessageByUids(consts.EVENT.START, {actor: actor}, [receiver], null);
+            });
+            cb()
+
+        },
+        function(cb) {
+            self.talkCountdown()
+            cb();
+        }],
+        function (err) {
+            if (err) {
+                logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
+                return;
+            }
+    });
 
 }
 
@@ -294,12 +265,13 @@ Game.prototype.start = function () {
  */
 Game.prototype.talkCountdown = function () {
 
+    var self = this;
+
     this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN, {
         talker: this.gameLogic.currentTalker,
         second: consts.GAME.TIMER.TALK
     }, null, function () {
-        var self = this;
-        var talkTimeoutActor = {uid: this.gameLogic.currentTalker.uid, actorNr: this.gameLogic.currentTalker.actorNr};
+        var talkTimeoutActor = {uid: self.gameLogic.currentTalker.uid, actorNr: self.gameLogic.currentTalker.actorNr};
 
         //如果玩家[?]秒内没没说话则说话超时：不说话
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function (jobData) {
@@ -308,11 +280,11 @@ Game.prototype.talkCountdown = function () {
                 return j.uid != jobData.uid;
             });
             self.talkTimeout(talkTimeoutActor);
-        }, {uid: data.uid});
+        }, {uid: talkTimeoutActor.uid});
 
-        this.jobQueue.push({uid: this.gameLogic.currentTalker.uid, jobId: jobId});
+        self.jobQueue.push({uid: self.gameLogic.currentTalker.uid, jobId: jobId});
 
-        this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
+        self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
 
     });
 }
@@ -325,8 +297,37 @@ Game.prototype.talkTimeout = function (actor) {
     this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN_TIMEOUT, {actor: actor}, null, null);
     var act = _.findWhere(this.actors, {uid: actor.uid});
     act.gameStatus.identity = consts.GAME.IDENTITY.UNKNOW;
-    this.talkCountdown();
+    this.gameLogic.talkNumber += 1;
+    this.gameLogic.talkTimeoutNumber += 1;
 
+    if (this.gameLogic.talkTimeoutNumber == this.maxActor) {
+        this.dissolve()
+        return;
+    }
+
+    if (this.gameLogic.talkNumber == this.maxActor) {
+        this.afterTalk()
+    } else
+    {
+        this.talkCountdown()
+    }
+
+}
+
+/**
+ * 所有玩家都说话超时，则强制解散牌局。（防止全部掉线形成僵尸房）
+ */
+Game.prototype.dissolve = function () {
+    logger.info('game||dissolve||牌局里所有玩家都说话超时,强制解散牌局 ||游戏&ID: %j', this.gameId);
+    this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
+    var self = this;
+    _.map(this.actors, function (actor) {
+        self.leave({uid: actor.uid}, function (data) {
+
+        })
+    });
+    delete(this.gameLogic);
+    this.gameLogic = null;
 }
 
 /**
@@ -514,6 +515,7 @@ Game.prototype.afterTalk = function () {
 
 Game.prototype.fanCountdown = function () {
 
+    var self = this;
     //如果上手出牌玩家是当前出牌玩家，则该玩家为上轮Boss
     var isBoss = this.gameLogic.lastFanActor.actorNr == this.currentFanActor.actorNr;
     if (isBoss) {
@@ -539,7 +541,6 @@ Game.prototype.fanCountdown = function () {
         second: consts.GAME.TIMER.FAN
     }, null, function () {
 
-        var self = true;
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
             logger.info('game||leave||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
@@ -550,11 +551,11 @@ Game.prototype.fanCountdown = function () {
         }, {uid: data.uid});
 
 
-        this.jobQueue.push({uid: fanTimeoutActor.uid, jobId: jobId});
+        self.jobQueue.push({uid: fanTimeoutActor.uid, jobId: jobId});
 
         //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
-        while (this.gameLogic.getNextActor(this.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
-            this.gameLogic.currentFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor)
+        while (self.gameLogic.getNextActor(self.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
+            self.gameLogic.currentFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor)
 
         }
     });
@@ -760,7 +761,7 @@ Game.prototype.leave = function (data, cb) {
         return;
     }
 
-    if (this.gameLogic != undefined && this.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
+    if (this.gameLogic != null && this.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
         logger.error('game||leave||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING})
         return;
@@ -786,6 +787,9 @@ Game.prototype.leave = function (data, cb) {
     this.actors = _.without(this.actors, actor);
     delete actor;
 
+    this.removeActorFromChannel({uid: actor.uid, serverId: actor.sid});
+
+    logger.info('game||leave||离开游戏成功||用户&ID: %j', data.uid);
 
     this.currentActorNum = this.currentActorNum - 1;
     this.isAllReady = false;
@@ -804,6 +808,72 @@ Game.prototype.getReceiver = function (actors) {
         return _.pick(act, 'uid', 'sid')
     });
 }
+
+Game.prototype.createChannel = function () {
+    if (this.channel) {
+        return this.channel;
+    }
+    var channelName = channelUtil.getGameChannelName(this.gameId);
+    this.channel = this.channelService.getChannel(channelName, true);
+    if (this.channel) {
+        return this.channel;
+    }
+    return null;
+}
+
+/**
+ * 添加actor到game
+ * @param gameObj
+ * @param data
+ * @returns {boolean}
+ */
+function doAddActor(gameObj, data) {
+    //如果牌局已满
+    if (gameObj.maxActor == gameObj.currentActorNum) {
+        return false;
+    }
+
+    //如果玩家已加入
+    var actorExist = _.findWhere(gameObj.actors, {uid: data.uid});
+    if (actorExist && actorExist != undefined) {
+        return false;
+    }
+
+    var seat = _.findWhere(gameObj.seatList, {uid: undefined});
+
+    var actor = new Actor(seat.seatNr, data.uid, data.sid);
+    gameObj.actors.push(actor);
+    gameObj.currentActorNum++;
+    seat.uid = data.uid;
+
+    if (gameObj.maxActor == gameObj.currentActorNum) {
+        gameObj.isFull = true;
+    }
+
+    return true;
+}
+
+Game.prototype.addActor2Channel = function (data) {
+    if (!this.channel) {
+        return false;
+    }
+    if (data) {
+        this.channel.add(data.uid, data.sid);
+        return true;
+    }
+    return false;
+}
+
+Game.prototype.removeActorFromChannel = function (data) {
+    if (!this.channel) {
+        return false;
+    }
+    if (data) {
+        this.channel.leave(data.uid, data.serverId);
+        return true;
+    }
+    return false;
+};
 
 
 module.exports = Game;

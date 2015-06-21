@@ -6,11 +6,11 @@ var consts = require('../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
-var underscore = require('underscore');
+var _ = require('underscore');
 require('date-utils');
 
 var Entity = require('./entity');
-
+var ranks = require('../../../config/data/rank');
 
 var Player = function(opts)
 {
@@ -54,26 +54,57 @@ Player.prototype.addGold = function (type, gold, cb) {
 
 Player.prototype.win = function (roomId, gold, cb) {
     this.winNr += 1;
+    this.addExp(true, {roomId: roomId});
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
 
 Player.prototype.lose = function (roomId, gold, cb) {
     this.loseNr += 1;
+    this.addExp(roomId, false);
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
+
 
 Player.prototype.addFragment = function (type, fragment, cb) {
     logger.info("user||fragment||用户通过[%j]获得了[%j]元宝，用户ID:%j", type, fragment, this.uid);
     this.fragment += fragment;
 }
 
-Player.prototype.addExp = function (exp) {
+Player.prototype.addExp = function (win, args) {
 
+    var exp = win ? 2 : 1;
+    this.exp += exp;
 
+    var rank = _.findWhere(ranks, {rank: this.rank});
+    if (this.exp > rank.exp) {
+        this.upgrade();
+    }
 }
 
 Player.prototype.upgrade = function () {
     this.rank += 1;
+}
+
+
+//emit..
+Player.prototype.save = function () {
+    this.emit('save');
+}
+
+Player.prototype.saveProfile = function () {
+    this.emit('saveProfile');
+}
+
+Player.prototype.flush = function () {
+    this.emit('flush');
+}
+
+Player.prototype.saveAll = function () {
+    this.emit('saveAll');
+}
+
+Player.prototype.flushAll = function () {
+    this.emit('flushAll');
 }
 
 

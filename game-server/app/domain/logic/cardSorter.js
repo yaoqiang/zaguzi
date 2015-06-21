@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var CardSorter = function(){}
 
 CardSorter.sort = function(cards)

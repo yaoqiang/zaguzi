@@ -14,10 +14,12 @@ var util = require('util');
 var User = function(opts) {
     this.id = opts.id;
     this.name = opts.username;
-    this.from = opts.from || '';
     this.password = opts.password;
-    this.loginCount = opts.login_count;
-    this.lastLoginTime = opts.last_login_time;
+    this.loginCount = opts.loginCount;
+    this.from = opts.from || '';
+    this.lastLoginTime = opts.lastLoginTime;
+    this.mobile = opts.mobile;
+
 };
 
 /**

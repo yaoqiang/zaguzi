@@ -66,6 +66,13 @@ exp.ready = function(data, cb)
     game.ready(data, cb);
 }
 
+exp.talk = function(data, cb)
+{
+    var game = this.getGameById(data.gameId);
+
+    game.talk(data, cb);
+}
+
 exp.kick = function()
 {
 

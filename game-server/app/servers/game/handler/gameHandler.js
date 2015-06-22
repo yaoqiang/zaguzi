@@ -54,10 +54,19 @@ handler.ready = function (msg, session, next) {
             return;
         }
         next(null, {code: Code.OK})
-    })
+    });
 };
 
 handler.talk = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.talk(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK})
+    })
 
 };
 

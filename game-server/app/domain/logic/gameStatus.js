@@ -113,8 +113,8 @@ GameStatus.prototype.addOutCards = function(cards)
  */
 GameStatus.prototype.hasCards = function(cards)
 {
-    if (!! cards || cards.length < 1)
-        return true;
+    if (!!cards == false || _.isArray(cards) == false ||  _.size(cards) < 1)
+        return false;
 
     for (var v in cards)
     {

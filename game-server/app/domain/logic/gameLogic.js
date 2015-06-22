@@ -50,6 +50,7 @@ GameLogic.prototype.reset = function () {
 GameLogic.prototype.newGame = function () {
     try {
         logger.info("game||start||游戏即将开始,游戏ID:[%j]", this.game.gameId);
+
         var firstGetPokerActorNr;
         //如果当前牌局玩家和上局玩家一样，则先发牌的是上局大油
         if (this.game.bigActorWithLastGame != null) {
@@ -58,6 +59,7 @@ GameLogic.prototype.newGame = function () {
         else {
             firstGetPokerActorNr = this.randomFirstActor();
         }
+
         var actor = _.findWhere(this.game.actors, {actorNr: firstGetPokerActorNr});
 
         //发牌
@@ -68,16 +70,16 @@ GameLogic.prototype.newGame = function () {
             this.currentTalker = this.game.bigActorWithLastGame
         }
         else {
-            this.currentTalker = this.getRedAActor();
+            this.currentTalker = this.getHeartAActor();
         }
 
-        var redAActor = this.getRed5Actor();
-        this.firstFanActor = {uid: redAActor.uid, actorNr: redAActor.actorNr};
+        var heart5Actor = this.getHeart5Actor();
+        this.firstFanActor = {uid: heart5Actor.uid, actorNr: heart5Actor.actorNr};
 
         this.currentPhase = consts.GAME.PHASE.TALKING;
 
     } catch (e) {
-        logger.error('game||start||游戏开始异常:%j', e);
+        logger.error('game||start||游戏开始异常:%j,游戏ID:[%j]', e, this.game.gameId);
     }
 
 }
@@ -107,22 +109,23 @@ GameLogic.prototype.randomFirstActor = function () {
     return _.random(1, this.game.maxActor);
 }
 
-GameLogic.prototype.getRedAActor = function () {
-    var redA = 214; //红桃A
-    return _.reduce(this.game.actors, function (actor) {
-        if (actor.gameStatus.hasCards(redA)) {
-            return actor;
+GameLogic.prototype.getHeartAActor = function () {
+    var heartA = [214]; //红桃A
+    for (var a in this.game.actors) {
+        if (this.game.actors[a].gameStatus.hasCards(heartA)) {
+            return this.game.actors[a];
         }
-    });
+    }
+
 }
 
-GameLogic.prototype.getRed5Actor = function () {
-    var redA = 205; //红桃5
-    return _.map(this.game.actors, function (actor) {
-        if (actor.gameStatus.hasCards(redA)) {
-            return actor;
+GameLogic.prototype.getHeart5Actor = function () {
+    var heart5 = [205]; //红桃5
+    for (var a in this.game.actors) {
+        if (this.game.actors[a].gameStatus.hasCards(heart5)) {
+            return this.game.actors[a];
         }
-    });
+    }
 }
 
 

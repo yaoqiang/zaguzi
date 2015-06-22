@@ -86,7 +86,7 @@ Game.prototype.join = function (data, cb) {
     if (otherActors.length > 0) {
         var receiver = this.getReceiver(otherActors);
 
-        this.channelService.pushMessageByUids(consts.EVENT.JOIN, gameResponse.generateActorResponse(actor), receiver, null)
+        this.channelService.pushMessageByUids(consts.EVENT.JOIN, {actor: gameResponse.generateActorResponse(actor)}, receiver, null)
     }
 
     cb({code: Code.OK, actors: gameResponse.generateActorsResponse(this.actors)});
@@ -243,7 +243,7 @@ Game.prototype.start = function () {
         function (cb) {
             _.map(self.actors, function (actor) {
                 var receiver = _.pick(actor, 'uid', 'sid')
-                self.channelService.pushMessageByUids(consts.EVENT.START, gameResponse.generateActorRichResponse(actor), [receiver], null);
+                self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], null);
             });
             cb()
 

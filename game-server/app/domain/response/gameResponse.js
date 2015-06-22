@@ -15,7 +15,7 @@ exp.generateActorRichResponse = function (actor) {
     act.gameStatus = {
         currentHoldingCards: actor.gameStatus.currentHoldingCards,
         outCards: actor.gameStatus.outCards,
-        //isTrusteeship: actor.gameStatus.isTrusteeship,
+        isTrusteeship: actor.gameStatus.isTrusteeship,
         //isLastFanTimeout: actor.gameStatus.isLastFanTimeout,
         identity: actor.gameStatus.identity,
         append: actor.gameStatus.append
@@ -44,49 +44,33 @@ exp.generateActorPoorResponseWithSecond = function (actor, second) {
 
 exp.generateActorResponse = function (actor) {
     return {
-        actor: {
-            isReady: actor.isReady,
-            actorNr: actor.actorNr,
-            uid: actor.uid,
-            sid: actor.sid,
-            properties: {
-                nickName: actor.properties.nickName,
-                avatar: actor.properties.avatar,
-                gold: actor.properties.gold,
-                winNr: actor.properties.winNr,
-                loseNr: actor.properties.loseNr,
-                rank: actor.properties.rank,
-                fragment: actor.properties.fragment
-            }
+        isReady: actor.isReady,
+        actorNr: actor.actorNr,
+        uid: actor.uid,
+        sid: actor.sid,
+        properties: {
+            nickName: actor.properties.nickName,
+            avatar: actor.properties.avatar,
+            gold: actor.properties.gold,
+            winNr: actor.properties.winNr,
+            loseNr: actor.properties.loseNr,
+            rank: actor.properties.rank,
+            fragment: actor.properties.fragment
         }
     }
 }
 
 
-exp.ready = {
+exp.ready = {}
 
-}
+exp.leave = {}
 
-exp.leave = {
+exp.start = {}
 
-}
+exp.talking = {}
 
-exp.start = {
+exp.talk = {}
 
-}
+exp.fan = {}
 
-exp.talking = {
-
-}
-
-exp.talk = {
-
-}
-
-exp.fan = {
-
-}
-
-exp.over = {
-
-}
+exp.over = {}

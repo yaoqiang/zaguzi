@@ -23,12 +23,12 @@ GameRemote.prototype.join = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
             logger.error('game||join||加入游戏失败, 玩家已下线||用户&ID: %j', user.uid);
-            cb({code: Code.FAIL, reason: consts.ERR_CODE.JOIN.ERR});
+            cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
             return;
         }
         if (user.gameId) {
             logger.error('game||join||加入游戏失败, 玩家已加入牌桌||用户&ID: %j', user.uid);
-            cb({code: Code.FAIL, reason: consts.ERR_CODE.JOIN.IN_GAME});
+            cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
             return;
         }
         data.player = user.player;

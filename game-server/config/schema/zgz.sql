@@ -46,7 +46,14 @@ INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, '1', '0', '0', '7')
 INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, '1', '0', '0', '8');
 INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, '1', '0', '0', '9');
 INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, '1', '0', '0', '10');
-INSERT INTO `player` VALUES ('10', '西门吹雪', '4', '5000', 0, 0, '1', '0', '0', '2');
+INSERT INTO `player` VALUES ('10', '西门吹雪', '1', '5000', 0, 0, '1', '0', '0', '2');
+INSERT INTO `player` VALUES ('11', '要强', '1', '5000', 0, 0, '1', '0', '0', '11');
+INSERT INTO `player` VALUES ('12', '李建新', '3', '5000', 0, 0, '1', '0', '0', '12');
+INSERT INTO `player` VALUES ('13', '臧宏文', '4', '5000', 0, 0, '1', '0', '0', '13');
+INSERT INTO `player` VALUES ('14', '薛文', '5', '5000', 0, 0, '1', '0', '0', '14');
+INSERT INTO `player` VALUES ('15', '张建阳', '6', '5000', 0, 0, '1', '0', '0', '15');
+INSERT INTO `player` VALUES ('16', '吕建成', '7', '5000', 0, 0, '1', '0', '0', '16');
+INSERT INTO `player` VALUES ('17', '樊一伟', '8', '5000', 0, 0, '1', '0', '0', '17');
 
 -- ----------------------------
 -- Table structure for properties
@@ -79,6 +86,13 @@ INSERT INTO `properties` VALUES ('7', '7', '0', '0', 0, 0, 0, '{}', '{}');
 INSERT INTO `properties` VALUES ('8', '8', '0', '0', 0, 0, 0, '{}', '{}');
 INSERT INTO `properties` VALUES ('9', '9', '0', '0', 0, 0, 0, '{}', '{}');
 INSERT INTO `properties` VALUES ('10', '10', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('11', '11', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('12', '12', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('13', '13', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('14', '14', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('15', '15', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('16', '16', '0', '0', 0, 0, 0, '{}', '{}');
+INSERT INTO `properties` VALUES ('17', '17', '0', '0', 0, 0, 0, '{}', '{}');
 
 -- ----------------------------
 -- Table structure for user
@@ -110,4 +124,11 @@ INSERT INTO `user` VALUES ('7', 'g', 'g', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('8', 'h', 'h', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('9', 'i', 'i', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('10', 'j', 'j', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('11', 'yaoqiang', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('12', 'lijianxin', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('13', 'zanghongwen', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('14', 'xuewen', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('15', 'zhangjianyang', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('16', 'lvjiancheng', '0', '0', '', '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('17', 'fanyiwei', '0', '0', '', '1416979185627', '0', '');
 

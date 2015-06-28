@@ -20,7 +20,6 @@ var gGameList = [];
 
 exp.join = function(data, cb)
 {
-    console.log('gGameList => ', gGameList);
     //根据加入场次查找空闲牌局
     var emptyGame = _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
     //如果没有空闲牌局,则创建牌局
@@ -48,9 +47,29 @@ exp.join = function(data, cb)
         }
         cb({code: Code.FAIL});
     });
+}
 
+exp.leave = function (data, cb) {
+    var game = exp.getGameById(data.gameId);
+    //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
+    if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
+        logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING});
+    }
 
+    game.leave({uid: data.uid}, function (result) {
+        if (result.code == Code.FAIL) {
+            logger.error('game||leave||离开游戏失败||用户&ID: %j', data.uid);
+            cb(result);
+            return;
+        }
+        cb(result);
 
+        //如果房间没人
+        if (game.currentActorNum == 0) {
+
+        }
+    });
 }
 
 

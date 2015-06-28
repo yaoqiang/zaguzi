@@ -61,26 +61,7 @@ GameRemote.prototype.leave = function(data, cb) {
             return;
         }
 
-        var game = gameService.getGameById(user.gameId);
-        //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
-        if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-            logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', user.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING});
-        }
-
-        game.leave({uid: user.uid}, function (result) {
-            if (result.code == Code.FAIL) {
-                logger.error('game||leave||离开游戏失败||用户&ID: %j', user.uid);
-                cb(result);
-                return;
-            }
-            cb(result);
-
-            //如果房间没人
-            if (game.currentActorNum == 0) {
-
-            }
-        });
+        gameService.leave({uid: data.uid, gameId: user.gameId}, cb);
 
     });
 

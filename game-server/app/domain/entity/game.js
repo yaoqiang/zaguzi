@@ -188,7 +188,9 @@ Game.prototype.start = function () {
     }
 
     //释放上局gameLogic
-    delete(this.gameLogic);
+    for (var i in this.gameLogic) {
+        delete this.gameLogic[i];
+    }
 
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
@@ -237,15 +239,10 @@ Game.prototype.start = function () {
     });
 
 
-    //组织游戏开始消息数据结构
-    //var actors = this.actors;
-
-    //将来改为分别单独为每个人发消息，保证牌底只有各自接受各自的
-    //this.channel.pushMessage(consts.EVENT.START, {actors: actors}, null, this.talkCountdown);
-
     //
     async.waterfall([
             function (cb) {
+                //分别单独为每个人发消息，保证牌底只有各自接受各自的
                 _.map(self.actors, function (actor) {
                     var receiver = _.pick(actor, 'uid', 'sid')
                     self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], null);
@@ -805,16 +802,18 @@ Game.prototype.leave = function (data, cb) {
     //push leave event
     var receiver = this.getReceiver(this.actors);
 
-    this.channelService.pushMessageByUids(consts.EVENT.LEAVE, {actor: gameResponse.generateActorPoorResponse(actor)}, receiver, null)
+    this.channelService.pushMessageByUids(consts.EVENT.LEAVE, gameResponse.generateActorPoorResponse(actor), receiver, null)
 
 
     var seat = _.findWhere(this.seatList, {uid: data.uid});
     seat.uid = undefined;
 
-    this.actors = _.without(this.actors, actor);
-    delete actor;
-
     this.removeActorFromChannel({uid: actor.uid, serverId: actor.sid});
+
+    this.actors = _.without(this.actors, actor);
+    for (var i in actor) {
+        delete actor[i];
+    }
 
     logger.info('game||leave||离开游戏成功||用户&ID: %j', data.uid);
 
@@ -855,8 +854,6 @@ Game.prototype.createChannel = function () {
  * @returns {boolean}
  */
 Game.prototype.doAddActor = function (data) {
-    console.log('this.maxActor => this.currentActorNum', this.maxActor, this.currentActorNum);
-
     //如果牌局已满
     if (this.maxActor == this.currentActorNum) {
         return false;
@@ -875,7 +872,6 @@ Game.prototype.doAddActor = function (data) {
     this.currentActorNum++;
     seat.uid = data.uid;
 
-    console.log('this.maxActor == this.currentActorNum => ', this.maxActor == this.currentActorNum);
     if (this.maxActor == this.currentActorNum) {
         this.isFull = true;
     }

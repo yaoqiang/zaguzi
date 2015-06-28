@@ -18,7 +18,7 @@ CardLogic.CardSeriesCode = {
 /**
  * 牌型识别
  * @param cards 当前出牌
- * @param type  当前牌桌类型（1：5人、2：6人、3：7人）
+ * @param type  当前牌桌类型（5：5人、6：6人、7：7人）
  * @param liang3 当前牌局亮3情况，决定片3是否能打4；决定双三是否可满天飞
  * @returns {CardRecognization}
  */
@@ -107,7 +107,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
  * 牌型比较
  * @param cr1   当前牌型
  * @param cr2   上手牌型
- * @param type  当前牌桌类型（1：5人、2：6人、3：7人）
+ * @param type  当前牌桌类型（5：5人、6：6人、7：7人）
  * @param liang3 当前牌局亮3情况，决定片3是否能打4；决定双三是否可满天飞
  * @returns {boolean}
  */

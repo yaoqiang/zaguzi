@@ -123,6 +123,22 @@ GameRemote.prototype.talk = function (data, cb) {
     });
 }
 
+GameRemote.prototype.fan = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        if (user == undefined || user == null) {
+            logger.error('game||fan||出牌失败, 玩家已下线||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
+            return;
+        }
+        if (user.gameId == null) {
+            logger.error('game||fan||出牌失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
+            return;
+        }
+        gameService.fan(data, cb);
+    });
+}
+
 GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
     cb(game.gameLogic != null ? game.gameLogic.currentPhase : null);

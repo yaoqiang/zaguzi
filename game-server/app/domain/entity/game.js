@@ -19,6 +19,7 @@ var Game = function (roomId, gameId) {
     this.room = gameUtil.getRoomById(roomId);
 
     this.lobbyId = this.room.lobbyId;
+    this.roomId = this.room.id;
     this.gameId = gameId;
     this.maxActor = this.room.maxActor;
     this.base = this.room.base;
@@ -52,7 +53,7 @@ Game.prototype.join = function (data, cb) {
         return;
     }
 
-    if (!doAddActor(this, data)) {
+    if (!this.doAddActor(data)) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
     }
 
@@ -148,16 +149,16 @@ Game.prototype.ready = function (data, cb) {
 
     var self = this;
     async.waterfall([
-        function (callback) {
-            cb({code: Code.OK});
-            callback()
-        }, function (callback) {
-            //全部准备，开始游戏
-            if (self.isAllReady) {
-                self.start();
-            }
-            callback();
-        }],
+            function (callback) {
+                cb({code: Code.OK});
+                callback()
+            }, function (callback) {
+                //全部准备，开始游戏
+                if (self.isAllReady) {
+                    self.start();
+                }
+                callback();
+            }],
         function (err) {
             if (err) {
                 logger.error('user||ready||用户准备失败||用户&ID: %j', data.uid);
@@ -191,7 +192,12 @@ Game.prototype.start = function () {
 
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
-    var gameInfo = {actors: this.actors, bigActorWithLastGame: this.bigActorWithLastGame, maxActor: this.maxActor, gameId: this.gameId};
+    var gameInfo = {
+        actors: this.actors,
+        bigActorWithLastGame: this.bigActorWithLastGame,
+        maxActor: this.maxActor,
+        gameId: this.gameId
+    };
     this.gameLogic = new GameLogic(gameInfo);
     this.gameLogic.newGame();
 
@@ -214,8 +220,7 @@ Game.prototype.start = function () {
                 v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.GUZI);
             }
         }
-        else
-        {
+        else {
             if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
                 self.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 //设置玩家真实身份
@@ -240,24 +245,24 @@ Game.prototype.start = function () {
 
     //
     async.waterfall([
-        function (cb) {
-            _.map(self.actors, function (actor) {
-                var receiver = _.pick(actor, 'uid', 'sid')
-                self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], null);
-            });
-            cb()
+            function (cb) {
+                _.map(self.actors, function (actor) {
+                    var receiver = _.pick(actor, 'uid', 'sid')
+                    self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], null);
+                });
+                cb()
 
-        },
-        function(cb) {
-            self.talkCountdown()
-            cb();
-        }],
+            },
+            function (cb) {
+                self.talkCountdown()
+                cb();
+            }],
         function (err) {
             if (err) {
                 logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
                 return;
             }
-    });
+        });
 
 }
 
@@ -271,22 +276,25 @@ Game.prototype.talkCountdown = function () {
     this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN,
         gameResponse.generateActorPoorResponseWithSecond(this.gameLogic.currentTalker, consts.GAME.TIMER.TALK),
         null, function () {
-        var talkTimeoutActor = {uid: self.gameLogic.currentTalker.uid, actorNr: self.gameLogic.currentTalker.actorNr};
+            var talkTimeoutActor = {
+                uid: self.gameLogic.currentTalker.uid,
+                actorNr: self.gameLogic.currentTalker.actorNr
+            };
 
-        //如果玩家[?]秒内没没说话则说话超时：不说话
-        var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function (jobData) {
-            logger.info('game||talk||玩家[%j]秒内未说话, 说话超时, ||用户&ID: %j', consts.GAME.TIMER.TALK, jobData.uid);
-            self.jobQueue = _.filter(self.jobQueue, function (j) {
-                return j.uid != jobData.uid;
-            });
-            self.talkTimeout(talkTimeoutActor);
-        }, {uid: talkTimeoutActor.uid});
+            //如果玩家[?]秒内没没说话则说话超时：不说话
+            var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function (jobData) {
+                logger.info('game||talk||玩家[%j]秒内未说话, 说话超时, ||用户&ID: %j', consts.GAME.TIMER.TALK, jobData.uid);
+                self.jobQueue = _.filter(self.jobQueue, function (j) {
+                    return j.uid != jobData.uid;
+                });
+                self.talkTimeout(talkTimeoutActor);
+            }, {uid: talkTimeoutActor.uid});
 
-        self.jobQueue.push({uid: self.gameLogic.currentTalker.uid, jobId: jobId});
+            self.jobQueue.push({uid: self.gameLogic.currentTalker.uid, jobId: jobId});
 
-        self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
+            self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
 
-    });
+        });
 }
 
 /**
@@ -307,8 +315,7 @@ Game.prototype.talkTimeout = function (actor) {
 
     if (this.gameLogic.talkNumber == this.maxActor) {
         this.afterTalk()
-    } else
-    {
+    } else {
         this.talkCountdown()
     }
 
@@ -546,6 +553,7 @@ Game.prototype.fanCountdown = function () {
     this.channel.pushMessage(consts.EVENT.FAN_COUNTDOWN, {
         actor: {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr},
         isBoss: isBoss,
+        lastFanCardRecognization: this.gameLogic.lastFanCardRecognization,
         second: consts.GAME.TIMER.FAN
     }, null, function () {
 
@@ -607,18 +615,21 @@ Game.prototype.fan = function (data, cb) {
 
     if (!!actor == false) {
         logger.error('game||fan||出牌错误，非法玩家||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL});
         return;
     }
 
     var cards = data.cards;
     if (!_.isArray(cards) || !!cards == false || !cards) {
         logger.error('game||fan||出牌错误，非法出牌||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL});
         return;
     }
 
     //如果当前出牌玩家是上轮Boss，并且没有出牌，则非法
     if (this.gameLogic.currentBoss.actorNr == actor.actorNr && cards.length == 0) {
         logger.error('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL});
         return;
     }
 
@@ -637,14 +648,14 @@ Game.prototype.fan = function (data, cb) {
         if (!isTimeout) actor.gameStatus.isTrusteeship = false;
 
         //response
-        cb({code: Code.OK, cards: cards, series: null});
+        cb({code: Code.OK, cards: cards, cardRecognization: null});
 
         //push message
         this.channelService.pushMessageByUids(consts.EVENT.FAN, {
             uid: data.uid,
             actorNr: actor.actorNr,
             cards: cards,
-            series: null
+            cardRecognization: null
         }, receiver, self.fanCountdown);
 
         var job = _.findWhere(this.jobQueue, {uid: data.uid});
@@ -698,7 +709,7 @@ Game.prototype.fan = function (data, cb) {
             this.gameLogic.lastFanCardRecognization = cardRecognization;
 
 
-            cb({code: Code.OK, cards: cards, series: cardRecognization.cardSeries});
+            cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
 
             var job = _.findWhere(this.jobQueue, {uid: data.uid});
             //出牌成功, 取消fanCountdown schedule
@@ -713,7 +724,7 @@ Game.prototype.fan = function (data, cb) {
                 uid: data.uid,
                 actorNr: actor.actorNr,
                 cards: cards,
-                series: cardRecognization.cardSeries
+                cardRecognization: cardRecognization
             }, receiver, function () {
                 //判断是否已结束
                 if (actor.gameStatus.getHoldingCards().length == 0) {
@@ -747,6 +758,12 @@ Game.prototype.isOver = function () {
 Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
     //计算结算结果，push结算消息
+    if (this.gameLogic.isRedWin) {
+
+    }
+    else {
+
+    }
 
 
     this.channel.pushMessage(consts.EVENT.OVER, {}, null, null);
@@ -837,27 +854,30 @@ Game.prototype.createChannel = function () {
  * @param data
  * @returns {boolean}
  */
-function doAddActor(gameObj, data) {
+Game.prototype.doAddActor = function (data) {
+    console.log('this.maxActor => this.currentActorNum', this.maxActor, this.currentActorNum);
+
     //如果牌局已满
-    if (gameObj.maxActor == gameObj.currentActorNum) {
+    if (this.maxActor == this.currentActorNum) {
         return false;
     }
 
     //如果玩家已加入
-    var actorExist = _.findWhere(gameObj.actors, {uid: data.uid});
+    var actorExist = _.findWhere(this.actors, {uid: data.uid});
     if (actorExist && actorExist != undefined) {
         return false;
     }
 
-    var seat = _.findWhere(gameObj.seatList, {uid: undefined});
+    var seat = _.findWhere(this.seatList, {uid: undefined});
 
     var actor = new Actor(seat.seatNr, data.uid, data.sid);
-    gameObj.actors.push(actor);
-    gameObj.currentActorNum++;
+    this.actors.push(actor);
+    this.currentActorNum++;
     seat.uid = data.uid;
 
-    if (gameObj.maxActor == gameObj.currentActorNum) {
-        gameObj.isFull = true;
+    console.log('this.maxActor == this.currentActorNum => ', this.maxActor == this.currentActorNum);
+    if (this.maxActor == this.currentActorNum) {
+        this.isFull = true;
     }
 
     return true;

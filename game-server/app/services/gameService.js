@@ -20,29 +20,30 @@ var gGameList = [];
 
 exp.join = function(data, cb)
 {
+    console.log('gGameList => ', gGameList);
     //根据加入场次查找空闲牌局
     var emptyGame = _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
     //如果没有空闲牌局,则创建牌局
     var game;
-    if (!emptyGame)
-    {
-        game = new Game(data.roomId, ++gGameId);
-        gGameList.push({roomId: data.roomId, gameId: game.gameId, game: game, isFull: false});
-    }
-    else
+    if (!!emptyGame)
     {
         game = this.getGameById(emptyGame.gameId);
-        if (!game)
+        if (!!!game)
         {
             cb({code: Code.FAIL, gameId: undefined});
             return;
         }
-
     }
+    else
+    {
+        game = new Game(data.roomId, ++gGameId);
+        gGameList.push(game);
+    }
+
     game.join(data, function (result) {
         if (result.code === Code.OK)
         {
-            cb({code: Code.OK, lobbyId: game.lobbyId, roomId: data.roomId, gameId: game.gameId, base: game.base, actors: result.actors});
+            cb({code: Code.OK, lobbyId: game.lobbyId, roomId: data.roomId, gameId: game.gameId, gameType: game.maxActor, base: game.base, actors: result.actors});
             return;
         }
         cb({code: Code.FAIL});
@@ -73,6 +74,11 @@ exp.talk = function(data, cb)
     game.talk(data, cb);
 }
 
+exp.fan = function (data, cb) {
+    var game = this.getGameById(data.gameId);
+    game.fan(data, cb);
+}
+
 exp.kick = function()
 {
 
@@ -86,9 +92,5 @@ exp.start = function()
 
 exp.getGameById = function(gameId)
 {
-    return _.findWhere(gGameList, {gameId: gameId}).game;
+    return _.findWhere(gGameList, {gameId: gameId});
 }
-
-
-
-

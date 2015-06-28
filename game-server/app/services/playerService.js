@@ -97,14 +97,8 @@ exp.onUserDisconnect = function (data, cb) {
 
     }
     else {
-        u.player.win(11, 1000, function () {
-            u.player.win(11, 1000, function () {
-                u.player.win(11, 1000, function () {
-                    u.player.flushAll();
-                })
-            })
-        })
 
+        u.player.flushAll();
 
         pomelo.app.userCache = _.without(pomelo.app.userCache, u);
         cb();

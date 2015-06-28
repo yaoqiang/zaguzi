@@ -65,9 +65,22 @@ handler.talk = function (msg, session, next) {
             next(null, {code: Code.FAIL, err: data.err});
             return;
         }
-        next(null, {code: Code.OK})
+        next(null, {code: Code.OK,goal: data.goal,
+            append: data.append,
+            share: data.share})
     })
+};
 
+handler.fan = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.fan(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK, cards: data.cards, cardRecognization: data.cardRecognization})
+    })
 };
 
 handler.leave = function (msg, session, next) {

@@ -3,7 +3,7 @@
  */
 var Game = require('../domain/entity/game');
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME, __filename);
 var pomelo = require('pomelo');
 
 var Code = require('../../../shared/code');

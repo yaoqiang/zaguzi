@@ -10,6 +10,7 @@ var CardLogic = require('../logic/cardLogic');
 var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
+var settleService = require('../../services/settleService');
 var gameResponse = require('../response/gameResponse');
 
 var async = require('async');
@@ -754,16 +755,11 @@ Game.prototype.isOver = function () {
 
 Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
-    //计算结算结果，push结算消息
-    if (this.gameLogic.isRedWin) {
 
-    }
-    else {
+    settleService.settle(this, function () {
+        
+    });
 
-    }
-
-
-    this.channel.pushMessage(consts.EVENT.OVER, {}, null, null);
 }
 
 /**

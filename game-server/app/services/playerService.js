@@ -119,6 +119,7 @@ exp.win = function (data, cb) {
         var player = user.player;
         player.win(data.roomId, data.gold, function () {
             player.save();
+            pomelo.
             cb({code: Code.OK});
         });
     });
@@ -159,6 +160,14 @@ exp.recharge = function (data, cb) {
 exp.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     cb(u);
+}
+exp.getUsersCacheByUids = function (uids, cb) {
+    var users = [];
+    _.map(uids, function (uid) {
+        var u = _.findWhere(pomelo.app.userCache, {uid: uid});
+        users.push(u);
+    });
+    cb(users);
 }
 
 exp.getUserCacheBySessionId = function (sessionId, cb) {

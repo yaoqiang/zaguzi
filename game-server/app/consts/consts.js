@@ -36,6 +36,9 @@ module.exports = {
             WITHOUT_CARDS: 1,
             NOT_BIGGER: 2,
             ERR: 3
+        },
+        SETTLE: {
+            ERR: 1
         }
     },
     MESSAGE: {
@@ -57,7 +60,8 @@ module.exports = {
         FAN_COUNTDOWN_TIMEOUT: 'onFanCountdownTimeout',
         FAN: 'onFan',
         TRUSTEESHIP: 'onTrusteeship',
-        OVER: 'onOver'
+        OVER: 'onOver',
+        GOLD_CHANGE: 'onGoldChange'
 
     },
 
@@ -99,6 +103,7 @@ module.exports = {
     LOG: {
         GAME: 'game.log',
         USER: 'user.log',
-        GOLD: 'gold.log'
+        GOLD: 'gold.log',
+        SETTLE: 'settle.log'
     }
 }

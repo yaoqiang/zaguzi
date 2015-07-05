@@ -23,6 +23,24 @@ UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.getUsersCacheByUids = function(msg, cb) {
+    playerService.getUsersCacheByUids(msg, function(ret) {
+        cb(ret);
+    });
+};
+
+UserRemote.prototype.win = function(msg, cb) {
+    playerService.win(msg, function(ret) {
+        cb(ret);
+    });
+};
+
+UserRemote.prototype.lose = function(msg, cb) {
+    playerService.lose(msg, function(ret) {
+        cb(ret);
+    });
+};
+
 
 /**
  * get user by sessionId from cache.

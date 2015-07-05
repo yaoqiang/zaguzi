@@ -12,6 +12,9 @@ require('date-utils');
 var Entity = require('./entity');
 var ranks = require('../../../config/data/rank');
 
+var messageService = require('../../services/messageService');
+
+
 var Player = function(opts)
 {
     Entity.call(this, opts);
@@ -39,7 +42,7 @@ Player.prototype.updateProfile = function (data, cb) {
     this.avatar = data.avatar;
 
     logger.info("user||profile||用户修改了个人基本信息，用户ID:%j", this.uid);
-
+    this.save();
     cb();
 }
 
@@ -48,6 +51,9 @@ Player.prototype.addGold = function (type, gold, cb) {
     logger.info("user||gold||用户通过[%j]获得了[%j]金币，用户ID:%j", type, gold, this.uid);
     this.gold += gold;
 
+    this.gold = this.gold < 0 ? 0 : this.gold;
+
+    messageService.pushMessageToPlayer(this.uid, consts.EVENT.GOLD_CHANGE, {gold: this.gold});
     cb();
 
 }

@@ -9,8 +9,8 @@ var GameLogic = function (game) {
     this.game = game; //game
     this.cards = [];    //牌
 
-    this.red = [];  //3家 {uid:xx, actorNr:xx}
-    this.black = [];    //股家 {uid:xx, actorNr:xx}
+    this.red = [];  //3家 {uid:xx, actorNr:xx, isFinished: true/false}
+    this.black = [];    //股家 {uid:xx, actorNr:xx, isFinished: true/false}
 
     this.currentPhase = null;
 

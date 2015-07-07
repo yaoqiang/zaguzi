@@ -91,15 +91,17 @@ exp.settleCommon = function (game, cb) {
             _.map(results, function (result) {
                 if (result.win) {
                     pomelo.app.rpc.manager.userRemote.win(null, {uid: result.uid, roomId: game.roomId, gold: result.gold}, function (data) {
-                        callback(null, data)
+                        //callback(null, data)
                     });
                 }
                 else {
                     pomelo.app.rpc.manager.userRemote.lose(null, {uid: result.uid, roomId: game.roomId, gold: result.gold * -1}, function (data) {
-                        callback(null, data)
+                        //callback(null, data)
                     });
                 }
             });
+
+            callback(null, {code: Code.OK});
 
         }], function (err, data) {
         if (err) {
@@ -113,6 +115,7 @@ exp.settleCommon = function (game, cb) {
         }
 
         game.channel.pushMessage(consts.EVENT.OVER, {game: {isRedWin: game.gameLogic.isRedWin, share: game.gameLogic.share}, results: results}, null, null);
+        cb();
     });
 
 

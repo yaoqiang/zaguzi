@@ -32,6 +32,11 @@ var GameLogic = function (game) {
     this.share = 0;  //基数（每个人亮3数或股子数）
     this.isRedWin = false;  //红3胜利
 
+
+    this.isGiveLogic = false;    //是否是接风环节
+    this.giveLogicFanRound = 0;
+    this.lastFanOverNextCountdownActor = null;  //第一个接风玩家
+
     this.init();
 
 }

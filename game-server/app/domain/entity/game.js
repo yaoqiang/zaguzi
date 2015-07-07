@@ -530,7 +530,10 @@ Game.prototype.fanCountdown = function () {
 
     var self = this;
     //如果上手出牌玩家是当前出牌玩家，则该玩家为上轮Boss
-    var isBoss = this.gameLogic.lastFanActor.actorNr == this.currentFanActor.actorNr;
+    var isBoss = (this.gameLogic.lastFanActor.actorNr == this.currentFanActor.actorNr) ||
+        (this.gameLogic.isGiveLogic &&
+        this.gameLogic.giveLogicFanRound > 0 &&
+        this.gameLogic.lastFanOverNextCountdownActor.uid == this.currentFanActor.uid);
     if (isBoss) {
         this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.currentFanActor.actorNr});
     }
@@ -543,7 +546,6 @@ Game.prototype.fanCountdown = function () {
         //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
         while (this.gameLogic.getNextActor(this.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
             this.gameLogic.currentFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor)
-
         }
         return;
     }
@@ -570,7 +572,6 @@ Game.prototype.fanCountdown = function () {
         //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
         while (self.gameLogic.getNextActor(self.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
             self.gameLogic.currentFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor)
-
         }
     });
 
@@ -665,6 +666,10 @@ Game.prototype.fan = function (data, cb) {
             });
         }
 
+        //如果是接风环节，设置接风出牌round
+        if (this.gameLogic.isGiveLogic) {
+            this.gameLogic.giveLogicFanRound += 1;
+        }
 
         return;
     }
@@ -727,15 +732,42 @@ Game.prototype.fan = function (data, cb) {
                 //判断是否已结束
                 if (actor.gameStatus.getHoldingCards().length == 0) {
                     //设置当前玩家出牌结束，并设置gameLogic中3家和股家的完成情况
-                    var actorIdentity = _.findWhere(this.gameLogic.red, {uid: actor.uid});
+                    var actorIdentity = _.findWhere(self.gameLogic.red, {uid: actor.uid});
                     if (!!actorIdentity) {
-                        actorIdentity = _.findWhere(this.gameLogic.black, {uid: actor.uid});
+                        actorIdentity = _.findWhere(self.gameLogic.black, {uid: actor.uid});
                     }
                     actorIdentity.isFinished = true;
-                    if (this.isOver()) {
-                        this.over();
+
+                    //所有玩家出牌完成状态
+                    var actorStatusCount = _.countBy(_.flatten([self.gameLogic.red, self.gameLogic.black]), function (actorStatus) {
+                        return actorStatus.isFinished == true ? 'finished' : 'notFinished'
+                    });
+
+                    //大油:第一个出完牌的玩家
+                    if (actorStatusCount.finished == 1) {
+                        self.bigActorWithLastGame = {uid: actorIdentity.uid, actorNr: actorIdentity.actorNr};
                     }
-                    return;
+
+                    //判断牌局是否结束
+                    if (self.isOver()) {
+                        self.over();
+                        return;
+                    }
+
+                    self.gameLogic.isGiveLogic = true;
+                    self.gameLogic.giveLogicFanRound = 0;
+                    self.gameLogic.lastFanOverNextCountdownActor = actor;
+                    while (self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor).gameStatus.getHoldingCards().length > 0) {
+                        self.gameLogic.lastFanOverNextCountdownActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor)
+                    }
+                }
+                else {
+                    //如果是接风环节，此次出牌代表有人接了，reset接风设置
+                    if (self.gameLogic.isGiveLogic) {
+                        self.gameLogic.isGiveLogic = false;
+                        self.gameLogic.giveLogicFanRound = 0;
+                        self.gameLogic.lastFanOverNextCountdownActor = null;
+                    }
                 }
                 self.fanCountdown()
             });
@@ -756,8 +788,9 @@ Game.prototype.isOver = function () {
 Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
 
+    var self = this;
     settleService.settle(this, function () {
-        
+        self.actorsWithLastGame = self.actors;
     });
 
 }

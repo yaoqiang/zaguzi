@@ -359,7 +359,7 @@ Game.prototype.talk = function (data, cb) {
         case consts.GAME.IDENTITY.UNKNOW:
 
             actor.gameStatus.identity = data.goal;
-            this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
+            //this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
             break;
         case consts.GAME.IDENTITY.GUZI:
@@ -409,11 +409,11 @@ Game.prototype.talk = function (data, cb) {
             }
 
             actor.gameStatus.identity = data.goal;
-            this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
+            //this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
 
             actor.gameStatus.append = data.append;
-            this.gameLogic.share = this.gameLogic.share + data.append.length;
+            this.gameLogic.share = this.gameLogic.share + data.append.length + 1;
             this.gameLogic.hasTalk = true;
             break;
 
@@ -465,8 +465,8 @@ Game.prototype.talk = function (data, cb) {
 
             actor.gameStatus.append = data.append;
             this.gameLogic.share = this.gameLogic.share + data.append.length;
-            if (_.contains(data.append), 216 && this.maxActor != consts.GAME.TYPE.SIX) this.gameLogic.share = this.gameLogic.share + 1;
-            if (_.contains(data.append), 416) this.gameLogic.share = this.gameLogic.share + 1;
+            if (_.contains(data.append, 216) && this.maxActor != consts.GAME.TYPE.SIX) this.gameLogic.share = this.gameLogic.share + 1;
+            //if (_.contains(data.append, 416)) this.gameLogic.share = this.gameLogic.share + 1;
             this.gameLogic.hasTalk = true;
 
             break;
@@ -514,6 +514,7 @@ Game.prototype.afterTalk = function () {
 
     //开始出牌
     var actor = _.findWhere(this.actors, {uid: this.gameLogic.firstFanActor.uid});
+
     //当前BOSS设置为第一个出牌者
     this.gameLogic.currentBoss = actor;
     //设置当前出牌玩家
@@ -530,12 +531,12 @@ Game.prototype.fanCountdown = function () {
 
     var self = this;
     //如果上手出牌玩家是当前出牌玩家，则该玩家为上轮Boss
-    var isBoss = (this.gameLogic.lastFanActor.actorNr == this.currentFanActor.actorNr) ||
+    var isBoss = (this.gameLogic.lastFanActor && this.gameLogic.lastFanActor.actorNr == this.gameLogic.currentFanActor.actorNr) ||
         (this.gameLogic.isGiveLogic &&
         this.gameLogic.giveLogicFanRound > 0 &&
         this.gameLogic.lastFanOverNextCountdownActor.uid == this.currentFanActor.uid);
     if (isBoss) {
-        this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.currentFanActor.actorNr});
+        this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.gameLogic.currentFanActor.actorNr});
     }
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
@@ -559,12 +560,12 @@ Game.prototype.fanCountdown = function () {
 
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.info('game||leave||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
+            logger.info('game||fan||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
             self.fanTimeout(fanTimeoutActor);
-        }, {uid: data.uid});
+        }, {uid: self.gameLogic.currentFanActor.uid});
 
 
         self.jobQueue.push({uid: fanTimeoutActor.uid, jobId: jobId});

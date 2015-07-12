@@ -83,9 +83,9 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 100,
-            TALK: 50,
-            FAN: 100
+            NOT_READY: 60,
+            TALK: 60,
+            FAN: 15
         },
         PHASE: {
             STARTING: 0,

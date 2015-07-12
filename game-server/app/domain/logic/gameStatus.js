@@ -36,7 +36,7 @@ GameStatus.prototype.reset = function()
  */
 GameStatus.prototype.fanCards = function(cards)
 {
-    if (!! cards || cards.length < 1) return;
+    if (!_.isArray(cards) || cards.length < 1) return;
 
     this.removeHoldingCards(cards);
     this.addOutCards(cards);

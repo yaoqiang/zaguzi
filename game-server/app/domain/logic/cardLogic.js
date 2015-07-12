@@ -24,8 +24,10 @@ CardLogic.CardSeriesCode = {
  */
 CardLogic.recognizeSeries = function(cards, type, liang3)
 {
-    if (!! cards || cards.length < 1 || cards.length > 4)
+    if (!cards || cards == undefined || cards.length < 1 || cards.length > 4)
+    {
         return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0);
+    }
 
     //校验牌型
     if (cards.length > 1 && cards.length < 5)
@@ -113,10 +115,10 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
  */
 CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
 {
-    if ( !! cr1) {
+    if (_.isUndefined(cr1) || !_.isObject(cr1)) {
         return false;
     }
-    if ( !! cr2) {
+    if (_.isUndefined(cr2)|| !_.isObject(cr2)) {
         return false;
     }
 

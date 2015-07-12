@@ -359,7 +359,6 @@ Game.prototype.talk = function (data, cb) {
         case consts.GAME.IDENTITY.UNKNOW:
 
             actor.gameStatus.identity = data.goal;
-            //this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
             break;
         case consts.GAME.IDENTITY.GUZI:
@@ -373,11 +372,11 @@ Game.prototype.talk = function (data, cb) {
                 //如果亮巴3
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     for (var i in data.append) {
-                        if (data.append[i] != 316 || data.append[i] != 416) {
+                        if (!_.contains([316, 416], data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
-                        if (!_.contains(cards, append[i])) {
+                        if (!_.contains(cards, data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
@@ -394,11 +393,11 @@ Game.prototype.talk = function (data, cb) {
                 //如果亮巴3
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     for (var i in data.append) {
-                        if (data.append[i] != 416) {
+                        if (!_.contains([416], data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
-                        if (!_.contains(cards, append[i])) {
+                        if (!_.contains(cards, data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
@@ -409,7 +408,6 @@ Game.prototype.talk = function (data, cb) {
             }
 
             actor.gameStatus.identity = data.goal;
-            //this.gameLogic.currentTalker = this.gameLogic.getNextActor(this.gameLogic.currentTalker);
             this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
 
             actor.gameStatus.append = data.append;
@@ -420,7 +418,7 @@ Game.prototype.talk = function (data, cb) {
         case consts.GAME.IDENTITY.HONG3:
             var cards = actor.gameStatus.getHoldingCards();
             if (this.maxActor == consts.GAME.TYPE.FIVE) {
-                if (!_.contains(cards, 116) || !_.contains(cards, 216)) {
+                if (!_.contains(cards, 116) && !_.contains(cards, 216)) {
                     cb({
                         code: Code.FAIL,
                         err: consts.ERR_CODE.TALK.LIANG3_WITHOUT3,
@@ -431,42 +429,68 @@ Game.prototype.talk = function (data, cb) {
                 }
                 //
                 if (data.append && !!data.append && _.size(data.append) > 0) {
+                    if (!_.contains(data.append, 116) && !_.contains(data.append, 216)) {
+                        logger.info('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                        return;
+                    }
                     for (var i in data.append) {
-                        if (data.append[i] != 316 || data.append[i] != 416) {
+                        if (!_.contains([116, 216, 316, 416], data.append[i])) {
+                            logger.info('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
-                        if (!_.contains(cards, append[i])) {
+                        if (!_.contains(cards, data.append[i])) {
+                            logger.info('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                     }
                 }
-            }
-            else {
-                if (!_.contains(cards, 116) || !_.contains(cards, 216) || !_.contains(cards, 316)) {
+                else {
+                    logger.info('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                     return;
                 }
-                //如果亮巴3
+            }
+            else {
+                if (!_.contains(cards, 116) && !_.contains(cards, 216) && !_.contains(cards, 316)) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_WITHOUT3, goal: data.goal, append: data.append})
+                    return;
+                }
+                //
                 if (data.append && !!data.append && _.size(data.append) > 0) {
+                    if (!_.contains(data.append, 116) && !_.contains(data.append, 216) && !_.contains(data.append, 316)) {
+                        logger.info('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                        return;
+                    }
                     for (var i in data.append) {
-                        if (data.append[i] != 416) {
+                        if (!_.contains([116, 216, 316, 416], data.append[i])) {
+                            logger.info('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
-                        if (!_.contains(cards, append[i])) {
+                        if (!_.contains(cards, data.append[i])) {
+                            logger.info('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                     }
                 }
+                else {
+                    logger.info('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                    return;
+                }
             }
+
+            actor.gameStatus.identity = data.goal;
+            this.gameLogic.talkNumber = this.gameLogic.talkNumber + 1;
 
             actor.gameStatus.append = data.append;
             this.gameLogic.share = this.gameLogic.share + data.append.length;
             if (_.contains(data.append, 216) && this.maxActor != consts.GAME.TYPE.SIX) this.gameLogic.share = this.gameLogic.share + 1;
-            //if (_.contains(data.append, 416)) this.gameLogic.share = this.gameLogic.share + 1;
             this.gameLogic.hasTalk = true;
 
             break;
@@ -531,10 +555,10 @@ Game.prototype.fanCountdown = function () {
 
     var self = this;
     //如果上手出牌玩家是当前出牌玩家，则该玩家为上轮Boss
-    var isBoss = (this.gameLogic.lastFanActor && this.gameLogic.lastFanActor.actorNr == this.gameLogic.currentFanActor.actorNr) ||
+    var isBoss = (this.gameLogic.lastFanActor && _.property('actorNr')(this.gameLogic.lastFanActor) == this.gameLogic.currentFanActor.actorNr) ||
         (this.gameLogic.isGiveLogic &&
         this.gameLogic.giveLogicFanRound > 0 &&
-        this.gameLogic.lastFanOverNextCountdownActor.uid == this.currentFanActor.uid);
+        this.gameLogic.lastFanOverNextCountdownActor.uid == this.gameLogic.currentFanActor.uid);
     if (isBoss) {
         this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.gameLogic.currentFanActor.actorNr});
     }
@@ -544,10 +568,6 @@ Game.prototype.fanCountdown = function () {
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.isTrusteeship) {
         this.fanTimeout(fanTimeoutActor);
-        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
-        while (this.gameLogic.getNextActor(this.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
-            this.gameLogic.currentFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor)
-        }
         return;
     }
 
@@ -570,10 +590,6 @@ Game.prototype.fanCountdown = function () {
 
         self.jobQueue.push({uid: fanTimeoutActor.uid, jobId: jobId});
 
-        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
-        while (self.gameLogic.getNextActor(self.gameLogic.currentFanActor).gameStatus.getHoldingCards().length > 0) {
-            self.gameLogic.currentFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor)
-        }
     });
 
 }
@@ -583,7 +599,7 @@ Game.prototype.fanTimeout = function (actor) {
     var act = _.findWhere(this.actors, {uid: actor.uid});
     var cards = [];
     //出牌超时，如果当前出牌者是本轮Boss，则出第一张，如果不是，则不出
-    if (this.gameLogic.currentBoss.actorNr == this.currentFanActor.actorNr) {
+    if (this.gameLogic.currentBoss.actorNr == this.gameLogic.currentFanActor.actorNr) {
         cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
     }
     //如果玩家已托管 - 智能出牌(后期完善)
@@ -609,7 +625,6 @@ Game.prototype.fanTimeout = function (actor) {
  * @param cb
  */
 Game.prototype.fan = function (data, cb) {
-
     var self = this;
     var actor = _.findWhere(this.actors, {uid: data.uid});
 
@@ -650,14 +665,6 @@ Game.prototype.fan = function (data, cb) {
         //response
         cb({code: Code.OK, cards: cards, cardRecognization: null});
 
-        //push message
-        this.channelService.pushMessageByUids(consts.EVENT.FAN, {
-            uid: data.uid,
-            actorNr: actor.actorNr,
-            cards: cards,
-            cardRecognization: null
-        }, receiver, self.fanCountdown);
-
         var job = _.findWhere(this.jobQueue, {uid: data.uid});
         //出牌成功, 取消fanCountdown schedule
         if (!!job) {
@@ -672,11 +679,31 @@ Game.prototype.fan = function (data, cb) {
             this.gameLogic.giveLogicFanRound += 1;
         }
 
+        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
+        var nextFanActor = this.gameLogic.getNextActor(this.gameLogic.currentFanActor);
+        while (true) {
+            if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                this.gameLogic.currentFanActor = nextFanActor;
+                break;
+            }
+            nextFanActor = this.gameLogic.getNextActor(nextFanActor);
+        }
+
+        //push message
+        this.channelService.pushMessageByUids(consts.EVENT.FAN, {
+            uid: data.uid,
+            actorNr: actor.actorNr,
+            cards: cards,
+            cardRecognization: null
+        }, receiver, function () {
+            self.fanCountdown();
+        });
+
         return;
     }
 
     //识别牌型
-    var cardRecognization = CardLogic.recognizeSeries(cards, this.game.maxActor, actor.gameStatus.append);
+    var cardRecognization = CardLogic.recognizeSeries(cards, this.maxActor, actor.gameStatus.append);
     switch (cardRecognization.cardSeries) {
         case CardLogic.CardSeriesCode.cardSeries_99:
             //错误牌型
@@ -692,7 +719,7 @@ Game.prototype.fan = function (data, cb) {
             }
 
 
-            //如果是Boss出牌，不需比较上手牌
+            //如果不是Boss出牌，则需比较上手牌
             if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, actor.gameStatus.append);
                 if (!result) {
@@ -758,8 +785,15 @@ Game.prototype.fan = function (data, cb) {
                     self.gameLogic.isGiveLogic = true;
                     self.gameLogic.giveLogicFanRound = 0;
                     self.gameLogic.lastFanOverNextCountdownActor = actor;
-                    while (self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor).gameStatus.getHoldingCards().length > 0) {
-                        self.gameLogic.lastFanOverNextCountdownActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor)
+
+                    //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
+                    var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor);
+                    while (true) {
+                        if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                            self.gameLogic.lastFanOverNextCountdownActor = nextFanActor;
+                            break;
+                        }
+                        nextFanActor = self.gameLogic.getNextActor(nextFanActor);
                     }
                 }
                 else {
@@ -769,6 +803,15 @@ Game.prototype.fan = function (data, cb) {
                         self.gameLogic.giveLogicFanRound = 0;
                         self.gameLogic.lastFanOverNextCountdownActor = null;
                     }
+                }
+                //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
+                var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor);
+                while (true) {
+                    if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                        self.gameLogic.currentFanActor = nextFanActor;
+                        break;
+                    }
+                    nextFanActor = self.gameLogic.getNextActor(nextFanActor);
                 }
                 self.fanCountdown()
             });

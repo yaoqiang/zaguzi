@@ -565,6 +565,7 @@ Game.prototype.fanCountdown = function () {
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
 
+    console.log('### isTrusteeship => ', this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.isTrusteeship)
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.isTrusteeship) {
         this.fanTimeout(fanTimeoutActor);
@@ -704,6 +705,7 @@ Game.prototype.fan = function (data, cb) {
 
     //识别牌型
     var cardRecognization = CardLogic.recognizeSeries(cards, this.maxActor, actor.gameStatus.append);
+    console.log('########### cardRecognization => ', cardRecognization)
     switch (cardRecognization.cardSeries) {
         case CardLogic.CardSeriesCode.cardSeries_99:
             //错误牌型
@@ -761,7 +763,7 @@ Game.prototype.fan = function (data, cb) {
                 if (actor.gameStatus.getHoldingCards().length == 0) {
                     //设置当前玩家出牌结束，并设置gameLogic中3家和股家的完成情况
                     var actorIdentity = _.findWhere(self.gameLogic.red, {uid: actor.uid});
-                    if (!!actorIdentity) {
+                    if (_.isUndefined(actorIdentity)) {
                         actorIdentity = _.findWhere(self.gameLogic.black, {uid: actor.uid});
                     }
                     actorIdentity.isFinished = true;
@@ -821,12 +823,12 @@ Game.prototype.fan = function (data, cb) {
 }
 
 Game.prototype.isOver = function () {
-    var notFinishedByRed = _.contains(this.gameLogic.red, {isFinished: false});
-    var notFinishedByBlack = _.contains(this.gameLogic.black, {isFinished: false});
+    var notFinishedByRed = _.findWhere(this.gameLogic.red, {isFinished: false});
+    var notFinishedByBlack = _.findWhere(this.gameLogic.black, {isFinished: false});
 
-    if (!notFinishedByRed) this.gameLogic.isRedWin = true;
+    if (_.isUndefined(notFinishedByRed)) this.gameLogic.isRedWin = true;
 
-    return !notFinishedByRed || !notFinishedByBlack;
+    return _.isUndefined(notFinishedByRed) || _.isUndefined(notFinishedByBlack);
 }
 
 Game.prototype.over = function () {

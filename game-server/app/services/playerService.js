@@ -59,9 +59,9 @@ exp.onUserDisconnect = function (data, cb) {
 
         var room = gameUtil.getRoomById(u.roomId);
 
-        pomelo.app.rpcInvoke(room.serverId, getStatusParams, function(status){
+        pomelo.app.rpcInvoke(room.serverId, getStatusParams, function(game){
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
-            if (status != null &&  status != 3)
+            if (game.gameLogic != null &&  game.gameLogic.currentPhase != consts.GAME.PHASE.OVER)
             {
                 logger.info("user||disconnect||玩家掉线时还在游戏中, 用户ID:%j", data.uid)
                 //set user session id = null.
@@ -79,7 +79,7 @@ exp.onUserDisconnect = function (data, cb) {
                 };
 
                 pomelo.app.rpcInvoke(room.serverId, leaveParams, function(result) {
-                    if (data.code == Code.FAIL) {
+                    if (result.code == Code.FAIL) {
                         cb();
                         return;
                     }

@@ -120,7 +120,12 @@ GameRemote.prototype.fan = function (data, cb) {
     });
 }
 
+/**
+ * 通过游戏ID获得当前游戏状态
+ * @param data
+ * @param cb
+ */
 GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
-    cb(game.gameLogic != null ? game.gameLogic.currentPhase : null);
+    cb(game);
 }

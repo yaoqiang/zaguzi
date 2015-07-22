@@ -25,6 +25,7 @@ var Player = function(opts)
     this.gold = opts.gold;
     this.winNr = opts.winNr || 0;
     this.loseNr = opts.loseNr || 0;
+    this.tieNr = opts.tieNr || 0;
     this.exp = opts.exp || 0;
     this.rank = opts.rank;
     this.fragment = opts.fragment;
@@ -58,18 +59,42 @@ Player.prototype.addGold = function (type, gold, cb) {
 
 }
 
+Player.prototype.payTax = function (roomId) {
+
+    //税费规则
+
+    var gold = 0;
+
+    logger.info("user||gold||用户游戏结束扣除[%j]金币税，用户ID:%j", gold, this.uid);
+    this.gold += gold;
+
+    this.gold = this.gold < 0 ? 0 : this.gold;
+
+    messageService.pushMessageToPlayer(this.uid, consts.EVENT.GOLD_CHANGE, {gold: this.gold});
+
+}
+
 Player.prototype.win = function (roomId, gold, cb) {
     this.winNr += 1;
+    this.payTax(roomId);
     this.addExp(true, {roomId: roomId});
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
 
 Player.prototype.lose = function (roomId, gold, cb) {
     this.loseNr += 1;
+    this.payTax(roomId);
     this.addExp(roomId, false);
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
 
+Player.prototype.tie = function (roomId, cb) {
+    this.tieNr += 1;
+    this.payTax(roomId);
+    this.addExp(roomId, false);
+    cb()
+
+}
 
 Player.prototype.addFragment = function (type, fragment, cb) {
     logger.info("user||fragment||用户通过[%j]获得了[%j]元宝，用户ID:%j", type, fragment, this.uid);

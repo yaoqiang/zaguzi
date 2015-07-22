@@ -41,6 +41,12 @@ UserRemote.prototype.lose = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.tie = function(msg, cb) {
+    playerService.tie(msg, function(ret) {
+        cb(ret);
+    });
+};
+
 
 /**
  * get user by sessionId from cache.

@@ -14,19 +14,19 @@ exp.settle = function (game, cb) {
 
 exp.settleCommon = function (game, cb) {
     //结算结构
-    //{game: {isRedWin: true/false, share: x}, results: [{uid:x, actorNr:x, actualIdentity:[], win: true/false, gold: x}]}
+    //{game: {result: consts.GAME.RESULT.x, share: x}, results: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x}]}
 
     var results = [];
 
     //计算被抓股数
-    if (game.gameLogic.isRedWin) {
+    if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
         var notFinishedActors = _.filter(game.gameLogic.black, function (act) {
             return act.isFinished == false;
         });
         game.gameLogic.share += _.size(notFinishedActors);
 
     }
-    else {
+    else if (game.gameLogic.result == consts.GAME.RESULT.BLACK_WIN) {
         var notFinishedActors = _.filter(game.gameLogic.red, function (act) {
             return act.isFinished == false;
         });
@@ -46,6 +46,10 @@ exp.settleCommon = function (game, cb) {
                     break;
             }
         });
+    }
+    //平局，只返回身份信息，扣除税费
+    else {
+
     }
 
     //每份输赢金币数
@@ -78,9 +82,31 @@ exp.settleCommon = function (game, cb) {
                     partition = 1;
                 }
 
+                var tmpRs, tmpGold = partitionGold * partition;
+                if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
+                    if (isRed) {
+                        tmpRs = consts.GAME.ACTOR_RESULT.WIN;
+                    }
+                    else {
+                        tmpRs = consts.GAME.ACTOR_RESULT.LOSE;
+                    }
+                }
+                else if (game.gameLogic.result == consts.GAME.RESULT.BLACK_WIN) {
+                    if (isRed) {
+                        tmpRs = consts.GAME.ACTOR_RESULT.LOSE;
+                    }
+                    else {
+                        tmpRs = consts.GAME.ACTOR_RESULT.WIN;
+                    }
+                }
+                else {
+                    tmpRs = consts.GAME.ACTOR_RESULT.TIE;
+                    tmpGold = 0;
+                }
+
                 results.push({
                     uid: actor.uid, actorNr: actor.actorNr, actualIdentity: actor.gameStatus.actualIdentity,
-                    win: game.gameLogic.isRedWin == isRed ? true : false, gold: partitionGold * partition
+                    result: tmpRs, gold: tmpGold
                 });
             });
 
@@ -89,13 +115,20 @@ exp.settleCommon = function (game, cb) {
         }, function (results, callback) {
             //处理结算数据
             _.map(results, function (result) {
-                if (result.win) {
+                console.log('game result => ', result)
+                console.log('game result.result => ', result.result)
+                if (result.result == consts.GAME.ACTOR_RESULT.WIN) {
                     pomelo.app.rpc.manager.userRemote.win(null, {uid: result.uid, roomId: game.roomId, gold: result.gold}, function (data) {
                         //callback(null, data)
                     });
                 }
-                else {
+                else if (result.result == consts.GAME.ACTOR_RESULT.LOSE) {
                     pomelo.app.rpc.manager.userRemote.lose(null, {uid: result.uid, roomId: game.roomId, gold: result.gold * -1}, function (data) {
+                        //callback(null, data)
+                    });
+                }
+                else {
+                    pomelo.app.rpc.manager.userRemote.tie(null, {uid: result.uid, roomId: game.roomId}, function (data) {
                         //callback(null, data)
                     });
                 }
@@ -114,7 +147,7 @@ exp.settleCommon = function (game, cb) {
             return;
         }
 
-        game.channel.pushMessage(consts.EVENT.OVER, {game: {isRedWin: game.gameLogic.isRedWin, share: game.gameLogic.share}, results: results}, null, null);
+        game.channel.pushMessage(consts.EVENT.OVER, {game: {result: game.gameLogic.result, share: game.gameLogic.share}, results: results}, null, null);
         cb();
     });
 

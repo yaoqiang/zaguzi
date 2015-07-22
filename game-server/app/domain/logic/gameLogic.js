@@ -30,7 +30,7 @@ var GameLogic = function (game) {
     this.talkTimeoutNumber = 0; //说话超时次数
 
     this.share = 0;  //基数（每个人亮3数或股子数）
-    this.isRedWin = false;  //红3胜利
+    this.result = null;  //结局
 
 
     this.isGiveLogic = false;    //是否是接风环节

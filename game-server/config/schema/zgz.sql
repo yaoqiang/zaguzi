@@ -26,6 +26,7 @@ CREATE TABLE `player` (
   `gold` bigint(20) DEFAULT NULL,
   `winNr` int DEFAULT 0,
   `loseNr` int DEFAULT 0,
+  `tieNr` int DEFAULT 0,
   `rank` int DEFAULT 0,
   `exp` int DEFAULT 0,
   `fragment` int DEFAULT 0,
@@ -37,23 +38,23 @@ CREATE TABLE `player` (
 -- ----------------------------
 -- Records of player
 -- ----------------------------
-INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, '1', '0', '0', '1');
-INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, '1', '0', '0', '3');
-INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, '1', '0', '0', '4');
-INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, '1', '0', '0', '5');
-INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, '1', '0', '0', '6');
-INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, '1', '0', '0', '7');
-INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, '1', '0', '0', '8');
-INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, '1', '0', '0', '9');
-INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, '1', '0', '0', '10');
-INSERT INTO `player` VALUES ('10', '西门吹雪', '1', '5000', 0, 0, '1', '0', '0', '2');
-INSERT INTO `player` VALUES ('11', '要强', '1', '5000', 0, 0, '1', '0', '0', '11');
-INSERT INTO `player` VALUES ('12', '李建新', '3', '5000', 0, 0, '1', '0', '0', '12');
-INSERT INTO `player` VALUES ('13', '臧宏文', '4', '5000', 0, 0, '1', '0', '0', '13');
-INSERT INTO `player` VALUES ('14', '薛文', '5', '5000', 0, 0, '1', '0', '0', '14');
-INSERT INTO `player` VALUES ('15', '张建阳', '6', '5000', 0, 0, '1', '0', '0', '15');
-INSERT INTO `player` VALUES ('16', '吕建成', '7', '5000', 0, 0, '1', '0', '0', '16');
-INSERT INTO `player` VALUES ('17', '樊一伟', '8', '5000', 0, 0, '1', '0', '0', '17');
+INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, 0, '1', '0', '0', '1');
+INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, 0, '1', '0', '0', '3');
+INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, 0, '1', '0', '0', '4');
+INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, 0, '1', '0', '0', '5');
+INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, 0, '1', '0', '0', '6');
+INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, 0, '1', '0', '0', '7');
+INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, 0, '1', '0', '0', '8');
+INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, 0, '1', '0', '0', '9');
+INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, 0, '1', '0', '0', '10');
+INSERT INTO `player` VALUES ('10', '西门吹雪', '1', '5000', 0, 0, 0, '1', '0', '0', '2');
+INSERT INTO `player` VALUES ('11', '要强', '1', '5000', 0, 0, 0, '1', '0', '0', '11');
+INSERT INTO `player` VALUES ('12', '李建新', '3', '5000', 0, 0, 0, '1', '0', '0', '12');
+INSERT INTO `player` VALUES ('13', '臧宏文', '4', '5000', 0, 0, 0, '1', '0', '0', '13');
+INSERT INTO `player` VALUES ('14', '薛文', '5', '5000', 0, 0, 0, '1', '0', '0', '14');
+INSERT INTO `player` VALUES ('15', '张建阳', '6', '5000', 0, 0, 0, '1', '0', '0', '15');
+INSERT INTO `player` VALUES ('16', '吕建成', '7', '5000', 0, 0, 0, '1', '0', '0', '16');
+INSERT INTO `player` VALUES ('17', '樊一伟', '8', '5000', 0, 0, 0, '1', '0', '0', '17');
 
 -- ----------------------------
 -- Table structure for properties

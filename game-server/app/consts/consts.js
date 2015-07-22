@@ -85,7 +85,7 @@ module.exports = {
         TIMER: {
             NOT_READY: 60,
             TALK: 60,
-            FAN: 15
+            FAN: 45
         },
         PHASE: {
             STARTING: 0,
@@ -95,6 +95,16 @@ module.exports = {
         },
         TRUSTEESHIP: {
             TIMEOUT_TIMES: 2
+        },
+        RESULT: {
+            RED_WIN: 'RED_WIN',
+            BLACK_WIN: 'BLACK_WIN',
+            TIE: 'TIE'
+        },
+        ACTOR_RESULT: {
+            WIN: 'WIN',
+            LOSE: 'LOSE',
+            TIE: 'TIE'
         }
 
 

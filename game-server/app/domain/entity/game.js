@@ -211,15 +211,15 @@ Game.prototype.start = function () {
     //标识玩家身份
     _.map(this.actors, function (v) {
         var cards = v.gameStatus.getHoldingCards();
-        if (this.maxActor == consts.GAME.TYPE.FIVE) {
+        if (self.maxActor == consts.GAME.TYPE.FIVE) {
             if (_.contains(cards, 116) || _.contains(cards, 216)) {
-                this.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                self.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 //设置玩家真实身份
                 if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
                 if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
             }
             else {
-                this.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
+                self.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.GUZI);
             }
         }
@@ -565,9 +565,9 @@ Game.prototype.fanCountdown = function () {
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
 
-    console.log('### isTrusteeship => ', this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.isTrusteeship)
+    console.log('### isTrusteeship => ', this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.gameStatus.isTrusteeship)
     //如果玩家已托管
-    if (this.gameLogic.currentFanActor.isTrusteeship) {
+    if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         this.fanTimeout(fanTimeoutActor);
         return;
     }
@@ -761,9 +761,12 @@ Game.prototype.fan = function (data, cb) {
             }, receiver, function () {
                 //判断是否已结束
                 if (actor.gameStatus.getHoldingCards().length == 0) {
+
                     //设置当前玩家出牌结束，并设置gameLogic中3家和股家的完成情况
+                    var identity = consts.GAME.IDENTITY.HONG3;
                     var actorIdentity = _.findWhere(self.gameLogic.red, {uid: actor.uid});
                     if (_.isUndefined(actorIdentity)) {
+                        identity = consts.GAME.IDENTITY.GUZI;
                         actorIdentity = _.findWhere(self.gameLogic.black, {uid: actor.uid});
                     }
                     actorIdentity.isFinished = true;
@@ -775,7 +778,7 @@ Game.prototype.fan = function (data, cb) {
 
                     //大油:第一个出完牌的玩家
                     if (actorStatusCount.finished == 1) {
-                        self.bigActorWithLastGame = {uid: actorIdentity.uid, actorNr: actorIdentity.actorNr};
+                        self.bigActorWithLastGame = {uid: actorIdentity.uid, actorNr: actorIdentity.actorNr, identity: identity};
                     }
 
                     //判断牌局是否结束
@@ -823,12 +826,37 @@ Game.prototype.fan = function (data, cb) {
 }
 
 Game.prototype.isOver = function () {
+    var isOver = false;
     var notFinishedByRed = _.findWhere(this.gameLogic.red, {isFinished: false});
     var notFinishedByBlack = _.findWhere(this.gameLogic.black, {isFinished: false});
 
-    if (_.isUndefined(notFinishedByRed)) this.gameLogic.isRedWin = true;
+    console.log('this.bigActorWithLastGame = ', this.bigActorWithLastGame)
+    console.log('notFinishedByRed = ', notFinishedByRed)
+    console.log('notFinishedByBlack = ', notFinishedByBlack)
 
-    return _.isUndefined(notFinishedByRed) || _.isUndefined(notFinishedByBlack);
+    //如果红3都出完了，并且大油是红3，则结束，红3胜利
+    if (_.isUndefined(notFinishedByRed) && this.bigActorWithLastGame.identity == consts.GAME.IDENTITY.HONG3) {
+        this.gameLogic.result = consts.GAME.RESULT.RED_WIN;
+        isOver = true;
+    }
+    //如果股子都出完了，并且大油是股子，则结束，股子胜利
+    else if (_.isUndefined(notFinishedByBlack) && this.bigActorWithLastGame.identity == consts.GAME.IDENTITY.GUZI) {
+        this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;
+        isOver = true;
+    }
+    //如果红3都出完了，并且大油是股子，则结束，平局
+    else if (_.isUndefined(notFinishedByRed) && this.bigActorWithLastGame.identity == consts.GAME.IDENTITY.GUZI) {
+        this.gameLogic.result = consts.GAME.RESULT.TIE;
+        isOver = true;
+    }
+    //如果股子都出完了，并且大油是红3，则结束，平局
+    else if (_.isUndefined(notFinishedByBlack) && this.bigActorWithLastGame.identity == consts.GAME.IDENTITY.HONG3) {
+        this.gameLogic.result = consts.GAME.RESULT.TIE;
+        isOver = true;
+    }
+
+
+    return isOver;
 }
 
 Game.prototype.over = function () {

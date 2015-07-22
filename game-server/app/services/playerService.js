@@ -110,7 +110,7 @@ exp.onUserDisconnect = function (data, cb) {
 
 exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
-        if (user == null || !!user) {
+        if (user == null || _.isUndefined(user)) {
             logger.info("user||win||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid);
             cb({code: Code.FAIL});
             return;
@@ -119,7 +119,6 @@ exp.win = function (data, cb) {
         var player = user.player;
         player.win(data.roomId, data.gold, function () {
             player.save();
-            pomelo.
             cb({code: Code.OK});
         });
     });
@@ -127,7 +126,7 @@ exp.win = function (data, cb) {
 
 exp.lose = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
-        if (user == null || !!user) {
+        if (user == null || _.isUndefined(user)) {
             logger.info("user||lose||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid);
             cb({code: Code.FAIL});
             return;
@@ -135,6 +134,23 @@ exp.lose = function (data, cb) {
 
         var player = user.player;
         player.lose(data.roomId, data.gold, function () {
+            player.save();
+            cb({code: Code.OK});
+        });
+    });
+}
+
+exp.tie = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user||tie||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        console.log('tie => ', user)
+        var player = user.player;
+        player.tie(data.roomId, function () {
             player.save();
             cb({code: Code.OK});
         });

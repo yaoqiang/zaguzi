@@ -77,7 +77,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
             //如果三张牌相同
             if (tmp[0] == tmp[1] && tmp[1] == tmp[2])
             {
-                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_2, tmp[0], cards);
+                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_3, tmp[0], cards);
             }
             else
             {
@@ -89,7 +89,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
             //如果四张牌相同
             if (tmp[0] == tmp[1] && tmp[1] == tmp[2] && tmp[2] == tmp[3])
             {
-                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_3, tmp[0], cards);
+                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_4, tmp[0], cards);
             }
             else
             {
@@ -133,12 +133,12 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
         if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_1)
         {
             //如果当前牌型是方块3或红桃3
-            if (_.contains([116, 216], cr1.cardSeries.originalCard[0])) {
+            if (_.contains([116, 216], cr1.originalCard[0])) {
                 //如果是5人和7人场，计算3的特殊大小；6人平3
                 if (type == consts.GAME.TYPE.FIVE || type == consts.GAME.TYPE.SEVEN)
                 {
                     //如果当前出牌是肉3（红桃3）并且上手出牌不是大小王
-                    if (cr1.cardSeries.originalCard[0] == 216 && cr2.cardSeries.maxCardPoint < 18)
+                    if (cr1.originalCard[0] == 216 && cr2.maxCardPoint < 18)
                     {
                         return true;
                     }
@@ -146,13 +146,13 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
                     if (type == consts.GAME.TYPE.FIVE)
                     {
                         //如果当前出牌是方块3
-                        if (cr1.cardSeries.originalCard[0] == 116)
+                        if (cr1.originalCard[0] == 116)
                         {
                             //如果方块3亮了
-                            if (_.contains(liang3, cr1.cardSeries.originalCard[0]))
+                            if (_.contains(liang3, cr1.originalCard[0]))
                             {
                                 //如果上手牌不是肉3和大小王
-                                if (cr2.cardSeries.originalCard[0] != 216 && cr2.cardSeries.originalCard[0] != 18 && cr2.cardSeries.originalCard[0] != 19)
+                                if (cr2.originalCard[0] != 216 && cr2.originalCard[0] != 18 && cr2.originalCard[0] != 19)
                                 {
                                     return true;
                                 }
@@ -202,30 +202,24 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
         }
     }
 
-    //如果是炸弹(3张相同牌）
-    if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_2)
+    //如果是炸弹(3张相同牌）、如果是四轮车：炸弹和四轮车比较逻辑一样
+    if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_3 || cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_4)
     {
-        if (cr2.cardSeries != CardLogic.CardSeriesCode.cardSeries_3 && cr2.cardSeries != CardLogic.CardSeriesCode.cardSeries_4 && cr2.cardSeries != CardLogic.CardSeriesCode.cardSeries_5)
+        //如果上手牌型是比当前牌型大，返回false
+        if (cr2.cardSeries > cr1.cardSeries)
         {
+            return false;
+        }
+        else if (cr2.cardSeries == cr2.cardSeries) {
             if (cr1.maxCardPoint > cr2.maxCardPoint)
             {
                 return true;
             }
+            return false;
         }
-        return false;
-    }
-
-    //如果是四轮车
-    if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_3)
-    {
-        if (cr2.cardSeries != CardLogic.CardSeriesCode.cardSeries_4 && cr2.cardSeries != CardLogic.CardSeriesCode.cardSeries_5)
-        {
-            if (cr1.maxCardPoint > cr2.maxCardPoint)
-            {
-                return true;
-            }
+        else {
+            return true;
         }
-        return false;
     }
 
 }

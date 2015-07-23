@@ -561,11 +561,12 @@ Game.prototype.fanCountdown = function () {
         this.gameLogic.lastFanOverNextCountdownActor.uid == this.gameLogic.currentFanActor.uid);
     if (isBoss) {
         this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.gameLogic.currentFanActor.actorNr});
+        console.log('set current boss.. => ', this.gameLogic.currentBoss.uid)
+
     }
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
 
-    console.log('### isTrusteeship => ', this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.gameStatus.isTrusteeship)
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         this.fanTimeout(fanTimeoutActor);
@@ -691,12 +692,12 @@ Game.prototype.fan = function (data, cb) {
         }
 
         //push message
-        this.channelService.pushMessageByUids(consts.EVENT.FAN, {
+        this.channel.pushMessage(consts.EVENT.FAN, {
             uid: data.uid,
             actorNr: actor.actorNr,
             cards: cards,
             cardRecognization: null
-        }, receiver, function () {
+        }, null, function () {
             self.fanCountdown();
         });
 
@@ -753,12 +754,20 @@ Game.prototype.fan = function (data, cb) {
                 });
             }
 
-            this.channelService.pushMessageByUids(consts.EVENT.FAN, {
+            this.channel.pushMessage(consts.EVENT.FAN, {
                 uid: data.uid,
                 actorNr: actor.actorNr,
                 cards: cards,
                 cardRecognization: cardRecognization
-            }, receiver, function () {
+            }, null, function () {
+
+                //如果是接风环节，此次出牌代表有人接了，reset接风设置
+                if (self.gameLogic.isGiveLogic) {
+                    self.gameLogic.isGiveLogic = false;
+                    self.gameLogic.giveLogicFanRound = 0;
+                    self.gameLogic.lastFanOverNextCountdownActor = null;
+                }
+
                 //判断是否已结束
                 if (actor.gameStatus.getHoldingCards().length == 0) {
 
@@ -801,14 +810,7 @@ Game.prototype.fan = function (data, cb) {
                         nextFanActor = self.gameLogic.getNextActor(nextFanActor);
                     }
                 }
-                else {
-                    //如果是接风环节，此次出牌代表有人接了，reset接风设置
-                    if (self.gameLogic.isGiveLogic) {
-                        self.gameLogic.isGiveLogic = false;
-                        self.gameLogic.giveLogicFanRound = 0;
-                        self.gameLogic.lastFanOverNextCountdownActor = null;
-                    }
-                }
+
                 //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
                 var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor);
                 while (true) {
@@ -829,10 +831,6 @@ Game.prototype.isOver = function () {
     var isOver = false;
     var notFinishedByRed = _.findWhere(this.gameLogic.red, {isFinished: false});
     var notFinishedByBlack = _.findWhere(this.gameLogic.black, {isFinished: false});
-
-    console.log('this.bigActorWithLastGame = ', this.bigActorWithLastGame)
-    console.log('notFinishedByRed = ', notFinishedByRed)
-    console.log('notFinishedByBlack = ', notFinishedByBlack)
 
     //如果红3都出完了，并且大油是红3，则结束，红3胜利
     if (_.isUndefined(notFinishedByRed) && this.bigActorWithLastGame.identity == consts.GAME.IDENTITY.HONG3) {

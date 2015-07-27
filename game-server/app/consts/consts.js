@@ -35,7 +35,8 @@ module.exports = {
         FAN: {
             WITHOUT_CARDS: 1,
             NOT_BIGGER: 2,
-            ERR: 3
+            MUST_BE_FIVE: 3,
+            ERR: 4
         },
         SETTLE: {
             ERR: 1
@@ -56,12 +57,15 @@ module.exports = {
         TALK_COUNTDOWN: 'onTalkCountdown',
         TALK_COUNTDOWN_TIMEOUT: 'onTalkCountdownTimeout',
         TALK: 'onTalk',
+        AFTER_TALK: 'onAfterTalk',
         FAN_COUNTDOWN: 'onFanCountdown',
         FAN_COUNTDOWN_TIMEOUT: 'onFanCountdownTimeout',
         FAN: 'onFan',
         TRUSTEESHIP: 'onTrusteeship',
         OVER: 'onOver',
-        GOLD_CHANGE: 'onGoldChange'
+        GOLD_CHANGE: 'onGoldChange',
+        FAN_WHEN_IS_RED: 'onFanWhenIsRed',
+        FAN_FINISHED: 'onFanFinished'
 
     },
 

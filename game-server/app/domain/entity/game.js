@@ -455,7 +455,12 @@ Game.prototype.talk = function (data, cb) {
             }
             else {
                 if (!_.contains(cards, 116) && !_.contains(cards, 216) && !_.contains(cards, 316)) {
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_WITHOUT3, goal: data.goal, append: data.append})
+                    cb({
+                        code: Code.FAIL,
+                        err: consts.ERR_CODE.TALK.LIANG3_WITHOUT3,
+                        goal: data.goal,
+                        append: data.append
+                    })
                     return;
                 }
                 //
@@ -529,6 +534,7 @@ Game.prototype.talk = function (data, cb) {
 };
 
 Game.prototype.afterTalk = function () {
+    var self = this;
     //如果没人说话，则重新发牌；如果有人说话，则第一个出牌人出牌。
     if (!this.gameLogic.hasTalk) {
         //重新开始
@@ -547,7 +553,10 @@ Game.prototype.afterTalk = function () {
     this.gameLogic.lastFanActor = actor;
     //设置游戏阶段
     this.gameLogic.currentPhase = consts.GAME.PHASE.FAN
-    this.fanCountdown();
+
+    this.channel.pushMessage(consts.EVENT.AFTER_TALK, {}, null, function () {
+        self.fanCountdown();
+    });
 }
 
 
@@ -561,8 +570,9 @@ Game.prototype.fanCountdown = function () {
         this.gameLogic.lastFanOverNextCountdownActor.uid == this.gameLogic.currentFanActor.uid);
     if (isBoss) {
         this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.gameLogic.currentFanActor.actorNr});
-        console.log('set current boss.. => ', this.gameLogic.currentBoss.uid)
-
+    }
+    else {
+        this.gameLogic.currentBoss = _.findWhere(this.actors, {actorNr: this.gameLogic.lastFanActor.actorNr});
     }
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
@@ -602,7 +612,17 @@ Game.prototype.fanTimeout = function (actor) {
     var cards = [];
     //出牌超时，如果当前出牌者是本轮Boss，则出第一张，如果不是，则不出
     if (this.gameLogic.currentBoss.actorNr == this.gameLogic.currentFanActor.actorNr) {
-        cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
+        if (this.gameLogic.round == 0) {
+            _.each(actor.gameStatus.getHoldingCards(), function (c) {
+                if (c % 100 == 5) {
+                    cards.push(c);
+                }
+            });
+        }
+        else {
+            cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
+        }
+
     }
     //如果玩家已托管 - 智能出牌(后期完善)
     if (act.gameStatus.isTrusteeship) {
@@ -691,6 +711,8 @@ Game.prototype.fan = function (data, cb) {
             nextFanActor = this.gameLogic.getNextActor(nextFanActor);
         }
 
+        this.gameLogic.round += 1;
+
         //push message
         this.channel.pushMessage(consts.EVENT.FAN, {
             uid: data.uid,
@@ -706,7 +728,6 @@ Game.prototype.fan = function (data, cb) {
 
     //识别牌型
     var cardRecognization = CardLogic.recognizeSeries(cards, this.maxActor, actor.gameStatus.append);
-    console.log('########### cardRecognization => ', cardRecognization)
     switch (cardRecognization.cardSeries) {
         case CardLogic.CardSeriesCode.cardSeries_99:
             //错误牌型
@@ -721,13 +742,28 @@ Game.prototype.fan = function (data, cb) {
                 return;
             }
 
-
             //如果不是Boss出牌，则需比较上手牌
             if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, actor.gameStatus.append);
                 if (!result) {
                     logger.error('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});
+                    return;
+                }
+            }
+
+            //如果是红桃5第一次出牌，必须出红桃5或对5或5炸弹或5四轮车
+            if (this.gameLogic.round == 0) {
+                var expectedCards = [];
+                _.each(actor.gameStatus.getHoldingCards(), function (c) {
+                    if (c % 100 == 5) {
+                        expectedCards.push(c);
+                    }
+                });
+                var diffCards = _.difference(cards, expectedCards);
+                if (_.size(diffCards) != 0) {
+                    logger.error('game||fan||出牌错误，红桃5第一次出牌必须出全部5||用户&ID: %j', data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_BE_FIVE});
                     return;
                 }
             }
@@ -742,6 +778,7 @@ Game.prototype.fan = function (data, cb) {
             this.gameLogic.lastFanCards = cards;
             this.gameLogic.lastFanCardRecognization = cardRecognization;
 
+            this.gameLogic.round += 1;
 
             cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
 
@@ -768,6 +805,14 @@ Game.prototype.fan = function (data, cb) {
                     self.gameLogic.lastFanOverNextCountdownActor = null;
                 }
 
+                //如果玩家出的牌型是黑3，并且玩家身份是红3，则需通知牌局中其他玩家：我有3呢
+                if (self.maxActor == consts.GAME.TYPE.FIVE) {
+
+                }
+                else {
+
+                }
+
                 //判断是否已结束
                 if (actor.gameStatus.getHoldingCards().length == 0) {
 
@@ -787,28 +832,47 @@ Game.prototype.fan = function (data, cb) {
 
                     //大油:第一个出完牌的玩家
                     if (actorStatusCount.finished == 1) {
-                        self.bigActorWithLastGame = {uid: actorIdentity.uid, actorNr: actorIdentity.actorNr, identity: identity};
+                        self.bigActorWithLastGame = {
+                            uid: actorIdentity.uid,
+                            actorNr: actorIdentity.actorNr,
+                            identity: identity
+                        };
                     }
 
-                    //判断牌局是否结束
-                    if (self.isOver()) {
-                        self.over();
-                        return;
-                    }
+                    console.log('actorStatusCount => ', actorStatusCount.finished)
 
-                    self.gameLogic.isGiveLogic = true;
-                    self.gameLogic.giveLogicFanRound = 0;
-                    self.gameLogic.lastFanOverNextCountdownActor = actor;
+                    actor.gameStatus.rank = actorStatusCount.finished;
 
-                    //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
-                    var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor);
-                    while (true) {
-                        if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
-                            self.gameLogic.lastFanOverNextCountdownActor = nextFanActor;
-                            break;
+                    //如果玩家出完手牌，向牌桌玩家发送消息
+                    self.channel.pushMessage(consts.EVENT.FAN_FINISHED, {
+                        actor: {
+                            uid: actor.uid,
+                            actorNr: actor.actorNr,
+                            rank: actor.gameStatus.rank,
+                            identity: identity
                         }
-                        nextFanActor = self.gameLogic.getNextActor(nextFanActor);
-                    }
+                    }, null, function () {
+                        //判断牌局是否结束
+                        if (self.isOver()) {
+                            self.over();
+                            return;
+                        }
+
+                        self.gameLogic.isGiveLogic = true;
+                        self.gameLogic.giveLogicFanRound = 0;
+                        self.gameLogic.lastFanOverNextCountdownActor = actor;
+
+                        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推；针对接风环节
+                        var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor);
+                        while (true) {
+                            if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                                self.gameLogic.lastFanOverNextCountdownActor = nextFanActor;
+                                break;
+                            }
+                            nextFanActor = self.gameLogic.getNextActor(nextFanActor);
+                        }
+                    });
+
                 }
 
                 //设置下家出牌者，如果下家已出完牌，找下下家，以此类推

@@ -12,6 +12,7 @@ var GameStatus = function(){
     this.identity = consts.GAME.IDENTITY.UNKNOW;  //牌面身份（0：未知、1：股子、2：红3）
     this.actualIdentity = [];   //consts.GAME.ACTUAL_IDENTITY.xx    //真实身份
     this.append = [];
+    this.rank = 0;
 }
 
 /**
@@ -27,7 +28,7 @@ GameStatus.prototype.reset = function()
     this.identity = 0;  //身份（0：未知、1：3、2：股子）
     this.actualIdentity = [];
     this.append = [];
-
+    this.rank = 0;
 }
 
 /**

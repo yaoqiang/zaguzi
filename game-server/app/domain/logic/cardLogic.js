@@ -55,7 +55,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
                         return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_6, null);
                     }
                 }
-                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_1, tmp[0], cards);
+                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_2, tmp[0], cards);
             }
             else
             {
@@ -205,12 +205,13 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
     //如果是炸弹(3张相同牌）、如果是四轮车：炸弹和四轮车比较逻辑一样
     if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_3 || cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_4)
     {
+        console.log('cards reg => ', cr1.cardSeries, cr2.cardSeries)
         //如果上手牌型是比当前牌型大，返回false
         if (cr2.cardSeries > cr1.cardSeries)
         {
             return false;
         }
-        else if (cr2.cardSeries == cr2.cardSeries) {
+        else if (cr1.cardSeries == cr2.cardSeries) {
             if (cr1.maxCardPoint > cr2.maxCardPoint)
             {
                 return true;

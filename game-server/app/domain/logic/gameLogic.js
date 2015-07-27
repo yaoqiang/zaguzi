@@ -14,11 +14,12 @@ var GameLogic = function (game) {
 
     this.currentPhase = null;
 
+    this.round = 0;
+
     this.currentBoss = null;    //本回合Boss
-    this.currentRound = 0;
     this.currentFanActor = null;
 
-    this.lastFanCards = [];
+    this.lastFanCards = null;
     this.lastFanActor = null;
     this.lastFanCardRecognization = null;
 

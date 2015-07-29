@@ -135,6 +135,9 @@ exp.settleCommon = function (game, cb) {
 
             callback(null, {code: Code.OK});
 
+        }, function (result, callback) {
+            console.log('game over, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
+            callback(null, result);
         }], function (err, data) {
         if (err) {
             cb({code: Code.FAIL, err: err});

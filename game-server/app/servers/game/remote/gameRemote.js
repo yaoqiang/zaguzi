@@ -47,8 +47,6 @@ GameRemote.prototype.join = function(data, cb) {
  *
  */
 GameRemote.prototype.leave = function(data, cb) {
-
-
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
             logger.error('game||leave||离开游戏失败, 玩家已下线||用户&ID: %j', user.uid);
@@ -127,5 +125,5 @@ GameRemote.prototype.fan = function (data, cb) {
  */
 GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
-    cb(game);
+    cb({gameLogic: game.gameLogic});
 }

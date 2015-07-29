@@ -148,7 +148,6 @@ exp.tie = function (data, cb) {
             return;
         }
 
-        console.log('tie => ', user)
         var player = user.player;
         player.tie(data.roomId, function () {
             player.save();

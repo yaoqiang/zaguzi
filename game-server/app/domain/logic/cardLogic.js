@@ -157,13 +157,45 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
                                     return true;
                                 }
                             }
-                            return false;
+                            else {
+                                if (cr1.maxCardPoint > cr2.maxCardPoint)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
                         }
                     }
                 }
 
             }
 
+            //判断4是否能打3
+            if (_.contains([117, 217, 317, 417], cr1.originalCard[0])) {
+                //6人平3可打；5人如果块3不亮也可打；
+                if (type == consts.GAME.TYPE.FIVE || type == consts.GAME.TYPE.SEVEN)
+                {
+                    if (cr2.originalCard[0] == 216) {
+                        return false;
+                    }
+                    if (cr2.originalCard[0] == 116) {
+                        if (type == consts.GAME.TYPE.FIVE) {
+                            if (_.contains(liang3, 116)) return false;
+                        }
+                    }
+                    if (cr1.maxCardPoint > cr2.maxCardPoint)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
         }
         if (cr1.maxCardPoint > cr2.maxCardPoint)
         {

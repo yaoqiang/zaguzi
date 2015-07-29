@@ -30,6 +30,8 @@ var GameLogic = function (game) {
     this.talkNumber = 0;
     this.talkTimeoutNumber = 0; //说话超时次数
 
+    this.appends = [];  //牌局亮3情况
+
     this.share = 0;  //基数（每个人亮3数或股子数）
     this.result = null;  //结局
 

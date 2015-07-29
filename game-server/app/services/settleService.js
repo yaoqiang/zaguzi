@@ -115,7 +115,6 @@ exp.settleCommon = function (game, cb) {
         }, function (results, callback) {
             //处理结算数据
             _.map(results, function (result) {
-                console.log('game result => ', result)
                 console.log('game result.result => ', result.result)
                 if (result.result == consts.GAME.ACTOR_RESULT.WIN) {
                     pomelo.app.rpc.manager.userRemote.win(null, {uid: result.uid, roomId: game.roomId, gold: result.gold}, function (data) {

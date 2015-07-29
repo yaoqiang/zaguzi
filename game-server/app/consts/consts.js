@@ -89,7 +89,7 @@ module.exports = {
         TIMER: {
             NOT_READY: 60,
             TALK: 60,
-            FAN: 30
+            FAN: 45
         },
         PHASE: {
             STARTING: 0,

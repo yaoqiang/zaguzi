@@ -13,6 +13,11 @@ File Encoding         : 65001
 Date: 2014-12-09 15:01:55
 */
 
+--CREATE DATABASE IF NOT EXISTS zgz DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+--
+--USE zgz;
+
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------

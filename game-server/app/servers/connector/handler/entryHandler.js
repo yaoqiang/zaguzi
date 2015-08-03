@@ -3,9 +3,11 @@ var userDao = require('../../../dao/userDao');
 var async = require('async');
 var channelUtil = require('../../../util/channelUtil');
 var utils = require('../../../util/utils');
+var gameUtil = require('../../../util/gameUtil');
 var rooms = require('../../../../config/data/room');
 var playerService = require('../../../services/playerService');
 var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../../../consts/consts');
 
 var schedule = require('pomelo-scheduler');
 
@@ -81,30 +83,57 @@ handler.enter = function (msg, session, next) {
 
         self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
 
-            //如果用户正常在线，踢掉原连接
+            //如果用户在线
             if (u && !!u.sessionId) {
-                //
+                //如果用户在牌局中
+                if (!!u.gameId) {
+                    //查询牌局状态
+                    //rpc invoke
+                    var getStatusParams = {
+                        namespace: 'user',
+                        service: 'gameRemote',
+                        method: 'getGameStatusById',
+                        args: [{
+                            gameId: u.gameId
+                        }]
+                    };
+
+                    var room = gameUtil.getRoomById(u.roomId);
+
+                    pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
+                        //玩家在游戏中，通知客户端需发送重回游戏指令；
+                        if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
+                            logger.debug("user||玩家重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid)
+                            if (_.isNull(u.sessionId)) {
+
+                            }
+                            else {
+
+                            }
+                        }
+                        //否则给原连接发送被T下线消息，踢掉原连接，再执行当前连接onUserEnter
+                        else {
+
+                        }
+                    });
+
+                }
                 sessionService.kickBySessionId(u.sessionId, null);
 
             }
-
-            self.app.rpc.manager.userRemote.onUserEnter(session, {
-                uid: uid,
-                serverId: msg.serverId,
-                sessionId: session.id,
-                player: player
-            }, function () {
-                next(null, {code: Code.OK, player: player});
-            });
-
-            //如果用户在游戏中，则告诉客户端需发送重回游戏指令
-            if (u && !!u.gameId) {
-
-            }
-
         });
 
+        self.app.rpc.manager.userRemote.onUserEnter(session, {
+            uid: uid,
+            serverId: msg.serverId,
+            sessionId: session.id,
+            player: player
+        }, function () {
+            next(null, {code: Code.OK, player: player});
+
+        });
     });
+
 };
 
 

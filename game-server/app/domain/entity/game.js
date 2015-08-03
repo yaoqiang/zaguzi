@@ -69,16 +69,8 @@ Game.prototype.join = function (data, cb) {
     var self = this;
 
     //如果玩家加入牌桌[?]秒内没准备则自动离开
-    var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.NOT_READY * 1000}, function (jobData) {
-        logger.info('game||leave||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', consts.GAME.TIMER.NOT_READY, jobData.uid);
-        self.jobQueue = _.filter(self.jobQueue, function (j) {
-            return j.uid != jobData.uid;
-        });
-        self.leave({uid: jobData.uid}, function (result) {
-        });
-    }, {uid: data.uid});
+    this.scheduleNotReady({uid: data.uid});
 
-    this.jobQueue.push({uid: data.uid, jobId: jobId});
 
     var otherActors = _.filter(this.actors, function (act) {
         return act.uid != data.uid;
@@ -174,7 +166,7 @@ Game.prototype.start = function () {
     //标识当前游戏局与上把局玩家是否变化
     var isActorsChanged = false;
     for (var i in this.actors) {
-        if (!_.contains(this.actorsWithLastGame, {uid: this.actors[i].uid, actorNr: this.actors[i].actorNr})) {
+        if (_.isUndefined(_.findWhere(this.actorsWithLastGame, {uid: this.actors[i].uid, actorNr: this.actors[i].actorNr}))) {
             isActorsChanged = true;
         }
     }
@@ -281,7 +273,7 @@ Game.prototype.talkCountdown = function () {
 
             //如果玩家[?]秒内没没说话则说话超时：不说话
             var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TALK * 1000}, function (jobData) {
-                logger.info('game||talk||玩家[%j]秒内未说话, 说话超时, ||用户&ID: %j', consts.GAME.TIMER.TALK, jobData.uid);
+                logger.debug('game||talk||玩家[%j]秒内未说话, 说话超时, ||用户&ID: %j', consts.GAME.TIMER.TALK, jobData.uid);
                 self.jobQueue = _.filter(self.jobQueue, function (j) {
                     return j.uid != jobData.uid;
                 });
@@ -323,7 +315,7 @@ Game.prototype.talkTimeout = function (actor) {
  * 所有玩家都说话超时，则强制解散牌局。（防止全部掉线形成僵尸房）
  */
 Game.prototype.dissolve = function () {
-    logger.info('game||dissolve||牌局里所有玩家都说话超时,强制解散牌局 ||游戏&ID: %j', this.gameId);
+    logger.debug('game||dissolve||牌局里所有玩家都说话超时,强制解散牌局 ||游戏&ID: %j', this.gameId);
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
     var self = this;
     _.map(this.actors, function (actor) {
@@ -430,25 +422,25 @@ Game.prototype.talk = function (data, cb) {
                 //
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     if (!_.contains(data.append, 116) && !_.contains(data.append, 216)) {
-                        logger.info('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                        logger.debug('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                         return;
                     }
                     for (var i in data.append) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
-                            logger.info('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                            logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
-                            logger.info('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                            logger.debug('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                     }
                 }
                 else {
-                    logger.info('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                    logger.debug('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                     return;
                 }
@@ -466,25 +458,25 @@ Game.prototype.talk = function (data, cb) {
                 //
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     if (!_.contains(data.append, 116) && !_.contains(data.append, 216) && !_.contains(data.append, 316)) {
-                        logger.info('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                        logger.debug('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                         return;
                     }
                     for (var i in data.append) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
-                            logger.info('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                            logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
-                            logger.info('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                            logger.debug('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                             return;
                         }
                     }
                 }
                 else {
-                    logger.info('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
+                    logger.debug('game||talk||玩家[%j]亮3时没用附加牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
                     return;
                 }
@@ -547,6 +539,11 @@ Game.prototype.afterTalk = function () {
         return;
     }
 
+    //设置上局玩家[{uid:xx, actorNr: xx}]
+    _.each(this.actors, function (actor) {
+        self.actorsWithLastGame.push({uid: actor.uid, actorNr: actor.actorNr})
+    });
+
     //开始出牌
     var actor = _.findWhere(this.actors, {uid: this.gameLogic.firstFanActor.uid});
 
@@ -582,8 +579,6 @@ Game.prototype.fanCountdown = function () {
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
 
-    console.log('###### => ', this.gameLogic.currentBoss.actorNr, this.gameLogic.currentFanActor.actorNr)
-
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         this.fanTimeout(fanTimeoutActor);
@@ -599,7 +594,7 @@ Game.prototype.fanCountdown = function () {
 
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.info('game||fan||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
+            logger.debug('game||fan||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
@@ -816,12 +811,31 @@ Game.prototype.fan = function (data, cb) {
                     self.gameLogic.lastFanOverNextCountdownActor = null;
                 }
 
-                //如果玩家出的牌型是黑3，并且玩家身份是红3，则需通知牌局中其他玩家：我有3呢
+                //如果玩家出的牌型是黑3，并且玩家身份是红3并且没有亮而且在手牌中，则需通知牌局中其他玩家：我有3呢
                 if (self.maxActor == consts.GAME.TYPE.FIVE) {
-
+                    //如果5人局里，当前出牌是单牌并且是♠️3或者♣️3，如果是对子并且是♠️3和♣️3，
+                    if ((_.size(cards) == 1 && _.contains([316, 416], cards[0])) || (_.size(cards) == 2 && _.size(_.difference([316, 416], cards)) == 0)) {
+                        //如果玩家手牌中有红3并且没有亮并且之前没有出过红3，则不能骗人，出黑3时需要通知牌局其他玩家身份
+                        if ((actor.gameStatus.hasCards([116]) || actor.gameStatus.hasCards([216]))
+                            && ((!_.contains(actor.gameStatus.outCards, 116) && !_.contains(actor.gameStatus.outCards, 216)))) {
+                            if (_.size(actor.gameStatus.append) == 0) {
+                                logger.debug('game||fan||3家没有亮3,先出黑3,为防止骗人,通知他人||用户&ID: %j', data.uid);
+                                self.channel.pushMessage(consts.EVENT.FAN_WHEN_IS_RED, gameResponse.generateActorPoorResponse(actor), null, null);
+                            }
+                        }
+                    }
                 }
                 else {
-
+                    //如果6,7人局里，当前出牌是单牌并且是♣️3，如果玩家手牌中有红3并且没有亮，则不能骗人，出黑3时需要通知牌局其他玩家身份
+                    if (_.size(cards) == 1 && _.size(_.difference([416], cards)) == 0) {
+                        if ((actor.gameStatus.hasCards([116]) || actor.gameStatus.hasCards([216]) || actor.gameStatus.hasCards([316]))
+                            && ((!_.contains(actor.gameStatus.outCards, 116) && !_.contains(actor.gameStatus.outCards, 216) && !_.contains(actor.gameStatus.outCards, 316)))) {
+                            if (_.size(actor.gameStatus.append) == 0) {
+                                logger.debug('game||fan||3家没有亮3,先出黑3,为防止骗人,通知他人||用户&ID: %j', data.uid);
+                                self.channel.pushMessage(consts.EVENT.FAN_WHEN_IS_RED, gameResponse.generateActorPoorResponse(actor), null, null);
+                            }
+                        }
+                    }
                 }
 
                 //判断是否已结束
@@ -849,6 +863,7 @@ Game.prototype.fan = function (data, cb) {
                             identity: identity
                         };
                     }
+
 
                     actor.gameStatus.rank = actorStatusCount.finished;
 
@@ -948,8 +963,15 @@ Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
 
     var self = this;
-    settleService.settle(this, function () {
-        self.actorsWithLastGame = self.actors;
+    settleService.settle(this, function (data) {
+        logger.debug('向客户端发送游戏结束消息');
+        self.channel.pushMessage(consts.EVENT.OVER, {game: {result: self.gameLogic.result, share: self.gameLogic.share}, details: data.details}, null, function () {
+            _.map(self.actors, function (actor) {
+                actor.isReady = false;
+                self.scheduleNotReady({uid: actor.uid});
+            })
+        });
+
     });
 
 }
@@ -1003,7 +1025,7 @@ Game.prototype.leave = function (data, cb) {
         delete actor[i];
     }
 
-    logger.info('game||leave||离开游戏成功||用户&ID: %j', data.uid);
+    logger.debug('game||leave||离开游戏成功||用户&ID: %j', data.uid);
 
     this.currentActorNum = this.currentActorNum - 1;
     this.isAllReady = false;
@@ -1016,6 +1038,20 @@ Game.prototype.leave = function (data, cb) {
 
 }
 
+Game.prototype.scheduleNotReady = function (data) {
+    var self = this;
+    //如果玩家加入牌桌[?]秒内没准备则自动离开
+    var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.NOT_READY * 1000}, function (jobData) {
+        logger.debug('game||leave||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', consts.GAME.TIMER.NOT_READY, jobData.uid);
+        self.jobQueue = _.filter(self.jobQueue, function (j) {
+            return j.uid != jobData.uid;
+        });
+        self.leave({uid: jobData.uid}, function (result) {
+        });
+    }, {uid: data.uid});
+
+    this.jobQueue.push({uid: data.uid, jobId: jobId});
+}
 
 Game.prototype.getReceiver = function (actors) {
     return _.map(actors, function (act) {

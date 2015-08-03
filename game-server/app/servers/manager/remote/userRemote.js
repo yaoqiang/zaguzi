@@ -47,6 +47,12 @@ UserRemote.prototype.tie = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.settle = function(msg, cb) {
+    playerService.settle(msg, function(ret) {
+        cb(ret);
+    });
+};
+
 
 /**
  * get user by sessionId from cache.

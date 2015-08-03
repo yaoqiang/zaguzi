@@ -44,15 +44,15 @@ CREATE TABLE `player` (
 -- Records of player
 -- ----------------------------
 INSERT INTO `player` VALUES ('1', '你说啥我说啥', '8', '5000', 0, 0, 0, '1', '0', '0', '1');
-INSERT INTO `player` VALUES ('2', '2huo', '8', '5000', 0, 0, 0, '1', '0', '0', '3');
-INSERT INTO `player` VALUES ('3', '活活活', '8', '5000', 0, 0, 0, '1', '0', '0', '4');
-INSERT INTO `player` VALUES ('4', 'iya', '8', '5000', 0, 0, 0, '1', '0', '0', '5');
-INSERT INTO `player` VALUES ('5', 'bug', '8', '5000', 0, 0, 0, '1', '0', '0', '6');
-INSERT INTO `player` VALUES ('6', 'todo', '8', '5000', 0, 0, 0, '1', '0', '0', '7');
-INSERT INTO `player` VALUES ('7', 'nihao', '8', '5000', 0, 0, 0, '1', '0', '0', '8');
-INSERT INTO `player` VALUES ('8', '2b', '8', '5000', 0, 0, 0, '1', '0', '0', '9');
-INSERT INTO `player` VALUES ('9', 'shit', '8', '5000', 0, 0, 0, '1', '0', '0', '10');
-INSERT INTO `player` VALUES ('10', '西门吹雪', '1', '5000', 0, 0, 0, '1', '0', '0', '2');
+INSERT INTO `player` VALUES ('2', '西门吹雪', '1', '5000', 0, 0, 0, '1', '0', '0', '2');
+INSERT INTO `player` VALUES ('3', '2huo', '8', '5000', 0, 0, 0, '1', '0', '0', '3');
+INSERT INTO `player` VALUES ('4', '活活活', '8', '5000', 0, 0, 0, '1', '0', '0', '4');
+INSERT INTO `player` VALUES ('5', 'iya', '8', '5000', 0, 0, 0, '1', '0', '0', '5');
+INSERT INTO `player` VALUES ('6', 'bug', '8', '5000', 0, 0, 0, '1', '0', '0', '6');
+INSERT INTO `player` VALUES ('7', 'todo', '8', '5000', 0, 0, 0, '1', '0', '0', '7');
+INSERT INTO `player` VALUES ('8', 'nihao', '8', '5000', 0, 0, 0, '1', '0', '0', '8');
+INSERT INTO `player` VALUES ('9', '2b', '8', '5000', 0, 0, 0, '1', '0', '0', '9');
+INSERT INTO `player` VALUES ('10', 'shit', '8', '5000', 0, 0, 0, '1', '0', '0', '10');
 INSERT INTO `player` VALUES ('11', '要强', '1', '5000', 0, 0, 0, '1', '0', '0', '11');
 INSERT INTO `player` VALUES ('12', '李建新', '3', '5000', 0, 0, 0, '1', '0', '0', '12');
 INSERT INTO `player` VALUES ('13', '臧宏文', '4', '5000', 0, 0, 0, '1', '0', '0', '13');
@@ -120,7 +120,7 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'a', 'a', '0', null, '1416979185627', '0', '');
+INSERT INTO `user` VALUES ('1', 'a', 'a', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('2', 'b', 'b', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('3', 'c', 'c', '0', '', '1416979185627', '0', '');
 INSERT INTO `user` VALUES ('4', 'd', 'd', '0', '', '1416979185627', '0', '');

@@ -65,7 +65,8 @@ module.exports = {
         OVER: 'onOver',
         GOLD_CHANGE: 'onGoldChange',
         FAN_WHEN_IS_RED: 'onFanWhenIsRed',
-        FAN_FINISHED: 'onFanFinished'
+        FAN_FINISHED: 'onFanFinished',
+        BACK_TO_GAME: 'onBackToGame'
 
     },
 
@@ -87,7 +88,7 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 60,
+            NOT_READY: 30,
             TALK: 60,
             FAN: 30
         },

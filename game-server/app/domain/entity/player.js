@@ -6,13 +6,13 @@ var consts = require('../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
+var gameUtil = require('../../util/gameUtil');
 var _ = require('underscore');
 require('date-utils');
 
 var Entity = require('./entity');
 var ranks = require('../../../config/data/rank');
-
-var messageService = require('../../services/messageService');
+var rooms = require('../../../config/data/room');
 
 
 var Player = function(opts)
@@ -54,8 +54,7 @@ Player.prototype.addGold = function (type, gold, cb) {
 
     this.gold = this.gold < 0 ? 0 : this.gold;
 
-    messageService.pushMessageToPlayer(this.uid, consts.EVENT.GOLD_CHANGE, {gold: this.gold});
-    cb();
+    cb({gold: this.gold});
 
 }
 
@@ -65,34 +64,36 @@ Player.prototype.payTax = function (roomId) {
 
     var gold = 0;
 
+    var room = gameUtil.getRoomById(roomId);
+
+    var gold = room.fax * -1;
+
     logger.info("user||gold||用户游戏结束扣除[%j]金币税，用户ID:%j", gold, this.uid);
     this.gold += gold;
 
     this.gold = this.gold < 0 ? 0 : this.gold;
-
-    messageService.pushMessageToPlayer(this.uid, consts.EVENT.GOLD_CHANGE, {gold: this.gold});
 
 }
 
 Player.prototype.win = function (roomId, gold, cb) {
     this.winNr += 1;
     this.payTax(roomId);
-    this.addExp(true, {roomId: roomId});
+    this.addExp(2, {roomId: roomId});
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
 
 Player.prototype.lose = function (roomId, gold, cb) {
     this.loseNr += 1;
     this.payTax(roomId);
-    this.addExp(roomId, false);
+    this.addExp(0, {roomId: roomId});
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
 }
 
 Player.prototype.tie = function (roomId, cb) {
     this.tieNr += 1;
     this.payTax(roomId);
-    this.addExp(roomId, false);
-    cb()
+    this.addExp(1, {roomId: roomId});
+    cb({gold: this.gold});
 
 }
 
@@ -101,9 +102,8 @@ Player.prototype.addFragment = function (type, fragment, cb) {
     this.fragment += fragment;
 }
 
-Player.prototype.addExp = function (win, args) {
+Player.prototype.addExp = function (exp, args) {
 
-    var exp = win ? 2 : 1;
     this.exp += exp;
 
     var rank = _.findWhere(ranks, {rank: this.rank});

@@ -10,6 +10,8 @@ var eventManager = require('../domain/event/eventManager');
 var Player = require('../domain/entity/player');
 var Properties = require('../domain/entity/properties');
 
+var messageService = require('./messageService')
+
 var exp = module.exports;
 
 
@@ -107,7 +109,6 @@ exp.onUserDisconnect = function (data, cb) {
 }
 
 
-
 exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -117,8 +118,9 @@ exp.win = function (data, cb) {
         }
 
         var player = user.player;
-        player.win(data.roomId, data.gold, function () {
+        player.win(data.roomId, data.gold, function (result) {
             player.save();
+            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -133,8 +135,9 @@ exp.lose = function (data, cb) {
         }
 
         var player = user.player;
-        player.lose(data.roomId, data.gold, function () {
+        player.lose(data.roomId, data.gold, function (result) {
             player.save();
+            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -149,11 +152,33 @@ exp.tie = function (data, cb) {
         }
 
         var player = user.player;
-        player.tie(data.roomId, function () {
+        player.tie(data.roomId, function (result) {
             player.save();
+            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
+}
+
+exp.settle = function(data, cb) {
+    var details = data.details;
+    var result = {code: Code.OK}
+    _.map(details, function (detail) {
+        if (detail.result == consts.GAME.ACTOR_RESULT.WIN) {
+            exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold}, function (data) {
+            });
+        }
+        else if (detail.result == consts.GAME.ACTOR_RESULT.LOSE) {
+            exp.lose({uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1}, function (data) {
+            });
+        }
+        else {
+            exp.tie({uid: detail.uid, roomId: detail.roomId}, function (data) {
+            });
+        }
+    });
+
+    cb(result);
 }
 
 exp.getSignInAward = function (data, cb) {
@@ -176,9 +201,9 @@ exp.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     cb(u);
 }
-exp.getUsersCacheByUids = function (uids, cb) {
+exp.getUsersCacheByUids = function (data, cb) {
     var users = [];
-    _.map(uids, function (uid) {
+    _.map(data.uids, function (uid) {
         var u = _.findWhere(pomelo.app.userCache, {uid: uid});
         users.push(u);
     });

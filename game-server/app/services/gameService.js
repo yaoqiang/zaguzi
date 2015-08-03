@@ -55,6 +55,7 @@ exp.leave = function (data, cb) {
     if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
         logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING});
+        return;
     }
 
     game.leave({uid: data.uid}, function (result) {

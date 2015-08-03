@@ -14,9 +14,9 @@ exp.settle = function (game, cb) {
 
 exp.settleCommon = function (game, cb) {
     //结算结构
-    //{game: {result: consts.GAME.RESULT.x, share: x}, results: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x}]}
+    //{game: {result: consts.GAME.RESULT.x, share: x}, details: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x}]}
 
-    var results = [];
+    var details = [];
 
     //计算被抓股数
     if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
@@ -58,6 +58,7 @@ exp.settleCommon = function (game, cb) {
 
     async.waterfall([
         function (callback) {
+            logger.debug('计算玩家输赢具体数额.');
             var actors = game.actors;
 
             var heart3Partition = game.maxActor == consts.GAME.TYPE.SIX ? 1 : 2;
@@ -69,6 +70,7 @@ exp.settleCommon = function (game, cb) {
                 var partition = 0;
 
                 if (isRed) {
+                    //map计算结果为：5人局2家3、6人局全部、7人局3家3
                     _.map(actor.gameStatus.actualIdentity, function (id) {
                         if (id == consts.GAME.ACTUAL_IDENTITY.Heart3) {
                             partition += heart3Partition;
@@ -77,6 +79,33 @@ exp.settleCommon = function (game, cb) {
                             partition += 1;
                         }
                     });
+                    //如果5人局1家3或7人局2家/1家3,单独处理
+                    switch (game.maxActor) {
+                        case consts.GAME.TYPE.FIVE:
+                            //如果是1家3（即双三）
+                            if (_.size(game.gameLogic.red) == 1) {
+                                partition = game.maxActor - 1;
+                            }
+                            break;
+                        case consts.GAME.TYPE.SEVEN:
+                            //如果是一家3
+                            if (_.size(game.gameLogic.red) == 1) {
+                                partition = game.maxActor - 1;
+                            }
+                            //如果是2家3
+                            else if (_.size(game.gameLogic.red) == 2) {
+                                //如果当前玩家是单3, 则计算2份；双3计算3份
+                                if (_.size(actor.gameStatus.actualIdentity) == 1) {
+                                    partition = 2;
+                                }
+                                else {
+                                    partition = 3;
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 else {
                     partition = 1;
@@ -104,39 +133,34 @@ exp.settleCommon = function (game, cb) {
                     tmpGold = 0;
                 }
 
-                results.push({
+                details.push({
                     uid: actor.uid, actorNr: actor.actorNr, actualIdentity: actor.gameStatus.actualIdentity,
-                    result: tmpRs, gold: tmpGold
+                    result: tmpRs, gold: tmpGold, roomId: game.roomId
                 });
             });
 
-            callback(null, results);
+            callback(null, details);
 
-        }, function (results, callback) {
+        }, function (details, callback) {
+
+            logger.debug('调用用户服务器进行结算.');
             //处理结算数据
-            _.map(results, function (result) {
-                console.log('game result.result => ', result.result)
-                if (result.result == consts.GAME.ACTOR_RESULT.WIN) {
-                    pomelo.app.rpc.manager.userRemote.win(null, {uid: result.uid, roomId: game.roomId, gold: result.gold}, function (data) {
-                        //callback(null, data)
-                    });
-                }
-                else if (result.result == consts.GAME.ACTOR_RESULT.LOSE) {
-                    pomelo.app.rpc.manager.userRemote.lose(null, {uid: result.uid, roomId: game.roomId, gold: result.gold * -1}, function (data) {
-                        //callback(null, data)
-                    });
-                }
-                else {
-                    pomelo.app.rpc.manager.userRemote.tie(null, {uid: result.uid, roomId: game.roomId}, function (data) {
-                        //callback(null, data)
-                    });
-                }
+            pomelo.app.rpc.manager.userRemote.settle(null, {details: details}, function() {
+                callback(null, {code: Code.OK});
             });
 
-            callback(null, {code: Code.OK});
-
         }, function (result, callback) {
-            console.log('game over, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
+            logger.debug('game over, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
+            var uids = _.pluck(details, 'uid');
+            pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
+                _.map(users, function(u) {
+                    if (_.isNull(u.sessionId)) {
+                        pomelo.app.rpc.manager.userRemote.onUserDisconnect(null, {uid: u.uid}, function () {
+
+                        });
+                    }
+                })
+            });
             callback(null, result);
         }], function (err, data) {
         if (err) {
@@ -149,8 +173,7 @@ exp.settleCommon = function (game, cb) {
             return;
         }
 
-        game.channel.pushMessage(consts.EVENT.OVER, {game: {result: game.gameLogic.result, share: game.gameLogic.share}, results: results}, null, null);
-        cb();
+        cb({details: details});
     });
 
 

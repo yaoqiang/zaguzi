@@ -14,7 +14,8 @@ exp.settle = function (game, cb) {
 
 exp.settleCommon = function (game, cb) {
     //结算结构
-    //{game: {result: consts.GAME.RESULT.x, share: x}, details: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x}]}
+    //{game: {result: consts.GAME.RESULT.x, share: x},
+    // details: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
 
     var details = [];
 
@@ -135,7 +136,7 @@ exp.settleCommon = function (game, cb) {
 
                 details.push({
                     uid: actor.uid, actorNr: actor.actorNr, actualIdentity: actor.gameStatus.actualIdentity,
-                    result: tmpRs, gold: tmpGold, roomId: game.roomId
+                    result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank
                 });
             });
 
@@ -173,7 +174,7 @@ exp.settleCommon = function (game, cb) {
             return;
         }
 
-        cb({details: details});
+        cb({details: _.sortBy(details, 'rank')});
     });
 
 

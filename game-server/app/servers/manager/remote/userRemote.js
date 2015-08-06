@@ -47,8 +47,8 @@ UserRemote.prototype.tie = function(msg, cb) {
     });
 };
 
-UserRemote.prototype.settle = function(msg, cb) {
-    playerService.settle(msg, function(ret) {
+UserRemote.prototype.balance = function(msg, cb) {
+    playerService.balance(msg, function(ret) {
         cb(ret);
     });
 };

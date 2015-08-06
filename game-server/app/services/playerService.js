@@ -12,6 +12,8 @@ var Properties = require('../domain/entity/properties');
 
 var messageService = require('./messageService')
 
+var Promise = require('promise');
+
 var exp = module.exports;
 
 
@@ -32,26 +34,30 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     playerObj.properties = propObj;
     eventManager.addEvent(playerObj);
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
-    if (u)
-    {
+    if (u) {
         u.serverId = serverId;
         u.sessionId = sessionId;
         u.player = player;
     }
-    else
-    {
-        pomelo.app.userCache.push({uid: uid, serverId: serverId, sessionId: sessionId, roomId: null, gameId: null, player: playerObj});
+    else {
+        pomelo.app.userCache.push({
+            uid: uid,
+            serverId: serverId,
+            sessionId: sessionId,
+            roomId: null,
+            gameId: null,
+            player: playerObj
+        });
     }
     cb();
 }
 
 exp.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
-    if (u.gameId)
-    {
+    if (u.gameId) {
         //rpc invoke
         var getStatusParams = {
-            namespace : 'user',
+            namespace: 'user',
             service: 'gameRemote',
             method: 'getGameStatusById',
             args: [{
@@ -61,10 +67,9 @@ exp.onUserDisconnect = function (data, cb) {
 
         var room = gameUtil.getRoomById(u.roomId);
 
-        pomelo.app.rpcInvoke(room.serverId, getStatusParams, function(game){
+        pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
-            if (game.gameLogic != null &&  game.gameLogic.currentPhase != consts.GAME.PHASE.OVER)
-            {
+            if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
                 logger.info("user||disconnect||玩家掉线时还在游戏中, 用户ID:%j", data.uid)
                 //set user session id = null.
                 exp.setUserSessionId(data.uid, null);
@@ -72,7 +77,7 @@ exp.onUserDisconnect = function (data, cb) {
             else {
                 //rpc invoke
                 var leaveParams = {
-                    namespace : 'user',
+                    namespace: 'user',
                     service: 'gameRemote',
                     method: 'leave',
                     args: [{
@@ -80,7 +85,7 @@ exp.onUserDisconnect = function (data, cb) {
                     }]
                 };
 
-                pomelo.app.rpcInvoke(room.serverId, leaveParams, function(result) {
+                pomelo.app.rpcInvoke(room.serverId, leaveParams, function (result) {
                     if (result.code == Code.FAIL) {
                         cb();
                         return;
@@ -120,7 +125,10 @@ exp.win = function (data, cb) {
         var player = user.player;
         player.win(data.roomId, data.gold, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            messageService.pushMessageToPlayer({
+                uid: user.uid,
+                sid: user.serverId
+            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -137,7 +145,10 @@ exp.lose = function (data, cb) {
         var player = user.player;
         player.lose(data.roomId, data.gold, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            messageService.pushMessageToPlayer({
+                uid: user.uid,
+                sid: user.serverId
+            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -154,16 +165,20 @@ exp.tie = function (data, cb) {
         var player = user.player;
         player.tie(data.roomId, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({uid: user.uid, sid: user.serverId}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            messageService.pushMessageToPlayer({
+                uid: user.uid,
+                sid: user.serverId
+            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
 }
 
-exp.settle = function(data, cb) {
+exp.balance = function (data, cb) {
     var details = data.details;
     var result = {code: Code.OK}
-    _.map(details, function (detail) {
+    //为防止结算未完成时，已将玩家从缓存中移除，所以需保证map结束后，再callback
+    Promise.all(_.map(details, function (detail) {
         if (detail.result == consts.GAME.ACTOR_RESULT.WIN) {
             exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold}, function (data) {
             });
@@ -176,9 +191,10 @@ exp.settle = function(data, cb) {
             exp.tie({uid: detail.uid, roomId: detail.roomId}, function (data) {
             });
         }
-    });
-
-    cb(result);
+        return Promise.resolve;
+    }))
+        .then(cb(result))
+        .done();
 }
 
 exp.getSignInAward = function (data, cb) {
@@ -194,7 +210,7 @@ exp.addFragment = function (data, cb) {
 }
 
 exp.recharge = function (data, cb) {
-    
+
 }
 
 exp.getUserCacheByUid = function (uid, cb) {

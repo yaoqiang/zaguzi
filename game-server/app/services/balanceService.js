@@ -1,18 +1,19 @@
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.SETTLE, __filename);
+var logger = require('pomelo-logger').getLogger(consts.LOG.BALANCE, __filename);
 var pomelo = require('pomelo');
 var async = require('async');
 
 var Code = require('../../../shared/code');
 var _ = require('underscore');
 
+
 var exp = module.exports;
 
-exp.settle = function (game, cb) {
-    exp.settleCommon(game, cb);
+exp.balance = function (game, cb) {
+    exp.balanceCommon(game, cb);
 }
 
-exp.settleCommon = function (game, cb) {
+exp.balanceCommon = function (game, cb) {
     //结算结构
     //{game: {result: consts.GAME.RESULT.x, share: x},
     // details: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
@@ -146,7 +147,7 @@ exp.settleCommon = function (game, cb) {
 
             logger.debug('调用用户服务器进行结算.');
             //处理结算数据
-            pomelo.app.rpc.manager.userRemote.settle(null, {details: details}, function() {
+            pomelo.app.rpc.manager.userRemote.balance(null, {details: details}, function() {
                 callback(null, {code: Code.OK});
             });
 
@@ -160,7 +161,7 @@ exp.settleCommon = function (game, cb) {
 
                         });
                     }
-                })
+                });
             });
             callback(null, result);
         }], function (err, data) {
@@ -180,7 +181,7 @@ exp.settleCommon = function (game, cb) {
 
 }
 
-exp.settleMatch = function () {
+exp.balanceMatch = function () {
 
 }
 

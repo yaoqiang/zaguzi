@@ -62,6 +62,7 @@ module.exports = {
         FAN_COUNTDOWN_TIMEOUT: 'onFanCountdownTimeout',
         FAN: 'onFan',
         TRUSTEESHIP: 'onTrusteeship',
+        CANCEL_TRUSTEESHIP: 'onCancelTrusteeship',
         OVER: 'onOver',
         GOLD_CHANGE: 'onGoldChange',
         FAN_WHEN_IS_RED: 'onFanWhenIsRed',
@@ -90,7 +91,7 @@ module.exports = {
         TIMER: {
             NOT_READY: 30,
             TALK: 60,
-            FAN: 30
+            FAN: 10
         },
         PHASE: {
             STARTING: 0,
@@ -119,6 +120,6 @@ module.exports = {
         GAME: 'game.log',
         USER: 'user.log',
         GOLD: 'gold.log',
-        SETTLE: 'settle.log'
+        BALANCE: 'balance.log'
     }
 }

@@ -10,10 +10,11 @@ var CardLogic = require('../logic/cardLogic');
 var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
-var settleService = require('../../services/settleService');
+var balanceService = require('../../services/balanceService');
 var gameResponse = require('../response/gameResponse');
 
 var async = require('async');
+var Promise = require('promise');
 
 
 var Game = function (roomId, gameId) {
@@ -140,33 +141,24 @@ Game.prototype.ready = function (data, cb) {
         }, receiver, null)
     }
 
-    var self = this;
-    async.waterfall([
-            function (callback) {
-                cb({code: Code.OK});
-                callback()
-            }, function (callback) {
-                //全部准备，开始游戏
-                if (self.isAllReady) {
-                    self.start();
-                }
-                callback();
-            }],
-        function (err) {
-            if (err) {
-                logger.error('user||ready||用户准备失败||用户&ID: %j', data.uid);
-                return;
-            }
-        });
 
+    //向准备玩家发送准备成功响应
+    cb({code: Code.OK});
 
+    //检查玩家是否都准备, 如果都准备则开始游戏
+    if (this.isAllReady) {
+        this.start();
+    }
 }
 
 Game.prototype.start = function () {
     //标识当前游戏局与上把局玩家是否变化
     var isActorsChanged = false;
     for (var i in this.actors) {
-        if (_.isUndefined(_.findWhere(this.actorsWithLastGame, {uid: this.actors[i].uid, actorNr: this.actors[i].actorNr}))) {
+        if (_.isUndefined(_.findWhere(this.actorsWithLastGame, {
+                uid: this.actors[i].uid,
+                actorNr: this.actors[i].actorNr
+            }))) {
             isActorsChanged = true;
         }
     }
@@ -231,28 +223,21 @@ Game.prototype.start = function () {
 
     });
 
-
     //
-    async.waterfall([
-            function (cb) {
-                //分别单独为每个人发消息，保证牌底只有各自接受各自的
-                _.map(self.actors, function (actor) {
-                    var receiver = _.pick(actor, 'uid', 'sid')
-                    self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], null);
-                });
-                cb()
-
-            },
-            function (cb) {
-                self.talkCountdown()
-                cb();
-            }],
-        function (err) {
-            if (err) {
-                logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
-                return;
-            }
+    Promise.all(_.map(self.actors, function (actor) {
+        var receiver = _.pick(actor, 'uid', 'sid');
+        //分别单独为每个人发消息，保证牌底只有各自接受各自的
+        self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], function () {
         });
+        return Promise.resolve;
+    }))
+        .then(function () {
+            self.talkCountdown()
+        })
+        .catch(function (err) {
+            logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
+        })
+        .done();
 
 }
 
@@ -487,7 +472,7 @@ Game.prototype.talk = function (data, cb) {
 
             actor.gameStatus.append = data.append;
 
-            _.each(data.append, function(item) {
+            _.each(data.append, function (item) {
                 self.gameLogic.appends.push(item);
             })
 
@@ -865,7 +850,7 @@ Game.prototype.fan = function (data, cb) {
                     }
 
 
-                    actor.gameStatus.rank = actorStatusCount.finished;
+                    actor.gameStatus.rank = actorStatusCount.finished == 0 ? undefined : actorStatusCount.finished;
 
                     //如果玩家出完手牌，向牌桌玩家发送消息
                     self.channel.pushMessage(consts.EVENT.FAN_FINISHED, {
@@ -963,9 +948,12 @@ Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
 
     var self = this;
-    settleService.settle(this, function (data) {
+    balanceService.balance(this, function (data) {
         logger.debug('向客户端发送游戏结束消息');
-        self.channel.pushMessage(consts.EVENT.OVER, {game: {result: self.gameLogic.result, share: self.gameLogic.share}, details: data.details}, null, function () {
+        self.channel.pushMessage(consts.EVENT.OVER, {
+            game: {result: self.gameLogic.result, share: self.gameLogic.share},
+            details: data.details
+        }, null, function () {
             _.map(self.actors, function (actor) {
                 actor.isReady = false;
                 self.scheduleNotReady({uid: actor.uid});

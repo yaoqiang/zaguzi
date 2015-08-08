@@ -5,9 +5,10 @@ var channelUtil = require('../../../util/channelUtil');
 var utils = require('../../../util/utils');
 var gameUtil = require('../../../util/gameUtil');
 var rooms = require('../../../../config/data/room');
-var playerService = require('../../../services/playerService');
+var messageService = require('../../../services/messageService');
 var logger = require('pomelo-logger').getLogger(__filename);
 var consts = require('../../../consts/consts');
+var pomelo = require('pomelo');
 
 var schedule = require('pomelo-scheduler');
 
@@ -71,10 +72,7 @@ handler.enter = function (msg, session, next) {
             }
         }, function (res, cb) {
             player = res;
-            session.bind(uid);
-            session.set('serverId', msg.serverId);
-            session.on('closed', onUserDisconnect.bind(null, self.app));
-            session.pushAll(cb);
+            cb();
         }], function (err) {
         if (err) {
             next(err, {code: Code.FAIL});
@@ -83,8 +81,16 @@ handler.enter = function (msg, session, next) {
 
         self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
 
+            //!!u.sessionId
             //如果用户在线
-            if (u && !!u.sessionId) {
+            if (u) {
+                //如果玩家在线, 用缓存中的用户数据覆盖从DB中查出的结果（考虑缓存中数据没有及时写入DB情况）
+                player = u.player;
+                if (!!u.sessionId) {
+                    next(null, {code: Code.FAIL, message: '用户已登录'});
+                    sessionService.kickBySessionId(session.id, null);
+                    return;
+                }
                 //如果用户在牌局中
                 if (!!u.gameId) {
                     //查询牌局状态
@@ -103,34 +109,44 @@ handler.enter = function (msg, session, next) {
                     pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
                         //玩家在游戏中，通知客户端需发送重回游戏指令；
                         if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-                            logger.debug("user||玩家重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid)
-                            if (_.isNull(u.sessionId)) {
+                            logger.debug("user||玩家掉线重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid);
 
-                            }
-                            else {
+                            session.bind(uid);
+                            session.set('serverId', msg.serverId);
+                            session.on('closed', onUserDisconnect.bind(null, self.app));
+                            session.pushAll();
 
-                            }
-                        }
-                        //否则给原连接发送被T下线消息，踢掉原连接，再执行当前连接onUserEnter
-                        else {
+                            next(null, {code: Code.OK, player: player});
 
+                            //u.sessionId = session.id;
+                            pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+
+                            });
+
+                            logger.debug("向游戏服务器查询游戏信息并返回-掉线状态");
+                            messageService.pushMessageToPlayer({
+                                uid: uid,
+                                sid: msg.serverId
+                            }, consts.EVENT.BACK_TO_GAME, {})
                         }
                     });
-
                 }
-                sessionService.kickBySessionId(u.sessionId, null);
-
             }
-        });
-
-        self.app.rpc.manager.userRemote.onUserEnter(session, {
-            uid: uid,
-            serverId: msg.serverId,
-            sessionId: session.id,
-            player: player
-        }, function () {
-            next(null, {code: Code.OK, player: player});
-
+            //玩家不在线
+            else {
+                session.bind(uid);
+                session.set('serverId', msg.serverId);
+                session.on('closed', onUserDisconnect.bind(null, self.app));
+                session.pushAll();
+                self.app.rpc.manager.userRemote.onUserEnter(session, {
+                    uid: uid,
+                    serverId: msg.serverId,
+                    sessionId: session.id,
+                    player: player
+                }, function () {
+                    next(null, {code: Code.OK, player: player});
+                });
+            }
         });
     });
 

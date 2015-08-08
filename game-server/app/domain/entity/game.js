@@ -849,8 +849,7 @@ Game.prototype.fan = function (data, cb) {
                         };
                     }
 
-
-                    actor.gameStatus.rank = actorStatusCount.finished == 0 ? undefined : actorStatusCount.finished;
+                    actor.gameStatus.rank = actorStatusCount.finished;
 
                     //如果玩家出完手牌，向牌桌玩家发送消息
                     self.channel.pushMessage(consts.EVENT.FAN_FINISHED, {

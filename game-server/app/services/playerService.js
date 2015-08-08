@@ -37,7 +37,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     if (u) {
         u.serverId = serverId;
         u.sessionId = sessionId;
-        u.player = player;
+        u.player = playerObj;
     }
     else {
         pomelo.app.userCache.push({

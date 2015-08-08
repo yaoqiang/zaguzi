@@ -157,6 +157,7 @@ exp.balanceCommon = function (game, cb) {
             pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
                 _.map(users, function(u) {
                     if (_.isNull(u.sessionId)) {
+                        logger.debug('移除掉线玩家：%j', u.uid);
                         pomelo.app.rpc.manager.userRemote.onUserDisconnect(null, {uid: u.uid}, function () {
 
                         });

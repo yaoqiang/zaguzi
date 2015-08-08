@@ -28,7 +28,7 @@ GameStatus.prototype.reset = function()
     this.identity = 0;  //身份（0：未知、1：3、2：股子）
     this.actualIdentity = [];
     this.append = [];
-    this.rank = 0;
+    this.rank = undefined;
 }
 
 /**

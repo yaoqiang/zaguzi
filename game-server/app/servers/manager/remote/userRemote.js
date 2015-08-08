@@ -87,3 +87,8 @@ UserRemote.prototype.onUserLeave = function (uid, cb) {
     playerService.setGameReference(uid, null, null);
     cb();
 };
+
+UserRemote.prototype.setUserSessionId = function (uid, sessionId, cb) {
+    playerService.setUserSessionId(uid, sessionId);
+    cb();
+}

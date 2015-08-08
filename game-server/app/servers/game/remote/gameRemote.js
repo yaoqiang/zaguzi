@@ -22,7 +22,7 @@ var GameRemote = function(app) {
 GameRemote.prototype.join = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
-            logger.error('game||join||加入游戏失败, 玩家已下线||用户&ID: %j', user.uid);
+            logger.error('game||join||加入游戏失败, 玩家已下线||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
             return;
         }

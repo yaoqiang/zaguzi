@@ -90,8 +90,8 @@ module.exports = {
         },
         TIMER: {
             NOT_READY: 30,
-            TALK: 60,
-            FAN: 10
+            TALK: 30,
+            FAN: 30
         },
         PHASE: {
             STARTING: 0,
@@ -100,7 +100,7 @@ module.exports = {
             OVER: 3
         },
         TRUSTEESHIP: {
-            TIMEOUT_TIMES: 2
+            TIMEOUT_TIMES: 3
         },
         RESULT: {
             RED_WIN: 'RED_WIN',

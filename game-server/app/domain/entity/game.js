@@ -619,7 +619,7 @@ Game.prototype.fanTimeout = function (actor) {
     }
 
     act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
-    //如果玩家连续2次出牌超时，则托管
+    //如果玩家连续consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES次出牌超时，则托管
     if (act.gameStatus.fanTimeoutTimes == consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES) {
         act.gameStatus.isTrusteeship = true;
         //push 托管消息
@@ -870,25 +870,19 @@ Game.prototype.fan = function (data, cb) {
                         self.gameLogic.giveLogicFanRound = 0;
                         self.gameLogic.lastFanOverNextCountdownActor = actor;
 
-                        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推；针对接风环节
+
                         var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.lastFanOverNextCountdownActor);
                         while (true) {
                             if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                                //设置下家出牌者，如果下家已出完牌，找下下家，以此类推；针对接风环节
                                 self.gameLogic.lastFanOverNextCountdownActor = nextFanActor;
-                                break;
-                            }
-                            nextFanActor = self.gameLogic.getNextActor(nextFanActor);
-                        }
-
-                        //设置下家出牌者，如果下家已出完牌，找下下家，以此类推
-                        var nextFanActor = self.gameLogic.getNextActor(self.gameLogic.currentFanActor);
-                        while (true) {
-                            if (nextFanActor.gameStatus.getHoldingCards().length > 0) {
+                                ////设置下家出牌者，如果下家已出完牌，找下下家，以此类推
                                 self.gameLogic.currentFanActor = nextFanActor;
                                 break;
                             }
                             nextFanActor = self.gameLogic.getNextActor(nextFanActor);
                         }
+
                         self.fanCountdown()
 
                     });
@@ -961,6 +955,34 @@ Game.prototype.over = function () {
 
     });
 
+}
+
+/**
+ * 托管
+ * @param data
+ * @param cb
+ */
+Game.prototype.trusteeship = function (data, cb) {
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+    if (!actor || actor == undefined) {
+        logger.error('game||trusteeship||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
+        return;
+    }
+}
+
+/**
+ * 取消托管
+ * @param data
+ * @param cb
+ */
+Game.prototype.trusteeship = function (data, cb) {
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+    if (!actor || actor == undefined) {
+        logger.error('game||cancel_trusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
+        return;
+    }
 }
 
 /**

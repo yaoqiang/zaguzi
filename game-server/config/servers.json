@@ -35,8 +35,7 @@
             {"id": "game-server-1", "host": "127.0.0.1", "port": 3450, "args": " --debug=32314 "},
             {"id": "game-server-2", "host": "127.0.0.1", "port": 3451, "args": " --debug=32315 "},
             {"id": "game-server-3", "host": "127.0.0.1", "port": 3452, "args": " --debug=32316 "},
-            {"id": "game-server-4", "host": "127.0.0.1", "port": 3453, "args": " --debug=32317 "},
-            {"id": "game-server-5", "host": "127.0.0.1", "port": 3454, "args": " --debug=32318 "}
+            {"id": "game-server-4", "host": "127.0.0.1", "port": 3453, "args": " --debug=32317 "}
         ],
         "manager": [
             {"id": "manager-server-1", "host": "127.0.0.1", "port": 3550, "args": " --debug=32319 "}
@@ -46,8 +45,15 @@
         "connector": [
             {
                 "id": "connector-server-1",
-                "host": "127.0.0.1",
+                "host": "101.200.173.252",
                 "port": 3150,
+                "clientPort": 3010,
+                "frontend": true
+            },
+            {
+                "id": "connector-server-2",
+                "host": "101.200.173.252",
+                "port": 3151,
                 "clientPort": 3010,
                 "frontend": true
             }
@@ -55,32 +61,31 @@
         "chat": [
             {
                 "id": "chat-server-1",
-                "host": "127.0.0.1",
+                "host": "101.200.173.252",
                 "port": 3250,
-                "args": " --debug=32312 "
+                "args": ""
             }
         ],
         "gate": [
             {
                 "id": "gate-server-1",
-                "host": "127.0.0.1",
+                "host": "101.200.173.252",
                 "clientPort": 3014,
                 "frontend": true,
-                "args": " --debug=32311 "
+                "args": ""
             }
         ],
         "auth": [
-            {"id": "auth-server-1", "host": "127.0.0.1", "port": 3350}
+            {"id": "auth-server-1", "host": "101.200.173.252", "port": 3350}
         ],
         "game": [
-            {"id": "game-server-1", "host": "127.0.0.1", "port": 3450},
-            {"id": "game-server-2", "host": "127.0.0.1", "port": 3451},
-            {"id": "game-server-3", "host": "127.0.0.1", "port": 3452},
-            {"id": "game-server-4", "host": "127.0.0.1", "port": 3453},
-            {"id": "game-server-5", "host": "127.0.0.1", "port": 3454}
+            {"id": "game-server-1", "host": "101.200.173.252", "port": 3450},
+            {"id": "game-server-2", "host": "101.200.173.252", "port": 3451},
+            {"id": "game-server-3", "host": "101.200.173.252", "port": 3452},
+            {"id": "game-server-4", "host": "101.200.173.252", "port": 3453}
         ],
         "manager": [
-            {"id": "manager-server-1", "host": "127.0.0.1", "port": 3550}
+            {"id": "manager-server-1", "host": "101.200.173.252", "port": 3550}
         ]
     }
 }

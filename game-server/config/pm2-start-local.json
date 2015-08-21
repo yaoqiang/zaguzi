@@ -6,7 +6,7 @@
       "args": "['env=production', 'type=master', 'id=master-server-1', 'host=101.200.173.252', 'port=3005']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -15,7 +15,7 @@
       "args": "['env=production', 'id=connector-server-1', 'host=101.200.173.252', 'port=3150', 'clientPort=3010', 'frontend=true', 'serverType=connector']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -24,7 +24,7 @@
       "args": "['env=production', 'id=connector-server-2', 'host=101.200.173.252', 'port=3151', 'clientPort=3010', 'frontend=true', 'serverType=connector']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -33,7 +33,7 @@
       "args": "['env=production', 'id=chat-server-1', 'host=101.200.173.252', 'port=3250', 'serverType=connector']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -42,7 +42,7 @@
       "args": "['env=production', 'id=gate-server-1', 'host=101.200.173.252', 'clientPort=3014', 'frontend=true', 'serverType=gate']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -51,7 +51,7 @@
       "args": "['env=production', 'id=auth-server-1', 'host=101.200.173.252', 'port=3350', 'serverType=auth']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -60,7 +60,7 @@
       "args": "['env=production', 'id=game-server-1', 'host=101.200.173.252', 'port=3450', 'serverType=game']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -69,7 +69,7 @@
       "args": "['env=production', 'id=game-server-2', 'host=101.200.173.252', 'port=3451', 'serverType=game']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -78,7 +78,7 @@
       "args": "['env=production', 'id=game-server-3', 'host=101.200.173.252', 'port=3452', 'serverType=game']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -87,7 +87,7 @@
       "args": "['env=production', 'id=game-server-4', 'host=101.200.173.252', 'port=3453', 'serverType=game']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     },
     {
@@ -96,7 +96,7 @@
       "args": "['env=production', 'id=manager-server-4', 'host=101.200.173.252', 'port=3550', 'serverType=manager']",
       "watch": "false",
       "merge_logs": true,
-      "cwd": "/home/root/workspace/zgz/game-server",
+      "cwd": "/root/workspace/zgz/game-server",
       "exec_mode": "fork_mode"
     }
   ]

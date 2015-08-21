@@ -1,6 +1,15 @@
 {
   "apps": [
     {
+      "name": "zgz-gate-server-1",
+      "script": "app.js",
+      "args": "['env=production', 'id=gate-server-1', 'host=101.200.173.252', 'clientPort=3014', 'frontend=true', 'serverType=gate']",
+      "watch": "false",
+      "merge_logs": true,
+      "cwd": "/root/workspace/zgz/game-server",
+      "exec_mode": "fork_mode"
+    },
+    {
       "name": "zgz-master-server-1",
       "script": "app.js",
       "args": "['env=production', 'type=master', 'id=master-server-1', 'host=101.200.173.252', 'port=3005']",
@@ -31,15 +40,6 @@
       "name": "zgz-chat-server-1",
       "script": "app.js",
       "args": "['env=production', 'id=chat-server-1', 'host=101.200.173.252', 'port=3250', 'serverType=connector']",
-      "watch": "false",
-      "merge_logs": true,
-      "cwd": "/root/workspace/zgz/game-server",
-      "exec_mode": "fork_mode"
-    },
-    {
-      "name": "zgz-gate-server-1",
-      "script": "app.js",
-      "args": "['env=production', 'id=gate-server-1', 'host=101.200.173.252', 'clientPort=3014', 'frontend=true', 'serverType=gate']",
       "watch": "false",
       "merge_logs": true,
       "cwd": "/root/workspace/zgz/game-server",
@@ -91,9 +91,9 @@
       "exec_mode": "fork_mode"
     },
     {
-      "name": "zgz-manager-server-4",
+      "name": "zgz-manager-server-1",
       "script": "app.js",
-      "args": "['env=production', 'id=manager-server-4', 'host=101.200.173.252', 'port=3550', 'serverType=manager']",
+      "args": "['env=production', 'id=manager-server-1', 'host=101.200.173.252', 'port=3550', 'serverType=manager']",
       "watch": "false",
       "merge_logs": true,
       "cwd": "/root/workspace/zgz/game-server",

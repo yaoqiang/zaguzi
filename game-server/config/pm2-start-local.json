@@ -21,7 +21,7 @@
     {
       "name": "zgz-connector-server-2",
       "script": "app.js",
-      "args": "['env=production', 'id=connector-server-2', 'host=101.200.173.252', 'port=3151', 'clientPort=3010', 'frontend=true', 'serverType=connector']",
+      "args": "['env=production', 'id=connector-server-2', 'host=101.200.173.252', 'port=3151', 'clientPort=3011', 'frontend=true', 'serverType=connector']",
       "watch": "false",
       "merge_logs": true,
       "cwd": "/root/workspace/zgz/game-server",

@@ -28,6 +28,8 @@ handler.queryEntry = function(msg, session, next) {
     }
     // get all connectors
     var connectors = this.app.getServersByType('connector');
+    console.log('----- connectors ---')
+    console.log(connectors)
     if(!connectors || connectors.length === 0) {
         next(null, {
             code: 500
@@ -36,6 +38,8 @@ handler.queryEntry = function(msg, session, next) {
     }
     // select connector
     var res = dispatcher.dispatch(uid, connectors);
+    console.log('----- res ---')
+    console.log(res)
     next(null, {
         code: 200,
         host: res.host,

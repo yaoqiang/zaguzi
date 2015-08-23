@@ -39,7 +39,7 @@
     {
       "name": "zgz-chat-server-1",
       "script": "app.js",
-      "args": "['env=production', 'id=chat-server-1', 'host=101.200.173.252', 'port=3250', 'serverType=connector']",
+      "args": "['env=production', 'id=chat-server-1', 'host=101.200.173.252', 'port=3250', 'serverType=chat']",
       "watch": "false",
       "merge_logs": true,
       "cwd": "/root/workspace/zgz/game-server",

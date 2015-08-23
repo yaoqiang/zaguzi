@@ -83,6 +83,10 @@ app.configure('production|development', 'auth|chat|connector|game|manager|master
     app.set('dbclient', dbclient);
 
     app.use(sync, {sync: {path:__dirname + '/app/dao/mapping', dbclient: dbclient}});
+
+    app.set('errorHandler', function(err, msg, resp, session, cb) {
+        console.log('errorHandler => ', err, msg);
+    });
 })
 
 // start app

@@ -40,6 +40,10 @@ module.exports = {
         },
         SETTLE: {
             ERR: 1
+        },
+        TRUSTEESHIP: {
+            NOT_IN_GAME: 1,
+            ERR: 2
         }
     },
     MESSAGE: {

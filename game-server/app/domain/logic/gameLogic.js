@@ -9,6 +9,7 @@ var GameLogic = function (game) {
     this.game = game; //game
     this.cards = [];    //牌
 
+    //玩家真实身份
     this.red = [];  //3家 {uid:xx, actorNr:xx, isFinished: true/false}
     this.black = [];    //股家 {uid:xx, actorNr:xx, isFinished: true/false}
 
@@ -25,7 +26,7 @@ var GameLogic = function (game) {
 
     this.hasTalk = false;
 
-    this.currentTalker = null;    //第一个说话的
+    this.currentTalker = null;    //当前说话的
     this.firstFanActor = null;    //第一个出牌的
     this.talkNumber = 0;
     this.talkTimeoutNumber = 0; //说话超时次数

@@ -99,6 +99,14 @@ exp.fan = function (data, cb) {
     game.fan(data, cb);
 }
 
+exp.trusteeship = function (data, cb) {
+    this.getGameById(data.gameId).trusteeship(data, cb)
+}
+
+exp.cancelTrusteeship = function (data, cb) {
+    this.getGameById(data.gameId).cancelTrusteeship(data, cb)
+}
+
 exp.kick = function()
 {
 

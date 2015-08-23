@@ -613,7 +613,7 @@ Game.prototype.fanTimeout = function (actor) {
     else {
 
     }
-    //如果玩家已托管 - 智能出牌(后期完善)
+    //如果玩家已托管 - 智能出牌(后期完善) TODO
     if (act.gameStatus.isTrusteeship) {
         //
     }
@@ -809,6 +809,7 @@ Game.prototype.fan = function (data, cb) {
                             }
                         }
                     }
+                    //TODO: 如果玩家没有亮3，此时出红3，则需要在头像旁显示花色标识
                 }
                 else {
                     //如果6,7人局里，当前出牌是单牌并且是♣️3，如果玩家手牌中有红3并且没有亮，则不能骗人，出黑3时需要通知牌局其他玩家身份
@@ -821,6 +822,7 @@ Game.prototype.fan = function (data, cb) {
                             }
                         }
                     }
+                    //TODO: 如果玩家没有亮3，此时出红3，则需要在头像旁显示花色标识
                 }
 
                 //判断是否已结束
@@ -966,9 +968,23 @@ Game.prototype.trusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
         logger.error('game||trusteeship||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
-        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
+    //设置托管状态为true
+    actor.gameStatus.trusteeship = true;
+    //push 托管消息
+    this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
+    if (this.currentFanActor.uid != actor.uid) {
+        cb({code: Code.OK});
+        return;
+    }
+
+    //设置玩家超时出牌N次, 为超时出牌逻辑代码通用
+    actor.gameStatus.fanTimeoutTimes = 99;
+    this.fanTimeout(actor);
+    cb({code: Code.OK});
+
 }
 
 /**
@@ -976,13 +992,19 @@ Game.prototype.trusteeship = function (data, cb) {
  * @param data
  * @param cb
  */
-Game.prototype.trusteeship = function (data, cb) {
+Game.prototype.cancelTrusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
         logger.error('game||cancel_trusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
-        cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
+    //设置托管状态为true
+    actor.gameStatus.trusteeship = false;
+    actor.gameStatus.fanTimeoutTimes = 0;
+    //push 托管消息
+    this.channel.pushMessage(consts.EVENT.CANCEL_TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
+    cb({code: Code.OK});
 }
 
 /**

@@ -83,11 +83,35 @@ handler.fan = function (msg, session, next) {
     })
 };
 
+handler.trusteeship = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.trusteeship(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK})
+    })
+};
+
+handler.cancelTrusteeship = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.cancelTrusteeship(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK})
+    })
+};
+
 handler.leave = function (msg, session, next) {
     var self = this;
     msg.uid = session.uid;
 
-    // join game
+    // leave game
     self.app.rpc.game.gameRemote.leave(session, msg, function (data) {
         if (data.code === Code.FAIL)
         {

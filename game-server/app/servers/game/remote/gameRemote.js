@@ -86,6 +86,11 @@ GameRemote.prototype.ready = function (data, cb) {
     });
 }
 
+/**
+ * 说话
+ * @param data
+ * @param cb
+ */
 GameRemote.prototype.talk = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
@@ -102,6 +107,11 @@ GameRemote.prototype.talk = function (data, cb) {
     });
 }
 
+/**
+ * 出牌
+ * @param data
+ * @param cb
+ */
 GameRemote.prototype.fan = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
@@ -115,6 +125,48 @@ GameRemote.prototype.fan = function (data, cb) {
             return;
         }
         gameService.fan(data, cb);
+    });
+}
+
+/**
+ * 托管
+ * @param data
+ * @param cb
+ */
+GameRemote.prototype.trusteeship = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        if (user == undefined || user == null) {
+            logger.error('game||trusteeship||托管失败, 玩家已下线||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ERR});
+            return;
+        }
+        if (user.gameId == null) {
+            logger.error('game||trusteeship||托管失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME});
+            return;
+        }
+        gameService.trusteeship(data, cb);
+    });
+}
+
+/**
+ * 取消托管
+ * @param data
+ * @param cb
+ */
+GameRemote.prototype.cancelTrusteeship = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        if (user == undefined || user == null) {
+            logger.error('game||trusteeship||取消托管失败, 玩家已下线||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME});
+            return;
+        }
+        if (user.gameId == null) {
+            logger.error('game||trusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ERR});
+            return;
+        }
+        gameService.cancelTrusteeship(data, cb);
     });
 }
 

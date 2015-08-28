@@ -54,6 +54,12 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
 
 exp.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
+
+    if (_.isUndefined(u)) {
+        logger.warn('玩家下线处理时，玩家已离线，玩家ID：%j', data.uid);
+        cb();
+        return;
+    }
     if (u.gameId) {
         //rpc invoke
         var getStatusParams = {

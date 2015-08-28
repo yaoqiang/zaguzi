@@ -16,7 +16,7 @@ exp.balance = function (game, cb) {
 exp.balanceCommon = function (game, cb) {
     //结算结构
     //{game: {result: consts.GAME.RESULT.x, share: x},
-    // details: [{uid:x, actorNr:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
+    // details: [{uid:x, actorNr:x, actorAvatar:x, actorName:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
 
     var details = [];
 

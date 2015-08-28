@@ -1052,9 +1052,7 @@ Game.prototype.leave = function (data, cb) {
     this.removeActorFromChannel({uid: actor.uid, serverId: actor.sid});
 
     this.actors = _.without(this.actors, actor);
-    for (var i in actor) {
-        delete actor[i];
-    }
+    actor = null;
 
     logger.debug('game||leave||离开游戏成功||用户&ID: %j', data.uid);
 

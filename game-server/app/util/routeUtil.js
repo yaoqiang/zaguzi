@@ -29,5 +29,5 @@ exp.game = function(session, msg, app, cb) {
 
     var serverId = gameUtil.getRoomById(roomId).serverId;
 
-    cb(null, serverId);
+    cb(null, serverId  || gameServers[0].id);
 };

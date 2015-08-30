@@ -199,8 +199,8 @@ Game.prototype.start = function () {
             if (_.contains(cards, 116) || _.contains(cards, 216)) {
                 self.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 //设置玩家真实身份
-                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
-                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
             }
             else {
                 self.gameLogic.black.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
@@ -211,8 +211,8 @@ Game.prototype.start = function () {
             if (_.contains(cards, 116) || _.contains(cards, 216) || _.contains(cards, 316)) {
                 self.gameLogic.red.push({uid: v.uid, actorNr: v.actorNr, isFinished: false});
                 //设置玩家真实身份
-                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
-                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+                if (_.contains(cards, 116)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Diamond3)
+                if (_.contains(cards, 216)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Heart3)
                 if (_.contains(cards, 316)) v.gameStatus.actualIdentity.push(consts.GAME.ACTUAL_IDENTITY.Spade3)
             }
             else {
@@ -274,25 +274,16 @@ Game.prototype.talkCountdown = function () {
 
 /**
  * 如果玩家说话超时，告知所有人该玩家超时没说话
- * @param receiver
+ * @param actor
  */
 Game.prototype.talkTimeout = function (actor) {
-    this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN_TIMEOUT, gameResponse.generateActorPoorResponse(actor), null, null);
-    var act = _.findWhere(this.actors, {uid: actor.uid});
-    act.gameStatus.identity = consts.GAME.IDENTITY.UNKNOW;
-    this.gameLogic.talkNumber += 1;
-    this.gameLogic.talkTimeoutNumber += 1;
 
-    if (this.gameLogic.talkTimeoutNumber == this.maxActor) {
-        this.dissolve()
-        return;
-    }
+    //消息貌似没用
+    //this.channel.pushMessage(consts.EVENT.TALK_COUNTDOWN_TIMEOUT, gameResponse.generateActorPoorResponse(actor), null, null);
 
-    if (this.gameLogic.talkNumber == this.maxActor) {
-        this.afterTalk()
-    } else {
-        this.talkCountdown()
-    }
+    this.talk({uid: actor.uid, append: [], goal: consts.GAME.IDENTITY.UNKNOW}, function () {
+        //
+    });
 
 }
 
@@ -493,19 +484,19 @@ Game.prototype.talk = function (data, cb) {
 
     cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
 
-    //push message
-    var otherActors = _.filter(this.actors, function (act) {
-        return act.uid != data.uid;
-    });
-    var receiver = this.getReceiver(otherActors);
-    this.channelService.pushMessageByUids(consts.EVENT.TALK, {
+    this.channel.pushMessage(consts.EVENT.TALK, {
         uid: data.uid,
         actorNr: actor.actorNr,
         goal: data.goal,
         append: data.append,
         share: this.gameLogic.share
-    }, receiver, function () {
+    }, null, function () {
+
         if (self.gameLogic.talkNumber == self.maxActor) {
+            if (self.gameLogic.share == 0) {
+                self.dissolve();
+                return;
+            }
             self.afterTalk();
         }
         else {
@@ -661,13 +652,6 @@ Game.prototype.fan = function (data, cb) {
 
     var isTimeout = data.isTimeout;
 
-    //
-    //push message
-    var otherActors = _.filter(this.actors, function (act) {
-        return act.uid != data.uid;
-    });
-    var receiver = this.getReceiver(otherActors);
-
     //玩家不出（传空数组）
     if (cards.length == 0) {
         if (!isTimeout) actor.gameStatus.fanTimeoutTimes = 0;
@@ -809,7 +793,6 @@ Game.prototype.fan = function (data, cb) {
                             }
                         }
                     }
-                    //TODO: 如果玩家没有亮3，此时出红3，则需要在头像旁显示花色标识
                 }
                 else {
                     //如果6,7人局里，当前出牌是单牌并且是♣️3，如果玩家手牌中有红3并且没有亮，则不能骗人，出黑3时需要通知牌局其他玩家身份
@@ -822,7 +805,6 @@ Game.prototype.fan = function (data, cb) {
                             }
                         }
                     }
-                    //TODO: 如果玩家没有亮3，此时出红3，则需要在头像旁显示花色标识
                 }
 
                 //判断是否已结束
@@ -971,17 +953,24 @@ Game.prototype.trusteeship = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
+    if (actor.gameStatus.trusteeship) {
+        logger.error('game||trusteeship||玩家已托管||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_TRUSTEESHIP})
+        return;
+    }
     //设置托管状态为true
     actor.gameStatus.trusteeship = true;
-    //push 托管消息
-    this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
+
+    //如果当前不是托管玩家出牌，则直接发托管消息，返回即可
     if (this.currentFanActor.uid != actor.uid) {
+        //push 托管消息
+        this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
         cb({code: Code.OK});
         return;
     }
 
     //设置玩家超时出牌N次, 为超时出牌逻辑代码通用
-    actor.gameStatus.fanTimeoutTimes = 99;
+    actor.gameStatus.fanTimeoutTimes = consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES - 1;
     this.fanTimeout(actor);
     cb({code: Code.OK});
 
@@ -999,7 +988,12 @@ Game.prototype.cancelTrusteeship = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
-    //设置托管状态为true
+    if (!actor.gameStatus.trusteeship) {
+        logger.error('game||cancel_trusteeship||玩家没有托管||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_CANCELED_TRUSTEESHIP})
+        return;
+    }
+    //设置托管状态为false
     actor.gameStatus.trusteeship = false;
     actor.gameStatus.fanTimeoutTimes = 0;
     //push 托管消息

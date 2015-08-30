@@ -43,7 +43,9 @@ module.exports = {
         },
         TRUSTEESHIP: {
             NOT_IN_GAME: 1,
-            ERR: 2
+            ALREADY_TRUSTEESHIP: 2,
+            ALREADY_CANCELED_TRUSTEESHIP: 3,
+            ERR: 4
         }
     },
     MESSAGE: {

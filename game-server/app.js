@@ -44,7 +44,7 @@ app.configure('production|development', 'auth', function(){
 // app configure
 app.configure('production|development', function() {
     // route configures
-    app.route('chat', routeUtil.chat);
+    //app.route('chat', routeUtil.chat);
 
     app.before(pomelo.filters.toobusy());
     app.enable('systemMonitor');

@@ -28,6 +28,24 @@
       "exec_mode": "fork_mode"
     },
     {
+      "name": "zgz-connector-server-2",
+      "script": "app.js",
+      "args": "['env=production', 'id=connector-server-2', 'host=101.200.173.252', 'port=3151', 'clientPort=3011', 'frontend=true', 'serverType=connector']",
+      "watch": "false",
+      "merge_logs": true,
+      "cwd": "/root/workspace/zgz/game-server",
+      "exec_mode": "fork_mode"
+    },
+    {
+      "name": "zgz-chat-server-1",
+      "script": "app.js",
+      "args": "['env=production', 'id=chat-server-1', 'host=101.200.173.252', 'port=3250', 'serverType=chat']",
+      "watch": "false",
+      "merge_logs": true,
+      "cwd": "/root/workspace/zgz/game-server",
+      "exec_mode": "fork_mode"
+    },
+    {
       "name": "zgz-auth-server-1",
       "script": "app.js",
       "args": "['env=production', 'id=auth-server-1', 'host=101.200.173.252', 'port=3350', 'serverType=auth']",
@@ -58,6 +76,15 @@
       "name": "zgz-game-server-3",
       "script": "app.js",
       "args": "['env=production', 'id=game-server-3', 'host=101.200.173.252', 'port=3452', 'serverType=game']",
+      "watch": "false",
+      "merge_logs": true,
+      "cwd": "/root/workspace/zgz/game-server",
+      "exec_mode": "fork_mode"
+    },
+    {
+      "name": "zgz-game-server-4",
+      "script": "app.js",
+      "args": "['env=production', 'id=game-server-4', 'host=101.200.173.252', 'port=3453', 'serverType=game']",
       "watch": "false",
       "merge_logs": true,
       "cwd": "/root/workspace/zgz/game-server",

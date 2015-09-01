@@ -45,7 +45,8 @@ module.exports = {
             NOT_IN_GAME: 1,
             ALREADY_TRUSTEESHIP: 2,
             ALREADY_CANCELED_TRUSTEESHIP: 3,
-            ERR: 4
+            NOT_GAMING: 4,
+            ERR: 5
         }
     },
     MESSAGE: {

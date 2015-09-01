@@ -56,6 +56,8 @@ exp.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
 
     if (_.isUndefined(u)) {
+        logger.warn('uid=>%j', data.uid)
+        console.log('pomelo.app.userCache =>', _.pluck(pomelo.app.userCache, 'uid'));
         logger.warn('玩家下线处理时，玩家已离线，玩家ID：%j', data.uid);
         cb();
         return;

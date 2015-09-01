@@ -953,13 +953,19 @@ Game.prototype.trusteeship = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
-    if (actor.gameStatus.trusteeship) {
+    if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
+        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
+        return;
+    }
+    if (actor.gameStatus.isTrusteeship) {
         logger.error('game||trusteeship||玩家已托管||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_TRUSTEESHIP})
         return;
     }
+
     //设置托管状态为true
-    actor.gameStatus.trusteeship = true;
+    actor.gameStatus.isTrusteeship = true;
 
     //如果当前不是托管玩家出牌，则直接发托管消息，返回即可
     if (this.currentFanActor.uid != actor.uid) {
@@ -984,17 +990,22 @@ Game.prototype.trusteeship = function (data, cb) {
 Game.prototype.cancelTrusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||cancel_trusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        logger.error('game||cancelTrusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
-    if (!actor.gameStatus.trusteeship) {
-        logger.error('game||cancel_trusteeship||玩家没有托管||用户&ID: %j', data.uid);
+    if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
+        logger.error('game||cancelTrusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
+        return;
+    }
+    if (!actor.gameStatus.isTrusteeship) {
+        logger.error('game||cancelTrusteeship||玩家没有托管||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_CANCELED_TRUSTEESHIP})
         return;
     }
     //设置托管状态为false
-    actor.gameStatus.trusteeship = false;
+    actor.gameStatus.isTrusteeship = false;
     actor.gameStatus.fanTimeoutTimes = 0;
     //push 托管消息
     this.channel.pushMessage(consts.EVENT.CANCEL_TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);

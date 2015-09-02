@@ -14,14 +14,15 @@ app.configure('production|development', 'connector', function(){
   app.set('connectorConfig',
     {
       connector : pomelo.connectors.hybridconnector,
-      //websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
-        transports: {
-            transports: ['websocket'],
-            'close timeout': 60,
-            'heartbeat interval': 10,
-            'heartbeat timeout': 30
-        },
+      ////websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
+      //  transports: {
+      //      transports: ['websocket'],
+      //      'close timeout': 60,
+      //      'heartbeat interval': 10,
+      //      'heartbeat timeout': 30
+      //  },
       heartbeat : 30,
+      disconnectOnTimeout: true,
       useDict : true,
       useProtobuf : true,
       handshake : function(msg, cb){
@@ -82,7 +83,7 @@ app.configure('production|development', 'game', function(){
 
 
 // configure database
-app.configure('production|development', 'auth|chat|connector|game|manager|master', function () {
+app.configure('production|development', 'auth|connector|game|manager|master', function () {
     app.loadConfig('mysql', app.getBase() + '/../shared/config/mysql.json');
     var dbclient = require('./app/dao/mysql/mysql').init(app);
     app.set('dbclient', dbclient);

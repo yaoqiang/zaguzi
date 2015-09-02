@@ -15,7 +15,12 @@ app.configure('production|development', 'connector', function(){
     {
       connector : pomelo.connectors.hybridconnector,
       //websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
-      transports : ['websocket'],
+        transports: {
+            transports: ['websocket'],
+            'close timeout': 60,
+            'heartbeat interval': 10,
+            'heartbeat timeout': 30
+        },
       heartbeat : 30,
       useDict : true,
       useProtobuf : true,

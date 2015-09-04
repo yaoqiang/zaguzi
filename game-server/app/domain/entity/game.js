@@ -973,7 +973,9 @@ Game.prototype.trusteeship = function (data, cb) {
     actor.gameStatus.isTrusteeship = true;
 
     //如果当前不是托管玩家出牌，则直接发托管消息，返回即可
-    if (this.currentFanActor.uid != actor.uid) {
+    console.log('this.gameLogic.currentFanActor.uid = > ', this.gameLogic.currentFanActor.uid)
+    console.log('actor.uid = > ', actor.uid)
+    if (this.gameLogic.currentFanActor.uid != actor.uid) {
         //push 托管消息
         this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
         cb({code: Code.OK});

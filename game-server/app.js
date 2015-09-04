@@ -21,7 +21,7 @@ app.configure('production|development', 'connector', function(){
       //      'heartbeat interval': 10,
       //      'heartbeat timeout': 30
       //  },
-      heartbeat : 30,
+      heartbeat : 120,
       disconnectOnTimeout: true,
       useDict : true,
       useProtobuf : true,

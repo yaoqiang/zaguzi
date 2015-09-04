@@ -953,6 +953,11 @@ Game.prototype.trusteeship = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
+    if (this.gameLogic == null) {
+        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
+        return;
+    }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
         logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
@@ -994,8 +999,13 @@ Game.prototype.cancelTrusteeship = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
+    if (this.gameLogic == null) {
+        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
+        return;
+    }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
-        logger.error('game||cancelTrusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }

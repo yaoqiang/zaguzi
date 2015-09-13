@@ -25,7 +25,12 @@ module.exports = {
             LIANG3_WITHOUT3: 3001, //没3 亮3（非法操作）
             GUZI_WITH3: 3002,   //有3 扎股子,
             NOT_IN_GAME: 3003,
-            ERR: 3004
+            PARAMETER_ERR: 3004,    //参数错误
+            GUZI_APPEND_NOT_3: 3005,    //股子附加牌不是3
+            GUZI_APPEND_NOT_HOLDING_CARD: 3006, //股子附加3，但是手牌里没有
+            LIANG3_APPEND_NOT_3: 3007,  //亮3附加牌不是3
+            LIANG3_APPEND_NOT_HOLDING_CARD: 3008,   //亮3附加3，但是手牌里没有
+            ERR: 3009   //未知错误
         },
         LEAVE: {
             NOT_IN_GAME: 4001,

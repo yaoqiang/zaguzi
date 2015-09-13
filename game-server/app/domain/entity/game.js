@@ -318,7 +318,7 @@ Game.prototype.talk = function (data, cb) {
     }
 
     if (!_.isArray(data.append) || !!data.append == false) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.PARAMETER_ERR, goal: data.goal, append: data.append})
         logger.error('game||talk||说话失败, 参数错误||用户&ID: %j', data.uid);
         return;
     }
@@ -341,11 +341,11 @@ Game.prototype.talk = function (data, cb) {
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     for (var i in data.append) {
                         if (!_.contains([316, 416], data.append[i])) {
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_HOLDING_CARD, goal: data.goal, append: data.append})
                             return;
                         }
                     }
@@ -362,11 +362,11 @@ Game.prototype.talk = function (data, cb) {
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     for (var i in data.append) {
                         if (!_.contains([416], data.append[i])) {
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_HOLDING_CARD, goal: data.goal, append: data.append})
                             return;
                         }
                     }
@@ -399,18 +399,18 @@ Game.prototype.talk = function (data, cb) {
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     if (!_.contains(data.append, 116) && !_.contains(data.append, 216)) {
                         logger.debug('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                         return;
                     }
                     for (var i in data.append) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
                             logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
                             logger.debug('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_HOLDING_CARD, goal: data.goal, append: data.append})
                             return;
                         }
                     }
@@ -435,18 +435,18 @@ Game.prototype.talk = function (data, cb) {
                 if (data.append && !!data.append && _.size(data.append) > 0) {
                     if (!_.contains(data.append, 116) && !_.contains(data.append, 216) && !_.contains(data.append, 316)) {
                         logger.debug('game||talk||玩家[%j]亮3附加牌里没有红3，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                         return;
                     }
                     for (var i in data.append) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
                             logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
                         }
                         if (!_.contains(cards, data.append[i])) {
                             logger.debug('game||talk||玩家[%j]没3亮3，非法操作 ||用户&ID: %j', data.uid, data.uid);
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ERR, goal: data.goal, append: data.append})
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_HOLDING_CARD, goal: data.goal, append: data.append})
                             return;
                         }
                     }

@@ -128,19 +128,10 @@ Game.prototype.ready = function (data, cb) {
 
     }
 
-    var otherActors = _.filter(this.actors, function (act) {
-        return act.uid != data.uid;
-    });
-
-    //push其他玩家，除自己外
-    if (otherActors.length > 0) {
-        var receiver = this.getReceiver(otherActors);
-        this.channelService.pushMessageByUids(consts.EVENT.READY, {
-            uid: data.uid,
-            actorNr: actor.actorNr
-        }, receiver, null)
-    }
-
+    this.channel.pushMessage(consts.EVENT.READY, {
+        uid: data.uid,
+        actorNr: actor.actorNr
+    }, null, null)
 
     //向准备玩家发送准备成功响应
     cb({code: Code.OK});

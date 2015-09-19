@@ -1,6 +1,8 @@
 var pomelo = require('pomelo');
 var routeUtil = require('./app/util/routeUtil');
 var sync = require('pomelo-sync-plugin');
+var logger = require('pomelo-logger');
+var log4jsConf = require('./config/log4js.json')
 
 
 /**
@@ -66,6 +68,9 @@ app.configure('production|development', function() {
 
     // filter configures
     app.filter(pomelo.filters.timeout());
+
+    //log conf
+    logger.configure(log4jsConf)
 });
 
 

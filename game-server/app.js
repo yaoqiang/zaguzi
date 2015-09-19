@@ -70,7 +70,6 @@ app.configure('production|development', function() {
     app.filter(pomelo.filters.timeout());
 
     //log conf
-    logger.configure(log4jsConf)
 });
 
 

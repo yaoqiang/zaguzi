@@ -1,4 +1,5 @@
-var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
 var pomelo = require('pomelo');
 
 var async = require('async');

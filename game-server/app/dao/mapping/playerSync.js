@@ -3,7 +3,6 @@ module.exports = {
         var sql = 'update player set gold = ?, winNr = ?, loseNr = ?, tieNr = ?, rank = ?, exp = ?, fragment = ? where userId = ?';
 
         var args = [val.gold, val.winNr, val.loseNr, val.tieNr, val.rank, val.exp, val.fragment, val.id];
-        console.log('args = ', args);
         dbclient.query(sql, args, function(err, res) {
             if (err) {
                 console.error(err)

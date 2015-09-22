@@ -1,8 +1,6 @@
 {
   "appenders": [
-    {
-      "type": "console"
-    },
+
     {
       "type": "file",
       "filename": "${opts:base}/logs/con-log-${opts:serverId}.log",
@@ -93,12 +91,43 @@
         }
       ,"backups": 5,
       "category":"pomelo-rpc"
+    },
+    {
+      "type": "file",
+      "filename": "./logs/system.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"system"
+    },
+    {
+      "type": "file",
+      "filename": "./logs/game.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"game"
+    },
+    {
+      "type": "file",
+      "filename": "./logs/user.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"user"
     }
   ],
 
   "levels": {
     "rpc-log" : "ERROR",
-    "forward-log": "ERROR"
+    "forward-log": "ERROR",
+    "game": "DEBUG"
   },
 
   "replaceConsole": true,

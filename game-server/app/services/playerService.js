@@ -3,7 +3,7 @@ var _ = require('underscore');
 var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
+var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
 var Code = require('../../../shared/code');
 var gameUtil = require('../util/gameUtil');
 var eventManager = require('../domain/event/eventManager');

@@ -1,5 +1,5 @@
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.BALANCE, __filename);
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 var async = require('async');
 

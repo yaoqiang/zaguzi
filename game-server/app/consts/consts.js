@@ -166,9 +166,10 @@ module.exports = {
     },
 
     LOG: {
-        GAME: 'game.log',
-        USER: 'user.log',
-        GOLD: 'gold.log',
-        BALANCE: 'balance.log'
+        SYSTEM: 'system',
+        GAME: 'game',
+        USER: 'user',
+        GOLD: 'gold',
+        BALANCE: 'balance'
     }
 }

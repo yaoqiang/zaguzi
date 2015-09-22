@@ -6,8 +6,8 @@ var utils = require('../../../util/utils');
 var gameUtil = require('../../../util/gameUtil');
 var rooms = require('../../../../config/data/room');
 var messageService = require('../../../services/messageService');
-var logger = require('pomelo-logger').getLogger(__filename);
 var consts = require('../../../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 
 var schedule = require('pomelo-scheduler');

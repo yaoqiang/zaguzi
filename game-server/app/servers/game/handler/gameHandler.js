@@ -2,8 +2,8 @@ var Code = require('../../../../../shared/code');
 var async = require('async');
 var utils = require('../../../util/utils');
 var rooms = require('../../../../config/data/room');
-
-var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../../../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var _ = require('underscore');
 var pomelo = require('pomelo');
 

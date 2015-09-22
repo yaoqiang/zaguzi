@@ -3,7 +3,8 @@
  * Copyright(c) 2012 fantasyni <fantasyni@163.com>
  * MIT Licensed
  */
-var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../consts/consts');
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var utils = require('../util/utils');
 
 module.exports = function(opts) {

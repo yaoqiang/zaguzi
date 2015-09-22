@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME, __filename);
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 
 
 var GameLogic = function (game) {

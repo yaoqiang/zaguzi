@@ -10,10 +10,6 @@ var Filter = function() {
 };
 
 Filter.prototype.before = function (msg, session, next) {
-    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, msg.uid, function (err, user) {
-        msg.player = user.player;
 
-
-    }
     next();
 };

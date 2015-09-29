@@ -1,29 +1,37 @@
-大同扎股子-基于Pomelo
-===
+# 大同扎股子 -- 基于[Pomelo](https://github.com/NetEase/pomelo/)
 
 
-#web-server is the http service for game login or ect..
+[TOC]
 
-#game-server is the socket api for game logic..
+## Directory -
 
-===
-Install
-===
-#first install nodejs..
-#npm install -g pomelo
+### web-server
+web-server directory is the http service for game login or ect..
 
-#install mysql and execute database script on game-server/config/schema/zgz.sql, then starting mysql server
+### game-server
+game-server directory is the TCP(based on websocket, socket.io, etc) api for game logic..
 
-#resetting the mysql host,port on shared/config/mysql.json 
+### shared
+shared directory is the public conf, util, etc.
 
+## Install
 
-#cd game-server && run npm install
-#cd web-server && run npm install
+### one by one
+- first install nodejs..(suggest use [nvm](https://github.com/creationix/nvm))
+- install pomelo, npm install -g pomelo
+- install mysql and execute database script on $PROJECT_HOME/game-server/config/schema/zgz.sql, then starting mysql server
+> or you can use pm2 to deploy
 
-===
-Deployment
+## Configuration
 
-===
-cd web-server && node app.js
-open a new terminal 
-cd game-server && pomelo start
+- reset the host and port in $PROJECT_HOME/game-server/config/servers.json, or you can use pm2-*.json to deployment
+- reset the mysql host and port on $PROJECT_HOME/shared/config/mysql.json
+
+## Deployment & Development|Test|Production
+
+**start game-server**
+cd game-server ; npm install ; pomelo start
+**start web-server**
+cd web-server ; npm install ; node app.js
+
+> Note: there is many way to start app, you can choose pm2 or dev with WebStorm

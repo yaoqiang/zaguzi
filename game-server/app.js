@@ -23,7 +23,7 @@ app.configure('production|development', 'connector', function(){
       //      'heartbeat interval': 10,
       //      'heartbeat timeout': 30
       //  },
-      heartbeat : 120,
+      heartbeat : 300,
       disconnectOnTimeout: true,
       useDict : true,
       useProtobuf : true,
@@ -70,7 +70,7 @@ app.configure('production|development', function() {
     app.filter(pomelo.filters.timeout());
 
     //log conf
-    logger.configure(log4jsConf);
+    //logger.configure(log4jsConf);
 
 });
 

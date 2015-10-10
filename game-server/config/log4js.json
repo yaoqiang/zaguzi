@@ -1,6 +1,8 @@
 {
   "appenders": [
-
+    {
+      "type": "console"
+    },
     {
       "type": "file",
       "filename": "${opts:base}/logs/con-log-${opts:serverId}.log",
@@ -127,10 +129,10 @@
   "levels": {
     "rpc-log" : "ERROR",
     "forward-log": "ERROR",
+    "pomelo": "DEBUG",
     "game": "DEBUG"
   },
 
-  "replaceConsole": true,
+  "replaceConsole": true
 
-  "lineDebug": false
 }

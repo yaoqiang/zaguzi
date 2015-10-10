@@ -124,10 +124,27 @@ handler.enter = function (msg, session, next) {
                             });
 
                             logger.debug("向游戏服务器查询游戏信息并返回-掉线状态");
-                            messageService.pushMessageToPlayer({
-                                uid: uid,
-                                sid: msg.serverId
-                            }, consts.EVENT.BACK_TO_GAME, {})
+
+                            //查询牌局状态
+                            //rpc invoke
+                            var getStatusDetailsParams = {
+                                namespace: 'user',
+                                service: 'gameRemote',
+                                method: 'getGameStatusDetailsById',
+                                args: [{
+                                    uid: uid,
+                                    gameId: u.gameId
+                                }]
+                            };
+
+                            pomelo.app.rpcInvoke(room.serverId, getStatusDetailsParams, function (gameDetails) {
+                                messageService.pushMessageToPlayer({
+                                    uid: uid,
+                                    sid: msg.serverId
+                                }, consts.EVENT.BACK_TO_GAME, gameDetails)
+                            });
+
+
                         }
                     });
                 }

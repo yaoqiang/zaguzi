@@ -179,3 +179,12 @@ GameRemote.prototype.getGameStatusById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
     cb({gameLogic: game.gameLogic});
 }
+
+/**
+ * 通过游戏ID获得当前游戏状态明细信息
+ * @param data
+ * @param cb
+ */
+GameRemote.prototype.getGameStatusDetailsById = function (data, cb) {
+    gameService.getGameStatusDetailsById(data, cb);
+}

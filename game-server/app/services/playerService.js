@@ -243,10 +243,11 @@ exp.getReceiverByUid = function (uid, cb) {
 
 }
 
-exp.setGameReference = function (uid, roomId, gameId) {
+exp.setGameReference = function (uid, roomId, gameId, cb) {
     var user = _.findWhere(pomelo.app.userCache, {uid: uid});
     user.roomId = roomId;
     user.gameId = gameId;
+    cb();
 };
 
 exp.setUserSessionId = function (uid, sessionId) {

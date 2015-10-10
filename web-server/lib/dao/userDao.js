@@ -32,7 +32,7 @@ userDao.getUserByName = function (username, cb){
  * @param {function} cb Call back function.
  */
 userDao.createUser = function (username, password, from, cb){
-    var sql = 'insert into User (username,password,`from`,loginCount,lastLoginTime) values(?,?,?,?,?)';
+    var sql = 'insert into user (username,password,`from`,loginCount,lastLoginTime) values(?,?,?,?,?)';
     var loginTime = Date.now();
     var args = [username, password, from || '', 0, loginTime];
     mysql.insert(sql, args, function(err,res){

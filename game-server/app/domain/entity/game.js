@@ -223,7 +223,8 @@ Game.prototype.start = function () {
         return Promise.resolve;
     }))
         .then(function () {
-            self.talkCountdown()
+            self.gameLogic.currentPhase = consts.GAME.PHASE.TALKING;
+            self.talkCountdown();
         })
         .catch(function (err) {
             logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
@@ -964,8 +965,6 @@ Game.prototype.trusteeship = function (data, cb) {
     actor.gameStatus.isTrusteeship = true;
 
     //如果当前不是托管玩家出牌，则直接发托管消息，返回即可
-    console.log('this.gameLogic.currentFanActor.uid = > ', this.gameLogic.currentFanActor.uid)
-    console.log('actor.uid = > ', actor.uid)
     if (this.gameLogic.currentFanActor.uid != actor.uid) {
         //push 托管消息
         this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);

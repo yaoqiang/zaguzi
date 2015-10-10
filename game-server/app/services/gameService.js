@@ -112,8 +112,49 @@ exp.kick = function()
 
 }
 
-exp.start = function()
+/**
+ * 通过游戏ID获得当前游戏状态明细信息
+ * @param data {uid: xx, gameId: xx}
+ */
+exp.getGameStatusDetailsById = function(data, cb)
 {
+    var game = this.getGameById(data.gameId)
+    // 当前游戏信息结构
+    // {
+    // game: {base: 100},
+    // actors: [
+    // {uid: 0, actorNr: 1, nickName: '', avatar: 1, identity: consts.GAME.IDENTITY, append: [116,216,316,416], rank: 0, isTrusteeship: false, holdingCards: []},
+    // {}],
+    // gameLogic: {
+    // currentPhase: consts.GAME.PHASE,
+    // currentFanActor: {uid: 0, actorNr: 1},
+    // lastFanActor: {uid: 0, actorNr: 1},
+    // lastFanCardRecognization: CardRecognization,
+    // currentTalker: {uid: 0, actorNr: 1},
+    // share: 0
+    // }
+
+    var actors = _.map(game.actors, function(actor) {
+        return {
+            uid: actor.uid, actorNr: actor.actorNr,
+            nickName: actor.properties.nickName, avatar: actor.properties.avatar,
+            identity: actor.gameStatus.identity, append: actor.gameStatus.append,
+            rank: actor.gameStatus.rank, isTrusteeship: actor.gameStatus.isTrusteeship,
+            holdingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : []
+        }
+    });
+
+    cb({
+        game: {lobbyId: game.lobbyId, roomId: game.roomId, gameId: game.gameId, gameType: game.maxActor, base: game.base},
+        actors: actors,
+        gameLogic: {
+            currentPhase: game.gameLogic.currentPhase,
+            currentFanActor: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? {} : {uid: game.gameLogic.currentFanActor.uid, actorNr: game.gameLogic.currentFanActor.actorNr},
+            lastFanActor: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? {} : {uid: game.gameLogic.lastFanActor.uid, actorNr: game.gameLogic.lastFanActor.actorNr},
+            lastFanCardRecognization: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? null : game.gameLogic.lastFanCardRecognization,
+            currentTalker: game.gameLogic.currentPhase != consts.GAME.PHASE.TALKING ? {} : {uid: game.gameLogic.currentTalker.uid, actorNr: game.gameLogic.currentTalker.actorNr},
+            share: game.gameLogic.share
+        }});
 
 }
 

@@ -1906,3 +1906,9 @@
 [2015-04-19 20:43:26.516] [INFO] pomelo - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" enter after start...
 [2015-04-19 20:43:26.519] [INFO] pomelo - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" finish start
 [2015-04-19 20:43:26.520] [INFO] pomelo - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" startup in 5847 ms
+[2015-11-26 16:43:54.583] [INFO] pomelo - [32m[D:\playground\zgz\game-server\node_modules\pomelo\lib\application.js] [39mapplication inited: "game-server-1"
+[2015-11-26 16:43:56.785] [INFO] pomelo - [32m[D:\playground\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" enter after start...
+[2015-11-26 16:43:56.787] [INFO] pomelo - [32m[D:\playground\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" finish start
+[2015-11-26 16:43:56.787] [INFO] pomelo - [32m[D:\playground\zgz\game-server\node_modules\pomelo\lib\application.js] [39m"game-server-1" startup in 1088 ms
+[2015-11-26 16:43:56.816] [DEBUG] pomelo - [36m[D:\playground\zgz\game-server\node_modules\pomelo\lib\modules\monitorwatcher.js] [39m[game-server-1] receive addServer signal: {"action":"addServer","server":{"main":"D:\\playground\\zgz\\game-server\\app.js","env":"development","id":"auth-server-1","host":"127.0.0.1","port":3350,"serverType":"auth","pid":8912}}
+[2015-11-26 16:43:56.860] [DEBUG] pomelo - [36m[D:\playground\zgz\game-server\node_modules\pomelo\lib\modules\monitorwatcher.js] [39m[game-server-1] receive addServer signal: {"action":"addServer","server":{"main":"D:\\playground\\zgz\\game-server\\app.js","env":"development","id":"game-server-4","host":"127.0.0.1","port":3453,"args":" --debug=32317 ","serverType":"game","pid":8604}}

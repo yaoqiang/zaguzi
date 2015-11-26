@@ -1,10 +1,10 @@
 var express = require('express');
 var Token = require('../shared/token');
 var secret = require('../shared/config/session').secret;
-var userDao = require('./lib/dao/userDao');
 var app = express();
-var mysql = require('./lib/dao/mysql/mysql');
 var everyauth = require('./lib/oauth');
+
+var db = require('./lib/mongodb');
 
 var log4js = require('log4js');
 var logger = log4js.getLogger();
@@ -16,7 +16,9 @@ var methodOverride = require('method-override');
 
 app.use(methodOverride('_method'));
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(express.static(__dirname + '/public'));
 
 // Populates req.session
@@ -30,8 +32,8 @@ app.use(session({
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By",' 4.13.3')
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By", ' 4.13.3')
     res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
@@ -40,9 +42,15 @@ app.all('*', function(req, res, next) {
 app.get('/auth_success', function(req, res) {
     if (req.session.userId) {
         var token = Token.create(req.session.userId, Date.now(), secret);
-        res.render('auth', {code: 200, token: token, uid: req.session.userId});
+        res.render('auth', {
+            code: 200,
+            token: token,
+            uid: req.session.userId
+        });
     } else {
-        res.render('auth', {code: 500});
+        res.render('auth', {
+            code: 500
+        });
     }
 });
 
@@ -54,58 +62,99 @@ app.post('/login', function(req, res) {
     var pwd = msg.password;
 
     if (!username || !pwd) {
-        res.send({code: 1003});
+        res.send({
+            code: 1003
+        });
         return;
     }
 
-    userDao.getUserByName(username, function(err, user) {
+    db.user.findOne({
+        username: username
+    }, function(err, user) {
         if (err || !user) {
-            logger.warn('username not exist! username: ' + username);
-            res.jsonp({code: 1001});
+            logger.warn('用户名不存在! username: ' + username);
+            res.jsonp({
+                code: 1001
+            });
             return;
         }
+
         if (pwd !== user.password) {
             // TODO code
             // password is wrong
-            logger.warn('password incorrect! username: ' + username);
-            res.jsonp({code: 1002});
+            logger.warn('用户密码错误! username: ' + username);
+            res.jsonp({
+                code: 1002
+            });
             return;
         }
 
-        logger.info(username + ' login success!');
-
-        res.jsonp({code: 200, token: Token.create(user.id, Date.now(), secret), uid: user.id});
+        logger.info(username + ' 登录成功!');
+        res.jsonp({
+            code: 200,
+            token: Token.create(user._id, Date.now(), secret),
+            uid: user._id
+        });
     });
+
+
 });
 
 app.get('/signup', function(req, res) {
-    res.render('signup', {  title: 'Signup'});
+    res.render('signup', {
+        title: 'Signup'
+    });
 });
 
 app.post('/register', function(req, res) {
     var msg = req.body;
     if (!msg.username || !msg.password) {
-        res.send({code: 500});
+        res.send({
+            code: 500
+        });
         return;
     }
 
-    userDao.createUser(msg.username, msg.password, '', function(err, user) {
-        if (err || !user) {
-            logger.error(err);
-            if (err && err.code === 1062) {
-                res.send({code: 501});
+    db.user.ensureIndex({username: 1});
+
+    db.user.findOne({
+        username: msg.username
+    }, function(err, doc) {
+        if (err || doc) {
+            if (err) {
+                logger.error(err);
+                res.send({
+                    code: 501
+                });
             } else {
-                res.send({code: 500});
+                res.send({
+                    code: 500,
+                    message: '用户名已存在'
+                });
             }
-        } else {
-            logger.info('A new user was created! --' + msg.username);
-            res.send({code: 200, token: Token.create(user.id, Date.now(), secret), uid: user.id});
+            return;
         }
+        var now = Date.now();
+        var user = {
+            username: msg.username,
+            password: msg.password,
+            loginCount: 0,
+            createdAt: now
+        };
+        db.user.save(user, function(err, doc) {
+            logger.info('A new user was created! --' + msg.username);
+            res.send({
+                code: 200,
+                token: Token.create(doc._id, Date.now(), secret),
+                uid: doc._id
+            });
+        });
+
     });
+
+
 });
 
-//Init mysql
-mysql.init();
 
 app.listen(3001);
 
@@ -115,5 +164,3 @@ process.on('uncaughtException', function(err) {
 });
 
 logger.info("Web server has started.");
-
-

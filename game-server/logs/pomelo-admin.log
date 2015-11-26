@@ -30,3 +30,14 @@
 [2015-04-19 20:43:25.450] [INFO] pomelo-admin - [32m[e:\github\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "connector", "127.0.0.1", 3005
 [2015-04-19 20:43:25.361] [INFO] pomelo-admin - [32m[e:\github\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "game", "127.0.0.1", 3005
 [2015-04-19 20:43:25.613] [INFO] pomelo-admin - [32m[e:\github\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "gate", "127.0.0.1", 3005
+[2015-11-26 16:43:52.809] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "master", "127.0.0.1", 3005
+[2015-11-26 16:43:55.172] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "gate", "127.0.0.1", 3005
+[2015-11-26 16:43:55.274] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "chat", "127.0.0.1", 3005
+[2015-11-26 16:43:55.627] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "game", "127.0.0.1", 3005
+[2015-11-26 16:43:55.832] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "game", "127.0.0.1", 3005
+[2015-11-26 16:43:56.240] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "connector", "127.0.0.1", 3005
+[2015-11-26 16:43:56.383] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "manager", "127.0.0.1", 3005
+[2015-11-26 16:43:56.414] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "connector", "127.0.0.1", 3005
+[2015-11-26 16:43:56.478] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "game", "127.0.0.1", 3005
+[2015-11-26 16:43:56.752] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "auth", "127.0.0.1", 3005
+[2015-11-26 16:43:56.644] [INFO] pomelo-admin - [32m[D:\playground\zgz\game-server\node_modules\pomelo\node_modules\pomelo-admin\lib\consoleService.js] [39mtry to connect master: "game", "127.0.0.1", 3005

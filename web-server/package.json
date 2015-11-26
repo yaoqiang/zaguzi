@@ -12,8 +12,7 @@
         "ejs": "*",
         "everyauth": "0.4.9",
         "connect": "3.4.0",
-        "generic-pool": "2.1.1",
-        "mysql": "2.8.0",
-        "log4js": "0.6.27"
+        "log4js": "0.6.27",
+        "mongojs": "~1.4.1"
     }
 }

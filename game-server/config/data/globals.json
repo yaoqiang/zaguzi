@@ -11,5 +11,33 @@
         ["#touxiang_16.png","#touxiang_16_2.png"],
         ["#touxiang_nan.png","#touxiang_nan_2.png"],
         ["#touxiang_nv.png","#touxiang_nv_2.png"]
-    ]
+    ],
+    "checkIn": {
+        "1": {
+            "gold": 1000
+        },
+        "2": {
+            "gold": 1500
+        },
+        "3": {
+            "gold": 1800
+        },
+        "4": {
+            "gold": 2000
+        },
+        "5": {
+            "gold": 2300
+        },
+        "6": {
+            "gold": 2500
+        },
+        "7": {
+            "gold": 3000
+        }
+    },
+    "bankruptcyGrant": {
+        "times": 3,
+        "gold": 1500
+    }
+    
 }

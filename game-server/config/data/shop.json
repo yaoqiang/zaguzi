@@ -1,0 +1,38 @@
+{
+	"android": [
+		{
+			"id": 1001,
+			"title": "经典套餐",
+			"currency": "RMB",
+			"gold": 3999,
+			"amount": 3,
+			"desc": "经典久久，买就送小喇叭、1天记牌器和7天超级表情包",
+			"icon": "",
+			"items": [
+				{
+					"id": 1,
+					"count": 7
+				},
+				{
+					"id": 2,
+					"count": 1
+				},
+				{
+					"id": 3,
+					"count": 1
+				}
+			]
+		},
+		{
+			"id": 1002,
+			"title": "超值金币特惠套餐",
+			"currency": "RMB",
+			"gold": 9999,
+			"amount": "5",
+			"desc": "超值金币特惠套餐",
+			"icon": "",
+			"items": []
+		}
+	],
+	"ios": []
+}

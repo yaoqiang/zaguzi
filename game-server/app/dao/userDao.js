@@ -133,10 +133,11 @@ userDao.createPlayer = function(uid, cb) {
         exp: 0,
         fragment: 0,
         properties: {
-            getBankruptNr: 0,
-            continuousLoginNr: 0,
-            isGetContinuousLogin: 0,
-            isFirstPay: false
+            getBankruptcyGrantNr: 0,
+            lastCheckIn: 0,
+            continuousCheckInNr: 0,
+            getCheckInGrant: false,
+            isPayed: false
         },
         createdAt: Date.now()
     };

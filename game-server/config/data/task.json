@@ -1,67 +1,167 @@
-[
-  "group": {
-    "id": "1", "roomId": "", "type": "battle", "tasks": {
-      "task": {
-        "id": "1010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "1012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "1013", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      }
+{
+  "daily": [
+    {
+      "groupId": "1001",
+      "roomId": [],
+      "type": "battle",
+      "tasks": [
+        {
+          "id": "100101",
+          "name": "每日扎一股",
+          "desc": "每日扎一股，开开心心拿金币",
+          "target": "1",
+          "icon": "",
+          "grant": "300"
+        }
+      ]
+    },
+    {
+      "groupId": "1002",
+      "roomId": [],
+      "type": "battle",
+      "tasks": [
+        {
+          "id": "100201",
+          "name": "每日扎一股",
+          "desc": "每日扎一会，开开心心拿金币",
+          "target": "10",
+          "icon": "",
+          "grant": "1000"
+        }
+      ]
+    },
+    {
+      "groupId": "1003",
+      "roomId": [13],
+      "type": "battle",
+      "tasks": [
+        {
+          "id": "100201",
+          "name": "参加大师对决",
+          "desc": "每日参加大师对决，赢更多金币",
+          "target": "10",
+          "icon": "",
+          "grant": "3000"
+        }
+      ]
+    },
+    {
+      "groupId": "1010",
+      "roomId": [],
+      "type": "win",
+      "tasks": [
+        {
+          "id": "101001",
+          "name": "每日赢一把",
+          "desc": "每日赢一把，开开心心拿金币",
+          "target": "1",
+          "icon": "",
+          "grant": "500"
+        }
+      ]
+    },
+    {
+      "groupId": "1011",
+      "roomId": [],
+      "type": "win",
+      "tasks": [
+        {
+          "id": "101101",
+          "name": "每日赢10把",
+          "desc": "每日赢10把，开开心心拿金币",
+          "target": "10",
+          "icon": "",
+          "grant": "1500"  
+        }
+      ]
+    },
+    {
+      "groupId": "1012",
+      "roomId": [13],
+      "type": "win",
+      "tasks": [
+        {
+          "id": "101201",
+          "name": "大师对决获胜10把",
+          "desc": "在大师对决房获胜10局，赢更多金币",
+          "target": "10",
+          "icon": "",
+          "grant": "10000"
+        }
+      ]
     }
-  },
-  "group": {
-    "id": "2", "roomId": "", "type": "win", "tasks": {
-      "task": {
-        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      }
+  ],
+  "forever": [
+    {
+      "groupId": "2001",
+      "roomId": [],
+      "type": "battle",
+      "tasks": [
+        {
+          "id": "200101",
+          "name": "对战3把",
+          "desc": "对战3把，可获得任务奖励",
+          "target": "3",
+          "icon": "",
+          "grant": "300"
+        },
+        {
+          "id": "200102",
+          "name": "对战10把",
+          "desc": "对战10把，可获得任务奖励",
+          "target": "10",
+          "icon": "",
+          "grant": "800"
+        },
+        {
+          "id": "200103",
+          "name": "对战50把",
+          "desc": "对战50把，可获得任务奖励",
+          "target": "50",
+          "icon": "",
+          "grant": "2000"
+        },
+        {
+          "id": "200104",
+          "name": "对战100把",
+          "desc": "对战100把，可获得任务奖励",
+          "target": "100",
+          "icon": "",
+          "grant": "3000"
+        }
+      ]
+    },
+    {
+      "groupId": "2002",
+      "roomId": [],
+      "type": "win",
+      "tasks": [
+        {
+          "id": "200201",
+          "name": "胜利3把",
+          "desc": "胜利3把，可获得任务奖励",
+          "target": "3",
+          "icon": "",
+          "grant": "500"
+        },
+        {
+          "id": "200202",
+          "name": "胜利3把",
+          "desc": "胜利3把，可获得任务奖励",
+          "target": "3",
+          "icon": "",
+          "grant": "500"
+        },
+        {
+          "id": "200203",
+          "name": "胜利10把",
+          "desc": "胜利10把，可获得任务奖励",
+          "target": "10",
+          "icon": "",
+          "grant": "1500"
+        }
+      ]
     }
-  },
-  "group": {
-    "id": "3", "roomId": "", "type": "win", "tasks": {
-      "task": {
-        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      }
-    }
-  },
-  "group": {
-    "id": "4", "roomId": "12", "type": "battle", "tasks": {
-      "task": {
-        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      }
-    }
-  },
-  "group": {
-    "id": "5", "roomId": "12", "type": "win", "tasks": {
-      "task": {
-        "id": "2010", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2011", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      },
-      "task": {
-        "id": "2012", "name": "", "desc": "", "target": "", "icon": "", "award": ""
-      }
-    }
-  }
-]
+    
+  ]
+}

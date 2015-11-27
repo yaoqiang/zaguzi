@@ -54,7 +54,7 @@ userDao.getUserInfo = function(username, passwd, cb) {
  */
 userDao.getPlayerByUid = function(uid, cb) {
 
-    db.user.findOne({
+    db.player.findOne({
         uid: uid
     }, function(err, doc) {
         if (err) {
@@ -94,7 +94,7 @@ userDao.getPlayerByUid = function(uid, cb) {
  * @param {function} cb Callback function
  */
 userDao.getUserById = function(uid, cb) {
-    db.findOne({
+    db.user.findOne({
         _id: uid
     }, function(err, doc) {
         if (err) {
@@ -119,8 +119,8 @@ userDao.getUserById = function(uid, cb) {
  */
 userDao.createPlayer = function(uid, cb) {
     
-    var nickName = globals[0][Math.floor(Math.random() * globals[0].length)];
-    var avatar = Math.floor(Math.random() * globals[0].length);
+    var nickName = globals.defaultNickname[Math.floor(Math.random() * globals.defaultNickname.length)];
+    var avatar = Math.floor(Math.random() * globals.defaultAvatar.length);
     var player = {
         uid: uid,
         nickName: nickName,
@@ -141,7 +141,7 @@ userDao.createPlayer = function(uid, cb) {
         createdAt: Date.now()
     };
 
-    db.save(player, function(err, doc) {
+    db.player.save(player, function(err, doc) {
         if (err || _.isNull(doc)) {
             logger.error('create player failed! ' + err.message);
             logger.error(err);

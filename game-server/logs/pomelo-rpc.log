@@ -1123,3 +1123,6 @@
 [2014-12-05 18:43:10.544] [ERROR] pomelo-rpc - [31m[e:\pomelo\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined
 [2015-04-18 19:09:54.594] [ERROR] pomelo-rpc - [31m[e:\github\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined
 [2015-04-18 19:09:54.598] [ERROR] pomelo-rpc - [31m[e:\github\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined
+[2015-11-27 23:22:09.211] [ERROR] pomelo-rpc - [31m[E:\game\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined
+[2015-11-27 23:26:21.059] [ERROR] pomelo-rpc - [31m[E:\game\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined
+[2015-11-27 23:36:17.423] [ERROR] pomelo-rpc - [31m[E:\game\zgz\game-server\node_modules\pomelo\node_modules\pomelo-rpc\lib\rpc-client\mailboxes\ws-mailbox.js] [39mrpc socket is disconnect, reason: undefined

@@ -12,8 +12,8 @@ var util = require('util');
  */
 
 var User = function(opts) {
-    this.id = opts.id;
-    this.name = opts.username;
+    this.id = opts._id;
+    this.username = opts.username;
     this.password = opts.password;
     this.loginCount = opts.loginCount;
     this.from = opts.from || '';

@@ -14,6 +14,7 @@ var Player = require('../domain/entity/player');
 var Properties = require('../domain/entity/properties');
 
 var db = pomelo.app.get('dbclient');
+var mongojs = require('mongojs');
 
 var userDao = module.exports;
 
@@ -55,7 +56,7 @@ userDao.getUserInfo = function(username, passwd, cb) {
 userDao.getPlayerByUid = function(uid, cb) {
 
     db.player.findOne({
-        uid: uid
+        uid: mongojs.ObjectId(uid)
     }, function(err, doc) {
         if (err) {
             utils.invokeCallback(cb, err.message, null);
@@ -63,7 +64,7 @@ userDao.getPlayerByUid = function(uid, cb) {
         }
 
         if (_.isNull(doc)) {
-            utils.invokeCallback(cb, 'player not found', null);
+            utils.invokeCallback(cb, null, null);
             return;
         }
 
@@ -95,7 +96,7 @@ userDao.getPlayerByUid = function(uid, cb) {
  */
 userDao.getUserById = function(uid, cb) {
     db.user.findOne({
-        _id: uid
+        _id: mongojs.ObjectId(uid)
     }, function(err, doc) {
         if (err) {
             utils.invokeCallback(cb, err.message, null);
@@ -149,7 +150,7 @@ userDao.createPlayer = function(uid, cb) {
             utils.invokeCallback(cb, err.message, null);
             return;
         }
-        db.ensureIndex({uid: 1});
+        db.player.ensureIndex({uid: 1});
         player.id = doc._id;
         utils.invokeCallback(cb, null, player);
     });

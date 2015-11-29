@@ -54,7 +54,6 @@ userDao.getUserInfo = function(username, passwd, cb) {
  * @param {function} cb Callback function.
  */
 userDao.getPlayerByUid = function(uid, cb) {
-
     db.player.findOne({
         uid: mongojs.ObjectId(uid)
     }, function(err, doc) {
@@ -123,7 +122,7 @@ userDao.createPlayer = function(uid, cb) {
     var nickName = globals.defaultNickname[Math.floor(Math.random() * globals.defaultNickname.length)];
     var avatar = Math.floor(Math.random() * globals.defaultAvatar.length);
     var player = {
-        uid: uid,
+        uid: mongojs.ObjectId(uid),
         nickName: nickName,
         avatar: avatar,
         gold: consts.GLOBAL.GOLD_INIT,
@@ -150,7 +149,6 @@ userDao.createPlayer = function(uid, cb) {
             utils.invokeCallback(cb, err.message, null);
             return;
         }
-        db.player.ensureIndex({uid: 1});
         player.id = doc._id;
         utils.invokeCallback(cb, null, player);
     });

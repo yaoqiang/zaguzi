@@ -49,3 +49,4 @@
 [2015-04-18 19:09:56.862] [INFO] crash-log - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\master\master.js] [39m[connector],[connector-server-1],[1429355396862],[disconnect]
 [2015-04-18 19:09:56.863] [INFO] crash-log - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\master\master.js] [39m[game],[game-server-1],[1429355396863],[disconnect]
 [2015-04-18 19:10:57.408] [INFO] crash-log - [32m[e:\github\zgz\game-server\node_modules\pomelo\lib\master\master.js] [39m[manager],[manager-server-1],[1429355457408],[disconnect]
+[2015-11-29 11:52:12.665] [INFO] crash-log - [32m[E:\game\zgz\game-server\node_modules\pomelo\lib\master\master.js] [39m[client],[pomelo_cli_1448768948015],[1448769132665],[disconnect]

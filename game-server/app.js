@@ -52,7 +52,7 @@ app.configure('production|development', function() {
   //app.route('chat', routeUtil.chat);
 
   app.before(pomelo.filters.toobusy());
-  app.enable('systemMonitor');
+  app.enable('systemMonitor');  
 
   var lobbyInfo = require('./app/modules/lobbyInfo');
   var onlineUser = require('./app/modules/onlineUser');

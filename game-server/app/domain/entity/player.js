@@ -31,7 +31,7 @@ var Player = function(opts)
     this.fragment = opts.fragment;
     this.uid = opts.uid;
 
-    this.properties = null;
+    this.properties = opts.properties;
 
 }
 

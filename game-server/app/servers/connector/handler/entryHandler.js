@@ -64,7 +64,6 @@ handler.enter = function (msg, session, next) {
             uid = user.id;
             userDao.getPlayerByUid(uid, cb);
         }, function (res, cb) {
-            console.log('res => ', res);
             if (res != null) {
                 cb(null, res);
             }

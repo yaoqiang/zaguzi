@@ -39,7 +39,7 @@ Module.prototype.masterHandler = function(agent, msg) {
         agent.notifyByType('connector', module.exports.moduleId);
         return;
     }
-
+    
     var data = agent.get(module.exports.moduleId);
     if(!data) {
         data = {};

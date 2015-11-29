@@ -29,7 +29,7 @@ app.use(session({
 }));
 
 //设置跨域访问
-app.all('*', function(req, res, next) {
+app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
@@ -39,7 +39,7 @@ app.all('*', function(req, res, next) {
 });
 
 
-app.get('/auth_success', function(req, res) {
+app.get('/auth_success', function (req, res) {
     if (req.session.userId) {
         var token = Token.create(req.session.userId, Date.now(), secret);
         res.render('auth', {
@@ -55,7 +55,7 @@ app.get('/auth_success', function(req, res) {
 });
 
 
-app.post('/login', function(req, res) {
+app.post('/login', function (req, res) {
     var msg = req.body;
 
     var username = msg.username;
@@ -70,7 +70,7 @@ app.post('/login', function(req, res) {
 
     db.user.findOne({
         username: username
-    }, function(err, user) {
+    }, function (err, user) {
         if (err || !user) {
             logger.warn('用户名不存在! username: ' + username);
             res.jsonp({
@@ -100,13 +100,13 @@ app.post('/login', function(req, res) {
 
 });
 
-app.get('/signup', function(req, res) {
+app.get('/signup', function (req, res) {
     res.render('signup', {
         title: 'Signup'
     });
 });
 
-app.post('/register', function(req, res) {
+app.post('/register', function (req, res) {
     var msg = req.body;
     if (!msg.username || !msg.password) {
         res.send({
@@ -115,11 +115,11 @@ app.post('/register', function(req, res) {
         return;
     }
 
-    db.user.ensureIndex({username: 1});
+    db.user.ensureIndex({ username: 1 });
 
     db.user.findOne({
         username: msg.username
-    }, function(err, doc) {
+    }, function (err, doc) {
         if (err || doc) {
             if (err) {
                 logger.error(err);
@@ -141,7 +141,7 @@ app.post('/register', function(req, res) {
             loginCount: 0,
             createdAt: now
         };
-        db.user.save(user, function(err, doc) {
+        db.user.save(user, function (err, doc) {
             logger.info('A new user was created! --' + msg.username);
             res.send({
                 code: 200,
@@ -159,8 +159,16 @@ app.post('/register', function(req, res) {
 app.listen(3001);
 
 // Uncaught exception handler
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
     logger.error(' Caught exception: ' + err.stack);
 });
+
+db.on('error', function (err) {
+    console.log('database error', err)
+})
+
+db.on('connect', function () {
+    console.log('database connected')
+})
 
 logger.info("Web server has started.");

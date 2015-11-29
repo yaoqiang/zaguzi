@@ -29,10 +29,8 @@ exp.getUserInfo = function (uid, cb) {
 exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     //add event
     var playerObj = new Player(player);
-    var propObj = new Properties(player.properties);
-
-    playerObj.properties = propObj;
     eventManager.addEvent(playerObj);
+    
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (u) {
         u.serverId = serverId;
@@ -49,6 +47,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
             player: playerObj
         });
     }
+    
     cb();
 }
 
@@ -102,7 +101,6 @@ exp.onUserDisconnect = function (data, cb) {
                     u.player.flushAll();
 
                     pomelo.app.userCache = _.without(pomelo.app.userCache, u);
-                    delete u;
                 });
 
             }

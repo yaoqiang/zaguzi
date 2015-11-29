@@ -27,12 +27,12 @@ function addSaveEvent(player) {
         app.get('sync').flush('playerSync.update', player.uid, player);
     });
 
-    player.properties.on('save', function () {
-        app.get('sync').exec('propertiesSync.update', player.uid, player.properties);
+    player.on('saveProperties', function () {
+        app.get('sync').exec('propertiesSync.update', player.uid, player);
     });
 
-    player.properties.on('flush', function () {
-        app.get('sync').flush('propertiesSync.update', player.uid, player.properties);
+    player.on('flushProperties', function () {
+        app.get('sync').flush('propertiesSync.update', player.uid, player);
     });
 
     player.on('saveAll', function () {

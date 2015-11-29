@@ -1,8 +1,9 @@
+var mongojs = require('mongojs');
+
 module.exports = {
     update: function(dbclient, val, cb) {
-
         dbclient.player.findAndModify({
-            query: {uid: val.id},
+            query: {uid: mongojs.ObjectId(val.uid)},
             update: {
                 $set: {
                     gold: val.gold,
@@ -28,7 +29,7 @@ module.exports = {
     updatePlayerProfile: function(dbclient, val, cb) {
 
         dbclient.player.findAndModify({
-            query: {uid: val.id},
+            query: {uid: mongojs.ObjectId(val.uid)},
             update: {
                 $set: {
                     nickName: val.nickName,

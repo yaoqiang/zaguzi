@@ -116,14 +116,32 @@ Player.prototype.upgrade = function () {
     this.rank += 1;
 }
 
+/////////////
+Player.prototype.getCheckInGrant = function (cb) {
+    
+}
 
+Player.prototype.getBankruptcyGrant = function (cb) {
+
+}
+
+/////////////////
 //emit..
+/////////////////
 Player.prototype.save = function () {
     this.emit('save');
 }
 
 Player.prototype.saveProfile = function () {
     this.emit('saveProfile');
+}
+
+Player.prototype.saveProperties = function () {
+    this.emit('saveProperties');
+}
+
+Player.prototype.flushProperties = function () {
+    this.emit('flushProperties');
 }
 
 Player.prototype.flush = function () {

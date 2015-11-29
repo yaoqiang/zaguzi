@@ -15,8 +15,6 @@ var Entity = require('./entity');
 var Properties = function(opts)
 {
     Entity.call(this, opts);
-
-    this.uid = opts.uid;
     this.getBankruptcyGrantNr = opts.getBankruptcyGrantNr;
     this.lastCheckIn = opts.lastCheckIn;
     this.continuousCheckInNr = opts.continuousCheckInNr;
@@ -28,11 +26,11 @@ var Properties = function(opts)
 util.inherits(Properties, Entity);
 
 
-Properties.prototype.getSignInAward = function (cb) {
-
+Properties.prototype.getCheckInGrant = function (cb) {
+    
 }
 
-Properties.prototype.getBankruptAward = function (cb) {
+Properties.prototype.getBankruptcyGrant = function (cb) {
 
 }
 

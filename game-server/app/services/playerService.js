@@ -48,9 +48,15 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
         });
     }
 
-    ////////////////////////////////
-    //处理登录后签到、补助
-    ////////////////////////////////
+    exp.attachmentHandle(playerObj, cb);
+}
+
+/**
+ * 处理登录后签到、补助、每日任务等信息
+ * @param playerObj
+ * @param cb
+ */
+exp.attachmentHandle = function (playerObj, cb) {
     //如果第一次登录, 无需任何处理;
     if (playerObj.properties.lastLoginAt == null) {
         playerObj.properties.lastLoginAt = new Date();
@@ -66,10 +72,8 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
                 playerObj.properties.continuousCheckInNr = 0;
             }
         }
+        //处理登录后每日任务等信息
     }
-
-    //处理登录后每日任务等信息
-
     cb({player: playerObj});
 }
 

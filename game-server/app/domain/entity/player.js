@@ -32,6 +32,7 @@ var Player = function(opts)
     this.uid = opts.uid;
 
     this.properties = opts.properties;
+    this.createdAt = opts.createdAt;
 
 }
 

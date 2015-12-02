@@ -4,6 +4,7 @@ var secret = require('../shared/config/session').secret;
 var app = express();
 var everyauth = require('./lib/oauth');
 
+var mongojs = require('mongojs');
 var db = require('./lib/mongodb');
 
 var log4js = require('log4js');
@@ -89,12 +90,28 @@ app.post('/login', function (req, res) {
             return;
         }
 
-        logger.info(username + ' 登录成功!');
-        res.jsonp({
-            code: 200,
-            token: Token.create(user._id, Date.now(), secret),
-            uid: user._id
+        db.user.update(
+            {
+                _id: mongojs.ObjectId(user._id)
+            },
+            {
+                $inc: {
+                    loginCount: 1
+                },
+                $set: {
+                    lastLogin: new Date()
+                }
+            },
+            function () {
+            logger.info(username + ' 登录成功!');
+            res.jsonp({
+                code: 200,
+                token: Token.create(user._id, Date.now(), secret),
+                uid: user._id
+            });
         });
+
+
     });
 
 
@@ -134,12 +151,11 @@ app.post('/register', function (req, res) {
             }
             return;
         }
-        var now = Date.now();
         var user = {
             username: msg.username,
             password: msg.password,
             loginCount: 0,
-            createdAt: now
+            createdAt: new Date()
         };
         db.user.save(user, function (err, doc) {
             logger.info('A new user was created! --' + msg.username);

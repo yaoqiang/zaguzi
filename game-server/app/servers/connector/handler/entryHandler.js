@@ -160,8 +160,8 @@ handler.enter = function (msg, session, next) {
                     serverId: msg.serverId,
                     sessionId: session.id,
                     player: player
-                }, function () {
-                    next(null, {code: Code.OK, player: player});
+                }, function (data) {
+                    next(null, {code: Code.OK, player: data.player});
                 });
             }
         });

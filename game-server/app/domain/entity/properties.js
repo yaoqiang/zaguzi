@@ -20,10 +20,16 @@ var Properties = function(opts)
     this.continuousCheckInNr = opts.continuousCheckInNr;
     this.getCheckInGrant = opts.getCheckInGrant;
     this.isPayed = opts.isPayed;
+    this.lastLoginAt = opts.lastLoginAt;
 
 }
 
 util.inherits(Properties, Entity);
+
+Properties.prototype.clearGrantRecord = function () {
+    this.getBankruptcyGrantNr = 0;
+    this.getCheckInGrant = false
+}
 
 
 Properties.prototype.getCheckInGrant = function (cb) {

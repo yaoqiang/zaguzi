@@ -47,8 +47,34 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
             player: playerObj
         });
     }
-    
-    cb();
+
+    exp.attachmentHandle(playerObj, cb);
+}
+
+/**
+ * 处理登录后签到、补助、每日任务等信息
+ * @param playerObj
+ * @param cb
+ */
+exp.attachmentHandle = function (playerObj, cb) {
+    //如果第一次登录, 无需任何处理;
+    if (playerObj.properties.lastLoginAt == null) {
+        playerObj.properties.lastLoginAt = new Date();
+    }
+    //如果上次登录不是今天，即今天第一次登录;（如果是今天，则说明已处理过，无需再处理）
+    else if (!playerObj.properties.lastLoginAt.isToday()) {
+        //清除领取今日奖励数据
+        playerObj.properties.clearGrantRecord();
+        //如果不是第一次签到
+        if (playerObj.properties.lastCheckIn != null) {
+            //如果上次签到不是昨天, 说明不是连续签到了
+            if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday)) {
+                playerObj.properties.continuousCheckInNr = 0;
+            }
+        }
+        //处理登录后每日任务等信息
+    }
+    cb({player: playerObj});
 }
 
 exp.onUserDisconnect = function (data, cb) {

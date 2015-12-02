@@ -4,6 +4,8 @@ var sync = require('pomelo-sync-plugin');
 var logger = require('pomelo-logger');
 var log4jsConf = require('./config/log4js.json')
 
+var helloWorld = require ('./app/components/helloWorld');
+
 
 /**
  * Init app for client.
@@ -52,7 +54,7 @@ app.configure('production|development', function() {
   //app.route('chat', routeUtil.chat);
 
   app.before(pomelo.filters.toobusy());
-  app.enable('systemMonitor');  
+  app.enable('systemMonitor');
 
   var lobbyInfo = require('./app/modules/lobbyInfo');
   var onlineUser = require('./app/modules/onlineUser');
@@ -99,7 +101,7 @@ app.configure('production|development', 'auth|connector|game|manager|master', fu
   dbclient.on('connect', function() {
     console.log('database connected')
   })
-  
+
   app.set('dbclient', dbclient);
 
   app.use(sync, {
@@ -112,7 +114,11 @@ app.configure('production|development', 'auth|connector|game|manager|master', fu
   app.set('errorHandler', function(err, msg, resp, session, cb) {
     console.log('errorHandler => ', err, msg);
   });
-})
+});
+
+app.configure ('production|development', 'manager', function() {
+  // app.load (helloWorld, {interval: 5000});
+});
 
 // start app
 app.start();

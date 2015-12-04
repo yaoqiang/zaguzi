@@ -12,29 +12,37 @@
         ["#touxiang_nan.png","#touxiang_nan_2.png"],
         ["#touxiang_nv.png","#touxiang_nv_2.png"]
     ],
-    "checkIn": {
-        "1": {
+    "checkIn": [
+        {
+            "day": 1,
             "gold": 1000
         },
-        "2": {
+        {
+            "day": 2,
             "gold": 1500
         },
-        "3": {
+        {
+            "day": 3,
             "gold": 1800
         },
-        "4": {
+        {
+            "day": 4,
             "gold": 2000
         },
-        "5": {
+        {
+            "day": 5,
             "gold": 2300
         },
-        "6": {
+        {
+            "day": 6,
             "gold": 2500
         },
-        "7": {
-            "gold": 3000
+        {
+            "day": 7,
+            "gold": 3000,
+            "items": []
         }
-    },
+    ],
     "bankruptcyGrant": {
         "times": 3,
         "gold": 1500

@@ -52,6 +52,14 @@ module.exports = {
             ALREADY_CANCELED_TRUSTEESHIP: 7003,
             NOT_GAMING: 7004,
             ERR: 7005
+        },
+        CHECK_IN: {
+            ALREADY_CHECK_IN: 8001,
+            ERR: 8002
+        },
+        BANKRUPTCY_GRANT: {
+            NOT_GRANT: 9001,
+            ERR: 9002
         }
     },
     ERR_MESSAGE: {
@@ -89,7 +97,12 @@ module.exports = {
         7002: "您已托管成功",
         7003: "您不在托管状态",
         7004: "游戏还未开始, 无法托管",
-        7005: "系统错误, 请联系管理员"    //参数错误等
+        7005: "系统错误, 请联系管理员",    //参数错误等
+
+        8001: "",
+        8002: "",
+        9001: "",
+        9002: ""
     },
     MESSAGE: {
         RES: 200,

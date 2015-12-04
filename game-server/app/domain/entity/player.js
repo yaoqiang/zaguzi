@@ -13,6 +13,7 @@ require('date-utils');
 var Entity = require('./entity');
 var ranks = require('../../../config/data/rank');
 var rooms = require('../../../config/data/room');
+var globals = require('../../../config/data/globals');
 
 
 var Player = function(opts)
@@ -119,7 +120,20 @@ Player.prototype.upgrade = function () {
 
 /////////////
 Player.prototype.getCheckInGrant = function (cb) {
-    
+    if (this.properties.getCheckInGrant) {
+        cb({code: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
+        return;
+    }
+
+    if (_.isNull(this.properties.lastCheckIn) || !Date.equalsDay(this.properties.lastCheckIn, Date.yesterday())) {
+        this.properties.continuousCheckInNr = 0;
+    }
+    if (Date.equalsDay(this.properties.lastCheckIn, Date.yesterday())) {
+        this.properties.continuousCheckInNr += 1;
+    }
+
+    //globals.checkIn
+
 }
 
 Player.prototype.getBankruptcyGrant = function (cb) {

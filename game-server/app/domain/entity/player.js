@@ -10,6 +10,8 @@ var gameUtil = require('../../util/gameUtil');
 var _ = require('underscore');
 require('date-utils');
 
+var Code = require('../../../../shared/code');
+
 var Entity = require('./entity');
 var ranks = require('../../../config/data/rank');
 var rooms = require('../../../config/data/room');
@@ -114,14 +116,18 @@ Player.prototype.addExp = function (exp, args) {
     }
 }
 
+Player.prototype.addItems = function(type, items, cb) {
+
+}
+
 Player.prototype.upgrade = function () {
     this.rank += 1;
 }
 
-/////////////
+/
 Player.prototype.getCheckInGrant = function (cb) {
     if (this.properties.getCheckInGrant) {
-        cb({code: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
         return;
     }
 
@@ -132,12 +138,50 @@ Player.prototype.getCheckInGrant = function (cb) {
         this.properties.continuousCheckInNr += 1;
     }
 
-    //globals.checkIn
+    var grantData = _.findWhere(globals.checkIn, {id: this.properties.continuousCheckInNr});
+
+    if (_.isUndefined(grantData)) {
+      cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ERR});
+      return;
+    }
+
+    //领取签到金币
+    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, grantData.gold, function(data) {
+    });
+
+    //如果有附加物品, 添加物品
+    if (!_.isUndefined(grantData.items) && grantData.items.length > 0) {
+      this.addItems(consts.GLOBAL.ADD_ITEM_TYPE.GRANT, grantData.items, function() {
+      });
+    }
+
+    this.saveAll();
+
+    cb({code: Code.OK, gold: grantData.gold});
 
 }
 
 Player.prototype.getBankruptcyGrant = function (cb) {
 
+  //如果今日已领完
+  if (this.getBankruptcyGrantNr >= globals.bankruptcyGrant.times) {
+    cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.ALREADY_GRANT});
+    return;
+  }
+
+  //如果钱够多, 不能领取
+  if (this.gold >= globals.bankruptcyGrant.threshold) {
+    cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.MORE_MONEY});
+    return;
+  }
+
+  this.getBankruptcyGrantNr += 1;
+
+  var self = this;
+  this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, globals.bankruptcyGrant.gold, function(data){
+    self.saveAll();
+    cb({code: Code.OK});
+  });
 }
 
 /////////////////
@@ -174,3 +218,27 @@ Player.prototype.flushAll = function () {
 
 
 module.exports = Player;
+
+//player constructor
+/**
+var player = {
+    uid: mongojs.ObjectId(uid),
+    nickName: nickName,
+    avatar: avatar,
+    gold: consts.GLOBAL.GOLD_INIT,
+    winNr: 0,
+    loseNr: 0,
+    tieNr: 0,
+    rank: 1,
+    exp: 0,
+    fragment: 0,
+    properties: {
+        getBankruptcyGrantNr: 0,
+        lastCheckIn: null,
+        continuousCheckInNr: 0,
+        getCheckInGrant: false,
+        isPayed: false,
+        lastLoginAt: null
+    },
+    createdAt: Date.now()
+};

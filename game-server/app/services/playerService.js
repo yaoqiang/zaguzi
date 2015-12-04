@@ -30,7 +30,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     //add event
     var playerObj = new Player(player);
     eventManager.addEvent(playerObj);
-    
+
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (u) {
         u.serverId = serverId;
@@ -68,7 +68,7 @@ exp.attachmentHandle = function (playerObj, cb) {
         //如果不是第一次签到
         if (playerObj.properties.lastCheckIn != null) {
             //如果上次签到不是昨天, 说明不是连续签到了
-            if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday)) {
+            if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday())) {
                 playerObj.properties.continuousCheckInNr = 0;
             }
         }

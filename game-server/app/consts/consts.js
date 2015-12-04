@@ -6,7 +6,16 @@ module.exports = {
             BATTLE: 2,
             TASK: 3,
             ACTIVITY: 4,
-            MATCH: 5
+            MATCH: 5,
+            GRANT: 6
+        },
+        ADD_ITEM_TYPE: {
+            RECHARGE: 1,
+            BATTLE: 2,
+            TASK: 3,
+            ACTIVITY: 4,
+            MATCH: 5,
+            GRANT: 6
         }
     },
     ERR_CODE: {
@@ -58,8 +67,9 @@ module.exports = {
             ERR: 8002
         },
         BANKRUPTCY_GRANT: {
-            NOT_GRANT: 9001,
-            ERR: 9002
+            ALREADY_GRANT: 9001,
+            MORE_MONEY: 9002,
+            ERR: 9003
         }
     },
     ERR_MESSAGE: {

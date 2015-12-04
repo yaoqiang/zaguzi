@@ -229,11 +229,20 @@ exp.balance = function (data, cb) {
         .done();
 }
 
-exp.getSignInAward = function (data, cb) {
+exp.getCheckInGrant = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user||check in||玩家签到, 但玩家不在缓存, 用户ID:%j", data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
 
+        var player = user.player;
+
+    });
 }
 
-exp.getBankruptAward = function (data, cb) {
+exp.getBankruptcyGrant = function (data, cb) {
 
 }
 

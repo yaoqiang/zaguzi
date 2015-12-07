@@ -118,7 +118,7 @@ userDao.getUserById = function(uid, cb) {
  * @param {function} cb Callback function
  */
 userDao.createPlayer = function(uid, cb) {
-    
+
     var nickName = globals.defaultNickname[Math.floor(Math.random() * globals.defaultNickname.length)];
     var avatar = Math.floor(Math.random() * globals.defaultAvatar.length);
     var player = {
@@ -140,6 +140,8 @@ userDao.createPlayer = function(uid, cb) {
             isPayed: false,
             lastLoginAt: null
         },
+        items: [],
+        tasks: {},
         createdAt: Date.now()
     };
 

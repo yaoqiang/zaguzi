@@ -2,46 +2,34 @@
  * Module dependencies
  */
 var util = require('util');
-var Entity = require('./entity');
+var _ = require('underscore');
+var Code = require('../../../../shared/code');
+var items = require('../../../config/data/items');
+var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
+var itemUtil = exports.modules
 
-/**
- * Initialize a new 'Item' with the given 'opts'.
- * Item inherits Entity
- *
- * @param {Object} opts
- * @api public
- */
-var Item = function(opts) {
-    Entity.call(this, opts);
-
-    this.id = opts.id;
+itemUtil.addItem = function(type, item, cb) {
+  
 
 
-};
+}
 
-util.inherits(Item, Entity);
+itemUtil.addItems = function(type, items, cb) {
+  if (!_.isArray(items) || _.size(items) <= 0) {
+    logger.error('参数错误');
+    cb({code: Code.FAIL});
+    return;
+  }
+}
 
-/**
- * Expose 'Item' constructor.
- */
-module.exports = Item;
+itemUtil.exist = function(k, cb) {
 
-/**
- * Item refresh every 'lifetime' millisecond
- *
- * @api public
- */
-Item.prototype.update = function(){
-    var next = Date.now();
-    this.lifetime -= (next - this.time);
-    this.time = next;
-    if(this.lifetime <= 0) {
-        this.died = true;
-    }
-};
+}
 
-Item.prototype.toJSON = function() {
-    return {
+itemUtil.isExpired = function(k, cb) {
 
-    };
-};
+}
+
+itemUtil.consumeItems = function(k, cb) {
+
+}

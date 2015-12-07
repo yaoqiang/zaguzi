@@ -31,15 +31,6 @@ Properties.prototype.clearGrantRecord = function () {
     this.getCheckInGrant = false
 }
 
-
-Properties.prototype.getCheckInGrant = function (cb) {
-    
-}
-
-Properties.prototype.getBankruptcyGrant = function (cb) {
-
-}
-
 Properties.prototype.save = function () {
     this.emit('save')
 }

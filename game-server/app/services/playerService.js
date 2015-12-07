@@ -12,6 +12,8 @@ var Properties = require('../domain/entity/properties');
 
 var messageService = require('./messageService')
 
+var globals = require('../../config/data/globals');
+
 var Promise = require('promise');
 
 var exp = module.exports;
@@ -70,6 +72,10 @@ exp.attachmentHandle = function (playerObj, cb) {
             //如果上次签到不是昨天, 说明不是连续签到了
             if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday())) {
                 playerObj.properties.continuousCheckInNr = 0;
+            }
+            //如果连续签到一个周期, 则重置连续签到
+            if (playerObj.properties.continuousCheckInNr == globals.checkIn.length) {
+              playerObj.properties.continuousCheckInNr = 0;
             }
         }
         //处理登录后每日任务等信息

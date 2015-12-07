@@ -6,6 +6,7 @@ var consts = require('../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
+var messageService = require('../../service/messageService');
 var gameUtil = require('../../util/gameUtil');
 var _ = require('underscore');
 require('date-utils');
@@ -15,6 +16,7 @@ var Code = require('../../../../shared/code');
 var Entity = require('./entity');
 var ranks = require('../../../config/data/rank');
 var rooms = require('../../../config/data/room');
+var itemConf = require('../../../config/data/item');
 var globals = require('../../../config/data/globals');
 
 
@@ -116,15 +118,79 @@ Player.prototype.addExp = function (exp, args) {
     }
 }
 
+//        id, 个数/天数, 类型
+// item: {id: Int, v: Int, m: String}
+Player.prototype.addItem = function(type, item, cb) {
+  if (!_.isObject(item)) {
+    logger.error('参数错误');
+    cb({code: Code.FAIL, err: consts.ERR_CODE.PARAMETER_ERR});
+    return;
+  }
+
+  //查找物品是否在配置表中
+  var data = _.findWhere(itemConf, {id: item.id});
+
+  if (_.isUndefined(data)) {
+    logger.error('参数错误');
+    cb({code: Code.FAIL, err: consts.ERR_CODE.PARAMETER_ERR});
+    return;
+  }
+
+  //如果玩家已有该物品
+  var i = _.findWhere(this.items, {id: item.id});
+  logger.info("user||items||玩家通过[%j]获得物品[%j] [%j]个/天,用户ID:%j", type, item.v, this.uid);
+  if (_.isUndefined(i)) {
+    
+  } else {
+
+  }
+
+}
+
 Player.prototype.addItems = function(type, items, cb) {
 
 }
+
+Player.prototype.exist = function(item) {
+  if (_.isNull(this.items) || _.isUndefined(this.items)) {
+    cb({exist: false});
+    return;
+  }
+
+  if (!_.isArray(this.items)) {
+    cb({exist: false});
+    return;
+  }
+
+  if (this.items.length <= 0) {
+    cb({exist: false});
+    return;
+  }
+
+  var exist = _.findWhere(this.items, {id: item.id});
+
+  return !_.isUndefined(exist);
+}
+
+Player.prototype.isExpired = function(k, cb) {
+
+}
+
+Player.prototype.consumeItem = function (type, item, cb) {
+  // body...
+};
+
+Player.prototype.consumeItems = function (type, items, cb) {
+  // body...
+};
 
 Player.prototype.upgrade = function () {
     this.rank += 1;
 }
 
-/
+/**
+ * 签到
+ */
 Player.prototype.getCheckInGrant = function (cb) {
     if (this.properties.getCheckInGrant) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
@@ -161,6 +227,9 @@ Player.prototype.getCheckInGrant = function (cb) {
 
 }
 
+/**
+ * 获取破产补助
+ */
 Player.prototype.getBankruptcyGrant = function (cb) {
 
   //如果今日已领完

@@ -19,6 +19,10 @@ module.exports = {
         }
     },
     ERR_CODE: {
+        SYS: {
+          PARAMETER_ERR: 1,
+          SYS_ERR: 2
+        },
         JOIN: {
             IN_GAME: 1001,   //在其他牌桌
             TOO_POOR: 1002,

@@ -6,7 +6,7 @@ var consts = require('../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
-var messageService = require('../../service/messageService');
+var messageService = require('../../services/messageService');
 var gameUtil = require('../../util/gameUtil');
 var _ = require('underscore');
 require('date-utils');
@@ -311,3 +311,4 @@ var player = {
     },
     createdAt: Date.now()
 };
+*/

@@ -68,11 +68,9 @@ Player.prototype.payTax = function (roomId) {
 
     //税费规则
 
-    var gold = 0;
+    var gold = room.fax * -1;
 
     var room = gameUtil.getRoomById(roomId);
-
-    var gold = room.fax * -1;
 
     logger.info("user||gold||用户游戏结束扣除[%j]金币税，用户ID:%j", gold, this.uid);
     this.gold += gold;
@@ -136,7 +134,7 @@ Player.prototype.addItem = function(type, item, cb) {
     return;
   }
 
-  //如果玩家已有该物品
+  //查询玩家是否有该物品
   var i = _.findWhere(this.items, {id: item.id});
   logger.info("user||items||玩家通过[%j]获得物品[%j] [%j]个/天,用户ID:%j", type, item.v, this.uid);
   if (_.isUndefined(i)) {

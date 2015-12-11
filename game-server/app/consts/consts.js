@@ -16,6 +16,10 @@ module.exports = {
             ACTIVITY: 4,
             MATCH: 5,
             GRANT: 6
+        },
+        ITEM_MODE: {
+            TERM: 'term',
+            COUNT: 'count'
         }
     },
     ERR_CODE: {

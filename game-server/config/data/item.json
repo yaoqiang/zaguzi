@@ -1,26 +1,26 @@
 [
 	{
-		"id": 1, "name": "expression", "mode": "term"
+		"id": 1, "name": "expression", "title": "豪华表情包", "icon": "", "mode": "term"
 	},
 	{
-		"id": 2, "name": "trumpet", "mode": "count"
+		"id": 2, "name": "trumpet", "title": "小喇叭", "icon": "", "mode": "count"
 	},
 	{
-		"id": 3, "name": "jipaiqi", "mode": "term"
+		"id": 3, "name": "jipaiqi", "title": "记牌器", "icon": "", "mode": "term"
 	},
 	{
-		"id": 4, "name": "vip", "mode": "term"
+		"id": 4, "name": "vip", "title": "VIP", "icon": "", "mode": "term"
 	},
 	{
-		"id": 5, "name": "chargeCard_1", "mode": "count", "value": 1
+		"id": 5, "name": "chargeCard_1", "title": "手机充值卡", "icon": "", "mode": "count", "value": 1
 	},
 	{
-		"id": 6, "name": "chargeCard_5", "mode": "count", "value": 5
+		"id": 6, "name": "chargeCard_5", "title": "手机充值卡", "icon": "", "mode": "count", "value": 5
 	},
 	{
-		"id": 7, "name": "chargeCard_10", "mode": "count", "value": 10
+		"id": 7, "name": "chargeCard_10", "title": "手机充值卡", "icon": "", "mode": "count", "value": 10
 	},
 	{
-		"id": 8, "name": "fragment", "mode": "count"
+		"id": 8, "name": "fragment", "title": "元宝", "icon": "", "mode": "count"
 	}
 ]

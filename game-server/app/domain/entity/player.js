@@ -163,15 +163,15 @@ Player.prototype.addItem = function (type, item) {
 
 Player.prototype.addItems = function (type, items, cb) {
   var self = this;
-  var result = _.map(items, function(item) {
+  var result = _.map(items, function (item) {
     return self.addItem(type, item);
   });
-  
+
   if (_.contains_(result, false)) {
-    cb({code: Code.FAIL, err: '添加物品失败'});
+    cb({ code: Code.FAIL, err: '添加物品失败' });
     return;
   }
-  cb({code: Code.OK});
+  cb({ code: Code.OK });
 }
 
 Player.prototype.exist = function (item) {
@@ -200,12 +200,32 @@ Player.prototype.consumeItem = function (type, item) {
   //查询玩家是否有该物品
   var i = _.findWhere(this.items, { id: item.id });
   if (_.isUndefined(i)) {
-    logger.error('items-consume||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.v, this.uid);
+    logger.error('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有该物品],用户ID:%j', this.uid, type, item.v, this.uid);
+    return false;
   }
+
+  if (i.value < item.v) {
+    logger.error('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有足够该物品],用户ID:%j', this.uid, type, item.v, this.uid);
+    return false;
+  }
+  
+  i.value -= item.v;
+
+  return true;
+
 };
 
 Player.prototype.consumeItems = function (type, items, cb) {
-  // body...
+  var self = this;
+  var result = _.map(items, function(item) {
+    return self.consumeItem(item);
+  });
+  
+  if (_.contains_(result, false)) {
+    cb({ code: Code.FAIL, err: '消耗物品失败' });
+    return;
+  }
+  cb({ code: Code.OK });
 };
 
 Player.prototype.upgrade = function () {

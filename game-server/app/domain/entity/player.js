@@ -314,55 +314,63 @@ Player.prototype.getBankruptcyGrant = function (cb) {
     });
 }
 
-Player.prototype.battle = function (room, outcome) {
-
+/**
+ * 游戏结束后处理各种附属情况
+ * @param room
+ * @param outcome
+ * @param result
+ */
+Player.prototype.battle = function (room, outcome, result) {
+    this.updateTask(room.id, outcome, result);
 }
 
-Player.prototype.initTasks = function () {
-    this.tasks = {daily: this.initDailyTasks(), forever: this.initForeverTasks()};
-}
 
-Player.prototype.initDailyTasks = function () {
-    return _.map(taskConf.daily, function (group) {
-        var task = _.first(group.tasks);
-        return {
-            id: task.id,
-            name: task.name,
-            desc: task.desc,
-            target: task.target,
-            icon: task.icon,
-            grant: task.grant,
-            current: 0
-        };
-    });
-}
-
-Player.prototype.initForeverTasks = function () {
-    return _.map(taskConf.forever, function (group) {
-        var task = _.first(group.tasks);
-        return {
-            id: task.id,
-            name: task.name,
-            desc: task.desc,
-            target: task.target,
-            icon: task.icon,
-            grant: task.grant,
-            current: 0
-        };
-    });
-}
-
-Player.prototype.updateTask = function(roomId, outcome, meeting) {
-    var allTaskConf = _.flatten([taskConf.daily, taskConf.forever]);
+/**
+ * 更新任务状态
+ * @param roomId
+ * @param outcome
+ * @param result
+ */
+Player.prototype.updateTask = function(roomId, outcome, result) {
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
+
     _.each(currentTasks, function (currentTask) {
+        //如果游戏房间是任务房间
         if (currentTask.roomId.length == 0 || _.contains(currentTask.roomId, roomId)) {
-            
+            //如果任务类型是胜利并且游戏结果是胜利,则更新任务状态
+            if (currentTask.type == "win") {
+                if (outcome == "win") {
+                    currentTask.current += 1;
+                }
+            } else {
+                currentTask.current += 1;
+            }
+            //如果任务类型是开会,则开会成功才更新任务状态
+            if (current.type == "meeting") {
+                if (result.meeting) {
+                    currentTask.current += 1;
+                }
+            }
+            if (currentTask.current >= currentTask.target) {
+                //send ui command event, to notify user.
+
+            }
         }
     });
 
+    this.save();
+
 }
 
+/**
+ * 领取任务奖励
+ * @param taskId
+ */
+Player.prototype.getTaskGrant = function (taskId) {
+    var allTaskConf = _.flatten([taskConf.daily, taskConf.forever]);
+    var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
+
+}
 
 /////////////////
 //emit..

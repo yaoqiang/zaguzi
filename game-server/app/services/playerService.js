@@ -79,7 +79,9 @@ exp.attachmentHandle = function (playerObj, cb) {
             }
         }
         //处理登录后每日任务等信息
+        playerObj.initDailyTasks();
     }
+    playerObj.saveAll();
     cb({player: playerObj});
 }
 

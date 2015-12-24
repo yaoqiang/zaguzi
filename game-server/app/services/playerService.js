@@ -165,10 +165,10 @@ exp.win = function (data, cb) {
         var player = user.player;
         player.win(data.roomId, data.gold, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({
-                uid: user.uid,
-                sid: user.serverId
-            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            //messageService.pushMessageToPlayer({
+            //    uid: user.uid,
+            //    sid: user.serverId
+            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -185,10 +185,10 @@ exp.lose = function (data, cb) {
         var player = user.player;
         player.lose(data.roomId, data.gold, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({
-                uid: user.uid,
-                sid: user.serverId
-            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            //messageService.pushMessageToPlayer({
+            //    uid: user.uid,
+            //    sid: user.serverId
+            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
@@ -205,10 +205,10 @@ exp.tie = function (data, cb) {
         var player = user.player;
         player.tie(data.roomId, function (result) {
             player.save();
-            messageService.pushMessageToPlayer({
-                uid: user.uid,
-                sid: user.serverId
-            }, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            //messageService.pushMessageToPlayer({
+            //    uid: user.uid,
+            //    sid: user.serverId
+            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });

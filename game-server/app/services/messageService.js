@@ -4,7 +4,6 @@ var logger = require('pomelo-logger').getLogger(__filename);
 var exp = module.exports;
 
 exp.pushMessageByUids = function (uids, route, msg) {
-    logger.debug('push message by uids => ', uids, route, msg);
     pomelo.app.get('channelService').pushMessageByUids(route, msg, uids, errHandler);
 };
 

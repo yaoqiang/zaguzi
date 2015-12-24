@@ -56,10 +56,18 @@ Player.prototype.updateProfile = function (data, cb) {
 
 Player.prototype.addGold = function (type, gold, cb) {
 
+    var self = this;
     logger.info("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j", this.uid, type, gold, this.uid);
     this.gold += gold;
 
     this.gold = this.gold < 0 ? 0 : this.gold;
+
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(session, this.uid, function (user) {
+        messageService.pushMessageToPlayer({
+            uid: user.uid,
+            sid: user.serverId
+        }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
+    });
 
     cb({gold: this.gold});
 
@@ -75,8 +83,6 @@ Player.prototype.payTax = function (roomId) {
 
     logger.info("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
     this.gold += gold;
-
-    this.gold = this.gold < 0 ? 0 : this.gold;
 
 }
 
@@ -366,9 +372,32 @@ Player.prototype.updateTask = function(roomId, outcome, result) {
  * 领取任务奖励
  * @param taskId
  */
-Player.prototype.getTaskGrant = function (taskId) {
-    var allTaskConf = _.flatten([taskConf.daily, taskConf.forever]);
+Player.prototype.getTaskGrant = function (taskId, cb) {
+
+    var self = this;
+
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
+
+    var task = _.findWhere(currentTasks, {id: taskId});
+    if (_.isUndefined(task)) {
+        cb({code: Code.FAIL, err: '领取失败'});
+        return;
+    }
+
+    if (task.current < task.target) {
+        cb({code: Code.FAIL, err: '领取失败'});
+        return;
+    }
+
+    this.addGold(consts.GAME.ADD_GOLD_TYPE.TASK, task.grant, function () {
+        messageService.pushMessageToPlayer(self.uid, '', '');
+    });
+
+    //如果是系统任务, 获取下一个任务并返回
+    if (taskId > 200000) {
+
+    }
+
 
 }
 

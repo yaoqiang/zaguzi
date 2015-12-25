@@ -18,7 +18,8 @@ taskUtil.initDailyTasks = function () {
       target: task.target,
       icon: task.icon,
       grant: task.grant,
-      current: 0
+      current: 0,
+      finished: false
     };
   });
 }
@@ -33,7 +34,8 @@ taskUtil.initForeverTasks = function () {
       target: task.target,
       icon: task.icon,
       grant: task.grant,
-      current: 0
+      current: 0,
+      finished: false
     };
   });
 }

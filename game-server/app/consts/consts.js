@@ -24,8 +24,8 @@ module.exports = {
     },
     ERR_CODE: {
         SYS: {
-          PARAMETER_ERR: 1,
-          SYS_ERR: 2
+            PARAMETER_ERR: 1,
+            SYS_ERR: 2
         },
         JOIN: {
             IN_GAME: 1001,   //在其他牌桌
@@ -149,6 +149,16 @@ module.exports = {
         FAN_FINISHED: 'onFanFinished',
         BACK_TO_GAME: 'onBackToGame'
 
+    },
+
+    UI_COMMAND: {
+        ALERT: 'onAlert',
+        PROMPT: 'onPrompt',
+        BLINK: {
+            GRANT: 'onGrantBlink',
+            SETTING: 'onSettingBlink',
+            TASK: 'onTaskBlink'
+        }
     },
 
     GAME: {

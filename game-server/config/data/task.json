@@ -2,8 +2,6 @@
   "daily": [
     {
       "groupId": "1001",
-      "roomId": [],
-      "type": "battle",
       "tasks": [
         {
           "id": "100101",
@@ -11,14 +9,14 @@
           "desc": "每日扎一股，开开心心拿金币",
           "target": "1",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "300"
         }
       ]
     },
     {
       "groupId": "1002",
-      "roomId": [],
-      "type": "battle",
       "tasks": [
         {
           "id": "100201",
@@ -26,14 +24,14 @@
           "desc": "每日扎一会，开开心心拿金币",
           "target": "10",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "1000"
         }
       ]
     },
     {
       "groupId": "1003",
-      "roomId": [13],
-      "type": "battle",
       "tasks": [
         {
           "id": "100201",
@@ -41,14 +39,18 @@
           "desc": "每日参加大师对决，赢更多金币",
           "target": "10",
           "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "battle",
           "grant": "3000"
         }
       ]
     },
     {
       "groupId": "1010",
-      "roomId": [],
-      "type": "win",
       "tasks": [
         {
           "id": "101001",
@@ -56,14 +58,14 @@
           "desc": "每日赢一把，开开心心拿金币",
           "target": "1",
           "icon": "",
+          "roomId": [],
+          "type": "win",
           "grant": "500"
         }
       ]
     },
     {
       "groupId": "1011",
-      "roomId": [],
-      "type": "win",
       "tasks": [
         {
           "id": "101101",
@@ -71,14 +73,14 @@
           "desc": "每日赢10把，开开心心拿金币",
           "target": "10",
           "icon": "",
+          "roomId": [],
+          "type": "win",
           "grant": "1500"
         }
       ]
     },
     {
       "groupId": "1012",
-      "roomId": [13],
-      "type": "win",
       "tasks": [
         {
           "id": "101201",
@@ -86,6 +88,12 @@
           "desc": "在大师对决房获胜10局，赢更多金币",
           "target": "10",
           "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "win",
           "grant": "10000"
         }
       ]
@@ -94,8 +102,6 @@
   "forever": [
     {
       "groupId": "2001",
-      "roomId": [],
-      "type": "battle",
       "tasks": [
         {
           "id": "200101",
@@ -103,6 +109,8 @@
           "desc": "对战3把，可获得任务奖励",
           "target": "3",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "300"
         },
         {
@@ -111,6 +119,8 @@
           "desc": "对战10把，可获得任务奖励",
           "target": "10",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "800"
         },
         {
@@ -119,6 +129,8 @@
           "desc": "对战50把，可获得任务奖励",
           "target": "50",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "2000"
         },
         {
@@ -127,14 +139,14 @@
           "desc": "对战100把，可获得任务奖励",
           "target": "100",
           "icon": "",
+          "roomId": [],
+          "type": "battle",
           "grant": "3000"
         }
       ]
     },
     {
       "groupId": "2002",
-      "roomId": [],
-      "type": "win",
       "tasks": [
         {
           "id": "200201",
@@ -142,6 +154,8 @@
           "desc": "胜利3把，可获得任务奖励",
           "target": "3",
           "icon": "",
+          "roomId": [],
+          "type": "win",
           "grant": "500"
         },
         {
@@ -150,6 +164,8 @@
           "desc": "胜利3把，可获得任务奖励",
           "target": "3",
           "icon": "",
+          "roomId": [],
+          "type": "win",
           "grant": "500"
         },
         {
@@ -158,10 +174,143 @@
           "desc": "胜利10把，可获得任务奖励",
           "target": "10",
           "icon": "",
+          "roomId": [],
+          "type": "win",
           "grant": "1500"
         }
       ]
+    },
+    {
+      "groupId": "3001",
+      "tasks": [
+        {
+          "id": "300101",
+          "name": "开会1把",
+          "desc": "开会1把，可获得任务奖励",
+          "target": "1",
+          "icon": "",
+          "roomId": [],
+          "type": "meeting",
+          "grant": "800"
+        },
+        {
+          "id": "300102",
+          "name": "开会10把",
+          "desc": "开会10把，可获得任务奖励",
+          "target": "10",
+          "icon": "",
+          "roomId": [],
+          "type": "meeting",
+          "grant": "2000"
+        },
+        {
+          "id": "300103",
+          "name": "开会30把",
+          "desc": "开会10把，可获得任务奖励",
+          "target": "30",
+          "icon": "",
+          "roomId": [],
+          "type": "meeting",
+          "grant": "3000"
+        }
+      ]
+    },
+    {
+      "groupId": "3002",
+      "tasks": [
+        {
+          "id": "300201",
+          "name": "开会5把",
+          "desc": "开会5把，可获得任务奖励",
+          "target": "5",
+          "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "meeting",
+          "grant": "1500"
+        },
+        {
+          "id": "300202",
+          "name": "开会10把",
+          "desc": "开会20把，可获得任务奖励",
+          "target": "20",
+          "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "meeting",
+          "grant": "3000"
+        },
+        {
+          "id": "300203",
+          "name": "开会50把",
+          "desc": "开会50把，可获得任务奖励",
+          "target": "50",
+          "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "meeting",
+          "grant": "5000"
+        }
+      ]
+    },
+    {
+      "groupId": "4001",
+      "tasks": [
+        {
+          "id": "400101",
+          "name": "元宝任务-中级",
+          "desc": "在大师之战房间赢取30把，可获得1枚元宝",
+          "target": "30",
+          "icon": "",
+          "roomId": [
+            13,
+            23,
+            33
+          ],
+          "type": "win",
+          "grant": "0",
+          "items": [
+            {
+              "id": 8,
+              "count": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groupId": "4002",
+      "tasks": [
+        {
+          "id": "400201",
+          "name": "元宝任务-高级",
+          "desc": "在巅峰之战赢取20把，可获得1枚元宝",
+          "target": "20",
+          "icon": "",
+          "roomId": [
+            14,
+            24,
+            34
+          ],
+          "type": "win",
+          "grant": "0",
+          "items": [
+            {
+              "id": 8,
+              "count": 1
+            }
+          ]
+        }
+      ]
     }
-
   ]
 }

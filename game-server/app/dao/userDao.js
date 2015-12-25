@@ -11,7 +11,7 @@ var globals = require('../../config/data/globals');
 
 var User = require('../domain/user');
 var Player = require('../domain/entity/player');
-var Properties = require('../domain/entity/properties');
+var taskUtil = require('../domain/entity/task');
 
 var db = pomelo.app.get('dbclient');
 var mongojs = require('mongojs');
@@ -32,9 +32,7 @@ userDao.getUserInfo = function(username, passwd, cb) {
         if (err !== null) {
             utils.invokeCallback(cb, err, null);
         } else {
-            var userId = 0;
             if (user) {
-                userId = user._id;
                 utils.invokeCallback(cb, null, user);
             } else {
                 utils.invokeCallback(cb, null, {
@@ -79,7 +77,10 @@ userDao.getPlayerByUid = function(uid, cb) {
             rank: doc.rank,
             exp: doc.exp,
             fragment: doc.fragment,
-            properties: doc.properties
+            items: doc.items,
+            tasks: doc.tasks,
+            properties: doc.properties,
+            createdAt: doc.createdAt
         });
 
         utils.invokeCallback(cb, null, player);
@@ -141,8 +142,8 @@ userDao.createPlayer = function(uid, cb) {
             lastLoginAt: null
         },
         items: [],
-        tasks: {},
-        createdAt: Date.now()
+        tasks: taskUtil.initTasks(),
+        createdAt: new Date()
     };
 
     db.player.save(player, function(err, doc) {

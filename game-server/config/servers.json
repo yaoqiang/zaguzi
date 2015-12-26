@@ -67,7 +67,7 @@
             }
         ],
         "auth": [
-            {"id": "auth-server-1", "host": "101.200.173.252", "port": 3350}
+            {"id": "auth-server-1", "host": "101.200.128.237", "port": 3350}
         ],
         "game": [
             {"id": "game-server-1", "host": "101.200.128.237", "port": 3450},

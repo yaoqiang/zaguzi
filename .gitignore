@@ -1,7 +1,25 @@
 game-server/node_modules
 web-server/node_modules
 game-server/logs
-/.idea
-.idea/vcs.xml
+
+
+# Created by https://www.gitignore.io
+
+### Intellij ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+
+*.iml
+
+## Directory-based project format:
+.idea/
+# if you remove the above rule, at least ignore the following:
+
+# User-specific stuff:
 .idea/workspace.xml
-.idea/zgz.iml
+.idea/tasks.xml
+.idea/dictionaries
+
+
+## File-based project format:
+*.ipr
+*.iws

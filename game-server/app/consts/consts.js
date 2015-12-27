@@ -17,6 +17,10 @@ module.exports = {
             MATCH: 5,
             GRANT: 6
         },
+        ADD_FRAGMENT_TYPE: {
+            TASK: 1,
+            ACTIVITY: 2
+        },
         ITEM_MODE: {
             TERM: 'term',
             COUNT: 'count'

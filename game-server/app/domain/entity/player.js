@@ -20,6 +20,8 @@ var itemConf = require('../../../config/data/item');
 var taskConf = require('../../../config/data/task');
 var globals = require('../../../config/data/globals');
 
+var taskUtil = require('./task');
+
 
 var Player = function (opts) {
     Entity.call(this, opts);
@@ -62,7 +64,7 @@ Player.prototype.addGold = function (type, gold, cb) {
 
     this.gold = this.gold < 0 ? 0 : this.gold;
 
-    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(session, this.uid, function (user) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, this.uid, function (user) {
         messageService.pushMessageToPlayer({
             uid: user.uid,
             sid: user.serverId
@@ -124,7 +126,7 @@ Player.prototype.addExp = function (exp, args) {
 }
 
 //        id, 个数/天数, 类型
-// item: {id: Int, v: Int, m: String}
+// item: {id: Int, value: Int}
 Player.prototype.addItem = function (type, item) {
     if (!_.isObject(item)) {
         logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.value, this.uid);
@@ -389,13 +391,24 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         return;
     }
 
-    this.addGold(consts.GAME.ADD_GOLD_TYPE.TASK, task.grant, function () {
-        messageService.pushMessageToPlayer(self.uid, '', '');
-    });
+    //添加金币或元宝
+    if (taskId < 400000) {
+        this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, task.grant, function () {
+        });
+    } else {
+        this.addItems(consts.GLOBAL.ADD_ITEM_TYPE.TASK, task.items, function (result) {
+        });
+    }
 
     //如果是系统任务, 获取下一个任务并返回
     if (taskId > 200000) {
+        taskUtil.getNextTask(taskId, function (data) {
+            var nextTask = data.taskConf;
 
+            if (nextTask.finished) nextTask.current = nextTask.target;
+
+            cb({code: Code.OK, nextTask: nextTask});
+        })
     }
 
 

@@ -40,7 +40,7 @@ userDao.createUser = function (username, password, from, cb){
             cb({code: err.number, msg: err.message}, null);
         } else {
             var userId = res.insertId;
-            var user = {id: res.insertId, name: username, password: password, loginCount: 1, lastLoginTime:loginTime};
+            var user = {id: res.insertId, name: username, password: password, loginCount: 1, lastLoginAt:loginTime};
             cb(null, user);
         }
     });

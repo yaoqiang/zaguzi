@@ -99,7 +99,7 @@ app.post('/login', function (req, res) {
                     loginCount: 1
                 },
                 $set: {
-                    lastLogin: new Date()
+                    lastLoginAt: new Date()
                 }
             },
             function () {

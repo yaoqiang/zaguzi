@@ -1,3 +1,5 @@
+var mongojs = require('mongojs');
+
 module.exports = {
     update: function(dbclient, val, cb) {
         dbclient.player.findAndModify({

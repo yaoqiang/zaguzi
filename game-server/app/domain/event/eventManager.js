@@ -23,6 +23,14 @@ function addSaveEvent(player) {
         app.get('sync').exec('playerSync.update', player.uid, player);
     });
 
+    player.on('saveTask', function () {
+        app.get('sync').exec('taskSync.update', player.uid, player);
+    });
+
+    player.on('saveItem', function () {
+        app.get('sync').exec('itemSync.update', player.uid, player);
+    });
+
     player.on('flush', function () {
         app.get('sync').flush('playerSync.update', player.uid, player);
     });
@@ -43,6 +51,8 @@ function addSaveEvent(player) {
     player.on('flushAll', function () {
         app.get('sync').flush('playerSync.update', player.uid, player);
         app.get('sync').flush('propertiesSync.update', player.uid, player.properties);
+        app.get('sync').exec('taskSync.update', player.uid, player);
+        app.get('sync').exec('itemSync.update', player.uid, player);
     })
 
 }

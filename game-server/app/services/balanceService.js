@@ -18,7 +18,8 @@ exp.balanceCommon = function (game, cb) {
     //{game: {result: consts.GAME.RESULT.x, share: x},
     // details: [{uid:x, actorNr:x, actorAvatar:x, actorName:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
 
-    var details = [];
+    var details = [], meeting = false;
+
 
     //计算被抓股数
     if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
@@ -27,6 +28,8 @@ exp.balanceCommon = function (game, cb) {
         });
         game.gameLogic.share += _.size(notFinishedActors);
 
+        //meeting?
+        if (game.gameLogic.red.length == 1) meeting = true;
     }
     else if (game.gameLogic.result == consts.GAME.RESULT.BLACK_WIN) {
         var notFinishedActors = _.filter(game.gameLogic.red, function (act) {
@@ -138,7 +141,8 @@ exp.balanceCommon = function (game, cb) {
                 details.push({
                     uid: actor.uid, actorNr: actor.actorNr, actorName: actor.properties.nickName,
                     actorAvatar: actor.properties.avatar, actualIdentity: actor.gameStatus.actualIdentity,
-                    result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank
+                    result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank,
+                    meeting: meeting && actor.identity == consts.GAME.IDENTITY.HONG3
                 });
             });
 

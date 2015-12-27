@@ -205,32 +205,47 @@ exp.tie = function (data, cb) {
         var player = user.player;
         player.tie(data.roomId, function (result) {
             player.save();
-            //messageService.pushMessageToPlayer({
-            //    uid: user.uid,
-            //    sid: user.serverId
-            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
             cb({code: Code.OK});
         });
     });
 }
 
-exp.balance = function (data, cb) {
-    var details = data.details;
-    var result = {code: Code.OK}
-    //为防止结算未完成时，已将玩家从缓存中移除，所以需保证map结束后，再callback
-    Promise.all(_.map(details, function (detail) {
-        if (detail.result == consts.GAME.ACTOR_RESULT.WIN) {
+exp.battle = function (detail, cb) {
+
+    exp.getUserCacheByUid(detail.uid, function (user) {
+        //处理结束后, 相关处理
+        user.player.battle(detail.roomId, detail.result, {meeting: detail.meeting});
+    });
+
+    switch (detail.result) {
+        case consts.GAME.ACTOR_RESULT.WIN:
             exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold}, function (data) {
             });
-        }
-        else if (detail.result == consts.GAME.ACTOR_RESULT.LOSE) {
+            break;
+        case consts.GAME.ACTOR_RESULT.LOSE:
             exp.lose({uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1}, function (data) {
             });
-        }
-        else {
+            break;
+        default:
             exp.tie({uid: detail.uid, roomId: detail.roomId}, function (data) {
             });
-        }
+            break;
+    }
+
+    cb();
+}
+
+exp.balance = function (data, cb) {
+    var details = data.details;
+    var result = {code: Code.OK};
+
+    //为防止结算未完成时，已将玩家从缓存中移除，所以需保证map结束后，再callback
+    Promise.all(_.map(details, function (detail) {
+
+        exp.battle(detail, function () {
+
+        });
+
         return Promise.resolve;
     }))
         .then(cb(result))

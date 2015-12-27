@@ -19,6 +19,7 @@ taskUtil.initDailyTasks = function () {
       icon: task.icon,
       grant: task.grant,
       current: 0,
+      roomId: task.roomId,
       finished: false
     };
   });
@@ -35,6 +36,7 @@ taskUtil.initForeverTasks = function () {
       icon: task.icon,
       grant: task.grant,
       current: 0,
+      roomId: task.roomId,
       finished: false
     };
   });

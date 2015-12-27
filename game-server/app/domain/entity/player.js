@@ -328,8 +328,8 @@ Player.prototype.getBankruptcyGrant = function (cb) {
  * @param outcome
  * @param result
  */
-Player.prototype.battle = function (room, outcome, result) {
-    this.updateTask(room.id, outcome, result);
+Player.prototype.battle = function (roomId, outcome, attributes) {
+    this.updateTask(roomId, outcome, attributes);
 }
 
 
@@ -339,34 +339,42 @@ Player.prototype.battle = function (room, outcome, result) {
  * @param outcome
  * @param result
  */
-Player.prototype.updateTask = function(roomId, outcome, result) {
+Player.prototype.updateTask = function (roomId, outcome, attributes) {
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
 
-    _.each(currentTasks, function (currentTask) {
+    //未完成任务列表
+    var unfinishedTasks = _.filter(currentTasks, function (t) {
+        return t.finished == false;
+    });
+
+    _.each(unfinishedTasks, function (currentTask) {
         //如果游戏房间是任务房间
         if (currentTask.roomId.length == 0 || _.contains(currentTask.roomId, roomId)) {
+
             //如果任务类型是胜利并且游戏结果是胜利,则更新任务状态
             if (currentTask.type == "win") {
                 if (outcome == "win") {
                     currentTask.current += 1;
                 }
-            } else {
-                currentTask.current += 1;
             }
             //如果任务类型是开会,则开会成功才更新任务状态
-            if (current.type == "meeting") {
-                if (result.meeting) {
+            else if (currentTask.type == "meeting") {
+                if (attributes.meeting) {
                     currentTask.current += 1;
                 }
             }
+            else {
+                currentTask.current += 1;
+            }
+
             if (currentTask.current >= currentTask.target) {
                 //send ui command event, to notify user.
-
             }
+
         }
     });
 
-    this.save();
+    this.saveTask();
 
 }
 
@@ -400,16 +408,17 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         });
     }
 
-    //如果是系统任务, 获取下一个任务并返回
-    if (taskId > 200000) {
-        taskUtil.getNextTask(taskId, function (data) {
-            var nextTask = data.taskConf;
+    //获取下一个任务并更新player.tasks, 最后返回客户端新任务信息
+    taskUtil.getNextTask(taskId, function (data) {
+        var nextTask = data.taskConf;
 
-            if (nextTask.finished) nextTask.current = nextTask.target;
+        if (nextTask.finished) nextTask.current = nextTask.target;
 
-            cb({code: Code.OK, nextTask: nextTask});
-        })
-    }
+        var t = _.findLastIndex(currentTasks, {id: taskId});
+        self.tasks[t] = nextTask;
+        self.saveTask();
+        cb({code: Code.OK, nextTask: nextTask});
+    })
 
 
 }
@@ -423,6 +432,14 @@ Player.prototype.save = function () {
 
 Player.prototype.saveProfile = function () {
     this.emit('saveProfile');
+}
+
+Player.prototype.saveTask = function () {
+    this.emit('saveTask');
+}
+
+Player.prototype.saveItem = function () {
+    this.emit('saveItem');
 }
 
 Player.prototype.saveProperties = function () {

@@ -91,7 +91,7 @@ app.configure('production|development', 'game', function() {
 
 
 // configure database
-app.configure('production|development', 'auth|connector|game|manager|master', function() {
+app.configure('production|development', 'auth|connector|manager', function() {
   var dbclient = require('./app/dao/mongodb');
 
   dbclient.on('error', function(err) {

@@ -941,22 +941,22 @@ Game.prototype.over = function () {
 Game.prototype.trusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||trusteeship||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
     if (this.gameLogic == null) {
-        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||托管失败, 游戏未开始||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
-        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||托管失败, 游戏未开始或已结束||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (actor.gameStatus.isTrusteeship) {
-        logger.error('game||trusteeship||玩家已托管||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||玩家已托管||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_TRUSTEESHIP})
         return;
     }
@@ -987,17 +987,17 @@ Game.prototype.trusteeship = function (data, cb) {
 Game.prototype.cancelTrusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||cancelTrusteeship||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        logger.error('game-cancelTrusteeship||%j||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
     if (this.gameLogic == null) {
-        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
-        logger.error('game||trusteeship||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid);
+        logger.error('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
@@ -1028,13 +1028,13 @@ Game.prototype.leave = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||leave||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
+        logger.error('game-leave||%j||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
         return;
     }
 
     if (this.gameLogic != null && this.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-        logger.error('game||leave||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid);
+        logger.error('game-leave||%j||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING})
         return;
     }
@@ -1061,7 +1061,7 @@ Game.prototype.leave = function (data, cb) {
     this.actors = _.without(this.actors, actor);
     actor = null;
 
-    logger.debug('game||leave||离开游戏成功||用户&ID: %j', data.uid);
+    logger.debug('game-leave||%j||离开游戏成功||用户&ID: %j', data.uid, data.uid);
 
     this.currentActorNum = this.currentActorNum - 1;
     this.isAllReady = false;
@@ -1078,7 +1078,7 @@ Game.prototype.scheduleNotReady = function (data) {
     var self = this;
     //如果玩家加入牌桌[?]秒内没准备则自动离开
     var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.NOT_READY * 1000}, function (jobData) {
-        logger.debug('game||leave||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', consts.GAME.TIMER.NOT_READY, jobData.uid);
+        logger.debug('game-ready||%j||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', data.uid, consts.GAME.TIMER.NOT_READY, jobData.uid);
         self.jobQueue = _.filter(self.jobQueue, function (j) {
             return j.uid != jobData.uid;
         });

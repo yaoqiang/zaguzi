@@ -423,6 +423,17 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 
 }
 
+
+//
+Player.prototype.clearGrantRecord = function () {
+    this.properties.getBankruptcyGrantNr = 0;
+    this.properties.getCheckInGrant = false
+}
+
+Player.prototype.initDailyTasks = function () {
+    this.tasks.daily = taskUtil.initDailyTasks();
+}
+
 /////////////////
 //emit..
 /////////////////

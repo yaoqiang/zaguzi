@@ -26,10 +26,7 @@ var Properties = function(opts)
 
 util.inherits(Properties, Entity);
 
-Properties.prototype.clearGrantRecord = function () {
-    this.getBankruptcyGrantNr = 0;
-    this.getCheckInGrant = false
-}
+
 
 Properties.prototype.save = function () {
     this.emit('save')

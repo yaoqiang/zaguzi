@@ -67,7 +67,7 @@ exp.attachmentHandle = function (playerObj, cb) {
     //如果上次登录不是今天，即今天第一次登录;（如果是今天，则说明已处理过，无需再处理）
     else if (!Date.equalsDay(new Date(playerObj.properties.lastLoginAt), Date.today())) {
         //清除领取今日奖励数据
-        playerObj.properties.clearGrantRecord();
+        playerObj.clearGrantRecord();
         //如果不是第一次签到
         if (playerObj.properties.lastCheckIn != null) {
             //如果上次签到不是昨天, 说明不是连续签到了

@@ -1,8 +1,10 @@
 var mongojs = require('mongojs');
+var logger = require('pomelo-logger').getLogger('sync');
 
 module.exports = {
     update: function (dbclient, val, cb) {
 
+        logger.debug('#execute propertiesSync.update');
         dbclient.player.findAndModify({
             query: { uid: mongojs.ObjectId(val.uid) },
             update: {

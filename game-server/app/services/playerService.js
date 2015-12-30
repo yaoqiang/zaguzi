@@ -29,6 +29,7 @@ exp.getUserInfo = function (uid, cb) {
 
 
 exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
+    logger.debug('#execute playerService.onUserEnter');
     //add event
     var playerObj = new Player(player);
     eventManager.addEvent(playerObj);
@@ -64,7 +65,7 @@ exp.attachmentHandle = function (playerObj, cb) {
         playerObj.properties.lastLoginAt = new Date();
     }
     //如果上次登录不是今天，即今天第一次登录;（如果是今天，则说明已处理过，无需再处理）
-    else if (!playerObj.properties.lastLoginAt.isToday()) {
+    else if (!Date.equalsDay(new Date(playerObj.properties.lastLoginAt), Date.today())) {
         //清除领取今日奖励数据
         playerObj.properties.clearGrantRecord();
         //如果不是第一次签到
@@ -111,7 +112,7 @@ exp.onUserDisconnect = function (data, cb) {
         pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
             if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-                logger.info("user||disconnect||玩家掉线时还在游戏中, 用户ID:%j", data.uid)
+                logger.info("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid)
                 //set user session id = null.
                 exp.setUserSessionId(data.uid, null);
             }
@@ -157,7 +158,7 @@ exp.onUserDisconnect = function (data, cb) {
 exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user||win||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid);
+            logger.info("user-win||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }
@@ -177,7 +178,7 @@ exp.win = function (data, cb) {
 exp.lose = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user||lose||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid);
+            logger.info("user-lose||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }
@@ -197,7 +198,7 @@ exp.lose = function (data, cb) {
 exp.tie = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user||tie||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid);
+            logger.info("user-tie||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }
@@ -255,7 +256,7 @@ exp.balance = function (data, cb) {
 exp.getCheckInGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user||check in||玩家签到, 但玩家不在缓存, 用户ID:%j", data.uid);
+            logger.info("user-check in||%j||玩家签到, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }

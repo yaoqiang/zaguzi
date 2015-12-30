@@ -256,12 +256,54 @@ exp.balance = function (data, cb) {
 exp.getCheckInGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-check in||%j||玩家签到, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.info("user-check in||%j||玩家签到失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }
 
         var player = user.player;
+
+        if (player.properties.getCheckInGrant) {
+            logger.warn("user-check in||%j||玩家签到失败, 玩家已签到, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        var checkInObj = globals.checkIn[player.properties.continuousCheckInNr-1];
+
+        if (_.isUndefined(checkInObj)) {
+            logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+
+        ////////////////
+        // 确保更新金币和物品后 触发Sync Queue
+        ////////////////
+        new Promise(function(resolve, reject) {
+            player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, checkInObj.gold, function () {
+                //如果有附加物品
+                if (!_.isUndefined(checkInObj.items) && checkInObj.items.length > 0) {
+                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.GRANT, checkInObj.items, function () {
+                        resolve();
+                    });
+                }
+                else {
+                    resolve();
+                }
+            })
+        }).then(function () {
+            player.properties.getCheckInGrant = true;
+            player.properties.continuousCheckInNr += 1;
+            player.properties.lastCheckIn = new Date();
+            player.save();
+            player.saveProperties();
+            player.saveItem();
+        }).done();
+
+
+        cb({code: Code.OK, gold: checkInObj.gold});
 
     });
 }

@@ -53,8 +53,8 @@ function addSaveEvent(player) {
     player.on('flushAll', function () {
         app.get('sync').flush('playerSync.update', player.uid, player);
         app.get('sync').flush('propertiesSync.update', player.uid, player);
-        app.get('sync').exec('taskSync.update', player.uid, player);
-        app.get('sync').exec('itemSync.update', player.uid, player);
+        app.get('sync').flush('taskSync.update', player.uid, player);
+        app.get('sync').flush('itemSync.update', player.uid, player);
     })
 
 }

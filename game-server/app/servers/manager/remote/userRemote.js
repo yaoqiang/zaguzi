@@ -53,6 +53,19 @@ UserRemote.prototype.balance = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.getCheckInGrant = function (msg, cb) {
+    playerService.getCheckInGrant(msg, cb);
+}
+
+UserRemote.prototype.getBankruptcyGrant = function (msg, cb) {
+    playerService.getBankruptcyGrant(msg, cb);
+}
+
+UserRemote.prototype.getTaskGrant = function (msg, cb) {
+    playerService.getTaskGrant(msg, cb);
+}
+
+
 
 /**
  * get user by sessionId from cache.

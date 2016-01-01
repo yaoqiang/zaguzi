@@ -68,7 +68,7 @@ exp.attachmentHandle = function (playerObj, cb) {
     else if (!Date.equalsDay(new Date(playerObj.properties.lastLoginAt), Date.today())) {
         //清除领取今日奖励数据
         playerObj.clearGrantRecord();
-        //如果不是第一次签到
+        //设置连续签到数
         if (playerObj.properties.lastCheckIn != null) {
             //如果上次签到不是昨天, 说明不是连续签到了
             if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday())) {
@@ -79,6 +79,8 @@ exp.attachmentHandle = function (playerObj, cb) {
               playerObj.properties.continuousCheckInNr = 0;
             }
         }
+        //设置本次登录时间
+        playerObj.properties.lastLoginAt = new Date();
         //处理登录后每日任务等信息
         playerObj.initDailyTasks();
     }
@@ -261,55 +263,31 @@ exp.getCheckInGrant = function (data, cb) {
             return;
         }
 
-        var player = user.player;
-
-        if (player.properties.getCheckInGrant) {
-            logger.warn("user-check in||%j||玩家签到失败, 玩家已签到, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
-            return;
-        }
-
-        var checkInObj = globals.checkIn[player.properties.continuousCheckInNr-1];
-
-        if (_.isUndefined(checkInObj)) {
-            logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
-            return;
-        }
-
-
-        ////////////////
-        // 确保更新金币和物品后 触发Sync Queue
-        ////////////////
-        new Promise(function(resolve, reject) {
-            player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, checkInObj.gold, function () {
-                //如果有附加物品
-                if (!_.isUndefined(checkInObj.items) && checkInObj.items.length > 0) {
-                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.GRANT, checkInObj.items, function () {
-                        resolve();
-                    });
-                }
-                else {
-                    resolve();
-                }
-            })
-        }).then(function () {
-            player.properties.getCheckInGrant = true;
-            player.properties.continuousCheckInNr += 1;
-            player.properties.lastCheckIn = new Date();
-            player.save();
-            player.saveProperties();
-            player.saveItem();
-        }).done();
-
-
-        cb({code: Code.OK, gold: checkInObj.gold});
+        user.player.getCheckInGrant(cb);
 
     });
 }
 
 exp.getBankruptcyGrant = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+        user.player.getBankruptcyGrant(cb);
+    })
+}
 
+exp.getTaskGrant = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-task grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+        user.player.getTaskGrant(data.taskId, cb);
+    })
 }
 
 exp.addFragment = function (data, cb) {

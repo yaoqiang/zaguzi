@@ -10,6 +10,7 @@ var messageService = require('../../services/messageService');
 var gameUtil = require('../../util/gameUtil');
 var _ = require('underscore');
 require('date-utils');
+var Promise = require('promise')
 
 var Code = require('../../../../shared/code');
 
@@ -261,8 +262,18 @@ Player.prototype.upgrade = function () {
  * 签到
  */
 Player.prototype.getCheckInGrant = function (cb) {
+    var self = this;
     if (this.properties.getCheckInGrant) {
+        logger.warn("user-check in||%j||玩家签到失败, 玩家已签到, 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
+        return;
+    }
+
+    var grantData = _.findWhere(globals.checkIn, {id: this.properties.continuousCheckInNr});
+
+    if (_.isUndefined(grantData)) {
+        logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", this.uid, this.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ERR});
         return;
     }
 
@@ -273,24 +284,30 @@ Player.prototype.getCheckInGrant = function (cb) {
         this.properties.continuousCheckInNr += 1;
     }
 
-    var grantData = _.findWhere(globals.checkIn, {id: this.properties.continuousCheckInNr});
+    ////////////////
+    // 确保更新金币和物品后 触发Sync Queue
+    ////////////////
+    new Promise(function(resolve, reject) {
+        self.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, grantData.gold, function () {
+            //如果有附加物品
+            if (!_.isUndefined(grantData.items) && grantData.items.length > 0) {
+                self.addItems(consts.GLOBAL.ADD_ITEM_TYPE.GRANT, grantData.items, function () {
+                    resolve();
+                });
+            }
+            else {
+                resolve();
+            }
+        })
+    }).then(function () {
+        self.properties.getCheckInGrant = true;
+        self.properties.continuousCheckInNr += 1;
+        self.properties.lastCheckIn = new Date();
+        self.save();
+        self.saveProperties();
+        self.saveItem();
+    }).done();
 
-    if (_.isUndefined(grantData)) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ERR});
-        return;
-    }
-
-    //领取签到金币
-    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, grantData.gold, function (data) {
-    });
-
-    //如果有附加物品, 添加物品
-    if (!_.isUndefined(grantData.items) && grantData.items.length > 0) {
-        this.addItems(consts.GLOBAL.ADD_ITEM_TYPE.GRANT, grantData.items, function () {
-        });
-    }
-
-    this.saveAll();
 
     cb({code: Code.OK, gold: grantData.gold});
 
@@ -303,12 +320,14 @@ Player.prototype.getBankruptcyGrant = function (cb) {
 
     //如果今日已领完
     if (this.getBankruptcyGrantNr >= globals.bankruptcyGrant.times) {
+        logger.warn("user-grant||%j||玩家已领取今日补助, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.ALREADY_GRANT});
         return;
     }
 
     //如果钱够多, 不能领取
     if (this.gold >= globals.bankruptcyGrant.threshold) {
+        logger.warn("user-grant||%j||玩家金币超出领取最低限, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.MORE_MONEY});
         return;
     }
@@ -317,8 +336,8 @@ Player.prototype.getBankruptcyGrant = function (cb) {
 
     var self = this;
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, globals.bankruptcyGrant.gold, function (data) {
-        self.saveAll();
-        cb({code: Code.OK});
+        self.save();
+        cb({code: Code.OK, gold: globals.bankruptcyGrant.gold});
     });
 }
 
@@ -326,7 +345,7 @@ Player.prototype.getBankruptcyGrant = function (cb) {
  * 游戏结束后处理各种附属情况
  * @param room
  * @param outcome
- * @param result
+ * @param attributes
  */
 Player.prototype.battle = function (roomId, outcome, attributes) {
     this.updateTask(roomId, outcome, attributes);
@@ -337,7 +356,7 @@ Player.prototype.battle = function (roomId, outcome, attributes) {
  * 更新任务状态
  * @param roomId
  * @param outcome
- * @param result
+ * @param attributes
  */
 Player.prototype.updateTask = function (roomId, outcome, attributes) {
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
@@ -381,6 +400,7 @@ Player.prototype.updateTask = function (roomId, outcome, attributes) {
 /**
  * 领取任务奖励
  * @param taskId
+ * @param cb
  */
 Player.prototype.getTaskGrant = function (taskId, cb) {
 
@@ -424,12 +444,13 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 }
 
 
-//
+//重置补助和签到状态
 Player.prototype.clearGrantRecord = function () {
     this.properties.getBankruptcyGrantNr = 0;
     this.properties.getCheckInGrant = false
 }
 
+//初始化每日任务
 Player.prototype.initDailyTasks = function () {
     this.tasks.daily = taskUtil.initDailyTasks();
 }

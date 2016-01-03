@@ -135,6 +135,7 @@ userDao.createPlayer = function(uid, cb) {
         fragment: 0,
         properties: {
             getBankruptcyGrantNr: 0,
+            getBankruptcyGrantRunOut: false,
             lastCheckIn: null,
             continuousCheckInNr: 0,
             getCheckInGrant: false,

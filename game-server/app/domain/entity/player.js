@@ -312,7 +312,7 @@ Player.prototype.getCheckInGrant = function (cb) {
 Player.prototype.getBankruptcyGrant = function (cb) {
 
     //如果今日已领完
-    if (this.getBankruptcyGrantNr >= globals.bankruptcyGrant.times) {
+    if (this.properties.getBankruptcyGrantRunOut) {
         logger.warn("user-grant||%j||玩家已领取今日补助, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.ALREADY_GRANT});
         return;
@@ -325,7 +325,11 @@ Player.prototype.getBankruptcyGrant = function (cb) {
         return;
     }
 
-    this.getBankruptcyGrantNr += 1;
+    this.properties.getBankruptcyGrantNr += 1;
+
+    if (this.properties.getBankruptcyGrantNr >= globals.bankruptcyGrant.times) {
+        this.properties.getBankruptcyGrantRunOut = true;
+    }
 
     var self = this;
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, globals.bankruptcyGrant.gold, function (data) {
@@ -440,7 +444,8 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 //重置补助和签到状态
 Player.prototype.clearGrantRecord = function () {
     this.properties.getBankruptcyGrantNr = 0;
-    this.properties.getCheckInGrant = false
+    this.properties.getCheckInGrant = false;
+    this.properties.getBankruptcyGrantRunOut = false;
 }
 
 //初始化每日任务
@@ -505,6 +510,7 @@ module.exports = Player;
     fragment: 0,
     properties: {
         getBankruptcyGrantNr: 0,
+        getBankruptcyGrantRunOut: false
         lastCheckIn: null,
         continuousCheckInNr: 0,
         getCheckInGrant: false,

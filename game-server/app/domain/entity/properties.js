@@ -1,4 +1,5 @@
 /**
+ * 已废弃!###
  * Module dependencies
  */
 var util = require('util');

@@ -55,7 +55,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
 }
 
 /**
- * 处理登录后签到、补助、每日任务等信息
+ * 重置登录后签到、补助、每日任务等信息
  * @param playerObj
  * @param cb
  */

@@ -271,19 +271,10 @@ Player.prototype.getCheckInGrant = function (cb) {
 
     var grantData = globals.checkIn[this.properties.continuousCheckInNr];
 
-
-
     if (_.isUndefined(grantData)) {
         logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ERR});
         return;
-    }
-
-    if (_.isNull(this.properties.lastCheckIn) || !Date.equalsDay(new Date(this.properties.lastCheckIn), Date.yesterday())) {
-        this.properties.continuousCheckInNr = 0;
-    }
-    if (Date.equalsDay(new Date(this.properties.lastCheckIn), Date.yesterday())) {
-        this.properties.continuousCheckInNr += 1;
     }
 
     ////////////////

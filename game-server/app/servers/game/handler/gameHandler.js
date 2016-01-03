@@ -122,7 +122,7 @@ handler.getCheckInGrant = function (msg, session, next) {
     var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.user.userRemote.getCheckInGrant(session, msg, function (data) {
+    self.app.rpc.manager.userRemote.getCheckInGrant(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -132,7 +132,7 @@ handler.getBankruptcyGrant = function (msg, session, next) {
     var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.user.userRemote.getBankruptcyGrant(session, msg, function (data) {
+    self.app.rpc.manager.userRemote.getBankruptcyGrant(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -141,7 +141,7 @@ handler.getTaskGrant = function (msg, session, next) {
     var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.user.userRemote.getTaskGrant(session, msg, function (data) {
+    self.app.rpc.manager.userRemote.getTaskGrant(session, msg, function (data) {
         next(null, data);
     });
 }

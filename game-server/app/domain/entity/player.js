@@ -269,7 +269,9 @@ Player.prototype.getCheckInGrant = function (cb) {
         return;
     }
 
-    var grantData = _.findWhere(globals.checkIn, {id: this.properties.continuousCheckInNr});
+    var grantData = globals.checkIn[this.properties.continuousCheckInNr];
+
+
 
     if (_.isUndefined(grantData)) {
         logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", this.uid, this.uid);
@@ -277,10 +279,10 @@ Player.prototype.getCheckInGrant = function (cb) {
         return;
     }
 
-    if (_.isNull(this.properties.lastCheckIn) || !Date.equalsDay(this.properties.lastCheckIn, Date.yesterday())) {
+    if (_.isNull(this.properties.lastCheckIn) || !Date.equalsDay(new Date(this.properties.lastCheckIn), Date.yesterday())) {
         this.properties.continuousCheckInNr = 0;
     }
-    if (Date.equalsDay(this.properties.lastCheckIn, Date.yesterday())) {
+    if (Date.equalsDay(new Date(this.properties.lastCheckIn), Date.yesterday())) {
         this.properties.continuousCheckInNr += 1;
     }
 

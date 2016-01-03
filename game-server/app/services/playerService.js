@@ -71,7 +71,7 @@ exp.attachmentHandle = function (playerObj, cb) {
         //设置连续签到数
         if (playerObj.properties.lastCheckIn != null) {
             //如果上次签到不是昨天, 说明不是连续签到了
-            if (!Date.equalsDay(playerObj.properties.lastCheckIn, Date.yesterday())) {
+            if (!Date.equalsDay(new Date(playerObj.properties.lastCheckIn), Date.yesterday())) {
                 playerObj.properties.continuousCheckInNr = 0;
             }
             //如果连续签到一个周期, 则重置连续签到

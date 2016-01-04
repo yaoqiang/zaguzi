@@ -279,10 +279,32 @@ exp.getBankruptcyGrant = function (data, cb) {
     })
 }
 
+exp.getDailyTaskList = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+        cb({code: Code.OK, taskList: user.player.tasks.daily});
+    })
+}
+
+exp.getForeverTaskList = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+        cb({code: Code.OK, taskList: user.player.tasks.forever});
+    })
+}
+
 exp.getTaskGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-task grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.info("user-task grant||%j||玩家领取任务奖励失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({code: Code.FAIL});
             return;
         }

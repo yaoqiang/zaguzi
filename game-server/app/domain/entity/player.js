@@ -59,6 +59,7 @@ Player.prototype.updateProfile = function (data, cb) {
 
 Player.prototype.addGold = function (type, gold, cb) {
 
+    gold = parseInt(gold);
     var self = this;
     logger.info("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j", this.uid, type, gold, this.uid);
     this.gold += gold;
@@ -405,14 +406,22 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
 
-    var task = _.findWhere(currentTasks, {id: taskId});
+    var task = _.findWhere(currentTasks, {id: taskId.toString()});
     if (_.isUndefined(task)) {
+        logger.warn("user-task grant||%j||玩家任务数据错误, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: '领取失败'});
         return;
     }
 
     if (task.current < task.target) {
+        logger.warn("user-task grant||%j||玩家任务状态不满足领取, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: '领取失败'});
+        return;
+    }
+
+    if (task.finished) {
+        logger.warn("user-task grant||%j||玩家任务状态已领取, , 用户ID:%j", this.uid, this.uid);
+        cb({code: Code.FAIL, err: '已领取'});
         return;
     }
 
@@ -428,8 +437,11 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
     //获取下一个任务并更新player.tasks, 最后返回客户端新任务信息
     taskUtil.getNextTask(taskId, function (data) {
         var nextTask = data.taskConf;
-
-        if (nextTask.finished) nextTask.current = nextTask.target;
+        if (nextTask.finished) {
+            nextTask.current = nextTask.target;
+        } else {
+            nextTask.current = task.current - task.target;
+        }
 
         var t = _.findLastIndex(currentTasks, {id: taskId});
         self.tasks[t] = nextTask;
@@ -510,7 +522,7 @@ module.exports = Player;
     fragment: 0,
     properties: {
         getBankruptcyGrantNr: 0,
-        getBankruptcyGrantRunOut: false
+        getBankruptcyGrantRunOut: false,
         lastCheckIn: null,
         continuousCheckInNr: 0,
         getCheckInGrant: false,

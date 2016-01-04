@@ -61,6 +61,14 @@ UserRemote.prototype.getBankruptcyGrant = function (msg, cb) {
     playerService.getBankruptcyGrant(msg, cb);
 }
 
+UserRemote.prototype.getDailyTaskList = function (msg, cb) {
+    playerService.getDailyTaskList(msg, cb);
+}
+
+UserRemote.prototype.getForeverTaskList = function (msg, cb) {
+    playerService.getForeverTaskList(msg, cb);
+}
+
 UserRemote.prototype.getTaskGrant = function (msg, cb) {
     playerService.getTaskGrant(msg, cb);
 }

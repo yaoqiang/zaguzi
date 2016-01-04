@@ -44,27 +44,42 @@ taskUtil.initForeverTasks = function () {
 
 taskUtil.getNextTask = function (taskId, cb) {
 
+  //每日任务
+  if (taskId < 200000) {
+    var parallelDailyTaskConf = _.flatten(_.map(taskConf.daily, function(group) {
+      return group.tasks;
+    }));
+    var dailyTask = _.findWhere(parallelDailyTaskConf, {id: taskId.toString()});
+    dailyTask.finished = true;
+    cb({taskConf: dailyTask});
+    return;
+  }
+
   var parallelTaskConf = _.flatten(_.map(taskConf.forever, function(group) {
     return group.tasks;
   }));
 
-  var currentTaskConf = _.findWhere(parallelTaskConf, {id: taskId});
+  var currentTaskConf = _.findWhere(parallelTaskConf, {id: taskId.toString()});
 
   //如果是元宝任务, 则clear后继续返回
   if (taskId > 400000) {
-    cb({taskConf: currentTaskConf, finished: false});
+    currentTaskConf.finished = false;
+    cb({taskConf: currentTaskConf});
+    return;
   }
 
-  var index = _.findLastIndex(parallelTaskConf, {id: taskId});
+  var index = _.findLastIndex(parallelTaskConf, {id: taskId.toString()});
 
   if (parallelTaskConf.length > index) {
     var nextTask = parallelTaskConf[index+1];
     //如果还有后续系列任务, 则返回后续任务; 如果没有, 则返回当前任务, 标识系列任务结束.
-    if (nextTask.id.substr(0, 4) == taskId.substr(0, 4) ) {
-      cb({taskConf: nextTask, finished: false});
+    if (nextTask.id.substr(0, 4) == taskId.toString().substr(0, 4) ) {
+      nextTask.finished = false;
+      cb({taskConf: nextTask});
     }
     else {
-      cb({taskConf: currentTaskConf, finished: true});
+      currentTaskConf.finished = true;
+      cb({taskConf: currentTaskConf});
     }
   }
 }

@@ -137,6 +137,24 @@ handler.getBankruptcyGrant = function (msg, session, next) {
     });
 }
 
+handler.getDailyTaskList = function (msg, session, next) {
+    var self = this;
+    msg.uid = session.uid;
+    //
+    self.app.rpc.manager.userRemote.getDailyTaskList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getForeverTaskList = function (msg, session, next) {
+    var self = this;
+    msg.uid = session.uid;
+    //
+    self.app.rpc.manager.userRemote.getForeverTaskList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 handler.getTaskGrant = function (msg, session, next) {
     var self = this;
     msg.uid = session.uid;

@@ -161,7 +161,7 @@ handler.enter = function (msg, session, next) {
                     sessionId: session.id,
                     player: player
                 }, function (data) {
-                    next(null, {code: Code.OK, player: data.player});
+                    next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player)});
                 });
             }
         });
@@ -186,3 +186,19 @@ var onUserDisconnect = function (app, session, reason) {
     });
 
 };
+
+var generateSimplePlayerResponse = function (player) {
+    return {
+        uid: player.uid,
+        nickName: player.nickName,
+        avatar: player.avatar,
+        gold: player.gold,
+        winNr: player.winNr,
+        loseNr: player.loseNr,
+        tieNr: player.tieNr,
+        rank: player.rank,
+        exp: player.exp,
+        fragment: player.fragment,
+        properties: player.properties
+    }
+}

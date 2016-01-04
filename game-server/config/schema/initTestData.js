@@ -1,5 +1,8 @@
 var db = connect('zgz');
 
+db.player.remove({});
+db.user.remove({});
+
 var User = function(username, password) {
     this.username = username;
     this.password = password;

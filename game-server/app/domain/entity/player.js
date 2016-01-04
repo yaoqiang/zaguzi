@@ -444,7 +444,12 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         }
 
         var t = _.findLastIndex(currentTasks, {id: taskId});
-        self.tasks[t] = nextTask;
+        if (taskId < 200000) {
+            self.tasks.daily[t] = nextTask;
+        } else {
+            self.tasks.forever[t] = nextTask;
+        }
+        
         self.saveTask();
         cb({code: Code.OK, nextTask: nextTask});
     })

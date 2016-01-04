@@ -18,7 +18,9 @@ var Promise = require('promise');
 
 var exp = module.exports;
 
-
+/**
+ * 获得用户信息
+ */
 exp.getUserInfo = function (uid, cb) {
 
     userDao.getUserById(uid, function (user) {
@@ -27,9 +29,10 @@ exp.getUserInfo = function (uid, cb) {
 
 }
 
-
+/**
+ * 当用户进入游戏后处理各种XX
+ */
 exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
-    logger.debug('#execute playerService.onUserEnter');
     //add event
     var playerObj = new Player(player);
     eventManager.addEvent(playerObj);
@@ -88,6 +91,9 @@ exp.attachmentHandle = function (playerObj, cb) {
     cb({player: playerObj});
 }
 
+/**
+ * 当用户断开连接时，处理各种XX
+ */
 exp.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
 
@@ -157,6 +163,9 @@ exp.onUserDisconnect = function (data, cb) {
 }
 
 
+/**
+ * 玩家胜利
+ */
 exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -177,6 +186,9 @@ exp.win = function (data, cb) {
     });
 }
 
+/**
+ * 玩家失败
+ */
 exp.lose = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -197,6 +209,9 @@ exp.lose = function (data, cb) {
     });
 }
 
+/**
+ * 平局
+ */
 exp.tie = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -213,6 +228,9 @@ exp.tie = function (data, cb) {
     });
 }
 
+/**
+ * 游戏结束后处理xx
+ */
 exp.battle = function (detail, cb) {
 
     exp.getUserCacheByUid(detail.uid, function (user) {
@@ -238,6 +256,9 @@ exp.battle = function (detail, cb) {
     cb();
 }
 
+/**
+ * 结算
+ */
 exp.balance = function (data, cb) {
     var details = data.details;
     var result = {code: Code.OK};
@@ -255,6 +276,9 @@ exp.balance = function (data, cb) {
         .done();
 }
 
+/**
+ * 签到
+ */
 exp.getCheckInGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -268,6 +292,9 @@ exp.getCheckInGrant = function (data, cb) {
     });
 }
 
+/**
+ * 领取破产补助
+ */
 exp.getBankruptcyGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -279,6 +306,9 @@ exp.getBankruptcyGrant = function (data, cb) {
     })
 }
 
+/**
+ * 获得每日任务列表
+ */
 exp.getDailyTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -290,6 +320,9 @@ exp.getDailyTaskList = function (data, cb) {
     })
 }
 
+/**
+ * 获得系统任务列表
+ */
 exp.getForeverTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -301,6 +334,10 @@ exp.getForeverTaskList = function (data, cb) {
     })
 }
 
+
+/**
+ * 领取任务奖励
+ */
 exp.getTaskGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
@@ -320,10 +357,17 @@ exp.recharge = function (data, cb) {
 
 }
 
+/**
+ * 通过uid获取缓存用户信息
+ */
 exp.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     cb(u);
 }
+
+/**
+ * 通过uids获取缓存用户信息集合
+ */
 exp.getUsersCacheByUids = function (data, cb) {
     var users = [];
     _.map(data.uids, function (uid) {
@@ -333,6 +377,9 @@ exp.getUsersCacheByUids = function (data, cb) {
     cb(users);
 }
 
+/**
+ * 通过sessionId获取用户信息
+ */
 exp.getUserCacheBySessionId = function (sessionId, cb) {
     var u = _.findWhere(pomelo.app.userCache, {sessionId: sessionId});
     cb(u);
@@ -342,6 +389,9 @@ exp.getReceiverByUid = function (uid, cb) {
 
 }
 
+/**
+ * 设置玩家的房间&游戏状态
+ */
 exp.setGameReference = function (uid, roomId, gameId, cb) {
     var user = _.findWhere(pomelo.app.userCache, {uid: uid});
     user.roomId = roomId;
@@ -349,6 +399,9 @@ exp.setGameReference = function (uid, roomId, gameId, cb) {
     cb();
 };
 
+/**
+ * 设置用户的sessionId
+ */
 exp.setUserSessionId = function (uid, sessionId) {
     var user = _.findWhere(pomelo.app.userCache, {uid: uid});
     user.sessionId = sessionId;

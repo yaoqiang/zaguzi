@@ -1,43 +1,43 @@
 {
   "daily": [
     {
-      "groupId": "1001",
+      "groupId": 1001,
       "tasks": [
         {
-          "id": "100101",
+          "id": 100101,
           "name": "每日扎一股",
           "desc": "每日扎一股，开开心心拿金币",
-          "target": "1",
+          "target": 1,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "300"
+          "grant": 300
         }
       ]
     },
     {
-      "groupId": "1002",
+      "groupId": 1002,
       "tasks": [
         {
-          "id": "100201",
+          "id": 100201,
           "name": "每日扎一股",
           "desc": "每日扎一会，开开心心拿金币",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "1000"
+          "grant": 1000
         }
       ]
     },
     {
-      "groupId": "1003",
+      "groupId": 1003,
       "tasks": [
         {
-          "id": "100301",
+          "id": 100301,
           "name": "参加大师对决",
           "desc": "每日参加大师对决，赢更多金币",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [
             13,
@@ -45,48 +45,48 @@
             33
           ],
           "type": "battle",
-          "grant": "3000"
+          "grant": 3000
         }
       ]
     },
     {
-      "groupId": "1010",
+      "groupId": 1010,
       "tasks": [
         {
-          "id": "101001",
+          "id": 101001,
           "name": "每日赢一把",
           "desc": "每日赢一把，开开心心拿金币",
-          "target": "1",
+          "target": 1,
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": "500"
+          "grant": 500
         }
       ]
     },
     {
-      "groupId": "1011",
+      "groupId": 1011,
       "tasks": [
         {
-          "id": "101101",
+          "id": 101101,
           "name": "每日赢10把",
           "desc": "每日赢10把，开开心心拿金币",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": "1500"
+          "grant": 1500
         }
       ]
     },
     {
-      "groupId": "1012",
+      "groupId": 1012,
       "tasks": [
         {
-          "id": "101201",
+          "id": 101201,
           "name": "大师对决获胜10把",
           "desc": "在大师对决房获胜10局，赢更多金币",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [
             13,
@@ -94,135 +94,135 @@
             33
           ],
           "type": "win",
-          "grant": "10000"
+          "grant": 10000
         }
       ]
     }
   ],
   "forever": [
     {
-      "groupId": "2001",
+      "groupId": 2001,
       "tasks": [
         {
-          "id": "200101",
+          "id": 200101,
           "name": "对战3把",
           "desc": "对战3把，可获得任务奖励",
-          "target": "3",
+          "target": 3,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "300"
+          "grant": 300
         },
         {
-          "id": "200102",
+          "id": 200102,
           "name": "对战10把",
           "desc": "对战10把，可获得任务奖励",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "800"
+          "grant": 800
         },
         {
-          "id": "200103",
+          "id": 200103,
           "name": "对战50把",
           "desc": "对战50把，可获得任务奖励",
-          "target": "50",
+          "target": 50,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "2000"
+          "grant": 2000
         },
         {
-          "id": "200104",
+          "id": 200104,
           "name": "对战100把",
           "desc": "对战100把，可获得任务奖励",
-          "target": "100",
+          "target": 100,
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": "3000"
+          "grant": 3000
         }
       ]
     },
     {
-      "groupId": "2002",
+      "groupId": 2002,
       "tasks": [
         {
-          "id": "200201",
+          "id": 200201,
           "name": "胜利3把",
           "desc": "胜利3把，可获得任务奖励",
-          "target": "3",
+          "target": 3,
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": "500"
+          "grant": 500
         },
         {
-          "id": "200202",
+          "id": 200202,
           "name": "胜利3把",
           "desc": "胜利3把，可获得任务奖励",
-          "target": "3",
+          "target": 3,
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": "500"
+          "grant": 500
         },
         {
-          "id": "200203",
+          "id": 200203,
           "name": "胜利10把",
           "desc": "胜利10把，可获得任务奖励",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": "1500"
+          "grant": 1500
         }
       ]
     },
     {
-      "groupId": "3001",
+      "groupId": 3001,
       "tasks": [
         {
-          "id": "300101",
+          "id": 300101,
           "name": "开会1把",
           "desc": "开会1把，可获得任务奖励",
-          "target": "1",
+          "target": 1,
           "icon": "",
           "roomId": [],
           "type": "meeting",
-          "grant": "800"
+          "grant": 800
         },
         {
-          "id": "300102",
+          "id": 300102,
           "name": "开会10把",
           "desc": "开会10把，可获得任务奖励",
-          "target": "10",
+          "target": 10,
           "icon": "",
           "roomId": [],
           "type": "meeting",
-          "grant": "2000"
+          "grant": 2000
         },
         {
-          "id": "300103",
+          "id": 300103,
           "name": "开会30把",
           "desc": "开会10把，可获得任务奖励",
-          "target": "30",
+          "target": 30,
           "icon": "",
           "roomId": [],
           "type": "meeting",
-          "grant": "3000"
+          "grant": 3000
         }
       ]
     },
     {
-      "groupId": "3002",
+      "groupId": 3002,
       "tasks": [
         {
-          "id": "300201",
+          "id": 300201,
           "name": "开会5把",
           "desc": "开会5把，可获得任务奖励",
-          "target": "5",
+          "target": 5,
           "icon": "",
           "roomId": [
             13,
@@ -230,13 +230,13 @@
             33
           ],
           "type": "meeting",
-          "grant": "1500"
+          "grant": 1500
         },
         {
-          "id": "300202",
+          "id": 300202,
           "name": "开会10把",
           "desc": "开会20把，可获得任务奖励",
-          "target": "20",
+          "target": 20,
           "icon": "",
           "roomId": [
             13,
@@ -244,13 +244,13 @@
             33
           ],
           "type": "meeting",
-          "grant": "3000"
+          "grant": 3000
         },
         {
-          "id": "300203",
+          "id": 300203,
           "name": "开会50把",
           "desc": "开会50把，可获得任务奖励",
-          "target": "50",
+          "target": 50,
           "icon": "",
           "roomId": [
             13,
@@ -258,18 +258,18 @@
             33
           ],
           "type": "meeting",
-          "grant": "5000"
+          "grant": 5000
         }
       ]
     },
     {
-      "groupId": "4001",
+      "groupId": 4001,
       "tasks": [
         {
-          "id": "400101",
+          "id": 400101,
           "name": "元宝任务-中级",
           "desc": "在大师之战房间赢取30把，可获得1枚元宝",
-          "target": "30",
+          "target": 30,
           "icon": "",
           "roomId": [
             13,
@@ -277,7 +277,7 @@
             33
           ],
           "type": "win",
-          "grant": "0",
+          "grant": 0,
           "items": [
             {
               "id": 8,
@@ -288,13 +288,13 @@
       ]
     },
     {
-      "groupId": "4002",
+      "groupId": 4002,
       "tasks": [
         {
-          "id": "400201",
+          "id": 400201,
           "name": "元宝任务-高级",
           "desc": "在巅峰之战赢取20把，可获得1枚元宝",
-          "target": "20",
+          "target": 20,
           "icon": "",
           "roomId": [
             14,
@@ -302,7 +302,7 @@
             34
           ],
           "type": "win",
-          "grant": "0",
+          "grant": 0,
           "items": [
             {
               "id": 8,

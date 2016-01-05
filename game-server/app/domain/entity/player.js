@@ -87,6 +87,7 @@ Player.prototype.payTax = function (roomId) {
 
     logger.info("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
     this.gold += gold;
+    if (this.gold < 0) this.gold = 0;
 
 }
 
@@ -364,19 +365,23 @@ Player.prototype.updateTask = function (roomId, outcome, attributes) {
         return t.finished == false;
     });
 
+    var self = this;
     _.each(unfinishedTasks, function (currentTask) {
+
         //如果游戏房间是任务房间
         if (currentTask.roomId.length == 0 || _.contains(currentTask.roomId, roomId)) {
 
             //如果任务类型是胜利并且游戏结果是胜利,则更新任务状态
             if (currentTask.type == "win") {
-                if (outcome == "win") {
+                //因outcome是使用常量定义,是大写的WIN
+                if (outcome == consts.GAME.ACTOR_RESULT.WIN) {
                     currentTask.current += 1;
                 }
             }
             //如果任务类型是开会,则开会成功才更新任务状态
             else if (currentTask.type == "meeting") {
                 if (attributes.meeting) {
+                    //TODO 为player添加开会数据
                     currentTask.current += 1;
                 }
             }
@@ -389,6 +394,7 @@ Player.prototype.updateTask = function (roomId, outcome, attributes) {
             }
 
         }
+
     });
 
     this.saveTask();
@@ -406,22 +412,22 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 
     var currentTasks = _.flatten([this.tasks.daily, this.tasks.forever]);
 
-    var task = _.findWhere(currentTasks, {id: taskId.toString()});
+    var task = _.findWhere(currentTasks, {id: taskId});
     if (_.isUndefined(task)) {
-        logger.warn("user-task grant||%j||玩家任务数据错误, , 用户ID:%j", this.uid, this.uid);
-        cb({code: Code.FAIL, err: '领取失败'});
+        logger.warn("user-task grant||%j||玩家任务数据错误, 用户ID:%j", this.uid, this.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
         return;
     }
 
     if (task.current < task.target) {
-        logger.warn("user-task grant||%j||玩家任务状态不满足领取, , 用户ID:%j", this.uid, this.uid);
-        cb({code: Code.FAIL, err: '领取失败'});
+        logger.warn("user-task grant||%j||玩家任务状态不满足领取, 用户ID:%j", this.uid, this.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
         return;
     }
 
     if (task.finished) {
-        logger.warn("user-task grant||%j||玩家任务状态已领取, , 用户ID:%j", this.uid, this.uid);
-        cb({code: Code.FAIL, err: '已领取'});
+        logger.warn("user-task grant||%j||玩家任务状态已领取, 用户ID:%j", this.uid, this.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ALREADY_GRANT});
         return;
     }
 
@@ -443,10 +449,12 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
             nextTask.current = task.current - task.target;
         }
 
-        var t = _.findLastIndex(currentTasks, {id: taskId});
+
         if (taskId < 200000) {
+            var t = _.findLastIndex(self.tasks.daily, {id: taskId});
             self.tasks.daily[t] = nextTask;
         } else {
+            var t = _.findLastIndex(self.tasks.forever, {id: taskId});
             self.tasks.forever[t] = nextTask;
         }
         

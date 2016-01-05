@@ -20,6 +20,7 @@ taskUtil.initDailyTasks = function () {
       grant: task.grant,
       current: 0,
       roomId: task.roomId,
+      type: task.type,
       finished: false
     };
   });
@@ -37,6 +38,7 @@ taskUtil.initForeverTasks = function () {
       grant: task.grant,
       current: 0,
       roomId: task.roomId,
+      type: task.type,
       finished: false
     };
   });
@@ -49,7 +51,7 @@ taskUtil.getNextTask = function (taskId, cb) {
     var parallelDailyTaskConf = _.flatten(_.map(taskConf.daily, function(group) {
       return group.tasks;
     }));
-    var dailyTask = _.findWhere(parallelDailyTaskConf, {id: taskId.toString()});
+    var dailyTask = _.findWhere(parallelDailyTaskConf, {id: taskId});
     dailyTask.finished = true;
     cb({taskConf: dailyTask});
     return;
@@ -59,7 +61,7 @@ taskUtil.getNextTask = function (taskId, cb) {
     return group.tasks;
   }));
 
-  var currentTaskConf = _.findWhere(parallelTaskConf, {id: taskId.toString()});
+  var currentTaskConf = _.findWhere(parallelTaskConf, {id: taskId});
 
   //如果是元宝任务, 则clear后继续返回
   if (taskId > 400000) {
@@ -68,12 +70,12 @@ taskUtil.getNextTask = function (taskId, cb) {
     return;
   }
 
-  var index = _.findLastIndex(parallelTaskConf, {id: taskId.toString()});
+  var index = _.findLastIndex(parallelTaskConf, {id: taskId});
 
   if (parallelTaskConf.length > index) {
     var nextTask = parallelTaskConf[index+1];
     //如果还有后续系列任务, 则返回后续任务; 如果没有, 则返回当前任务, 标识系列任务结束.
-    if (nextTask.id.substr(0, 4) == taskId.toString().substr(0, 4) ) {
+    if (nextTask.id.toString().substr(0, 4) == taskId.toString().substr(0, 4) ) {
       nextTask.finished = false;
       cb({taskConf: nextTask});
     }

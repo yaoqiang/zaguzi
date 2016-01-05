@@ -82,6 +82,10 @@ module.exports = {
             ALREADY_GRANT: 9001,
             MORE_MONEY: 9002,
             ERR: 9003
+        },
+        TASK_GRANT: {
+            ALREADY_GRANT: 9101,
+            ERR: 9102
         }
     },
     ERR_MESSAGE: {

@@ -7,7 +7,6 @@ var consts = require('../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
-var underscore = require('underscore');
 require('date-utils');
 
 var Entity = require('./entity');

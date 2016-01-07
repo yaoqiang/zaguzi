@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);

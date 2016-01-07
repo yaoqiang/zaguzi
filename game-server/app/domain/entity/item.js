@@ -2,7 +2,7 @@
  * Module dependencies
  */
 var util = require('util');
-var _ = require('underscore');
+var _ = require('lodash');
 var Code = require('../../../../shared/code');
 var items = require('../../../config/data/items');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);

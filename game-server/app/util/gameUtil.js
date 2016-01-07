@@ -1,7 +1,7 @@
 var GameUtil = module.exports;
 
 var rooms = require('../../config/data/room');
-var _ = require('underscore');
+var _ = require('lodash');
 
 GameUtil.getRoomsByLobbyId = function (lobbyId) {
 

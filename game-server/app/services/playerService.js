@@ -1,5 +1,5 @@
 var userDao = require('../dao/userDao');
-var _ = require('underscore');
+var _ = require('lodash');
 var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
@@ -8,7 +8,6 @@ var Code = require('../../../shared/code');
 var gameUtil = require('../util/gameUtil');
 var eventManager = require('../domain/event/eventManager');
 var Player = require('../domain/entity/player');
-var Properties = require('../domain/entity/properties');
 
 var messageService = require('./messageService')
 

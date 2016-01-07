@@ -8,7 +8,7 @@ var pomelo = require('pomelo');
 var utils = require('../../util/utils');
 var messageService = require('../../services/messageService');
 var gameUtil = require('../../util/gameUtil');
-var _ = require('underscore');
+var _ = require('lodash');
 require('date-utils');
 var Promise = require('promise')
 

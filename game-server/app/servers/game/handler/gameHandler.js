@@ -4,7 +4,7 @@ var utils = require('../../../util/utils');
 var rooms = require('../../../../config/data/room');
 var consts = require('../../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
-var _ = require('underscore');
+var _ = require('lodash');
 var pomelo = require('pomelo');
 
 

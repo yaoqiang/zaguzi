@@ -1,5 +1,5 @@
 var pomelo = require('pomelo');
-var _ = require('underscore');
+var _ = require('lodash');
 var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
 var Code = require('../../../../shared/code');

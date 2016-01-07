@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var CardRecognization = require('./cardRecognization');
 var consts = require('../../consts/consts');
 

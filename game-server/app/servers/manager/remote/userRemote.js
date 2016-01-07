@@ -1,7 +1,7 @@
 var playerService = require('../../../services/playerService');
 var Code = require('../../../../../shared/code');
 var utils = require('../../../util/utils');
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = function(app) {
     return new UserRemote(app);

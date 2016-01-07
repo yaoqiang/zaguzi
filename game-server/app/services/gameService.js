@@ -7,7 +7,7 @@ var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 
 var Code = require('../../../shared/code');
-var _ = require('underscore');
+var _ = require('lodash');
 
 
 var exp = module.exports;

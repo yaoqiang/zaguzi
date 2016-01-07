@@ -2,7 +2,7 @@ var exp = module.exports;
 var dispatcher = require('./dispatcher');
 var gameUtil = require('./gameUtil');
 var consts = require('../consts/consts');
-var _ = require('underscore');
+var _ = require('lodash');
 
 exp.chat = function(session, msg, app, cb) {
     var chatServers = app.getServersByType('chat');

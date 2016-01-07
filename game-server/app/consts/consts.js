@@ -220,6 +220,7 @@ module.exports = {
         GAME: 'game',
         USER: 'user',
         GOLD: 'gold',
-        BALANCE: 'balance'
+        BALANCE: 'balance',
+        PAYMENT: 'payment'
     }
 }

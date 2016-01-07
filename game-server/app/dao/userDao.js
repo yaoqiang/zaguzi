@@ -1,12 +1,11 @@
 var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
 var pomelo = require('pomelo');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var async = require('async');
 require('date-utils');
 var utils = require('../util/utils');
-var consts = require('../consts/consts');
 var globals = require('../../config/data/globals');
 
 var User = require('../domain/user');

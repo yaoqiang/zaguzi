@@ -4,7 +4,7 @@ var pomelo = require('pomelo');
 var async = require('async');
 
 var Code = require('../../../shared/code');
-var _ = require('underscore');
+var _ = require('lodash');
 
 
 var exp = module.exports;

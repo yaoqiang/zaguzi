@@ -29,7 +29,7 @@ exp.requestChargesPingxx = function () {
 
 
 
-exp.payment = function (uid, productId, state, device, from) {
-
+exp.payment = function (uid, productId, state, device, source) {
+    //
 }
 

@@ -215,6 +215,22 @@ module.exports = {
 
     },
 
+    EXCHANGE: {
+        TYPE: {
+            INBOX: "INBOX",
+            OUTBOX: "OUTBOX"
+        }
+    },
+
+    ORDER: {
+        STATE: {
+            SUBMIT: "SUBMIT",
+            PENDING: "PENDING",
+            PAYMENT: "PAYMENT",
+            CANCELED: "CANCELED"
+        }
+    },
+
     LOG: {
         SYSTEM: 'system',
         GAME: 'game',

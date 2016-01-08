@@ -1,4 +1,5 @@
 var gameService = require('../../../services/gameService');
+var shopService = require('../../../services/shopService');
 var utils = require('../../../util/utils');
 var pomelo = require('pomelo');
 var consts = require('../../../consts/consts');
@@ -187,4 +188,9 @@ GameRemote.prototype.getGameStatusById = function (data, cb) {
  */
 GameRemote.prototype.getGameStatusDetailsById = function (data, cb) {
     gameService.getGameStatusDetailsById(data, cb);
+}
+
+
+GameRemote.prototype.getShopList = function (data, cb) {
+    cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
 }

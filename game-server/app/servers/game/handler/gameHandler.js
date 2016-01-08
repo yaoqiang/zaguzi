@@ -164,3 +164,14 @@ handler.getTaskGrant = function (msg, session, next) {
     });
 }
 
+handler.getShopList = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.getShopList(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK, shopList: data.shopList});
+    })
+}

@@ -118,6 +118,8 @@ app.configure('production|development', 'auth|connector|manager', function() {
 
 app.configure ('production|development', 'manager', function() {
   // app.load (helloWorld, {interval: 5000});
+  require('./app/util/httpServer')(app, {});
+
 });
 
 // start app

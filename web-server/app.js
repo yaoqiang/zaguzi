@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 // Populates req.session
@@ -32,10 +33,10 @@ app.use(session({
 //设置跨域访问
 app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Token");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
     res.header("X-Powered-By", ' 4.13.3')
-    res.header("Content-Type", "application/json;charset=utf-8");
+    res.header("Content-Type", "application/json; charset=utf-8");
     next();
 });
 
@@ -57,10 +58,11 @@ app.get('/auth_success', function (req, res) {
 
 
 app.post('/login', function (req, res) {
-    var msg = req.body;
 
-    var username = msg.username;
-    var pwd = msg.password;
+    var data = req.body;
+
+    var username = data.username;
+    var pwd = data.password;
 
     if (!username || !pwd) {
         res.send({
@@ -70,7 +72,9 @@ app.post('/login', function (req, res) {
     }
 
     db.user.findOne({
-        username: username
+        $or: [{
+            username: username
+        }, {mobile: username}]
     }, function (err, user) {
         if (err || !user) {
             logger.warn('用户名不存在! username: ' + username);
@@ -103,25 +107,103 @@ app.post('/login', function (req, res) {
                 }
             },
             function () {
-            logger.info(username + ' 登录成功!');
-            res.jsonp({
-                code: 200,
-                token: Token.create(user._id, Date.now(), secret),
-                uid: user._id
+                logger.info(username + ' 登录成功!');
+                res.jsonp({
+                    code: 200,
+                    token: Token.create(user._id, Date.now(), secret),
+                    uid: user._id
+                });
             });
+
+
+    });
+
+
+});
+
+app.post('/getCaptchaByMobile', function (req, res) {
+    var data = req.body;
+
+    if (!data.mobile) {
+        res.send({
+            code: 500,
+            msg: '参数错误'
         });
+        return;
+    }
 
+    var mobileReg = !!data.mobile.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
+    if (mobileReg == false) {
+        res.send({
+            code: 500,
+            msg: '请输入正确的手机号码!'
+        });
+        return;
+    }
 
-    });
+    //调用第三方平台发送短信验证码
+    var captcha = 0;
 
+    //
+    db.captcha.findAndModify({
+        query: {
+            mobile: data.mobile
+        }, update: {
+            $set: {
+                captcha: captcha,
+                createdAt: new Date()
+            }
+        }, new: true, upsert: true,
+    }, function (err, doc, lastErrorObject) {
+        res.send({
+            code: 200,
+            msg: '验证码已发送成功'
+        })
+    })
+})
+
+app.post('/bindingMobile', function (req, res) {
+
+    var data = req.body;
+
+    if (!data.captcha || !data.mobile || !data.uid) {
+        res.send({
+            code: 500,
+            msg: '参数错误'
+        });
+        return;
+    }
+
+    db.captcha.findOne({
+        mobile: data.mobile
+    }, function (err, doc) {
+        if (doc.captcha != data.captcha) {
+            res.send({
+                code: 500,
+                msg: '验证码错误, 请重新输入'
+            })
+            return;
+        }
+        
+        db.user.findAndModify({
+            query: {
+                _id: mongojs.ObjectId(data.uid)
+            }, update: {
+                $set: {mobile: data.mobile}
+            }, new: true,
+        }, function (err, doc) {
+            res.send({
+                code: 200,
+                msg: '绑定成功'
+            })
+        })
+    })
 
 });
 
-app.get('/signup', function (req, res) {
-    res.render('signup', {
-        title: 'Signup'
-    });
-});
+app.post('/registerByMobile', function (req, res) {
+
+})
 
 app.post('/register', function (req, res) {
     var msg = req.body;
@@ -131,8 +213,6 @@ app.post('/register', function (req, res) {
         });
         return;
     }
-
-    db.user.ensureIndex({ username: 1 });
 
     db.user.findOne({
         username: msg.username
@@ -154,6 +234,7 @@ app.post('/register', function (req, res) {
         var user = {
             username: msg.username,
             password: msg.password,
+            mobile: msg.mobile == undefined ? '' : msg.mobile,
             loginCount: 0,
             createdAt: new Date()
         };

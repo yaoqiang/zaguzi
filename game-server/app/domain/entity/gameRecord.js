@@ -9,7 +9,7 @@ var GameRecord = function (opts) {
     this.result = opts.result;
     this.share = opts.share;
     this.meeting = opts.meeting;
-    createdAt = new Date();
+    this.createdAt = new Date();
 }
 
 /////////////////
@@ -20,3 +20,5 @@ GameRecord.prototype.save = function () {
 }
 
 util.inherits(GameRecord, Entity);
+
+module.exports = GameRecord;

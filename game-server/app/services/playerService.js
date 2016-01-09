@@ -8,6 +8,7 @@ var Code = require('../../../shared/code');
 var gameUtil = require('../util/gameUtil');
 var eventManager = require('../domain/event/eventManager');
 var Player = require('../domain/entity/player');
+var GameRecord = require('../domain/entity/gameRecord');
 
 var messageService = require('./messageService')
 
@@ -271,6 +272,12 @@ exp.balance = function (data, cb) {
     }))
         .then(cb(result))
         .done();
+
+    var gameRecord = new GameRecord(data.gameRecord);
+
+    eventManager.addGameRecordEvent(gameRecord);
+
+    gameRecord.save();
 }
 
 /**

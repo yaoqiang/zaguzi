@@ -155,20 +155,18 @@ exp.balanceCommon = function (game, cb) {
         }, function (details, callback) {
 
             logger.debug('游戏结束, 调用用户服务器进行结算, 后续任务等逻辑处理');
-            
-            var gameRecord = new GameRecord({
-                lobby = game.maxActor;
-                roomId = game.roomId;
-                result = game.gameLogic.result;
-                share = game.gameLogic.share;
-                meeting = meeting;
-            });
-            eventManager.addGameRecordEvent(gameRecord);
-            
-            gameRecord.save();
-            
+
             //处理结算数据
-            pomelo.app.rpc.manager.userRemote.balance(null, {details: details}, function() {
+            pomelo.app.rpc.manager.userRemote.balance(null, {
+                gameRecord: {
+                    lobby: game.maxActor,
+                    roomId: game.roomId,
+                    result: game.gameLogic.result,
+                    share: game.gameLogic.share,
+                    meeting: meeting
+                },
+                details: details
+            }, function () {
                 callback(null, {code: Code.OK});
             });
 
@@ -176,7 +174,7 @@ exp.balanceCommon = function (game, cb) {
             logger.debug('结算结束, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
             var uids = _.pluck(details, 'uid');
             pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
-                _.map(users, function(u) {
+                _.map(users, function (u) {
                     if (_.isNull(u.sessionId)) {
                         logger.debug('移除掉线玩家：%j', u.uid);
                         pomelo.app.rpc.manager.userRemote.onUserDisconnect(null, {uid: u.uid}, function () {

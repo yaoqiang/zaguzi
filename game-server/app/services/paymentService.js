@@ -1,4 +1,5 @@
 var shopConf = require('../../config/data/shop');
+var appConf = require('../../config/app.json');
 var _ = require('lodash');
 var pomelo = require('pomelo');
 
@@ -8,26 +9,29 @@ var Code = require('../../../shared/code');
 
 var Promise = require('promise');
 
-var pingpp = require('pingpp')('sk_test_ibbTe5jLGCi5rzfH4OqPW9KC');
+var pingpp = require('pingpp')(appConf.payment.pingxx.testSecretKey);
 
 var exp = module.exports
 
-exp.requestChargesPingxx = function () {
+exp.requestChargesPingxx = function (data, cb) {
+
     pingpp.charges.create({
-        subject: "Your Subject",
-        body: "Your Body",
+        subject: data.subject,
+        body: data.body,
         amount: 100,
         order_no: "123456789",
-        channel: "alipay",
+        channel: data.channel,
         currency: "cny",
-        client_ip: "127.0.0.1",
-        app: {id: "app_1Gqj58ynP0mHeX1q"}
+        client_ip: data.clientIp,
+        app: {id: appConf.payment.pingxx.appid}
     }, function(err, charge) {
         // YOUR CODE
     });
 }
 
-
+exp.webhooksPingxx = function () {
+    //
+}
 
 exp.payment = function (uid, productId, state, device, source) {
     //

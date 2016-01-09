@@ -78,6 +78,7 @@ userDao.getPlayerByUid = function(uid, cb) {
             fragment: doc.fragment,
             items: doc.items,
             tasks: doc.tasks,
+            meetingTimes: 0,
             properties: doc.properties,
             createdAt: doc.createdAt
         });
@@ -132,6 +133,7 @@ userDao.createPlayer = function(uid, cb) {
         rank: 1,
         exp: 0,
         fragment: 0,
+        meetingTimes: 0,
         properties: {
             getBankruptcyGrantNr: 0,
             getBankruptcyGrantRunOut: false,

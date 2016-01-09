@@ -3,17 +3,27 @@ var pomelo = require('pomelo');
 var exp = module.exports;
 
 /**
- * Listen event for entity
+ * Listen player event
  */
-exp.addEvent = function (entity) {
-    addSaveEvent(entity);
+exp.addPlayerEvent = function (entity) {
+    addPlayerSaveEvent(entity);
 };
+
+/**
+ * listen gameRecord event
+ */
+exp.addGameRecordEvent = function (entity) {
+    var app = pomelo.app;
+    entity.on('save', function () {
+        app.get('sync').exec('gameRecordSync.insert', null, entity);
+    });
+}
 
 /**
  * Add save event for player
  * @param {Object} player The player to add save event for.
  */
-function addSaveEvent(player) {
+function addPlayerSaveEvent(player) {
     var app = pomelo.app;
     player.on('saveProfile', function () {
         app.get('sync').exec('playerSync.updatePlayerProfile', player.uid, player);

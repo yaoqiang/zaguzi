@@ -14,7 +14,8 @@ module.exports = {
                     tieNr: val.tieNr,
                     rank: val.rank,
                     exp: val.exp,
-                    fragment: val.fragment
+                    fragment: val.fragment,
+                    meetingTimes: val.meetingTimes
                 }
             }
         }, function(err, doc, lastErrorObject) {

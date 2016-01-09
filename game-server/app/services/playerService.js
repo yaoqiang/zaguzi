@@ -34,7 +34,7 @@ exp.getUserInfo = function (uid, cb) {
 exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     //add event
     var playerObj = new Player(player);
-    eventManager.addEvent(playerObj);
+    eventManager.addPlayerEvent(playerObj);
 
     var u = _.findWhere(pomelo.app.userCache, {uid: uid});
     if (u) {
@@ -174,12 +174,13 @@ exp.win = function (data, cb) {
         }
 
         var player = user.player;
+        
+        //如果开会成功, 添加开会次数
+        if (meeting) player.meetingTimes += 1;
+        
         player.win(data.roomId, data.gold, function (result) {
             player.save();
-            //messageService.pushMessageToPlayer({
-            //    uid: user.uid,
-            //    sid: user.serverId
-            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            
             cb({code: Code.OK});
         });
     });
@@ -199,10 +200,7 @@ exp.lose = function (data, cb) {
         var player = user.player;
         player.lose(data.roomId, data.gold, function (result) {
             player.save();
-            //messageService.pushMessageToPlayer({
-            //    uid: user.uid,
-            //    sid: user.serverId
-            //}, consts.EVENT.GOLD_CHANGE, {gold: result.gold});
+            
             cb({code: Code.OK});
         });
     });
@@ -239,7 +237,7 @@ exp.battle = function (detail, cb) {
 
     switch (detail.result) {
         case consts.GAME.ACTOR_RESULT.WIN:
-            exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold}, function (data) {
+            exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold, meeting: detail.meeting}, function (data) {
             });
             break;
         case consts.GAME.ACTOR_RESULT.LOSE:

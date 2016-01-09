@@ -3,6 +3,9 @@ var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 var async = require('async');
 
+var eventManager = require('../domain/event/eventManager');
+var GameRecord = require('../domain/entity/gameRecord');
+
 var Code = require('../../../shared/code');
 var _ = require('lodash');
 
@@ -16,7 +19,8 @@ exp.balance = function (game, cb) {
 exp.balanceCommon = function (game, cb) {
     //结算结构
     //{game: {result: consts.GAME.RESULT.x, share: x},
-    // details: [{uid:x, actorNr:x, actorAvatar:x, actorName:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, gold: x, roomId: game.roomId, rank: actor.gameStatus.rank}]}
+    // details: [{uid:x, actorNr:x, actorAvatar:x, actorName:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, 
+    //  gold: x, roomId: game.roomId, rank: actor.gameStatus.rank, meeting: true/false}]}
 
     var details = [], meeting = false;
 
@@ -150,14 +154,26 @@ exp.balanceCommon = function (game, cb) {
 
         }, function (details, callback) {
 
-            logger.debug('调用用户服务器进行结算.');
+            logger.debug('游戏结束, 调用用户服务器进行结算, 后续任务等逻辑处理');
+            
+            var gameRecord = new GameRecord({
+                lobby = game.maxActor;
+                roomId = game.roomId;
+                result = game.gameLogic.result;
+                share = game.gameLogic.share;
+                meeting = meeting;
+            });
+            eventManager.addGameRecordEvent(gameRecord);
+            
+            gameRecord.save();
+            
             //处理结算数据
             pomelo.app.rpc.manager.userRemote.balance(null, {details: details}, function() {
                 callback(null, {code: Code.OK});
             });
 
         }, function (result, callback) {
-            logger.debug('game over, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
+            logger.debug('结算结束, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
             var uids = _.pluck(details, 'uid');
             pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
                 _.map(users, function(u) {

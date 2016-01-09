@@ -533,6 +533,7 @@ module.exports = Player;
     rank: 1,
     exp: 0,
     fragment: 0,
+    meetingTimes: 0,
     properties: {
         getBankruptcyGrantNr: 0,
         getBankruptcyGrantRunOut: false,

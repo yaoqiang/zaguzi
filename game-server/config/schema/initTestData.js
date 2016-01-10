@@ -42,3 +42,9 @@ var users = new Array(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, yaoqiang, lvjianc
 
 
 initUser(users);
+
+//exchange list
+db.exchangeList.save({name: '5元话费', icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX'});
+db.exchangeList.save({name: '15元话费', icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX'});
+db.exchangeList.save({name: '25元话费', icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX'});
+db.exchangeList.save({name: '100元话费', icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: false, type: 'INBOX'});

@@ -22,6 +22,9 @@ var handler = Handler.prototype;
 
 
 
+/////////////////////////
+// 牌局相关
+////////////////////////
 handler.join = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
@@ -108,58 +111,64 @@ handler.cancelTrusteeship = function (msg, session, next) {
 };
 
 handler.leave = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
 
     // leave game
-    self.app.rpc.game.gameRemote.leave(session, msg, function (data) {
+    this.app.rpc.game.gameRemote.leave(session, msg, function (data) {
         next(null, data);
     });
 };
 
 
+
+///////////////////////////
+// 游戏内其他附加功能相关
+///////////////////////////
+
+handler.updateProfile = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.userRemote.updateProfile(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 handler.getCheckInGrant = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.manager.userRemote.getCheckInGrant(session, msg, function (data) {
+    this.app.rpc.manager.userRemote.getCheckInGrant(session, msg, function (data) {
         next(null, data);
     });
 }
 
 
 handler.getBankruptcyGrant = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.manager.userRemote.getBankruptcyGrant(session, msg, function (data) {
+    this.app.rpc.manager.userRemote.getBankruptcyGrant(session, msg, function (data) {
         next(null, data);
     });
 }
 
 handler.getDailyTaskList = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.manager.userRemote.getDailyTaskList(session, msg, function (data) {
+    this.app.rpc.manager.userRemote.getDailyTaskList(session, msg, function (data) {
         next(null, data);
     });
 }
 
 handler.getForeverTaskList = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.manager.userRemote.getForeverTaskList(session, msg, function (data) {
+    this.app.rpc.manager.userRemote.getForeverTaskList(session, msg, function (data) {
         next(null, data);
     });
 }
 
 handler.getTaskGrant = function (msg, session, next) {
-    var self = this;
     msg.uid = session.uid;
     //
-    self.app.rpc.manager.userRemote.getTaskGrant(session, msg, function (data) {
+    this.app.rpc.manager.userRemote.getTaskGrant(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -174,4 +183,27 @@ handler.getShopList = function (msg, session, next) {
         }
         next(null, {code: Code.OK, shopList: data.shopList});
     })
+}
+
+handler.getMyItemList = function (msg, session, next) {
+    msg.uid = session.uid;
+    //
+    this.app.rpc.manager.userRemote.getMyItemList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getExchangeList = function (msg, session, next) {
+    msg.uid = session.uid;
+    //
+    this.app.rpc.manager.userRemote.getExchangeList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.exchange = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.userRemote.exchange(session, msg, function (data) {
+        next(null, data);
+    });
 }

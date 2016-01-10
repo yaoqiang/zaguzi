@@ -29,6 +29,10 @@ UserRemote.prototype.getUsersCacheByUids = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.updateProfile = function (msg, cb) {
+    playerService.updateProfile(msg, cb);
+}
+
 UserRemote.prototype.win = function(msg, cb) {
     playerService.win(msg, function(ret) {
         cb(ret);
@@ -73,6 +77,17 @@ UserRemote.prototype.getTaskGrant = function (msg, cb) {
     playerService.getTaskGrant(msg, cb);
 }
 
+UserRemote.prototype.getMyItemList = function (msg, cb) {
+    playerService.getMyItemList(msg, cb);
+}
+
+UserRemote.prototype.getExchangeList = function (msg, cb) {
+    playerService.getExchangeList(msg, cb);
+}
+
+UserRemote.prototype.exchange = function (msg, cb) {
+    playerService.exchange(msg, cb);
+}
 
 
 /**

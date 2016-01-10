@@ -278,12 +278,7 @@
           ],
           "type": "win",
           "grant": 0,
-          "items": [
-            {
-              "id": 8,
-              "count": 1
-            }
-          ]
+          "fragment": 1
         }
       ]
     },
@@ -303,12 +298,7 @@
           ],
           "type": "win",
           "grant": 0,
-          "items": [
-            {
-              "id": 8,
-              "value": 1
-            }
-          ]
+          "fragment": 1
         }
       ]
     }

@@ -1,3 +1,5 @@
+var consts = require('../consts/consts');
+
 var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
 var pomelo = require('pomelo');
 var _ = require('lodash');
@@ -5,7 +7,6 @@ var _ = require('lodash');
 var async = require('async');
 require('date-utils');
 var utils = require('../util/utils');
-var consts = require('../consts/consts');
 var globals = require('../../config/data/globals');
 
 var db = pomelo.app.get('dbclient');
@@ -20,8 +21,8 @@ var commonDao = module.exports;
  * @param type
  * @param cb
  */
-commonDao.listExchangeList = function (type, cb) {
-    db.exchangeList.find({type: type, enabled: true}, function (err, docs) {
+commonDao.listExchangeList = function (cb) {
+    db.exchangeList.find({enabled: true}, function (err, docs) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         } else {
@@ -36,7 +37,7 @@ commonDao.listExchangeList = function (type, cb) {
  * @param cb
  */
 commonDao.getExchangeListById = function (id, cb) {
-    db.exchangeList.findOne({_id: mongojs.ObjectId(id)}, function (err, doc) {
+    db.exchangeList.findOne({_id: mongojs.ObjectId(id), enabled: true}, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         } else {

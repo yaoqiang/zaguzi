@@ -1,5 +1,9 @@
 module.exports = {
     GLOBAL: {
+        GENDER: {
+            MALE: 'MALE',
+            FEMALE: 'FEMALE'
+        },
         GOLD_INIT: 5000,
         ADD_GOLD_TYPE: {
             RECHARGE: 1,
@@ -86,6 +90,17 @@ module.exports = {
         TASK_GRANT: {
             ALREADY_GRANT: 9101,
             ERR: 9102
+        },
+        EXCHANGE: {
+            YUANBAO_NOT_ENOUGH: 9201,
+            INVENTORY_NOT_ENOUGH: 9202,
+            ITEM_OFFLINE: 9203,
+            NOT_BLANK_MOBILE: 9204,
+            NOT_BLANK_CONTACT: 9205,
+            NOT_BLANK_ADDRESS: 9206,
+            INVALID_MOBILE: 9207,
+            ERR: 9208,
+            NEED_CUSTOMER: 9209
         }
     },
     ERR_MESSAGE: {
@@ -127,9 +142,23 @@ module.exports = {
 
         8001: "玩家已签到",
         8002: "签到失败",
+
         9001: "已领取今日补助",
         9002: "金币超出领取最低限制",
-        9003: "领取补助失败"
+        9003: "领取补助失败",
+
+        9101: "已领取任务奖励",
+        9102: "领取任务奖励失败",
+
+        9201: "元宝不足",
+        9202: "库存不足",
+        9203: "兑换物品已下线",
+        9204: "请填写手机号码",
+        9205: "请填写联系人",
+        9206: "请填写收件地址",
+        9207: "手机号码无效",
+        9208: "兑换失败",
+        9209: "兑换失败, 请联系客服"
     },
     MESSAGE: {
         RES: 200,
@@ -217,8 +246,9 @@ module.exports = {
 
     EXCHANGE: {
         TYPE: {
-            INBOX: "INBOX",
-            OUTBOX: "OUTBOX"
+            INBOX: "INBOX", //话费类
+            OUTBOX: "OUTBOX"    //实体类
+
         }
     },
 

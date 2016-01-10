@@ -10,17 +10,5 @@
 	},
 	{
 		"id": 4, "name": "vip", "title": "VIP", "icon": "", "mode": "term"
-	},
-	{
-		"id": 5, "name": "chargeCard_1", "title": "手机充值卡", "icon": "", "mode": "count", "value": 1
-	},
-	{
-		"id": 6, "name": "chargeCard_5", "title": "手机充值卡", "icon": "", "mode": "count", "value": 5
-	},
-	{
-		"id": 7, "name": "chargeCard_10", "title": "手机充值卡", "icon": "", "mode": "count", "value": 10
-	},
-	{
-		"id": 8, "name": "yuanbao", "title": "元宝", "icon": "", "mode": "count"
 	}
 ]

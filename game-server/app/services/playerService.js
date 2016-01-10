@@ -1,4 +1,5 @@
 var userDao = require('../dao/userDao');
+var commonDao = require('../dao/commonDao');
 var _ = require('lodash');
 var pomelo = require('pomelo');
 
@@ -162,6 +163,25 @@ exp.onUserDisconnect = function (data, cb) {
 
 }
 
+/**
+ * 修改个人信息
+ * @param data {uid: xx, avatar: xx, nickName: xx, gender: xx}
+ * @param cb
+ */
+exp.updateProfile = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-update profile||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        var player = user.player;
+
+        player.updateProfile(data, cb);
+
+    });
+}
 
 /**
  * 玩家胜利
@@ -177,7 +197,7 @@ exp.win = function (data, cb) {
         var player = user.player;
         
         //如果开会成功, 添加开会次数
-        if (meeting) player.meetingTimes += 1;
+        if (data.meeting) player.meetingTimes += 1;
         
         player.win(data.roomId, data.gold, function (result) {
             player.save();
@@ -350,7 +370,149 @@ exp.getTaskGrant = function (data, cb) {
             return;
         }
         user.player.getTaskGrant(data.taskId, cb);
-    })
+    });
+}
+
+exp.getMyItemList = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-item list||%j||玩家获取背包物品失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
+            return;
+        }
+
+        cb({code: Code.OK, itemList: user.player.items});
+
+    });
+}
+
+/**
+ * 获取兑换列表
+ * @param data
+ * @param cb
+ */
+exp.getExchangeList = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        // return result:
+        // [{id: xx, name: xx, icon: xx, inventory: xx,
+        // fragment: xx, createdAt: xx, enabled: true/false,
+        // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
+        commonDao.listExchangeList(function (err, docs) {
+            if (err != null) {
+                cb({code: Code.OK, exchangeList: []});
+            }
+            else {
+                cb({code: Code.OK, exchangeList: docs});
+            }
+        });
+
+    });
+}
+
+/**
+ * 兑换
+ * @param data {uid: xx, exchangeId: xx, mobile: xx, contact: xx, address: xx}
+ * @param cb
+ */
+exp.exchange = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.warn("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR});
+            return;
+        }
+
+        commonDao.getExchangeListById(data.exchangeId, function (err, doc) {
+            if (err) {
+                logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR});
+                return;
+            }
+            if (_.isNull(doc)) {
+                logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],兑换物品不存在或已下线, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ITEM_OFFLINE});
+                return;
+            }
+
+            if (user.player.fragment <  doc.fragment) {
+                logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],玩家元宝不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.YUANBAO_NOT_ENOUGH});
+                return;
+            }
+
+            if (data.count > doc.inventory) {
+                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 兑换物品库存不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVENTORY_NOT_ENOUGH});
+                return;
+            }
+
+            if (_.isEmpty(data.mobile)) {
+                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE});
+                return;
+            }
+
+            var mobileReg = !!data.mobile.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
+            if (mobileReg == false) {
+                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE});
+                return;
+            }
+
+            //如果是话费类
+            if (doc.type == consts.EXCHANGE.TYPE.INBOX) {
+                //TODO 调用第三方平台充值(apix.cn)
+
+                commonDao.exchange(data.exchangeId, data.uid, data.count, {mobile: data.mobile}, function (err, result) {
+
+                    if (err ==null || result == null) {
+                        logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER});
+                        return;
+                    }
+
+                    cb({code: Code.OK});
+
+                });
+            }
+            else {
+                //如果是实物类
+                if (_.isEmpty(data.contact)) {
+                    logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写联系人或收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_CONTACT});
+                    return;
+                }
+
+                if (_.isEmpty(data.address)) {
+                    logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_ADDRESS});
+                    return;
+                }
+
+                //存储兑换记录, 在后台跟进操作
+                commonDao.exchange(data.exchangeId, data.uid, data.count, {mobile: data.mobile, contact: data.contact, address: data.address}, function (err, result) {
+                    if (err == null || result == null) {
+                        logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER});
+                        return;
+                    }
+
+                    cb({code: Code.OK});
+
+                });
+
+            }
+
+
+        })
+
+    });
 }
 
 exp.addFragment = function (data, cb) {

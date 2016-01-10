@@ -36,7 +36,8 @@ module.exports = {
             update: {
                 $set: {
                     nickName: val.nickName,
-                    avatar: val.avatar
+                    avatar: val.avatar,
+                    gender: val.gender
                 }
             }
         }, function(err, doc, lastErrorObject) {

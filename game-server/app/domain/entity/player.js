@@ -52,10 +52,11 @@ Player.prototype.updateProfile = function (data, cb) {
 
     this.nickName = data.nickName;
     this.avatar = data.avatar;
+    this.gender = data.gender;
 
-    logger.info("profile-update||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
+    logger.info("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
     this.saveProfile();
-    cb();
+    cb({code: Code.OK});
 }
 
 Player.prototype.addGold = function (type, gold, cb) {
@@ -433,13 +434,15 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         return;
     }
 
-    //添加金币或元宝
+    //添加金币
     if (taskId < 400000) {
         this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, task.grant, function () {
         });
     } else {
-        this.addItems(consts.GLOBAL.ADD_ITEM_TYPE.TASK, task.items, function (result) {
-        });
+        //添加元宝单独使用player.fragment
+        this.fragment += task.fragment;
+        logger.info("user-fragment||%j||玩家通过任务领取元宝[%j]个, 用户ID:%j", this.uid, task.fragment, this.uid);
+
     }
 
     //获取下一个任务并更新player.tasks, 最后返回客户端新任务信息

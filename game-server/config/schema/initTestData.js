@@ -6,6 +6,7 @@ db.user.remove({});
 var User = function(username, password) {
     this.username = username;
     this.password = password;
+    this.mobile = '';
     this.loginCount = 0;
     this.createdAt = new Date();
     this.lastLoginAt = new Date();

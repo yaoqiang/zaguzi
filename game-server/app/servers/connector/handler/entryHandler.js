@@ -43,7 +43,7 @@ handler.enter = function (msg, session, next) {
         return;
     }
 
-    var player;
+    var player, userData;
 
     async.waterfall([
         function (cb) {
@@ -60,6 +60,8 @@ handler.enter = function (msg, session, next) {
                 next(null, {code: Code.ENTRY.FA_USER_NOT_EXIST});
                 return;
             }
+
+            userData = user;
 
             uid = user.id;
             userDao.getPlayerByUid(uid, cb);
@@ -161,7 +163,7 @@ handler.enter = function (msg, session, next) {
                     sessionId: session.id,
                     player: player
                 }, function (data) {
-                    next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player)});
+                    next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player, userData)});
                 });
             }
         });
@@ -187,7 +189,7 @@ var onUserDisconnect = function (app, session, reason) {
 
 };
 
-var generateSimplePlayerResponse = function (player) {
+var generateSimplePlayerResponse = function (player, userData) {
     return {
         uid: player.uid,
         nickName: player.nickName,
@@ -199,6 +201,11 @@ var generateSimplePlayerResponse = function (player) {
         rank: player.rank,
         exp: player.exp,
         fragment: player.fragment,
-        properties: player.properties
+        meetingTimes: player.meetingTimes,
+        properties: player.properties,
+        user: {
+            username: userData.username,
+            mobile: userData.mobile
+        }
     }
 }

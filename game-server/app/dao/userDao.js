@@ -78,7 +78,7 @@ userDao.getPlayerByUid = function(uid, cb) {
             fragment: doc.fragment,
             items: doc.items,
             tasks: doc.tasks,
-            meetingTimes: 0,
+            meetingTimes: doc.meetingTimes,
             properties: doc.properties,
             createdAt: doc.createdAt
         });

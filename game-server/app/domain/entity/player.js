@@ -37,6 +37,7 @@ var Player = function (opts) {
     this.exp = opts.exp || 0;
     this.rank = opts.rank;
     this.fragment = opts.fragment;
+    this.meetingTimes = opts.meetingTimes || 0;
     this.uid = opts.uid;
     this.items = opts.items;
     this.tasks = opts.tasks;
@@ -53,7 +54,7 @@ Player.prototype.updateProfile = function (data, cb) {
     this.avatar = data.avatar;
 
     logger.info("profile-update||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
-    this.save();
+    this.saveProfile();
     cb();
 }
 
@@ -259,6 +260,7 @@ Player.prototype.consumeItems = function (type, items, cb) {
 Player.prototype.upgrade = function () {
     this.rank += 1;
 }
+
 
 /**
  * 签到

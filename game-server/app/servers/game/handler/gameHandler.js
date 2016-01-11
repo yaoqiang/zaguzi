@@ -201,6 +201,14 @@ handler.getExchangeList = function (msg, session, next) {
     });
 }
 
+handler.getMyExchangeRecordList = function (msg, session, next) {
+    msg.uid = session.uid;
+    //
+    this.app.rpc.manager.userRemote.getMyExchangeRecordList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 handler.exchange = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.userRemote.exchange(session, msg, function (data) {

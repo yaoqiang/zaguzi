@@ -415,6 +415,30 @@ exp.getExchangeList = function (data, cb) {
     });
 }
 
+exp.getMyExchangeRecordList = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.info("user-exchange record list||%j||玩家获取兑换记录失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({code: Code.FAIL});
+            return;
+        }
+
+        // return result:
+        // [{id: xx, name: xx, icon: xx, inventory: xx,
+        // fragment: xx, createdAt: xx, enabled: true/false,
+        // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
+        commonDao.listExchangeRecordByUid(data.uid, function (err, docs) {
+            if (err != null) {
+                cb({code: Code.OK, exchangeRecordList: []});
+            }
+            else {
+                cb({code: Code.OK, exchangeRecordList: docs});
+            }
+        });
+
+    });
+}
+
 /**
  * 兑换
  * @param data {uid: xx, exchangeId: xx, mobile: xx, contact: xx, address: xx}

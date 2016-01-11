@@ -85,6 +85,10 @@ UserRemote.prototype.getExchangeList = function (msg, cb) {
     playerService.getExchangeList(msg, cb);
 }
 
+UserRemote.prototype.getMyExchangeRecordList = function (msg, cb) {
+    playerService.getMyExchangeRecordList(msg, cb);
+}
+
 UserRemote.prototype.exchange = function (msg, cb) {
     playerService.exchange(msg, cb);
 }

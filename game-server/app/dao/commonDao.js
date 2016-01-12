@@ -90,3 +90,10 @@ commonDao.exchange = function (exchangeId, uid, count, params, cb) {
         utils.invokeCallback(cb, err, null);
     })
 }
+
+
+
+//ranking list
+commonDao.getRankingList = function (data, cb) {
+    db.rankingList.find({type: data.type})
+}

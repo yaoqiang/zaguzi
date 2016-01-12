@@ -261,12 +261,19 @@ module.exports = {
         }
     },
 
+    RANKING_LIST: {
+        WEALTH: 'WEALTH',
+        STRENGTH: 'STRENGTH',
+        RECHARGE_YESTERDAY: 'RECHARGE_YESTERDAY',
+        MEETING: 'MEETING'
+    },
+
     LOG: {
         SYSTEM: 'system',
         GAME: 'game',
         USER: 'user',
-        GOLD: 'gold',
         BALANCE: 'balance',
-        PAYMENT: 'payment'
+        PAYMENT: 'payment',
+        SYNC: 'sync'
     }
 }

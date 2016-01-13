@@ -48,6 +48,13 @@ app.configure('production|development', 'auth', function() {
   });
 });
 
+app.configure('production|development', 'manager', function() {
+  app.set('connectorConfig', {
+    connector: pomelo.connectors.hybridconnector,
+    useProtobuf: true
+  });
+});
+
 // app configure
 app.configure('production|development', function() {
   // route configures

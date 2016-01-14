@@ -185,7 +185,9 @@ module.exports = {
         GOLD_CHANGE: 'onGoldChange',
         FAN_WHEN_IS_RED: 'onFanWhenIsRed',
         FAN_FINISHED: 'onFanFinished',
-        BACK_TO_GAME: 'onBackToGame'
+        BACK_TO_GAME: 'onBackToGame',
+        UI_COMMAND: 'onUICommand',
+        VERSION_UPGRADE: 'onVersionUpgrade'
 
     },
 

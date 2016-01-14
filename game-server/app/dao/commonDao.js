@@ -95,5 +95,25 @@ commonDao.exchange = function (exchangeId, uid, count, params, cb) {
 
 //ranking list
 commonDao.getRankingList = function (data, cb) {
-    db.rankingList.find({type: data.type})
+    db.rankingList.findOne({type: data.type, date: new Date()}, function(err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
+
+
+//版本检查
+commonDao.getTopOfAppReleaseRecord = function (data, cb) {
+    db.appReleaseRecord.findOne({}, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
 }

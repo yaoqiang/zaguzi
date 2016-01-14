@@ -55,11 +55,6 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
         });
     }
 
-    messageService.pushMessageToPlayer({
-        uid: uid,
-        sid: serverId
-    }, consts.EVENT.GOLD_CHANGE, {gold: playerObj.gold+1});
-
     exp.attachmentHandle(playerObj, cb);
 }
 

@@ -209,9 +209,27 @@ handler.getMyExchangeRecordList = function (msg, session, next) {
     });
 }
 
+//
 handler.exchange = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.userRemote.exchange(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+//
+handler.getRankingList = function (msg, session, next) {
+    this.app.rpc.manager.universalRemote.getRankingList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+//
+handler.getTopOfAppReleaseRecord = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, function (data) {
         next(null, data);
     });
 }

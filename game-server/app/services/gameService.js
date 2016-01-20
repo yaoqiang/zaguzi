@@ -2,6 +2,7 @@
  * Module dependencies
  */
 var Game = require('../domain/entity/game');
+var gameResponse = require('../domain/response/gameResponse');
 var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
@@ -135,13 +136,11 @@ exp.getGameStatusDetailsById = function(data, cb)
     // }
 
     var actors = _.map(game.actors, function(actor) {
-        return {
-            uid: actor.uid, actorNr: actor.actorNr,
-            nickName: actor.properties.nickName, avatar: actor.properties.avatar,
+        return _.assign(gameResponse.generateActorResponse(actor), {
             identity: actor.gameStatus.identity, append: actor.gameStatus.append,
             rank: actor.gameStatus.rank, isTrusteeship: actor.gameStatus.isTrusteeship,
             holdingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : []
-        }
+        })
     });
 
     cb({

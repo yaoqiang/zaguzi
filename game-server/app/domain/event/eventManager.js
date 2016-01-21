@@ -58,6 +58,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').exec('propertiesSync.update', player.uid, player);
         app.get('sync').exec('taskSync.update', player.uid, player);
         app.get('sync').exec('itemSync.update', player.uid, player);
+        app.get('sync').exec('playerSync.updatePlayerProfile', player.uid, player);
     });
 
     player.on('flushAll', function () {
@@ -65,6 +66,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('propertiesSync.update', player.uid, player);
         app.get('sync').flush('taskSync.update', player.uid, player);
         app.get('sync').flush('itemSync.update', player.uid, player);
+        app.get('sync').flush('playerSync.updatePlayerProfile', player.uid, player);
     })
 
 }

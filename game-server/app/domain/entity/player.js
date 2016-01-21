@@ -29,6 +29,7 @@ var Player = function (opts) {
 
     this.id = opts.id;
     this.nickName = opts.nickName;
+    this.gender = opts.gender;
     this.avatar = opts.avatar;
     this.gold = opts.gold;
     this.winNr = opts.winNr || 0;
@@ -54,7 +55,7 @@ Player.prototype.updateProfile = function (data, cb) {
     this.avatar = data.avatar;
     this.gender = data.gender;
 
-    logger.info("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
+    logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
     this.saveProfile();
     cb({code: Code.OK});
 }

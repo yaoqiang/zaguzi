@@ -193,6 +193,7 @@ var generateSimplePlayerResponse = function (player, userData) {
     return {
         uid: player.uid,
         nickName: player.nickName,
+        gender: player.gender,
         avatar: player.avatar,
         gold: player.gold,
         winNr: player.winNr,

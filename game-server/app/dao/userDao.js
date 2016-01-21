@@ -69,7 +69,7 @@ userDao.getPlayerByUid = function(uid, cb) {
             uid: doc.uid,
             nickName: doc.nickName,
             avatar: doc.avatar,
-            gender: doc.gender,
+            gender: doc.gender == null ? consts.GLOBAL.GENDER.MALE : doc.gender,
             gold: doc.gold,
             winNr: doc.winNr,
             loseNr: doc.loseNr,

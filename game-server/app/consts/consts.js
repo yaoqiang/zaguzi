@@ -1,5 +1,6 @@
 module.exports = {
     GLOBAL: {
+        LOBBY: [0, 1, 2],
         GENDER: {
             MALE: 'MALE',
             FEMALE: 'FEMALE'

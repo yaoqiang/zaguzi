@@ -4,7 +4,7 @@ var sync = require('pomelo-sync-plugin');
 var logger = require('pomelo-logger');
 var log4jsConf = require('./config/log4js.json')
 
-var helloWorld = require ('./app/components/helloWorld');
+var onlineUserAnalysis = require ('./app/components/onlineUserAnalysis');
 
 
 /**
@@ -122,7 +122,7 @@ app.configure('production|development', 'auth|connector|manager', function() {
 });
 
 app.configure ('production|development', 'manager', function() {
-  // app.load (helloWorld, {interval: 5000});
+  app.load (onlineUserAnalysis, {});
   require('./app/util/httpServer')(app, {});
 
 });

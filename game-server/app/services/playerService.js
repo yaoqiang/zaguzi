@@ -38,7 +38,7 @@ exp.onUserEnter = function (uid, serverId, sessionId, player, cb) {
     var playerObj = new Player(player);
     eventManager.addPlayerEvent(playerObj);
 
-    var u = _.findWhere(pomelo.app.userCache, {uid: uid});
+    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
     if (u) {
         u.serverId = serverId;
         u.sessionId = sessionId;
@@ -80,7 +80,7 @@ exp.attachmentHandle = function (playerObj, cb) {
             }
             //如果连续签到一个周期, 则重置连续签到
             if (playerObj.properties.continuousCheckInNr == globals.checkIn.length) {
-              playerObj.properties.continuousCheckInNr = 0;
+                playerObj.properties.continuousCheckInNr = 0;
             }
         }
         //设置本次登录时间
@@ -89,14 +89,14 @@ exp.attachmentHandle = function (playerObj, cb) {
         playerObj.initDailyTasks();
     }
     playerObj.saveAll();
-    cb({player: playerObj});
+    cb({ player: playerObj });
 }
 
 /**
  * 当用户断开连接时，处理各种XX
  */
 exp.onUserDisconnect = function (data, cb) {
-    var u = _.findWhere(pomelo.app.userCache, {uid: data.uid});
+    var u = _.findWhere(pomelo.app.userCache, { uid: data.uid });
 
     if (_.isUndefined(u)) {
         logger.warn('uid=>%j', data.uid)
@@ -172,7 +172,7 @@ exp.updateProfile = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-update profile||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
@@ -190,7 +190,7 @@ exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-win||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
@@ -198,11 +198,11 @@ exp.win = function (data, cb) {
         
         //如果开会成功, 添加开会次数
         if (data.meeting) player.meetingTimes += 1;
-        
+
         player.win(data.roomId, data.gold, function (result) {
             player.save();
-            
-            cb({code: Code.OK});
+
+            cb({ code: Code.OK });
         });
     });
 }
@@ -214,15 +214,15 @@ exp.lose = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-lose||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
         var player = user.player;
         player.lose(data.roomId, data.gold, function (result) {
             player.save();
-            
-            cb({code: Code.OK});
+
+            cb({ code: Code.OK });
         });
     });
 }
@@ -234,14 +234,14 @@ exp.tie = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-tie||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
         var player = user.player;
         player.tie(data.roomId, function (result) {
             player.save();
-            cb({code: Code.OK});
+            cb({ code: Code.OK });
         });
     });
 }
@@ -253,20 +253,20 @@ exp.battle = function (detail, cb) {
 
     exp.getUserCacheByUid(detail.uid, function (user) {
         //处理结束后, 相关处理
-        user.player.battle(detail.roomId, detail.result, {meeting: detail.meeting});
+        user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting });
     });
 
     switch (detail.result) {
         case consts.GAME.ACTOR_RESULT.WIN:
-            exp.win({uid: detail.uid, roomId: detail.roomId, gold: detail.gold, meeting: detail.meeting}, function (data) {
+            exp.win({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold, meeting: detail.meeting }, function (data) {
             });
             break;
         case consts.GAME.ACTOR_RESULT.LOSE:
-            exp.lose({uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1}, function (data) {
+            exp.lose({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1 }, function (data) {
             });
             break;
         default:
-            exp.tie({uid: detail.uid, roomId: detail.roomId}, function (data) {
+            exp.tie({ uid: detail.uid, roomId: detail.roomId }, function (data) {
             });
             break;
     }
@@ -279,7 +279,7 @@ exp.battle = function (detail, cb) {
  */
 exp.balance = function (data, cb) {
     var details = data.details;
-    var result = {code: Code.OK};
+    var result = { code: Code.OK };
 
     //为防止结算未完成时，已将玩家从缓存中移除，所以需保证map结束后，再callback
     Promise.all(_.map(details, function (detail) {
@@ -307,7 +307,7 @@ exp.getCheckInGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-check in||%j||玩家签到失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
@@ -323,7 +323,7 @@ exp.getBankruptcyGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
         user.player.getBankruptcyGrant(cb);
@@ -337,10 +337,10 @@ exp.getDailyTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
-        cb({code: Code.OK, taskList: user.player.tasks.daily});
+        cb({ code: Code.OK, taskList: user.player.tasks.daily });
     })
 }
 
@@ -351,10 +351,10 @@ exp.getForeverTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
-        cb({code: Code.OK, taskList: user.player.tasks.forever});
+        cb({ code: Code.OK, taskList: user.player.tasks.forever });
     })
 }
 
@@ -366,7 +366,7 @@ exp.getTaskGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-task grant||%j||玩家领取任务奖励失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
         user.player.getTaskGrant(data.taskId, cb);
@@ -377,11 +377,11 @@ exp.getMyItemList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-item list||%j||玩家获取背包物品失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
 
-        cb({code: Code.OK, itemList: user.player.items});
+        cb({ code: Code.OK, itemList: user.player.items });
 
     });
 }
@@ -395,7 +395,7 @@ exp.getExchangeList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
@@ -405,10 +405,10 @@ exp.getExchangeList = function (data, cb) {
         // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
         commonDao.listExchangeList(function (err, docs) {
             if (err != null) {
-                cb({code: Code.OK, exchangeList: []});
+                cb({ code: Code.OK, exchangeList: [] });
             }
             else {
-                cb({code: Code.OK, exchangeList: docs});
+                cb({ code: Code.OK, exchangeList: docs });
             }
         });
 
@@ -419,7 +419,7 @@ exp.getMyExchangeRecordList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.info("user-exchange record list||%j||玩家获取兑换记录失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
             return;
         }
 
@@ -429,10 +429,10 @@ exp.getMyExchangeRecordList = function (data, cb) {
         // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
         commonDao.listExchangeRecordByUid(data.uid, function (err, docs) {
             if (err != null) {
-                cb({code: Code.OK, exchangeRecordList: []});
+                cb({ code: Code.OK, exchangeRecordList: [] });
             }
             else {
-                cb({code: Code.OK, exchangeRecordList: docs});
+                cb({ code: Code.OK, exchangeRecordList: docs });
             }
         });
 
@@ -448,44 +448,44 @@ exp.exchange = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.warn("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR });
             return;
         }
 
         commonDao.getExchangeListById(data.exchangeId, function (err, doc) {
             if (err) {
                 logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR });
                 return;
             }
             if (_.isNull(doc)) {
                 logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],兑换物品不存在或已下线, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ITEM_OFFLINE});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ITEM_OFFLINE });
                 return;
             }
 
-            if (user.player.fragment <  doc.fragment) {
+            if (user.player.fragment < doc.fragment) {
                 logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],玩家元宝不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.YUANBAO_NOT_ENOUGH});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.YUANBAO_NOT_ENOUGH });
                 return;
             }
 
             if (data.count > doc.inventory) {
                 logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 兑换物品库存不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVENTORY_NOT_ENOUGH});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVENTORY_NOT_ENOUGH });
                 return;
             }
 
             if (_.isEmpty(data.mobile)) {
                 logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE });
                 return;
             }
 
             var mobileReg = !!data.mobile.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
             if (mobileReg == false) {
                 logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
-                cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE });
                 return;
             }
 
@@ -493,15 +493,15 @@ exp.exchange = function (data, cb) {
             if (doc.type == consts.EXCHANGE.TYPE.INBOX) {
                 //TODO 调用第三方平台充值(apix.cn)
 
-                commonDao.exchange(data.exchangeId, data.uid, data.count, {mobile: data.mobile}, function (err, result) {
+                commonDao.exchange(data.exchangeId, data.uid, data.count, { mobile: data.mobile }, function (err, result) {
 
-                    if (err ==null || result == null) {
+                    if (err == null || result == null) {
                         logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
-                        cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER});
+                        cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                         return;
                     }
 
-                    cb({code: Code.OK});
+                    cb({ code: Code.OK });
 
                 });
             }
@@ -509,25 +509,25 @@ exp.exchange = function (data, cb) {
                 //如果是实物类
                 if (_.isEmpty(data.contact)) {
                     logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写联系人或收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_CONTACT});
+                    cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_CONTACT });
                     return;
                 }
 
                 if (_.isEmpty(data.address)) {
                     logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_ADDRESS});
+                    cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_ADDRESS });
                     return;
                 }
 
                 //存储兑换记录, 在后台跟进操作
-                commonDao.exchange(data.exchangeId, data.uid, data.count, {mobile: data.mobile, contact: data.contact, address: data.address}, function (err, result) {
+                commonDao.exchange(data.exchangeId, data.uid, data.count, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
                     if (err == null || result == null) {
                         logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
-                        cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER});
+                        cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                         return;
                     }
 
-                    cb({code: Code.OK});
+                    cb({ code: Code.OK });
 
                 });
 
@@ -551,7 +551,7 @@ exp.recharge = function (data, cb) {
  * 通过uid获取缓存用户信息
  */
 exp.getUserCacheByUid = function (uid, cb) {
-    var u = _.findWhere(pomelo.app.userCache, {uid: uid});
+    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
     cb(u);
 }
 
@@ -561,7 +561,7 @@ exp.getUserCacheByUid = function (uid, cb) {
 exp.getUsersCacheByUids = function (data, cb) {
     var users = [];
     _.map(data.uids, function (uid) {
-        var u = _.findWhere(pomelo.app.userCache, {uid: uid});
+        var u = _.findWhere(pomelo.app.userCache, { uid: uid });
         users.push(u);
     });
     cb(users);
@@ -571,7 +571,7 @@ exp.getUsersCacheByUids = function (data, cb) {
  * 通过sessionId获取用户信息
  */
 exp.getUserCacheBySessionId = function (sessionId, cb) {
-    var u = _.findWhere(pomelo.app.userCache, {sessionId: sessionId});
+    var u = _.findWhere(pomelo.app.userCache, { sessionId: sessionId });
     cb(u);
 }
 
@@ -583,7 +583,7 @@ exp.getReceiverByUid = function (uid, cb) {
  * 设置玩家的房间&游戏状态
  */
 exp.setGameReference = function (uid, roomId, gameId, cb) {
-    var user = _.findWhere(pomelo.app.userCache, {uid: uid});
+    var user = _.findWhere(pomelo.app.userCache, { uid: uid });
     user.roomId = roomId;
     user.gameId = gameId;
     cb();
@@ -593,6 +593,65 @@ exp.setGameReference = function (uid, roomId, gameId, cb) {
  * 设置用户的sessionId
  */
 exp.setUserSessionId = function (uid, sessionId) {
-    var user = _.findWhere(pomelo.app.userCache, {uid: uid});
+    var user = _.findWhere(pomelo.app.userCache, { uid: uid });
     user.sessionId = sessionId;
+}
+
+
+exp.getOnlineUserResultCache = function() {
+    return pomelo.app.onlineUserResultCache;
+}
+
+/////////////////
+// 获取在线人数
+/////////////////
+exp.getOnlineUserList = function () {
+    //return {total: xx, lobby: {"0": xx, "1": xx, "2": xx}, room: {"roomId": xx}}
+    var userList = pomelo.app.userCache;
+    
+    /**
+    var roomIdList = _.flatMap(_.map(consts.GLOBAL.LOBBY, function(lobbyId) {
+        return gameUtil.getRoomsByLobbyId(lobbyId);
+    }), function(room) {
+        return room.id;
+    });
+    
+    var initRoomState = {};
+    _.each(roomIdList, function(id) {
+        initRoomState[id] = 0;
+    });
+     */
+
+    var result = _.reduce(userList, function (result, value) {
+        return {
+            total: result.total + 1,
+            lobby: {
+                "0": value.roomId > 0 && value.roomId < 20 ? result.lobby["0"] + 1 : result.lobby["0"],
+                "1": value.roomId > 10 && value.roomId < 30 ? result.lobby["1"] + 1 : result.lobby["1"],
+                "2": value.roomId > 20 && value.roomId < 40 ? result.lobby["2"] + 1 : result.lobby["2"]
+            },
+            room: {
+                "11": value.roomId == 11 ? result.room["11"] + 1 : result.room["11"],
+                "12": value.roomId == 12 ? result.room["12"] + 1 : result.room["12"],
+                "13": value.roomId == 13 ? result.room["13"] + 1 : result.room["13"],
+                "14": value.roomId == 14 ? result.room["14"] + 1 : result.room["14"],
+                "21": value.roomId == 21 ? result.room["21"] + 1 : result.room["21"],
+                "22": value.roomId == 22 ? result.room["22"] + 1 : result.room["22"],
+                "23": value.roomId == 23 ? result.room["23"] + 1 : result.room["23"],
+                "24": value.roomId == 24 ? result.room["24"] + 1 : result.room["24"],
+                "31": value.roomId == 31 ? result.room["31"] + 1 : result.room["31"],
+                "32": value.roomId == 32 ? result.room["32"] + 1 : result.room["32"],
+                "33": value.roomId == 33 ? result.room["33"] + 1 : result.room["33"],
+                "34": value.roomId == 34 ? result.room["34"] + 1 : result.room["34"],
+            }
+        }
+    }, {
+            total: 0,
+            lobby: { "0": 0, "1": 0, "2": 0 },
+            room: { "11": 0, "12": 0, "13": 0, "14": 0, "21": 0, "22": 0, "23": 0, "24": 0, "31": 0, "32": 0, "33": 0, "34": 0 }
+    });
+        
+
+    return result;
+
 }

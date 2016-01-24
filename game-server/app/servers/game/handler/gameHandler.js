@@ -125,6 +125,12 @@ handler.leave = function (msg, session, next) {
 // 游戏内其他附加功能相关
 ///////////////////////////
 
+/**
+ * 更新个人信息
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.updateProfile = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.userRemote.updateProfile(session, msg, function (data) {
@@ -132,6 +138,19 @@ handler.updateProfile = function (msg, session, next) {
     });
 }
 
+handler.getDailyTodoInfo = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.userRemote.getDailyTodoInfo(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+/**
+ * 领取签到奖励
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getCheckInGrant = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -140,7 +159,12 @@ handler.getCheckInGrant = function (msg, session, next) {
     });
 }
 
-
+/**
+ * 领取破产补助
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getBankruptcyGrant = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -149,6 +173,12 @@ handler.getBankruptcyGrant = function (msg, session, next) {
     });
 }
 
+/**
+ * 获得每日任务列表
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getDailyTaskList = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -157,6 +187,12 @@ handler.getDailyTaskList = function (msg, session, next) {
     });
 }
 
+/**
+ * 获得系统任务列表
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getForeverTaskList = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -165,6 +201,12 @@ handler.getForeverTaskList = function (msg, session, next) {
     });
 }
 
+/**
+ * 领取任务奖励
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getTaskGrant = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -173,6 +215,12 @@ handler.getTaskGrant = function (msg, session, next) {
     });
 }
 
+/**
+ * 获得商城列表
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getShopList = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.game.gameRemote.getShopList(session, msg, function (data) {
@@ -185,6 +233,12 @@ handler.getShopList = function (msg, session, next) {
     })
 }
 
+/**
+ * 获得我的物品列表
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getMyItemList = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -193,6 +247,12 @@ handler.getMyItemList = function (msg, session, next) {
     });
 }
 
+/**
+ * 获得兑换列表
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getExchangeList = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -201,6 +261,12 @@ handler.getExchangeList = function (msg, session, next) {
     });
 }
 
+/**
+ * 获得我的兑换记录
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getMyExchangeRecordList = function (msg, session, next) {
     msg.uid = session.uid;
     //
@@ -209,7 +275,12 @@ handler.getMyExchangeRecordList = function (msg, session, next) {
     });
 }
 
-//
+/**
+ * 兑换
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.exchange = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.userRemote.exchange(session, msg, function (data) {
@@ -217,14 +288,24 @@ handler.exchange = function (msg, session, next) {
     });
 }
 
-//
+/**
+ * 获得排行榜
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getRankingList = function (msg, session, next) {
     this.app.rpc.manager.universalRemote.getRankingList(session, msg, function (data) {
         next(null, data);
     });
 }
 
-//
+/**
+ * 获得最新版本信息
+ * @param msg
+ * @param session
+ * @param next
+ */
 handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;

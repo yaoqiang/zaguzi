@@ -123,7 +123,7 @@ exp.onUserDisconnect = function (data, cb) {
         pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
             if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-                logger.info("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid)
+                logger.debug("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid)
                 //set user session id = null.
                 exp.setUserSessionId(data.uid, null);
             }
@@ -173,7 +173,7 @@ exp.onUserDisconnect = function (data, cb) {
 exp.updateProfile = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-update profile||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-update profile||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -191,7 +191,7 @@ exp.updateProfile = function (data, cb) {
 exp.win = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-win||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-win||%j||玩家胜利, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -215,7 +215,7 @@ exp.win = function (data, cb) {
 exp.lose = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-lose||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-lose||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -235,7 +235,7 @@ exp.lose = function (data, cb) {
 exp.tie = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-tie||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-tie||%j||玩家失败, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -302,13 +302,29 @@ exp.balance = function (data, cb) {
     gameRecord.save();
 }
 
+exp.getDailyTodoInfo = function (data, cb) {
+    exp.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.debug("user-get info||%j||玩家获取每日必做信息失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({ code: Code.FAIL });
+            return;
+        }
+
+        cb({code: Code.OK,
+            canGetCheckInGrant: !user.player.properties.getCheckInGrant,
+            canGetBankruptcyGrant: !user.player.properties.getBankruptcyGrantRunOut,
+            threshold: user.player.gold < globals.bankruptcyGrant.threshold
+        });
+    });
+}
+
 /**
  * 签到
  */
 exp.getCheckInGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-check in||%j||玩家签到失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-check in||%j||玩家签到失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -324,7 +340,7 @@ exp.getCheckInGrant = function (data, cb) {
 exp.getBankruptcyGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-grant||%j||玩家领取补助失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -338,7 +354,7 @@ exp.getBankruptcyGrant = function (data, cb) {
 exp.getDailyTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
@@ -352,7 +368,7 @@ exp.getDailyTaskList = function (data, cb) {
 exp.getForeverTaskList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-task list||%j||玩家获取任务列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
@@ -367,7 +383,7 @@ exp.getForeverTaskList = function (data, cb) {
 exp.getTaskGrant = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-task grant||%j||玩家领取任务奖励失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-task grant||%j||玩家领取任务奖励失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
@@ -378,7 +394,7 @@ exp.getTaskGrant = function (data, cb) {
 exp.getMyItemList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-item list||%j||玩家获取背包物品失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-item list||%j||玩家获取背包物品失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR });
             return;
         }
@@ -396,7 +412,7 @@ exp.getMyItemList = function (data, cb) {
 exp.getExchangeList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -420,7 +436,7 @@ exp.getExchangeList = function (data, cb) {
 exp.getMyExchangeRecordList = function (data, cb) {
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.info("user-exchange record list||%j||玩家获取兑换记录失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-exchange record list||%j||玩家获取兑换记录失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL });
             return;
         }
@@ -510,13 +526,13 @@ exp.exchange = function (data, cb) {
             else {
                 //如果是实物类
                 if (_.isEmpty(data.contact)) {
-                    logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写联系人或收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写联系人或收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
                     cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_CONTACT });
                     return;
                 }
 
                 if (_.isEmpty(data.address)) {
-                    logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
                     cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_ADDRESS });
                     return;
                 }

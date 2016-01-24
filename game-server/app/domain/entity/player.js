@@ -308,7 +308,7 @@ Player.prototype.getCheckInGrant = function (cb) {
     }).done();
 
 
-    cb({code: Code.OK, gold: grantData.gold});
+    cb({code: Code.OK, gold: grantData.gold, day: this.properties.continuousCheckInNr+1});
 
 }
 
@@ -340,7 +340,7 @@ Player.prototype.getBankruptcyGrant = function (cb) {
     var self = this;
     this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.GRANT, globals.bankruptcyGrant.gold, function (data) {
         self.save();
-        cb({code: Code.OK, gold: globals.bankruptcyGrant.gold});
+        cb({code: Code.OK, gold: globals.bankruptcyGrant.gold, canGetBankruptcyGrant: self.properties.getBankruptcyGrantRunOut});
     });
 }
 

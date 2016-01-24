@@ -57,6 +57,12 @@ UserRemote.prototype.balance = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.getDailyTodoInfo = function (msg, cb) {
+    playerService.getDailyTodoInfo(msg, function (ret) {
+        cb(ret);
+    })
+}
+
 UserRemote.prototype.getCheckInGrant = function (msg, cb) {
     playerService.getCheckInGrant(msg, cb);
 }

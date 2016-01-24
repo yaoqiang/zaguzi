@@ -52,7 +52,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
                 {
                     if (type == consts.GAME.TYPE.FIVE)
                     {
-                        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_6, null);
+                        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_6, cards);
                     }
                 }
                 return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_2, tmp[0], cards);
@@ -62,7 +62,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
                 //如果是双王
                 if (_.contains(tmp, 18) && _.contains(tmp, 19))
                 {
-                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_5, null);
+                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_5, cards);
                 }
                 //错误牌型
                 else

@@ -519,6 +519,10 @@ Player.prototype.saveAll = function () {
     this.emit('saveAll');
 }
 
+Player.prototype.saveOnEnter = function () {
+    this.emit('saveOnEnter');
+}
+
 Player.prototype.flushAll = function () {
     this.emit('flushAll');
 }

@@ -117,3 +117,4 @@ commonDao.getTopOfAppReleaseRecord = function (data, cb) {
         }
     })
 }
+

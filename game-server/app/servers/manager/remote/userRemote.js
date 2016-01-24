@@ -130,3 +130,7 @@ UserRemote.prototype.setUserSessionId = function (uid, sessionId, cb) {
     playerService.setUserSessionId(uid, sessionId);
     cb();
 }
+
+UserRemote.prototype.getOnlineUserResultCache = function (data, cb) {
+    cb({code: Code.OK, online: playerService.getOnlineUserResultCache()});
+}

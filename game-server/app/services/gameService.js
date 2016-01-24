@@ -139,7 +139,7 @@ exp.getGameStatusDetailsById = function(data, cb)
         return _.assign(gameResponse.generateActorResponse(actor), {
             identity: actor.gameStatus.identity, append: actor.gameStatus.append,
             rank: actor.gameStatus.rank, isTrusteeship: actor.gameStatus.isTrusteeship,
-            holdingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : []
+            currentHoldingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : []
         })
     });
 

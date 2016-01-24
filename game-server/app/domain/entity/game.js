@@ -696,13 +696,13 @@ Game.prototype.fan = function (data, cb) {
     switch (cardRecognization.cardSeries) {
         case CardLogic.CardSeriesCode.cardSeries_99:
             //错误牌型
-            logger.error('game||fan||出牌错误，错误牌型||用户&ID: %j', data.uid);
+            logger.debug('game||fan||出牌错误，错误牌型||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
             break;
         default:
             //玩家手牌中没有所出牌
             if (!actor.gameStatus.hasCards(cards)) {
-                logger.error('game||fan||出牌错误，玩家没有该牌||用户&ID: %j', data.uid);
+                logger.debug('game||fan||出牌错误，玩家没有该牌||用户&ID: %j', data.uid);
                 cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.WITHOUT_CARDS});
                 return;
             }
@@ -711,7 +711,7 @@ Game.prototype.fan = function (data, cb) {
             if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, this.gameLogic.appends);
                 if (!result) {
-                    logger.error('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
+                    logger.debug('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});
                     return;
                 }
@@ -727,7 +727,7 @@ Game.prototype.fan = function (data, cb) {
                 });
                 var diffCards = _.difference(expectedCards, cards);
                 if (_.size(diffCards) != 0) {
-                    logger.error('game||fan||出牌错误，红桃5第一次出牌必须出全部5||用户&ID: %j', data.uid);
+                    logger.debug('game||fan||出牌错误，红桃5第一次出牌必须出全部5||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_BE_FIVE});
                     return;
                 }

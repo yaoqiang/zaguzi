@@ -57,22 +57,22 @@ app.configure('production|development', 'manager', function() {
 
 // app configure
 app.configure('production|development', function() {
-  // route configures
-  //app.route('chat', routeUtil.chat);
 
   app.before(pomelo.filters.toobusy());
-  app.enable('systemMonitor');
 
-  var lobbyInfo = require('./app/modules/lobbyInfo');
-  var onlineUser = require('./app/modules/onlineUser');
-  if (typeof app.registerAdmin === 'function') {
-    app.registerAdmin(lobbyInfo, {
-      app: app
-    });
-    app.registerAdmin(onlineUser, {
-      app: app
-    });
-  }
+
+  //app.enable('systemMonitor');
+
+  //var lobbyInfo = require('./app/modules/lobbyInfo');
+  //var onlineUser = require('./app/modules/onlineUser');
+  //if (typeof app.registerAdmin === 'function') {
+  //  app.registerAdmin(lobbyInfo, {
+  //    app: app
+  //  });
+  //  app.registerAdmin(onlineUser, {
+  //    app: app
+  //  });
+  //}
 
   app.userCache = [];
 

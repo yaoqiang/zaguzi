@@ -1,7 +1,9 @@
-var userDao = require('../dao/userDao');
-var commonDao = require('../dao/commonDao');
+
 var _ = require('lodash');
 var pomelo = require('pomelo');
+
+var userDao = require('../dao/userDao');
+var commonDao = require('../dao/commonDao');
 
 var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
@@ -88,7 +90,7 @@ exp.attachmentHandle = function (playerObj, cb) {
         //处理登录后每日任务等信息
         playerObj.initDailyTasks();
     }
-    playerObj.saveAll();
+    playerObj.saveOnEnter();
     cb({ player: playerObj });
 }
 
@@ -598,60 +600,6 @@ exp.setUserSessionId = function (uid, sessionId) {
 }
 
 
-exp.getOnlineUserResultCache = function() {
+exp.getOnlineUserResultCache = function () {
     return pomelo.app.onlineUserResultCache;
-}
-
-/////////////////
-// 获取在线人数
-/////////////////
-exp.getOnlineUserList = function () {
-    //return {total: xx, lobby: {"0": xx, "1": xx, "2": xx}, room: {"roomId": xx}}
-    var userList = pomelo.app.userCache;
-    
-    /**
-    var roomIdList = _.flatMap(_.map(consts.GLOBAL.LOBBY, function(lobbyId) {
-        return gameUtil.getRoomsByLobbyId(lobbyId);
-    }), function(room) {
-        return room.id;
-    });
-    
-    var initRoomState = {};
-    _.each(roomIdList, function(id) {
-        initRoomState[id] = 0;
-    });
-     */
-
-    var result = _.reduce(userList, function (result, value) {
-        return {
-            total: result.total + 1,
-            lobby: {
-                "0": value.roomId > 0 && value.roomId < 20 ? result.lobby["0"] + 1 : result.lobby["0"],
-                "1": value.roomId > 10 && value.roomId < 30 ? result.lobby["1"] + 1 : result.lobby["1"],
-                "2": value.roomId > 20 && value.roomId < 40 ? result.lobby["2"] + 1 : result.lobby["2"]
-            },
-            room: {
-                "11": value.roomId == 11 ? result.room["11"] + 1 : result.room["11"],
-                "12": value.roomId == 12 ? result.room["12"] + 1 : result.room["12"],
-                "13": value.roomId == 13 ? result.room["13"] + 1 : result.room["13"],
-                "14": value.roomId == 14 ? result.room["14"] + 1 : result.room["14"],
-                "21": value.roomId == 21 ? result.room["21"] + 1 : result.room["21"],
-                "22": value.roomId == 22 ? result.room["22"] + 1 : result.room["22"],
-                "23": value.roomId == 23 ? result.room["23"] + 1 : result.room["23"],
-                "24": value.roomId == 24 ? result.room["24"] + 1 : result.room["24"],
-                "31": value.roomId == 31 ? result.room["31"] + 1 : result.room["31"],
-                "32": value.roomId == 32 ? result.room["32"] + 1 : result.room["32"],
-                "33": value.roomId == 33 ? result.room["33"] + 1 : result.room["33"],
-                "34": value.roomId == 34 ? result.room["34"] + 1 : result.room["34"],
-            }
-        }
-    }, {
-            total: 0,
-            lobby: { "0": 0, "1": 0, "2": 0 },
-            room: { "11": 0, "12": 0, "13": 0, "14": 0, "21": 0, "22": 0, "23": 0, "24": 0, "31": 0, "32": 0, "33": 0, "34": 0 }
-    });
-        
-
-    return result;
-
 }

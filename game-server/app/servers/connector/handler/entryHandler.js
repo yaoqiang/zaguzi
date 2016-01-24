@@ -9,8 +9,7 @@ var messageService = require('../../../services/messageService');
 var consts = require('../../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
-
-var schedule = require('pomelo-scheduler');
+var _ = require('lodash');
 
 module.exports = function (app) {
     return new Handler(app);
@@ -88,12 +87,13 @@ handler.enter = function (msg, session, next) {
             if (u) {
                 //如果玩家在线, 用缓存中的用户数据覆盖从DB中查出的结果（考虑缓存中数据没有及时写入DB情况）
                 player = u.player;
+                //如果玩家是正常在线, 则不允许登录
                 if (!!u.sessionId) {
                     next(null, {code: Code.FAIL, message: '用户已登录'});
-                    sessionService.kickBySessionId(session.id, null);
+                    //sessionService.kickBySessionId(session.id, null);
                     return;
                 }
-                //如果用户在牌局中
+                //如果玩家是掉线状态,并且用户在牌局中
                 if (!!u.gameId) {
                     //查询牌局状态
                     //rpc invoke
@@ -171,10 +171,30 @@ handler.enter = function (msg, session, next) {
 
 };
 
+handler.enterIndex = function (msg, session, next) {
+    this.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+        next(null, {code: Code.OK, onlineLobby: data.online.lobby})
+    });
+}
+
 
 handler.enterLobby = function (msg, session, next) {
     var lobbyId = msg.lobbyId;
-    next(null, {code: Code.OK, rooms: rooms[lobbyId]});
+    var self = this;
+    self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+        var roomsResult = _.map(rooms[lobbyId], function (room) {
+            _.each(data.online.room, function (onlineRoom) {
+                if (onlineRoom.id == room.id) {
+                    room.online = onlineRoom.online;
+                }
+            });
+            return room;
+        });
+
+        next(null, {code: Code.OK, rooms: roomsResult});
+
+    });
+
 };
 
 

@@ -29,6 +29,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').exec('playerSync.updatePlayerProfile', player.uid, player);
     });
 
+    //player基本信息(战绩之类)
     player.on('save', function () {
         app.get('sync').exec('playerSync.update', player.uid, player);
     });
@@ -52,6 +53,11 @@ function addPlayerSaveEvent(player) {
     player.on('flushProperties', function () {
         app.get('sync').flush('propertiesSync.update', player.uid, player);
     });
+    
+    player.on('saveOnEnter', function () {
+        app.get('sync').exec('propertiesSync.update', player.uid, player);
+        app.get('sync').exec('taskSync.update', player.uid, player);
+    })
 
     player.on('saveAll', function () {
         app.get('sync').exec('playerSync.update', player.uid, player);

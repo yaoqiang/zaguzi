@@ -49,7 +49,6 @@ OnlineUserAnalysis.prototype.start = function (cb) {
         self.app.onlineUserResultCache = result;
         self.save(result);
 
-
     }, this.interval);
     process.nextTick(cb);
 }
@@ -153,6 +152,5 @@ OnlineUserAnalysis.prototype.getOnlineUserList = function () {
 
 OnlineUserAnalysis.prototype.save = function (result) {
     this.app.get('dbclient').onlineUserAnalysis.save(_.assign(result, {createdAt: new Date()}), function (err, doc) {
-
     })
 }

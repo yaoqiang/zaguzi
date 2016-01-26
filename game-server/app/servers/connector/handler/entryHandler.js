@@ -118,7 +118,7 @@ handler.enter = function (msg, session, next) {
                             session.on('closed', onUserDisconnect.bind(null, self.app));
                             session.pushAll();
 
-                            next(null, {code: Code.OK, player: player});
+                            next(null, {code: Code.OK, player: player, isBackGame: true});
 
                             //u.sessionId = session.id;
                             pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {

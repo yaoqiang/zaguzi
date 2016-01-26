@@ -1,18 +1,19 @@
 {
-    "name": "zgz",
-    "version": "0.0.1",
-    "private": false,
-    "dependencies": {
-        "express": "4.13.3",
-        "express-session": "~1.11.3",
-        "body-parser": "~1.13.3",
-        "cookie-parser": "~1.3.5",
-        "cookie-session": "~1.2.0",
-        "method-override": "~2.3.5",
-        "ejs": "*",
-        "everyauth": "0.4.9",
-        "connect": "3.4.0",
-        "log4js": "0.6.27",
-        "mongojs": "~1.4.1"
-    }
+  "name": "zgz",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "body-parser": "~1.13.3",
+    "connect": "3.4.0",
+    "cookie-parser": "~1.3.5",
+    "cookie-session": "~1.2.0",
+    "ejs": "*",
+    "everyauth": "0.4.9",
+    "express": "4.13.3",
+    "express-session": "~1.11.3",
+    "log4js": "0.6.27",
+    "method-override": "~2.3.5",
+    "mongojs": "~1.4.1",
+    "password-hash": "^1.2.2"
+  }
 }

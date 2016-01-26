@@ -2,7 +2,7 @@ var express = require('express');
 var Token = require('../shared/token');
 var secret = require('../shared/config/session').secret;
 var app = express();
-var everyauth = require('./lib/oauth');
+//var everyauth = require('./lib/oauth');
 
 var mongojs = require('mongojs');
 var db = require('./lib/mongodb');
@@ -14,6 +14,8 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
+
+var passwordHash = require('password-hash');
 
 app.use(methodOverride('_method'));
 app.use(cookieParser());
@@ -84,6 +86,8 @@ app.post('/login', function (req, res) {
             return;
         }
 
+        //密码加密
+        //passwordHash.verify(pwd, user.password)
         if (pwd !== user.password) {
             // TODO code
             // password is wrong
@@ -107,7 +111,7 @@ app.post('/login', function (req, res) {
                 }
             },
             function () {
-                logger.info(username + ' 登录成功!');
+                logger.debug(username + ' 登录成功!');
                 res.jsonp({
                     code: 200,
                     token: Token.create(user._id, Date.now(), secret),
@@ -189,7 +193,7 @@ app.post('/bindingMobile', function (req, res) {
             query: {
                 _id: mongojs.ObjectId(data.uid)
             }, update: {
-                $set: {mobile: data.mobile}
+                $set: {mobile: data.mobile, password: data.password}
             }, new: true,
         }, function (err, doc) {
             res.send({
@@ -231,15 +235,17 @@ app.post('/register', function (req, res) {
             }
             return;
         }
+        //var password = passwordHash.generate(msg.password);
+        var password = msg.password;
         var user = {
             username: msg.username,
-            password: msg.password,
+            password: password,
             mobile: msg.mobile == undefined ? '' : msg.mobile,
             loginCount: 0,
             createdAt: new Date()
         };
         db.user.save(user, function (err, doc) {
-            logger.info('A new user was created! --' + msg.username);
+            logger.debug('A new user was created! --' + msg.username);
             res.send({
                 code: 200,
                 token: Token.create(doc._id, Date.now(), secret),

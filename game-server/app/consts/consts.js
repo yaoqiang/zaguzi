@@ -29,7 +29,8 @@ module.exports = {
         ITEM_MODE: {
             TERM: 'term',
             COUNT: 'count'
-        }
+        },
+        JOIN_MIN_GOLD: 1000
     },
     ERR_CODE: {
         SYS: {

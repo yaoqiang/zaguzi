@@ -1,6 +1,8 @@
 var GameUtil = module.exports;
 
 var rooms = require('../../config/data/room');
+var consts = require('../consts/consts');
+var Code = require('../../../shared/code');
 var _ = require('lodash');
 
 GameUtil.getRoomsByLobbyId = function (lobbyId) {
@@ -19,6 +21,19 @@ GameUtil.getJoinAvailable = function (roomId, player) {
     }
 
     var room = this.getRoomById(roomId);
-    //some check..
+    //加入房间前检查
+    if (player.gold < consts.GLOBAL.JOIN_MIN_GOLD) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_POOR};
+    }
+    
+    if (player.gold > room.max) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_RICH};
+    }
+    
+    if (player.gold < room.min) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_POOR};
+    }
+    
+    return {code: Code.OK};
 
 }

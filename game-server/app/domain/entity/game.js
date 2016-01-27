@@ -38,6 +38,9 @@ var Game = function (roomId, gameId) {
 
     this.jobQueue = []; //[{uid: xx, jobId}]
 
+    //几次没人说话, 3次解散房间, 3个地方会设置该值, 1: 初始化牌局(此处), 2: 都没人说话会++, 3: 游戏结束会重置为0
+    this.nobodyTalkTime = 0;
+
     this.init();
 }
 
@@ -168,7 +171,6 @@ Game.prototype.start = function () {
         delete this.gameLogic[i];
     }
 
-
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {
         actors: this.actors,
@@ -176,6 +178,7 @@ Game.prototype.start = function () {
         maxActor: this.maxActor,
         gameId: this.gameId
     };
+    this.gameLogic = null;
     this.gameLogic = new GameLogic(gameInfo);
     this.gameLogic.newGame();
 
@@ -291,6 +294,8 @@ Game.prototype.dissolve = function () {
 
         })
     });
+    //解散后,重置牌桌设置
+    this.nobodyTalkTime = 0;
     delete(this.gameLogic);
     this.gameLogic = null;
 }
@@ -304,14 +309,20 @@ Game.prototype.talk = function (data, cb) {
     var self = this;
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game||talk||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid);
+        logger.error('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME});
         return;
     }
 
     if (!_.isArray(data.append) || !!data.append == false) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.PARAMETER_ERR, goal: data.goal, append: data.append})
-        logger.error('game||talk||说话失败, 参数错误||用户&ID: %j', data.uid);
+        logger.error('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
+        return;
+    }
+
+    if (this.gameLogic.talkNumber == this.maxActor || actor.gameStatus.hasTalk) {
+        cb({code: Code.FAIL})
+        logger.error('game-talk||%j||说话失败, 牌局已开始, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
         return;
     }
 
@@ -474,6 +485,9 @@ Game.prototype.talk = function (data, cb) {
         });
     }
 
+    //设置actor已说话
+    actor.gameStatus.hasTalk = true;
+
     cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
 
     this.channel.pushMessage(consts.EVENT.TALK, {
@@ -486,7 +500,13 @@ Game.prototype.talk = function (data, cb) {
 
         if (self.gameLogic.talkNumber == self.maxActor) {
             if (self.gameLogic.share == 0) {
-                self.dissolve();
+                self.nobodyTalkTime += 1;
+                if (self.nobodyTalkTime == consts.GAME.DISSOLVE_NOBODY_TALK_TIME) {
+                    self.dissolve();
+                }
+                else {
+                    self.start();
+                }
                 return;
             }
             self.afterTalk();
@@ -915,6 +935,7 @@ Game.prototype.isOver = function () {
 
 Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
+    this.nobodyTalkTime = 0;
 
     var self = this;
     balanceService.balance(this, function (data) {

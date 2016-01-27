@@ -5,7 +5,7 @@ var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 
 
 var GameLogic = function (game) {
-    logger.info("game||start||初始化游戏逻辑,游戏ID:[%j]", game.gameId);
+    logger.debug("game||start||初始化游戏逻辑,游戏ID:[%j]", game.gameId);
     this.game = game; //game
     this.cards = [];    //牌
 
@@ -58,7 +58,7 @@ GameLogic.prototype.reset = function () {
 
 GameLogic.prototype.newGame = function () {
     try {
-        logger.info("game||start||游戏即将开始,游戏ID:[%j]", this.game.gameId);
+        logger.debug("game||start||游戏即将开始,游戏ID:[%j]", this.game.gameId);
 
         var firstGetPokerActorNr;
         //如果当前牌局玩家和上局玩家一样，则先发牌的是上局大油

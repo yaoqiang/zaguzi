@@ -13,6 +13,7 @@ var GameStatus = function(){
     this.actualIdentity = [];   //consts.GAME.ACTUAL_IDENTITY.xx    //真实身份
     this.append = [];
     this.rank = undefined;
+    this.hasTalk = false;
 }
 
 /**
@@ -29,6 +30,7 @@ GameStatus.prototype.reset = function()
     this.actualIdentity = [];
     this.append = [];
     this.rank = undefined;
+    this.hasTalk = false;
 }
 
 /**

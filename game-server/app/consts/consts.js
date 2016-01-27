@@ -242,7 +242,8 @@ module.exports = {
             WIN: 'WIN',
             LOSE: 'LOSE',
             TIE: 'TIE'
-        }
+        },
+        DISSOLVE_NOBODY_TALK_TIME: 3
 
 
     },

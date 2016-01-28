@@ -82,17 +82,12 @@ handler.enter = function (msg, session, next) {
 
         self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
 
-            //!!u.sessionId
+            //u: 缓存用户状态
             //如果用户在线
             if (u) {
                 //如果玩家在线, 用缓存中的用户数据覆盖从DB中查出的结果（考虑缓存中数据没有及时写入DB情况）
                 player = u.player;
-                //如果玩家是正常在线, 则不允许登录
-                if (!!u.sessionId) {
-                    next(null, {code: Code.FAIL, message: '用户已登录'});
-                    //sessionService.kickBySessionId(session.id, null);
-                    return;
-                }
+
                 //如果玩家是掉线状态,并且用户在牌局中
                 if (!!u.gameId) {
                     //查询牌局状态
@@ -111,65 +106,129 @@ handler.enter = function (msg, session, next) {
                     pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
                         //玩家在游戏中，通知客户端需发送重回游戏指令；
                         if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-                            logger.debug("user||玩家掉线重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid);
+                            logger.debug("user||玩家重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid);
 
-                            session.bind(uid);
-                            session.set('serverId', msg.serverId);
-                            session.on('closed', onUserDisconnect.bind(null, self.app));
-                            session.pushAll();
 
+
+                            //isBackGame: true, 为客户端处理页面逻辑需要而提供
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
-                            //u.sessionId = session.id;
-                            pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+                            logger.debug("向游戏服务器查询游戏信息并返回");
 
-                            });
+                            console.log('##### uuuu => ', u.player.nickName, u.uid, u.sessionId);
 
-                            logger.debug("向游戏服务器查询游戏信息并返回-掉线状态");
+                            //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
+                            if (!!u.sessionId) {
 
-                            //查询牌局状态
-                            //rpc invoke
-                            var getStatusDetailsParams = {
-                                namespace: 'user',
-                                service: 'gameRemote',
-                                method: 'getGameStatusDetailsById',
-                                args: [{
-                                    uid: uid,
-                                    gameId: u.gameId
-                                }]
-                            };
+                                //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
+                                doUserDisconnect(self.app, u.uid, function () {
 
-                            pomelo.app.rpcInvoke(room.serverId, getStatusDetailsParams, function (gameDetails) {
-                                messageService.pushMessageToPlayer({
-                                    uid: uid,
-                                    sid: msg.serverId
-                                }, consts.EVENT.BACK_TO_GAME, gameDetails)
-                            });
+                                    sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
+                                        session.bind(uid);
+                                        session.set('serverId', msg.serverId);
+                                        session.on('closed', onUserDisconnect.bind(null, self.app));
+                                        session.pushAll();
 
+                                        pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+                                            sendBackGameEvent(uid, u, room, msg);
+                                        });
+                                    });
+                                });
+                            }
+                            else {
+                                //如果玩家掉线, 设置新的sessionId(在gameLogic逻辑处理中,如果掉线不会立即清空用户缓存,
+                                // 而会将sessionId设置为undefined or null, 结束后结算完才清空)
+                                session.bind(uid);
+                                session.set('serverId', msg.serverId);
+                                session.on('closed', onUserDisconnect.bind(null, self.app));
+                                session.pushAll();
+
+                                pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+                                    sendBackGameEvent(uid, u, room, msg);
+                                });
+                            }
 
                         }
+                        else {
+                            //如果玩家是正常在线, 并且在牌桌, 但是没有开始游戏, 则踢掉
+                            if (!!u.sessionId) {
+                                //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
+                                doUserDisconnect(self.app, u.uid, function () {
+
+                                    //设置之前用户sessionId为undefined, 为onDisconnect逻辑处理;
+                                    var originSession = sessionService.get(u.sessionId).toFrontendSession();
+                                    originSession.set('uid', undefined);
+                                    originSession.push('uid');
+
+                                    //
+                                    sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
+                                        onUserEnter(session, uid, msg, self, player, userData, next);
+                                    });
+                                });
+
+                            }
+                        }
                     });
+                }
+                else {
+                    //如果玩家是正常在线, 则踢掉
+                    if (!!u.sessionId) {
+                        doUserDisconnect(self.app, u.uid, function () {
+                            //设置之前用户sessionId为undefined, 为onDisconnect逻辑处理;
+                            var originSession = sessionService.get(u.sessionId).toFrontendSession();
+
+                            originSession.set('uid', undefined);
+                            originSession.push('uid');
+                            sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
+                                onUserEnter(session, uid, msg, self, player, userData, next);
+                            });
+                        });
+                    }
                 }
             }
             //玩家不在线
             else {
-                session.bind(uid);
-                session.set('serverId', msg.serverId);
-                session.on('closed', onUserDisconnect.bind(null, self.app));
-                session.pushAll();
-                self.app.rpc.manager.userRemote.onUserEnter(session, {
-                    uid: uid,
-                    serverId: msg.serverId,
-                    sessionId: session.id,
-                    player: player
-                }, function (data) {
-                    next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player, userData)});
-                });
+                onUserEnter(session, uid, msg, self, player, userData, next);
             }
         });
     });
 
 };
+
+function onUserEnter(session, uid, msg, self, player, userData, next) {
+    session.bind(uid);
+    session.set('serverId', msg.serverId);
+    session.on('closed', onUserDisconnect.bind(null, self.app, uid));
+    session.pushAll();
+    self.app.rpc.manager.userRemote.onUserEnter(session, {
+        uid: uid,
+        serverId: msg.serverId,
+        sessionId: session.id,
+        player: player
+    }, function (data) {
+        next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player, userData)});
+    });
+}
+
+function sendBackGameEvent(uid, u, room, msg) {
+    //查询牌局状态,     rpc invoke
+    var getStatusDetailsParams = {
+        namespace: 'user',
+        service: 'gameRemote',
+        method: 'getGameStatusDetailsById',
+        args: [{
+            uid: uid,
+            gameId: u.gameId
+        }]
+    };
+
+    pomelo.app.rpcInvoke(room.serverId, getStatusDetailsParams, function (gameDetails) {
+        messageService.pushMessageToPlayer({
+            uid: uid,
+            sid: msg.serverId
+        }, consts.EVENT.BACK_TO_GAME, gameDetails)
+    });
+}
 
 handler.enterIndex = function (msg, session, next) {
     this.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
@@ -199,15 +258,23 @@ handler.enterLobby = function (msg, session, next) {
 
 
 var onUserDisconnect = function (app, session, reason) {
-    if (session.uid == undefined) {
+    //如果session.uid已不存在, 则不处理; 目前使用场景是, 如果被踢下线, 手动处理了kick流程, 并且原session.uid会被设置为undefined
+    if (!!!session.uid) {
         return;
     }
 
-    app.rpc.manager.userRemote.onUserDisconnect(null, {roomId: session.settings.roomId, uid: session.uid}, function () {
+    doUserDisconnect(app, session.uid, function () {
 
     });
 
 };
+
+var doUserDisconnect = function (app, uid, cb) {
+    app.rpc.manager.userRemote.onUserDisconnect(null, {uid: uid}, function () {
+        console.log('-- doUserDisconnect finished --')
+        cb();
+    });
+}
 
 var generateSimplePlayerResponse = function (player, userData) {
     return {

@@ -256,9 +256,11 @@ module.exports = {
 
     EXCHANGE: {
         TYPE: {
-            INBOX: "INBOX", //话费类
+            INBOX_CALL: "INBOX_CALL", //话费类
+            INBOX_DATA_MOBILE: "INBOX_DATA_MOBILE", //流量类, 移动
+            INBOX_DATA_UNICOM: "INBOX_DATA_UNICOM", //流量类, 联通
+            INBOX_DATA_TELECOM: "INBOX_DATA_TELECOM", //流量类, 电信
             OUTBOX: "OUTBOX"    //实体类
-
         }
     },
 

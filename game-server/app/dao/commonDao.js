@@ -91,11 +91,26 @@ commonDao.exchange = function (exchangeId, uid, count, params, cb) {
     })
 }
 
+//////////////////
+//充值后，生成订单
+/////////////////
+commonDao.saveOrder = function(data, cb) {
+    //data: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx, 
+    //player: {nickName: xx, avatar: xx}}   //player for rankingList
+    db.order.save(data, function(err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
 
 
 //ranking list
 commonDao.getRankingList = function (data, cb) {
-    db.rankingList.findOne({type: data.type, date: new Date()}, function(err, doc) {
+    db.rankingList.findOne({type: data.type}, function(err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

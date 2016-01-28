@@ -108,14 +108,10 @@ handler.enter = function (msg, session, next) {
                         if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
                             logger.debug("user||玩家重新登录后, 玩家状态还在游戏中, 发送重回游戏消息, 用户ID:%j", u.uid);
 
-
-
                             //isBackGame: true, 为客户端处理页面逻辑需要而提供
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
                             logger.debug("向游戏服务器查询游戏信息并返回");
-
-                            console.log('##### uuuu => ', u.player.nickName, u.uid, u.sessionId);
 
                             //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
                             if (!!u.sessionId) {
@@ -155,11 +151,6 @@ handler.enter = function (msg, session, next) {
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
                                 doUserDisconnect(self.app, u.uid, function () {
 
-                                    //设置之前用户sessionId为undefined, 为onDisconnect逻辑处理;
-                                    var originSession = sessionService.get(u.sessionId).toFrontendSession();
-                                    originSession.set('uid', undefined);
-                                    originSession.push('uid');
-
                                     //
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
                                         onUserEnter(session, uid, msg, self, player, userData, next);
@@ -174,11 +165,7 @@ handler.enter = function (msg, session, next) {
                     //如果玩家是正常在线, 则踢掉
                     if (!!u.sessionId) {
                         doUserDisconnect(self.app, u.uid, function () {
-                            //设置之前用户sessionId为undefined, 为onDisconnect逻辑处理;
-                            var originSession = sessionService.get(u.sessionId).toFrontendSession();
 
-                            originSession.set('uid', undefined);
-                            originSession.push('uid');
                             sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
                                 onUserEnter(session, uid, msg, self, player, userData, next);
                             });

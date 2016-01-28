@@ -50,12 +50,12 @@ GameRemote.prototype.join = function(data, cb) {
 GameRemote.prototype.leave = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user == undefined || user == null) {
-            logger.error('game||leave||离开游戏失败, 玩家已下线||用户&ID: %j', user.uid);
+            logger.error('game||leave||离开游戏失败, 玩家已下线||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME});
             return;
         }
         if (user.gameId == null) {
-            logger.error('game||leave||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+            logger.error('game||leave||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME});
             return;
         }

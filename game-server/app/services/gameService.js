@@ -4,6 +4,7 @@
 var Game = require('../domain/entity/game');
 var gameResponse = require('../domain/response/gameResponse');
 var consts = require('../consts/consts');
+var gameUtil = require('../util/gameUtil');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 
@@ -21,6 +22,13 @@ var gGameList = [];
 
 exp.join = function(data, cb)
 {
+    //检查金币是否可加入
+    var goldValidator = gameUtil.getJoinAvailable(data.roomId, data.player);
+    if (goldValidator.code == Code.FAIL) {
+        cb(goldValidator);
+        return;
+    }
+
     //根据加入场次查找空闲牌局
     var emptyGame = _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
     //如果没有空闲牌局,则创建牌局

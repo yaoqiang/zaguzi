@@ -126,6 +126,9 @@ exp.onUserDisconnect = function (data, cb) {
                 logger.debug("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid)
                 //set user session id = null.
                 exp.setUserSessionId(data.uid, null);
+
+                cb();
+
             }
             else {
                 //rpc invoke
@@ -147,10 +150,12 @@ exp.onUserDisconnect = function (data, cb) {
                     u.player.flushAll();
 
                     pomelo.app.userCache = _.without(pomelo.app.userCache, u);
+
+                    cb();
+
                 });
 
             }
-            cb();
 
         });
 

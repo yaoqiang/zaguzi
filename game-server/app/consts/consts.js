@@ -30,7 +30,12 @@ module.exports = {
             TERM: 'term',
             COUNT: 'count'
         },
-        JOIN_MIN_GOLD: 1000
+        JOIN_MIN_GOLD: 1000,
+        KICK_REASON: {
+            ANOTHER_LOGIN: 'ANOTHER_LOGIN',
+            SERVICE_MAINTENANCE: 'SERVICE_MAINTENANCE',
+            UNKNOWN: 'UNKNOWN'
+        }
     },
     ERR_CODE: {
         SYS: {

@@ -15,6 +15,12 @@ GameUtil.getRoomById = function (id) {
     return _.find(_.flatten(rooms), {id: id});
 }
 
+/**
+ * 检查玩家金币是否能加入
+ * @param roomId
+ * @param player
+ * @returns {*}
+ */
 GameUtil.getJoinAvailable = function (roomId, player) {
     if (player.gameId && player.gameId != undefined) {
         return false;

@@ -59,7 +59,7 @@ Game.prototype.join = function (data, cb) {
     }
 
     if (!this.doAddActor(data)) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
     }
 
     if (!this.addActor2Channel(data)) {

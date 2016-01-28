@@ -271,7 +271,6 @@ var onUserDisconnect = function (app, session, reason) {
 
 var doUserDisconnect = function (app, uid, cb) {
     app.rpc.manager.userRemote.onUserDisconnect(null, {uid: uid}, function () {
-        console.log('-- doUserDisconnect finished --')
         cb();
     });
 }

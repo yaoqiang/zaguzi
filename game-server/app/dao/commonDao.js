@@ -96,7 +96,7 @@ commonDao.exchange = function (exchangeId, uid, count, params, cb) {
 /////////////////
 commonDao.saveOrder = function(data, cb) {
     //data: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx, 
-    //player: {nickName: xx, avatar: xx}}   //player for rankingList
+    //player: {nickName: xx, avatar: xx}}   //player info for rankingList
     db.order.save(data, function(err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
@@ -110,7 +110,7 @@ commonDao.saveOrder = function(data, cb) {
 
 //ranking list
 commonDao.getRankingList = function (data, cb) {
-    db.rankingList.findOne({type: data.type}, function(err, doc) {
+    db.rankingList.find({type: data.type}).sort({_id: -1}).limit(1, function(err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -123,7 +123,7 @@ commonDao.getRankingList = function (data, cb) {
 
 //版本检查
 commonDao.getTopOfAppReleaseRecord = function (data, cb) {
-    db.appReleaseRecord.findOne({}, function (err, doc) {
+    db.appReleaseRecord.find({}).sort({_id: -1}).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

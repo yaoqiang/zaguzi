@@ -9,12 +9,13 @@ var exp = module.exports
 
 exp.getRankingList = function (data, cb) {
 
-    commonDao.getRankingList(data, function (doc) {
-        if (doc) {
-            cb({code: Code.OK, rankingList: {type: data.type, details: doc.details}});
+    commonDao.getRankingList(data, function (err, doc) {
+
+        if (doc && _.size(doc) > 0) {
+            cb({code: Code.OK, rankingList: doc[0].ranking});
         }
         else {
-            cb({code: Code.OK, rankingList: {type: data.type, details: []}});
+            cb({code: Code.OK, rankingList: []});
         }
     });
 
@@ -22,7 +23,7 @@ exp.getRankingList = function (data, cb) {
 
 
 exp.getTopOfAppReleaseRecord = function (data) {
-    commonDao.getTopOfAppReleaseRecord(data, function (doc) {
+    commonDao.getTopOfAppReleaseRecord(data, function (err, doc) {
         if (doc) {
             //version: 1.0, 1.1, 1.2 ...
             if (doc.version > data.version) {
@@ -30,7 +31,7 @@ exp.getTopOfAppReleaseRecord = function (data) {
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: data.serverId
-                }, consts.EVENT.VERSION_UPGRADE, {appInfo: doc});
+                }, consts.EVENT.VERSION_UPGRADE, {releaseInfo: doc});
             }
         }
 

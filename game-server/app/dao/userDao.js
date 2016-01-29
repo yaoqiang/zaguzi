@@ -171,3 +171,23 @@ userDao.createPlayer = function(uid, cb) {
 userDao.updatePlayer = function(player, cb) {
 
 };
+
+/**
+ * 根据mobile查询用户是否存在，true: 存在，false: 不存在
+ */
+userDao.findByMobile = function(mobile, cb) {
+    db.user.findOne({
+        mobile: mobile
+    }, function(err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err.message, null);
+            return;
+        }
+
+        if (doc) {
+            utils.invokeCallback(cb, null, true);
+        } else {
+            utils.invokeCallback(cb, null, false);
+        }
+    });
+}

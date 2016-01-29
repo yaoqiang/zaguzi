@@ -108,6 +108,19 @@ module.exports = {
             INVALID_MOBILE: 9207,
             ERR: 9208,
             NEED_CUSTOMER: 9209
+        },
+        SMS: {
+            MOBILE_NOT_BLANK: 9301,
+            MOBILE_NOT_VALIDATE: 9302,
+            MOBILE_ALREADY_BINDING: 9303,
+            CAPTCHA_ERR: 9304,
+            ERR: 9305
+        },
+        MOBILE_RECHARGE: {
+            MOBILE_NOT_BLANK: 9401,
+            MOBILE_NOT_VALIDATE: 9402,
+            DEMONINATION_NOT_ERR: 9303,
+            ERR: 9305
         }
     },
     ERR_MESSAGE: {

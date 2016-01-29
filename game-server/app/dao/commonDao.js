@@ -9,6 +9,8 @@ require('date-utils');
 var utils = require('../util/utils');
 var globals = require('../../config/data/globals');
 
+var Code = require('../../../shared/code');
+
 var db = pomelo.app.get('dbclient');
 var mongojs = require('mongojs');
 
@@ -133,3 +135,23 @@ commonDao.getTopOfAppReleaseRecord = function (data, cb) {
     })
 }
 
+
+
+commonDao.updateCaptchaCode = function (data, cb) {
+    //
+    db.captcha.findAndModify({
+        query: {
+            mobile: data.mobile
+        }, update: {
+            $set: {
+                captcha: data.captcha,
+                createdAt: new Date()
+            }
+        }, new: true, upsert: true,
+    }, function (err, doc, lastErrorObject) {
+        if (err) logger.error('--commonDao.updateCaptchaCode error--')
+        cb({
+            code: err ? Code.FAIL : Code.OK
+        })
+    })
+}

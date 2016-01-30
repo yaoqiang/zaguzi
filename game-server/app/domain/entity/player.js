@@ -88,9 +88,10 @@ Player.prototype.payTax = function (roomId) {
 
     var gold = room.fax * -1;
 
-    logger.info("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
-    this.gold += gold;
-    if (this.gold < 0) this.gold = 0;
+    logger.debug("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
+    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, function (data) {
+
+    });
 
 }
 
@@ -117,8 +118,16 @@ Player.prototype.tie = function (roomId, cb) {
 }
 
 Player.prototype.addFragment = function (type, fragment, cb) {
-    logger.info("fragment-add||%j||用户通过[%j]获得了[%j]元宝，用户ID:%j", this.uid, type, fragment, this.uid);
     this.fragment += fragment;
+    logger.info("fragment-add||%j||用户通过[%j]获得了[%j]元宝，用户ID:%j", this.uid, type, fragment, this.uid);
+    cb({fragment: this.fragment});
+    var self = this;
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, this.uid, function (user) {
+        messageService.pushMessageToPlayer({
+            uid: user.uid,
+            sid: user.serverId
+        }, consts.EVENT.INGOT_CHANGE, {ingot: self.fragment});
+    });
 }
 
 Player.prototype.addExp = function (exp, args) {
@@ -418,19 +427,19 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
 
     var task = _.findWhere(currentTasks, {id: taskId});
     if (_.isUndefined(task)) {
-        logger.warn("user-task grant||%j||玩家任务数据错误, 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-task grant||%j||玩家任务数据错误, 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
         return;
     }
 
     if (task.current < task.target) {
-        logger.warn("user-task grant||%j||玩家任务状态不满足领取, 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-task grant||%j||玩家任务状态不满足领取, 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ERR});
         return;
     }
 
     if (task.finished) {
-        logger.warn("user-task grant||%j||玩家任务状态已领取, 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-task grant||%j||玩家任务状态已领取, 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TASK_GRANT.ALREADY_GRANT});
         return;
     }
@@ -441,9 +450,8 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         });
     } else {
         //添加元宝单独使用player.fragment
-        this.fragment += task.fragment;
-        logger.info("user-fragment||%j||玩家通过任务领取元宝[%j]个, 用户ID:%j", this.uid, task.fragment, this.uid);
-
+        this.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.TASK, task.fragment, function () {
+        });
     }
 
     //获取下一个任务并更新player.tasks, 最后返回客户端新任务信息

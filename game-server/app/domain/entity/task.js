@@ -36,6 +36,7 @@ taskUtil.initForeverTasks = function () {
       target: task.target,
       icon: task.icon,
       grant: task.grant,
+      fragment: task.fragment,
       current: 0,
       roomId: task.roomId,
       type: task.type,

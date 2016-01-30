@@ -6,7 +6,7 @@ var consts = require('../../../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 var _ = require('lodash');
 var pomelo = require('pomelo');
-var compareVersions = require('compare-versions');
+
 var messageService = require('../../../services/messageService');
 
 module.exports = function (app) {
@@ -311,12 +311,5 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
-    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, function (data) {
-        //a < b = -1, a == b: 0, a > b = 1;
-        var result = compareVersions(msg.version, data.version);
-        //如果客户端版本不是最新，则发送更新Event
-        if (result == -1) {
-            messageService.pushMessageToPlayer(msg.uid, consts.EVENT.VERSION_UPGRADE, data.summary);
-        }
-    });
+    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg);
 }

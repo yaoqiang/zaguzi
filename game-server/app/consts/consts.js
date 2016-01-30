@@ -207,7 +207,8 @@ module.exports = {
         FAN_FINISHED: 'onFanFinished',
         BACK_TO_GAME: 'onBackToGame',
         UI_COMMAND: 'onUICommand',
-        VERSION_UPGRADE: 'onVersionUpgrade'
+        VERSION_UPGRADE: 'onVersionUpgrade',
+        INGOT_CHANGE: 'onIngotChange'
 
     },
 

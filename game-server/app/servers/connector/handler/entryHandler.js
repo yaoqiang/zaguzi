@@ -229,12 +229,18 @@ handler.enterLobby = function (msg, session, next) {
     var self = this;
     self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
         var roomsResult = _.map(rooms[lobbyId], function (room) {
-            _.each(data.online.room, function (onlineRoom) {
-                if (onlineRoom.id == room.id) {
-                    room.online = onlineRoom.online;
-                }
-            });
-            return room;
+            if (!!data.online) {
+                _.each(data.online.room, function (onlineRoom) {
+                    if (onlineRoom.id == room.id) {
+                        room.online = onlineRoom.online;
+                    }
+                });
+                return room;
+            }
+            else {
+                room.online = 0;
+            }
+
         });
 
         next(null, {code: Code.OK, rooms: roomsResult});

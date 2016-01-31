@@ -1,4 +1,5 @@
 var commonService = require('../../../services/commonService');
+var exchangeService = require('../../../services/exchangeService');
 var Code = require('../../../../../shared/code');
 var utils = require('../../../util/utils');
 var _ = require('lodash');

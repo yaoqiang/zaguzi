@@ -23,7 +23,7 @@ var commonDao = module.exports;
  * @param type
  * @param cb
  */
-commonDao.listExchangeList = function (cb) {
+commonDao.listExchangeList = function (data, cb) {
     db.exchangeList.find({enabled: true}, function (err, docs) {
         if (err) {
             utils.invokeCallback(cb, err, null);

@@ -14,8 +14,18 @@ exp.getRankingList = function (data, cb) {
 
     commonDao.getRankingList(data, function (err, doc) {
 
+        var rankingList = doc[0].ranking;
+
+        if (data.type == consts.RANKING_LIST.RICH) {
+            rankingList = _.sortBy(rankingList, 'gold').reverse();
+        } else if (data.type == consts.RANKING_LIST.GOD) {
+            rankingList = _.sortBy(rankingList, 'winning').reverse();
+        } else if (data.type == consts.RANKING_LIST.RECHARGE) {
+            rankingList = _.sortBy(rankingList, 'totalAmount').reverse();
+        }
+
         if (doc && _.size(doc) > 0) {
-            cb({code: Code.OK, rankingList: doc[0].ranking});
+            cb({code: Code.OK, rankingList: rankingList});
         }
         else {
             cb({code: Code.OK, rankingList: []});

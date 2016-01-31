@@ -283,14 +283,15 @@ module.exports = {
             SUBMIT: "SUBMIT",
             PENDING: "PENDING",
             PAYMENT: "PAYMENT",
-            CANCELED: "CANCELED"
+            CANCELED: "CANCELED",
+            FINISHED: "FINISHED"
         }
     },
 
     RANKING_LIST: {
-        WEALTH: 'WEALTH',
-        STRENGTH: 'STRENGTH',
-        RECHARGE_YESTERDAY: 'RECHARGE_YESTERDAY',
+        RICH: 'RICH',
+        GOD: 'GOD',
+        RECHARGE: 'RECHARGE',
         MEETING: 'MEETING'
     },
 

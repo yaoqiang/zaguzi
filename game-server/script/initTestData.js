@@ -51,4 +51,7 @@ db.exchangeList.save({name: '30元话费', icon: '', inventory: 9999, fragment: 
 db.exchangeList.save({name: '50元话费', icon: '', inventory: 9999, fragment: 50, createdAt: new Date(), enabled: false, type: 'INBOX_CALL'});
 
 
+db.exchangeRecord.save({uid: ObjectId('56ac9e72ba27df1c78df57fb'), number: '1', createdAt: new Date(), productId: 1, productName: '1元话费', state: 'FINISHED', detail: {mobile: '18600000000', address: '', contact: ''}});
+
+
 db.appReleaseRecord.save({name: '', version: '1.0.0', createdAt: new Date(), summary: '【新增】发布第一个版本'});

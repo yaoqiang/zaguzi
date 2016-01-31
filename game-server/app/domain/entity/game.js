@@ -600,6 +600,12 @@ Game.prototype.fanTimeout = function (actor) {
 
     var act = _.findWhere(this.actors, {uid: actor.uid});
     var cards = [];
+
+    //如果玩家已托管 - 智能出牌(后期完善)
+    if (act.gameStatus.isTrusteeship) {
+
+    }
+
     //出牌超时，如果当前出牌者是本轮Boss，则出第一张，如果不是，则不出
     if (this.gameLogic.currentBoss.actorNr == this.gameLogic.currentFanActor.actorNr) {
         if (this.gameLogic.round == 0) {
@@ -616,10 +622,7 @@ Game.prototype.fanTimeout = function (actor) {
     else {
 
     }
-    //如果玩家已托管 - 智能出牌(后期完善) TODO
-    if (act.gameStatus.isTrusteeship) {
-        //
-    }
+
 
     act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
     //如果玩家连续consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES次出牌超时，则托管

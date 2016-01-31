@@ -257,7 +257,6 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
     //如果是炸弹(3张相同牌）、如果是四轮车：炸弹和四轮车比较逻辑一样
     if (cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_3 || cr1.cardSeries == CardLogic.CardSeriesCode.cardSeries_4)
     {
-        console.log('cards reg => ', cr1.cardSeries, cr2.cardSeries)
         //如果上手牌型是比当前牌型大，返回false
         if (cr2.cardSeries > cr1.cardSeries)
         {
@@ -274,6 +273,44 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
             return true;
         }
     }
+
+}
+
+CardLogic.simpleAnalysis = function (lastFanCardRecognization, holdingCards, type, liang3) {
+    if (lastFanCardRecognization.cardSeries == CardLogic.CardSeriesCode.cardSeries_99) {
+        return [];
+    }
+
+    switch (lastFanCardRecognization.cardSeries) {
+        case CardLogic.CardSeriesCode.cardSeries_1 :
+            
+            break;
+        case CardLogic.CardSeriesCode.cardSeries_2 :
+            break;
+        case CardLogic.CardSeriesCode.cardSeries_3 :
+            break;
+        case CardLogic.CardSeriesCode.cardSeries_4 :
+            break;
+        case CardLogic.CardSeriesCode.cardSeries_5 :
+            break;
+        case CardLogic.CardSeriesCode.cardSeries_6 :
+            break;
+    }
+
+    //分析手牌, 得出各牌型结果{cardSeries_1: [CardRecognization,], cardSeries_2: [...], ...}
+    function analysisHoldingCards(holdingCards) {
+        holdingCards = holdingCards.reverse();
+        var result = {};
+        _.each(holdingCards, function (card) {
+            var cardRecognization = CardLogic.recognizeSeries(card, type, liang3);
+            result.cardSeries_1.push(cardRecognization);
+        });
+
+
+
+
+    }
+
 
 }
 

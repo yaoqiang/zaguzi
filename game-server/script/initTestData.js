@@ -44,11 +44,11 @@ var users = new Array(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, yaoqiang, lvjianc
 initUser(users);
 
 //exchange list
-db.exchangeList.save({name: '1元话费', icon: '', inventory: 9999, fragment: 2, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '5元话费', icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '10元话费', icon: '', inventory: 9999, fragment: 10, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '30元话费', icon: '', inventory: 9999, fragment: 30, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '50元话费', icon: '', inventory: 9999, fragment: 50, createdAt: new Date(), enabled: false, type: 'INBOX_CALL'});
+db.exchangeList.save({name: '1元话费', denomination: 1, icon: '', inventory: 9999, fragment: 2, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
+db.exchangeList.save({name: '5元话费', denomination: 5, icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
+db.exchangeList.save({name: '10元话费', denomination: 10, icon: '', inventory: 9999, fragment: 10, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
+db.exchangeList.save({name: '30元话费', denomination: 30, icon: '', inventory: 9999, fragment: 30, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
+db.exchangeList.save({name: '50元话费', denomination: 50, icon: '', inventory: 9999, fragment: 50, createdAt: new Date(), enabled: false, type: 'INBOX_CALL'});
 
 
 db.exchangeRecord.save({uid: ObjectId('56ac9e72ba27df1c78df57fb'), number: '1', createdAt: new Date(), productId: 1, productName: '1元话费', state: 'FINISHED', detail: {mobile: '18600000000', address: '', contact: ''}});

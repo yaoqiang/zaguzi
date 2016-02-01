@@ -58,6 +58,41 @@ app.get('/auth_success', function (req, res) {
     }
 });
 
+app.post('/autoLogin', function (req, res) {
+    var password = Math.floor(Math.random()*(9999-1000)+1000);
+    var user = {
+        username: '',
+        password: passwordHash.generate(password),
+        loginCount: 1,
+        lastLoginAt: new Date(),
+        createdAt: new Date()
+    };
+    db.user.save(user, function (err, doc) {
+        logger.debug('A new user was created! --' + doc._id);
+        db.user.update(
+            {
+                _id: mongojs.ObjectId(doc._id)
+            },
+            {
+                $set: {
+                    username: doc._id
+                }
+            },
+            function (err, doc) {
+                if (err) {
+                    res.send({code: 500, err: ''})
+                }
+                res.send({
+                    code: 200,
+                    token: Token.create(doc._id, Date.now(), secret),
+                    uid: doc._id
+                });
+            }
+        );
+
+    });
+});
+
 
 app.post('/login', function (req, res) {
 
@@ -88,7 +123,7 @@ app.post('/login', function (req, res) {
 
         //密码加密
         //passwordHash.verify(pwd, user.password)
-        if (pwd !== user.password) {
+        if (pwd != user.password) {
             // TODO code
             // password is wrong
             logger.warn('用户密码错误! username: ' + username);
@@ -118,53 +153,11 @@ app.post('/login', function (req, res) {
                     uid: user._id
                 });
             });
-
-
     });
 
 
 });
 
-app.post('/getCaptchaByMobile', function (req, res) {
-    var data = req.body;
-
-    if (!data.mobile) {
-        res.send({
-            code: 500,
-            msg: '参数错误'
-        });
-        return;
-    }
-
-    var mobileReg = !!data.mobile.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
-    if (mobileReg == false) {
-        res.send({
-            code: 500,
-            msg: '请输入正确的手机号码!'
-        });
-        return;
-    }
-
-    //调用第三方平台发送短信验证码
-    var captcha = 0;
-
-    //
-    db.captcha.findAndModify({
-        query: {
-            mobile: data.mobile
-        }, update: {
-            $set: {
-                captcha: captcha,
-                createdAt: new Date()
-            }
-        }, new: true, upsert: true,
-    }, function (err, doc, lastErrorObject) {
-        res.send({
-            code: 200,
-            msg: '验证码已发送成功'
-        })
-    })
-})
 
 app.post('/bindingMobile', function (req, res) {
 
@@ -193,7 +186,7 @@ app.post('/bindingMobile', function (req, res) {
             query: {
                 _id: mongojs.ObjectId(data.uid)
             }, update: {
-                $set: {mobile: data.mobile, password: data.password}
+                $set: {mobile: data.mobile, password: passwordHash.generate(data.password)}
             }, new: true,
         }, function (err, doc) {
             res.send({

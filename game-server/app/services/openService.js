@@ -15,6 +15,8 @@ var request = require('request');
 
 var qs = require('qs');
 
+var crypto = require('crypto');
+
 var md5 = crypto.createHash('md5');
 
 var exp = module.exports

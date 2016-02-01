@@ -63,34 +63,64 @@ commonDao.listExchangeRecordByUid = function (uid, cb) {
  * @param exchangeId
  * @param uid
  * @param count
- * @param params {mobile: xx, address: xx, courier{company: xx, no: xx},
+ * @param state
+ * @param params {mobile: xx, address: xx, contact: xx},
  * @param cb
  */
-commonDao.exchange = function (exchangeId, uid, count, params, cb) {
+commonDao.exchange = function (exchangeId, uid, count, state, fragment, params, cb) {
     var exchangeRecord = {
         exchangeId: mongojs.ObjectId(exchangeId),
         uid: mongojs.ObjectId(uid),
+        number: mongojs.ObjectId,
+        state: state,
         count: count,
-        params: params,
+        mobile: params.mobile,
+        address: params.address,
+        contact: params.contact,
         createdAt: new Date()
     }
     new Promise(function (resolve, reject) {
-        db.exchangeRecord.save(exchangeRecord, function (err, doc) {
+        db.player.findAndModify({
+            query: {uid: mongojs.ObjectId(uid)},
+            update: {$inc: {fragment: -fragment}}
+        }, function(err, doc, lastErrorObject) {
             if (err) {
                 reject(err);
             } else {
                 resolve(doc);
             }
         })
-    }).then(function (doc) {
+    })
+    .then(function(doc) {
+        db.exchangeRecord.save(exchangeRecord, function (err, doc) {
+            if (err) {
+                Promise.reject(err);
+            } else {
+                Promise.resolve(doc);
+            }
+        })
+    }, function(err) {
+         Promise.reject(err);
+    })
+    .then(function (doc) {
         db.exchangeList.findAndModify({
             query: {_id: mongojs.ObjectId(exchangeId)},
             update: {$inc: {count: -count}}
+        }, function(err, doc, lastErrorObject) {
+            if (err) {
+                utils.invokeCallback(cb, err, null);
+            } else {
+                utils.invokeCallback(cb, null, doc);
+            }
         })
-        utils.invokeCallback(cb, null, doc);
     }, function (err) {
         utils.invokeCallback(cb, err, null);
     })
+}
+
+//单独为Player处理元宝
+commonDao.addFragment = function(data, cb) {
+    
 }
 
 //////////////////

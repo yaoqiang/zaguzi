@@ -14,6 +14,7 @@ var Player = require('../domain/entity/player');
 var GameRecord = require('../domain/entity/gameRecord');
 
 var messageService = require('./messageService')
+var openService = require('./openService');
 
 var globals = require('../../config/data/globals');
 
@@ -505,26 +506,37 @@ exp.exchange = function (data, cb) {
                 return;
             }
 
-            var mobileReg = !!data.mobile.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
-            if (mobileReg == false) {
+            if (!utils.mobileValidate(data.mobile)) {
                 logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE });
                 return;
             }
 
             //如果是话费类
-            if (doc.type == consts.EXCHANGE.TYPE.INBOX) {
-                //TODO 调用第三方平台充值(apix.cn)
+            if (doc.type == consts.EXCHANGE.TYPE.INBOX_CALL) {
 
-                commonDao.exchange(data.exchangeId, data.uid, data.count, { mobile: data.mobile }, function (err, result) {
-
+                commonDao.exchange(data.exchangeId, data.uid, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile }, function (err, result) {
                     if (err == null || result == null) {
                         logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
                         cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                         return;
                     }
-
-                    cb({ code: Code.OK });
+                    
+                    //调用第三方平台充值(apix.cn)
+                    openService.mobileRecharge(function(rechargeResult) {
+                        //如果立即返回充值失败，则为玩家恢复元宝数量
+                        if (rechargeResult.code !== Code.OK) {
+                            //TODO;
+                        } else {
+                            //如果充值提交成功, 则通知客户端元宝变化消息 
+                            messageService.pushMessageToPlayer({
+                                uid: user.uid,
+                                sid: user.serverId
+                            }, consts.EVENT.INGOT_CHANGE, {ingot: self.fragment});
+                            
+                            cb({code: Code.OK});
+                        }
+                    });
 
                 });
             }
@@ -543,7 +555,7 @@ exp.exchange = function (data, cb) {
                 }
 
                 //存储兑换记录, 在后台跟进操作
-                commonDao.exchange(data.exchangeId, data.uid, data.count, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
+                commonDao.exchange(data.exchangeId, data.uid, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
                     if (err == null || result == null) {
                         logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
                         cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });

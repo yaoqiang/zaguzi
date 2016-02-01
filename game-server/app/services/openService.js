@@ -15,6 +15,8 @@ var request = require('request');
 
 var qs = require('qs');
 
+var md5 = crypto.createHash('md5');
+
 var exp = module.exports
 
 /**
@@ -83,20 +85,35 @@ exp.sendSMS = function (data, cb) {
 }
 
 exp.mobileRecharge = function(data, cb) {
-    if (!!data.mobile) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.MOBILE_RECHARGE.MOBILE_NOT_BLANK});
-        return;
-    }
     
-    if (!utils.mobileValidate(data.mobile)) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.MOBILE_RECHARGE.MOBILE_NOT_VALIDATE});
-        return;
-    }
-    
-    if (!data.denomination || !_.isNumber(data.denomination)) {
-        cb({code: Code.FAIL, err: consts.ERR_CODE.MOBILE_RECHARGE.DEMONINATION_NOT_ERR});
-        return;
-    }
-    
-    
+    var options = { method: open.APIX.MOBILE_RECHARGE.METHOD,
+    url: open.APIX.MOBILE_RECHARGE.URL,
+    qs: 
+    { phone: data.mobile,
+        price: data.denomination,
+        orderid: data.number,
+        sign: md5.update(data.mobile + data.denomination + data.number),
+        callback_url: '' },
+    headers: 
+    { 'apix-key': open.APIX.MOBILE_RECHARGE.KEY,
+        'content-type': 'application/json',
+        accept: 'application/json' } };
+
+    request(options, function (error, response, body) {
+        if (error) {
+            logger.error('open||调用充值接口失败, %j', {mobile: data.mobile, number: data.number, denomination: data.denomination, err: error});
+            cb({code: Code.FAIL});
+            return;
+        }
+        
+        console.log('body - ', body);
+        if (body.Code != 0) {
+            logger.error('open||调用充值接口失败, %j', {mobile: data.mobile, number: data.number, denomination: data.denomination, err: body.Msg});
+            cb({code: Code.FAIL, err: body.Msg})
+            return;
+        }
+        
+        cb({code: Code.OK})
+        
+    });
 }

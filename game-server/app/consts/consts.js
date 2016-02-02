@@ -24,7 +24,9 @@ module.exports = {
         },
         ADD_FRAGMENT_TYPE: {
             TASK: 1,
-            ACTIVITY: 2
+            ACTIVITY: 2,
+            EXCHANGE: 3,
+            EXCHANGE_FAILED_RETURN: 4
         },
         ITEM_MODE: {
             TERM: 'term',

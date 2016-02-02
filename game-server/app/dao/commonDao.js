@@ -80,27 +80,13 @@ commonDao.exchange = function (exchangeId, uid, count, state, fragment, params, 
         createdAt: new Date()
     }
     new Promise(function (resolve, reject) {
-        db.player.findAndModify({
-            query: {uid: mongojs.ObjectId(uid)},
-            update: {$inc: {fragment: -fragment}}
-        }, function(err, doc, lastErrorObject) {
+       db.exchangeRecord.save(exchangeRecord, function (err, doc) {
             if (err) {
                 reject(err);
             } else {
                 resolve(doc);
             }
         })
-    })
-    .then(function(doc) {
-        db.exchangeRecord.save(exchangeRecord, function (err, doc) {
-            if (err) {
-                Promise.reject(err);
-            } else {
-                Promise.resolve(doc);
-            }
-        })
-    }, function(err) {
-         Promise.reject(err);
     })
     .then(function (doc) {
         db.exchangeList.findAndModify({
@@ -115,7 +101,7 @@ commonDao.exchange = function (exchangeId, uid, count, state, fragment, params, 
         })
     }, function (err) {
         utils.invokeCallback(cb, err, null);
-    })
+    });
 }
 
 //单独为Player处理元宝

@@ -43,6 +43,7 @@ var Player = function (opts) {
     this.items = opts.items;
     this.tasks = opts.tasks;
     this.properties = opts.properties;
+    this.summary = opts.summary;
     this.createdAt = opts.createdAt;
 
 }
@@ -54,6 +55,7 @@ Player.prototype.updateProfile = function (data, cb) {
     this.nickName = data.nickName;
     this.avatar = data.avatar;
     this.gender = data.gender;
+    this.summary = data.summary;
 
     logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
     this.saveProfile();
@@ -89,32 +91,32 @@ Player.prototype.payTax = function (roomId) {
     var gold = room.fax * -1;
 
     logger.debug("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
-    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, function (data) {
+    this.gold += gold;
+    if (this.gold < 0) this.gold = 0;
 
-    });
+    return gold;
 
 }
 
 Player.prototype.win = function (roomId, gold, cb) {
     this.winNr += 1;
-    this.payTax(roomId);
+    var taxFee = this.payTax(roomId);
     this.addExp(2, {roomId: roomId});
-    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
+    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold + taxFee, cb);
 }
 
 Player.prototype.lose = function (roomId, gold, cb) {
     this.loseNr += 1;
-    this.payTax(roomId);
+    var taxFee = this.payTax(roomId);
     this.addExp(0, {roomId: roomId});
-    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold, cb);
+    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, gold + taxFee, cb);
 }
 
 Player.prototype.tie = function (roomId, cb) {
     this.tieNr += 1;
-    this.payTax(roomId);
+    var taxFee = this.payTax(roomId);
     this.addExp(1, {roomId: roomId});
-    cb({gold: this.gold});
-
+    this.addGold(consts.GLOBAL.ADD_GOLD_TYPE.BATTLE, taxFee, cb);
 }
 
 Player.prototype.addFragment = function (type, fragment, cb) {
@@ -563,6 +565,7 @@ module.exports = Player;
     },
     items: [],
     tasks: {},
+    summary: '',
     createdAt: Date.now()
 };
  */

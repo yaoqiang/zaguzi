@@ -37,7 +37,8 @@ module.exports = {
                 $set: {
                     nickName: val.nickName,
                     avatar: val.avatar,
-                    gender: val.gender
+                    gender: val.gender,
+                    summary: val.summary
                 }
             }
         }, function(err, doc, lastErrorObject) {

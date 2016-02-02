@@ -81,6 +81,7 @@ userDao.getPlayerByUid = function(uid, cb) {
             tasks: doc.tasks,
             meetingTimes: doc.meetingTimes,
             properties: doc.properties,
+            summary: doc.summary,
             createdAt: doc.createdAt
         });
 
@@ -147,6 +148,7 @@ userDao.createPlayer = function(uid, cb) {
         },
         items: [],
         tasks: taskUtil.initTasks(),
+        summary: '',
         createdAt: new Date()
     };
 

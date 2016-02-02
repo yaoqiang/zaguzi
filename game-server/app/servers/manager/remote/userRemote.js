@@ -23,6 +23,19 @@ UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
     });
 };
 
+UserRemote.prototype.getProfileByUid = function (msg, cb) {
+    this.getUserCacheByUid(msg.uid, function (ret) {
+        playerService.getUserInfo(msg.uid, function (result) {
+            if (result) {
+                cb({player: ret.player, userInfo: {mobile: result.mobile}});
+                return;
+            }
+            cb({player: ret.player});
+        });
+
+    });
+}
+
 UserRemote.prototype.getUsersCacheByUids = function(msg, cb) {
     playerService.getUsersCacheByUids(msg, function(ret) {
         cb(ret);

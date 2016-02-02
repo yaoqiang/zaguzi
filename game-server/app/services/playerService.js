@@ -27,10 +27,13 @@ var exp = module.exports;
  */
 exp.getUserInfo = function (uid, cb) {
 
-    userDao.getUserById(uid, function (user) {
+    userDao.getUserById(uid, function (err, user) {
+        if (err) {
+            cb(null);
+            return;
+        }
         cb(user);
     });
-
 }
 
 /**
@@ -416,6 +419,7 @@ exp.getMyItemList = function (data, cb) {
  * @param cb
  */
 exp.getExchangeList = function (data, cb) {
+
     exp.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
@@ -425,9 +429,8 @@ exp.getExchangeList = function (data, cb) {
 
         // return result:
         // [{id: xx, name: xx, icon: xx, inventory: xx,
-        // fragment: xx, createdAt: xx, enabled: true/false,
-        // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
-        commonDao.listExchangeList(function (err, docs) {
+        // fragment: xx, createdAt: xx, enabled: true/false}
+        commonDao.listExchangeList({}, function (err, docs) {
             if (err != null) {
                 cb({ code: Code.OK, exchangeList: [] });
             }

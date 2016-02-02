@@ -301,6 +301,7 @@ module.exports = {
         USER: 'user',
         BALANCE: 'balance',
         PAYMENT: 'payment',
-        SYNC: 'sync'
+        SYNC: 'sync',
+        NORMAL: 'normal'
     }
 }

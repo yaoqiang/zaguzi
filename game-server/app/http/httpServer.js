@@ -62,10 +62,20 @@ var httpStart = function (app) {
         saveUninitialized: false,
         cookie: { maxAge: 60000 }
     }));
-    
-    server.use('/callback/apix', require('./expressCtrl/APiXController')(app));
-    
-    app.get('/', function(req, res) {
+
+    // parse application/x-www-form-urlencoded
+    server.use(bodyParser.urlencoded({ extended: false }))
+
+    // parse application/json
+    server.use(bodyParser.json())
+
+
+    //router
+    server.use('/callback/apix', require('./controller/APiXController')(app));
+
+
+    //root path
+    server.get('/', function(req, res) {
         res.send('Hello form root route.');
     });
     

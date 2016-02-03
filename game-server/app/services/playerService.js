@@ -9,6 +9,7 @@ var consts = require('../consts/consts');
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
 var Code = require('../../../shared/code');
 var gameUtil = require('../util/gameUtil');
+var utils = require('../util/utils');
 var eventManager = require('../domain/event/eventManager');
 var Player = require('../domain/entity/player');
 var GameRecord = require('../domain/entity/gameRecord');

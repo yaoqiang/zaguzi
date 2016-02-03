@@ -304,6 +304,7 @@ module.exports = {
         BALANCE: 'balance',
         PAYMENT: 'payment',
         SYNC: 'sync',
-        NORMAL: 'normal'
+        NORMAL: 'normal',
+        OPEN_API: 'open_api'
     }
 }

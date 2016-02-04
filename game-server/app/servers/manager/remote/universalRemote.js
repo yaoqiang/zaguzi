@@ -20,5 +20,11 @@ UniversalRemote.prototype = {
     //notify
     getTopOfAppReleaseRecord: function (data) {
         commonService.getTopOfAppReleaseRecord(data);
+    },
+    
+    //
+    mobileRechargeHandler: function (data, cb) {
+        console.log('-- mobileRechargeHandler --', arguments);
+        cb()
     }
 }

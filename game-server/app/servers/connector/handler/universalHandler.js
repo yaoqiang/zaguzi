@@ -8,6 +8,7 @@ var pomelo = require('pomelo');
 
 var messageService = require('../../../services/messageService');
 
+
 module.exports = function (app) {
     return new Handler(app);
 };
@@ -239,5 +240,29 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
-    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg);
+    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, function () {
+        
+    });
+}
+
+
+////////////
+//
+///////////
+handler.sendBindingSMS = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.sendBindingSMS(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.bindingMobile = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.bindingMobile(session, msg, function (data) {
+        next(null, data);
+    });
 }

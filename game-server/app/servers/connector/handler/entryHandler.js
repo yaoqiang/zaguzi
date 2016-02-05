@@ -193,7 +193,6 @@ function onUserEnter(session, uid, msg, self, player, userData, next) {
         sessionId: session.id,
         player: player
     }, function (data) {
-        console.log('------ onUserEnter callback ------ ', data);
         next(null, {code: Code.OK, player: generateSimplePlayerResponse(data.player, userData)});
     });
 }

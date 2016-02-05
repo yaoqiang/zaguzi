@@ -6,6 +6,7 @@ module.exports = {
             FEMALE: 'FEMALE'
         },
         GOLD_INIT: 5000,
+        BINDING_MOBILE_GRANT: 3000,
         ADD_GOLD_TYPE: {
             RECHARGE: 1,
             BATTLE: 2,
@@ -121,7 +122,7 @@ module.exports = {
         MOBILE_RECHARGE: {
             MOBILE_NOT_BLANK: 9401,
             MOBILE_NOT_VALIDATE: 9402,
-            DEMONINATION_NOT_ERR: 9303,
+            DENOMINATION_NOT_ERR: 9303,
             ERR: 9305
         }
     },
@@ -180,7 +181,13 @@ module.exports = {
         9206: "请填写收件地址",
         9207: "手机号码无效",
         9208: "兑换失败",
-        9209: "兑换失败, 请联系客服"
+        9209: "兑换失败, 请联系客服",
+
+        9301: "请输入手机号",
+        9302: "手机号格式有误",
+        9303: "该手机已绑定",
+        9304: "验证码错误",
+        9305: "操作失败",
     },
     MESSAGE: {
         RES: 200,

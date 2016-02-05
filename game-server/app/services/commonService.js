@@ -52,3 +52,14 @@ exp.getTopOfAppReleaseRecord = function (data) {
 
     })
 }
+
+
+exp.bindingMobile = function (data, cb) {
+    if (!data.captcha || !data.mobile || !data.password || !data.uid) {
+        cb({code: Code.FAIL});
+        return;
+    }
+
+    commonDao.bindingMobile(data, cb);
+
+}

@@ -16,6 +16,8 @@ var mongojs = require('mongojs');
 
 var Promise = require('promise');
 
+var passwordHash = require('password-hash');
+
 var commonDao = module.exports;
 
 /**
@@ -168,6 +170,36 @@ commonDao.updateCaptchaCode = function (data, cb) {
         if (err) logger.error('--commonDao.updateCaptchaCode error--')
         cb({
             code: err ? Code.FAIL : Code.OK
+        })
+    })
+}
+
+
+commonDao.bindingMobile = function (data, cb) {
+    db.captcha.findOne({
+        mobile: data.mobile
+    }, function (err, doc) {
+        if (doc.captcha != data.captcha) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
+
+        //var password = passwordHash.generate(data.password);
+        var password = data.password;
+
+        db.user.findAndModify({
+            query: {
+                _id: mongojs.ObjectId(data.uid)
+            }, update: {
+                $set: {mobile: data.mobile, password: password}
+            }, new: true,
+        }, function (err, doc) {
+            if (err) {
+                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+            }
+            else {
+                cb({code: Code.OK});
+            }
         })
     })
 }

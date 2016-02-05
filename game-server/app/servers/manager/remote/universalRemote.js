@@ -12,6 +12,7 @@ var playerService = require('../../../services/playerService');
 var openService = require('../../../services/openService');
 var commonService = require('../../../services/commonService');
 var exchangeService = require('../../../services/exchangeService');
+var shopService = require('../../../services/shopService');
 
 
 ////////////////////////////////////////////
@@ -69,8 +70,34 @@ UniversalRemote.prototype = {
             });
         });
     },
-    
-    //处理话费充值回调
+
+    //////////////////////////////////
+    // 兑换相关
+    //////////////////////////////////
+    getExchangeList: function (data, cb) {
+        exchangeService.getExchangeList(data, cb);
+    },
+
+    getMyExchangeRecordList: function (data, cb) {
+        exchangeService.getMyExchangeRecordList(data, cb);
+    },
+
+    exchange: function (data, cb) {
+        exchangeService.exchange(data, cb);
+    },
+
+
+
+
+
+    getShopList: function (data, cb) {
+        cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
+    },
+
+
+
+
+//处理话费充值回调
     // data: ↓
     // state         string     充值状态（0为充值中 1为成功 其他为失败）
     // orderid       string     商家订单号 

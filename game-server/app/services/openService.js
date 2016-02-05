@@ -15,9 +15,7 @@ var request = require('request');
 
 var qs = require('qs');
 
-var crypto = require('crypto');
-
-var md5 = crypto.createHash('md5');
+var md5 = require('md5');
 
 var utils = require('../util/utils');
 
@@ -71,7 +69,7 @@ openService.sendSMS = function (data, cb) {
 
             request(options, function (err, response, body) {
                 if (err) {
-                    logger.error('------- send SMS ERR ----------1');
+                    logger.error('open-sms||发送短信失败||');
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
                     return;
                 }
@@ -79,7 +77,7 @@ openService.sendSMS = function (data, cb) {
                 var bodyJson = JSON.parse(body);
 
                 if (bodyJson.error_code != 0) {
-                    logger.error('------- send SMS ERR ----------2');
+                    logger.error('open-sms||发送短信失败||');
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
                     return;
                 }
@@ -93,6 +91,7 @@ openService.sendSMS = function (data, cb) {
 
 }
 
+//data: {mobile: xx, denomination: xx, number: xx}
 openService.mobileRecharge = function (data, cb) {
 
     var options = {
@@ -102,7 +101,7 @@ openService.mobileRecharge = function (data, cb) {
             phone: data.mobile,
             price: data.denomination,
             orderid: data.number,
-            sign: md5.update(data.mobile + data.denomination + data.number),
+            sign: md5(data.mobile + data.denomination + data.number),
             callback_url: ''
         },
         headers: {
@@ -114,7 +113,7 @@ openService.mobileRecharge = function (data, cb) {
 
     request(options, function (error, response, body) {
         if (error) {
-            logger.error('open||调用充值接口失败, %j', {
+            logger.error('open-mobile recharge||调用充值接口失败||%j', {
                 mobile: data.mobile,
                 number: data.number,
                 denomination: data.denomination,
@@ -124,19 +123,20 @@ openService.mobileRecharge = function (data, cb) {
             return;
         }
 
-        console.log('body - ', body);
-        if (body.Code != 0) {
-            logger.error('open||调用充值接口失败, %j', {
+        var bodyJson = JSON.parse(body);
+        if (bodyJson.Code != 0) {
+            logger.error('open-mobile recharge||调用充值接口失败||%j', {
                 mobile: data.mobile,
                 number: data.number,
                 denomination: data.denomination,
                 err: body.Msg
             });
-            cb({code: Code.FAIL, err: body.Msg})
+            cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR})
             return;
         }
 
         cb({code: Code.OK})
 
     });
+
 }

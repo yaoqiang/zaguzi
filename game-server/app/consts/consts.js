@@ -118,12 +118,6 @@ module.exports = {
             MOBILE_ALREADY_BINDING: 9303,
             CAPTCHA_ERR: 9304,
             ERR: 9305
-        },
-        MOBILE_RECHARGE: {
-            MOBILE_NOT_BLANK: 9401,
-            MOBILE_NOT_VALIDATE: 9402,
-            DENOMINATION_NOT_ERR: 9303,
-            ERR: 9305
         }
     },
     ERR_MESSAGE: {
@@ -188,6 +182,7 @@ module.exports = {
         9303: "该手机已绑定",
         9304: "验证码错误",
         9305: "操作失败",
+
     },
     MESSAGE: {
         RES: 200,

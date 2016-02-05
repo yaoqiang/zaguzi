@@ -190,7 +190,3 @@ GameRemote.prototype.getGameStatusDetailsById = function (data, cb) {
     gameService.getGameStatusDetailsById(data, cb);
 }
 
-
-GameRemote.prototype.getShopList = function (data, cb) {
-    cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
-}

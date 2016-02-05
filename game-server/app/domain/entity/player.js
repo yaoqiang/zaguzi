@@ -8,6 +8,7 @@ var pomelo = require('pomelo');
 var utils = require('../../util/utils');
 var messageService = require('../../services/messageService');
 var gameUtil = require('../../util/gameUtil');
+var dispatcher = require('../../util/dispatcher');
 var _ = require('lodash');
 require('date-utils');
 var Promise = require('promise')
@@ -46,6 +47,9 @@ var Player = function (opts) {
     this.summary = opts.summary;
     this.createdAt = opts.createdAt;
 
+
+    //for push message;
+    this.connectors = pomelo.app.getServersByType('connector');
 }
 
 util.inherits(Player, Entity);
@@ -71,12 +75,10 @@ Player.prototype.addGold = function (type, gold, cb) {
 
     this.gold = this.gold < 0 ? 0 : this.gold;
 
-    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, this.uid, function (user) {
-        messageService.pushMessageToPlayer({
-            uid: user.uid,
-            sid: user.serverId
-        }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
-    });
+    messageService.pushMessageToPlayer({
+        uid: this.uid,
+        sid: dispatcher(this.uid, this.connectors).id
+    }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
 
     cb({gold: this.gold});
 
@@ -124,12 +126,10 @@ Player.prototype.addFragment = function (type, fragment, cb) {
     logger.info("fragment-add||%j||用户通过[%j]获得了[%j]元宝，用户ID:%j", this.uid, type, fragment, this.uid);
     cb({fragment: this.fragment});
     var self = this;
-    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, this.uid, function (user) {
-        messageService.pushMessageToPlayer({
-            uid: user.uid,
-            sid: user.serverId
-        }, consts.EVENT.INGOT_CHANGE, {ingot: self.fragment});
-    });
+    messageService.pushMessageToPlayer({
+        uid: this.uid,
+        sid: dispatcher.dispatch(this.uid, this.connectors).id
+    }, consts.EVENT.INGOT_CHANGE, {ingot: self.fragment});
 }
 
 Player.prototype.addExp = function (exp, args) {

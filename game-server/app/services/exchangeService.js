@@ -14,7 +14,10 @@ var playerService = require('./playerService');
 var exchangeDao = require('../dao/exchangeDao');
 var userDao = require('../dao/userDao');
 
-var compareVersions = require('compare-versions');
+var utils = require('../util/utils');
+
+var mongojs = require('mongojs');
+
 
 var exchangeService = module.exports
 
@@ -124,11 +127,18 @@ exchangeService.exchange = function (data, cb) {
                 return;
             }
 
+            //生成订单号
+            data.number = mongojs.ObjectId().toString();
+            //面额
+            data.denomination = doc.denomination;
+            //产品名称
+            data.productName = doc.name;
+
             //如果是话费类
             if (doc.type == consts.EXCHANGE.TYPE.INBOX_CALL) {
                 
                 //调用第三方平台充值(apix.cn)
-                openService.mobileRecharge(function(rechargeResult) {
+                openService.mobileRecharge(data, function(rechargeResult) {
                     //如果APIX立即返回充值失败, 则通知客户端失败信息
                     if (rechargeResult.code !== Code.OK) {
                         //
@@ -136,14 +146,15 @@ exchangeService.exchange = function (data, cb) {
                     } else {
                         
                         //如果APIX返回成功，则初步定义为充值成功；后续会根据回调或OSS跟进（如有后续失败并没有收到回调的，可人工在OSS处理）
-                        exchangeDao.exchange(data.exchangeId, data.uid, data.count, consts.ORDER.STATE.FINISHED, doc.fragment, { mobile: data.mobile }, function (err, result) {
-                            if (err == null || result == null) {
-                                logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                        exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.FINISHED, doc.fragment, { mobile: data.mobile }, function (err, result) {
+                            if (err) {
+                                logger.error("user-exchange||%s||玩家兑换物品失败(APIX已成功返回), 兑换ID:[%s], 手机号码[%s], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
                                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                                 return;
                             }
+                            logger.info("user-exchange||%s||玩家兑换话费&流量成功, 兑换ID:[%s], 手机号码[%s], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
                             //如果充值提交成功, 则更新player.fragment;
-                            user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, doc.fragment, function(fragmentResult) {
+                            user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
                                 cb({code: Code.OK});
                             });
                         });
@@ -154,21 +165,21 @@ exchangeService.exchange = function (data, cb) {
             else {
                 //如果是实物类
                 if (_.isEmpty(data.contact)) {
-                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写联系人或收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    logger.debug("user-exchange||%s||玩家兑换物品失败, 兑换ID:[%s], 未填写联系人或收件地址, 用户ID:%s", data.uid, data.exchangeId, data.uid);
                     cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_CONTACT });
                     return;
                 }
 
                 if (_.isEmpty(data.address)) {
-                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写收件地址, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    logger.debug("user-exchange||%s||玩家兑换物品失败, 兑换ID:[%s], 未填写收件地址, 用户ID:%s", data.uid, data.exchangeId, data.uid);
                     cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_ADDRESS });
                     return;
                 }
 
                 //存储兑换记录, 在后台跟进操作
-                exchangeDao.exchange(data.exchangeId, data.uid, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
+                exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
                     if (err == null || result == null) {
-                        logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                        logger.error("user-exchange||%s||玩家兑换物品失败, 兑换ID:[%s], 手机号码[%j], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
                         cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                         return;
                     }

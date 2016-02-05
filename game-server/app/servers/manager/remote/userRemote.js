@@ -104,21 +104,6 @@ UserRemote.prototype.getMyItemList = function (msg, cb) {
     playerService.getMyItemList(msg, cb);
 }
 
-//////////////////////////////////
-// 兑换相关
-//////////////////////////////////
-UserRemote.prototype.getExchangeList = function (msg, cb) {
-    exchangeService.getExchangeList(msg, cb);
-}
-
-UserRemote.prototype.getMyExchangeRecordList = function (msg, cb) {
-    exchangeService.getMyExchangeRecordList(msg, cb);
-}
-
-UserRemote.prototype.exchange = function (msg, cb) {
-    exchangeService.exchange(msg, cb);
-}
-
 
 ///////////////////////////
 /// 玩家状态相关

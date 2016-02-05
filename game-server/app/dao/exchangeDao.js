@@ -87,11 +87,12 @@ exchangeDao.getExchangeRecordByNumber = function (number, cb) {
  * @param params {mobile: xx, address: xx, contact: xx},
  * @param cb
  */
-exchangeDao.exchange = function (exchangeId, uid, count, state, fragment, params, cb) {
+exchangeDao.exchange = function (exchangeId, uid, number, productName, count, state, fragment, params, cb) {
     var exchangeRecord = {
         exchangeId: mongojs.ObjectId(exchangeId),
         uid: mongojs.ObjectId(uid),
-        number: mongojs.ObjectId,
+        number: number,
+        productName: productName,
         state: state,
         count: count,
         mobile: params.mobile,
@@ -111,7 +112,7 @@ exchangeDao.exchange = function (exchangeId, uid, count, state, fragment, params
     .then(function (doc) {
         db.exchangeList.findAndModify({
             query: {_id: mongojs.ObjectId(exchangeId)},
-            update: {$inc: {count: -count}}
+            update: {$inc: {inventory: -count}}
         }, function(err, doc, lastErrorObject) {
             if (err) {
                 utils.invokeCallback(cb, err, null);

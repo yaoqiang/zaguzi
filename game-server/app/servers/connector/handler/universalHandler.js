@@ -143,23 +143,6 @@ handler.getTaskGrant = function (msg, session, next) {
     });
 }
 
-/**
- * 获得商城列表
- * @param msg
- * @param session
- * @param next
- */
-handler.getShopList = function (msg, session, next) {
-    msg.uid = session.uid;
-    this.app.rpc.game.gameRemote.getShopList(session, msg, function (data) {
-        if (data.code === Code.FAIL)
-        {
-            next(null, {code: Code.FAIL, err: data.err});
-            return;
-        }
-        next(null, {code: Code.OK, shopList: data.shopList});
-    })
-}
 
 /**
  * 获得我的物品列表
@@ -183,10 +166,8 @@ handler.getMyItemList = function (msg, session, next) {
  */
 handler.getExchangeList = function (msg, session, next) {
     msg.uid = session.uid;
-    console.log(111, msg);
     //
-    this.app.rpc.manager.userRemote.getExchangeList(session, msg, function (data) {
-        console.log(2, data)
+    this.app.rpc.manager.universalRemote.getExchangeList(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -200,7 +181,7 @@ handler.getExchangeList = function (msg, session, next) {
 handler.getMyExchangeRecordList = function (msg, session, next) {
     msg.uid = session.uid;
     //
-    this.app.rpc.manager.userRemote.getMyExchangeRecordList(session, msg, function (data) {
+    this.app.rpc.manager.universalRemote.getMyExchangeRecordList(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -213,7 +194,7 @@ handler.getMyExchangeRecordList = function (msg, session, next) {
  */
 handler.exchange = function (msg, session, next) {
     msg.uid = session.uid;
-    this.app.rpc.manager.userRemote.exchange(session, msg, function (data) {
+    this.app.rpc.manager.universalRemote.exchange(session, msg, function (data) {
         next(null, data);
     });
 }
@@ -228,6 +209,24 @@ handler.getRankingList = function (msg, session, next) {
     this.app.rpc.manager.universalRemote.getRankingList(session, msg, function (data) {
         next(null, data);
     });
+}
+
+/**
+ * 获得商城列表
+ * @param msg
+ * @param session
+ * @param next
+ */
+handler.getShopList = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getShopList(session, msg, function (data) {
+        if (data.code === Code.FAIL)
+        {
+            next(null, {code: Code.FAIL, err: data.err});
+            return;
+        }
+        next(null, {code: Code.OK, shopList: data.shopList});
+    })
 }
 
 /**

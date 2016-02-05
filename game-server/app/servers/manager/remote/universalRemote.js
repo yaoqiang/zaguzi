@@ -1,20 +1,28 @@
-var commonService = require('../../../services/commonService');
+var _ = require('lodash');
+
 var Code = require('../../../../../shared/code');
 var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
-var utils = require('../../../util/utils');
-var _ = require('lodash');
-
-var playerService = require('../../../services/playerService');
-var openService = require('../../../services/openService');
 
 var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
 
-module.exports = function(app) {
+var utils = require('../../../util/utils');
+
+var playerService = require('../../../services/playerService');
+var openService = require('../../../services/openService');
+var commonService = require('../../../services/commonService');
+var exchangeService = require('../../../services/exchangeService');
+
+
+////////////////////////////////////////////
+// 一些无状态接口
+////////////////////////////////////////////
+
+module.exports = function (app) {
     return new UniversalRemote(app);
 };
 
-var UniversalRemote = function(app) {
+var UniversalRemote = function (app) {
     this.app = app;
 };
 
@@ -32,22 +40,22 @@ UniversalRemote.prototype = {
 
 
     sendBindingSMS: function (data, cb) {
-        playerService.getUserCacheByUid(data.uid, function(user) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
                 logger.error("user-send SMS||%j||发送短信失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
-                cb({code: Code.FAIL});
+                cb({ code: Code.FAIL });
                 return;
             }
             data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.MOBILE_BINDING;
             openService.sendSMS(data, cb);
         });
     },
-    
+
     bindingMobile: function (data, cb) {
-        playerService.getUserCacheByUid(data.uid, function(user) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
                 logger.error("user-binding mobile||%j||绑定失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
-                cb({code: Code.FAIL});
+                cb({ code: Code.FAIL });
                 return;
             }
             commonService.bindingMobile(data, function (data) {
@@ -62,9 +70,56 @@ UniversalRemote.prototype = {
         });
     },
     
-    //
+    //处理话费充值回调
+    // data: ↓
+    // state         string     充值状态（0为充值中 1为成功 其他为失败）
+    // orderid       string     商家订单号 
+    // ordertime     string     订单处理时间 (格式为：yyyyMMddHHmmss  如：20150323140214）)
+    // sign          string     32位小写md5签名：md5(apix-key + orderid+ ordertime)
+    // err_msg       string     充值失败时候返回失败信息。成功时为空。
     mobileRechargeHandler: function (data, cb) {
-        console.log('-- mobileRechargeHandler --', arguments);
-        cb()
+        console.log('-- mobileRechargeHandler --', data);
+        
+        //如果失败，先查询是否订单存在
+        exchangeService.getExchangeRecordByNumber(data.orderid, function(err, exchangeRecord) {
+            if (err) {
+                logger.info('callback-apxi||%j||处理APIX回调时, 未根据订单号查到兑换记录', {number: data.orderid});
+                cb();
+                return;
+            }
+            
+            if (exchangeRecord.state == consts.ORDER.STATE.CANCELED) {
+                logger.info('callback-apxi||%j||处理APIX回调时, 该兑换记录已处理过', {number: data.orderid});
+                cb();
+                return;
+            }
+            
+            //获取兑换产品信息
+            exchangeService.getExchangeListById(exchangeRecord._id, function (err, exchangeItem) {
+                //查询玩家是否在线
+                playerService.getUserCacheByUid(exchangeRecord.uid, function (user) {
+                    //如果玩家不在线，则直接操作DB更新
+                    if (user == null || _.isUndefined(user)) {
+                        exchangeService.callbackPlayerFragment({uid: exchangeRecord.uid, fragment: exchangeItem.fragment}, function (err, p) {
+                            if (err) {
+                                logger.error('callback-apxi||%s||处理APIX充值失败回调异常: %o', data.orderid, err);
+                            } else {
+                                logger.info('callback-apxi||%s||处理成功', data.orderid);
+                            }
+                        });
+                    } 
+                    //如果玩家在线，则通过pomelo-sync处理并向客户端发送元宝变化事件
+                    else {
+                        user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN, exchangeItem.fragment, function(fragment) {
+                            //TODO 可以通过UI_COMMAND发送兑换模块有新状态
+                        })
+                    }
+                });
+                cb()
+            });
+            
+        });
+        
+        
     }
 }

@@ -1,7 +1,11 @@
-var playerService = require('../../../services/playerService');
-var Code = require('../../../../../shared/code');
-var utils = require('../../../util/utils');
 var _ = require('lodash');
+
+var Code = require('../../../../../shared/code');
+
+var playerService = require('../../../services/playerService');
+var exchangeService = require('../../../services/exchangeService');
+
+var utils = require('../../../util/utils');
 
 module.exports = function(app) {
     return new UserRemote(app);
@@ -100,25 +104,25 @@ UserRemote.prototype.getMyItemList = function (msg, cb) {
     playerService.getMyItemList(msg, cb);
 }
 
+//////////////////////////////////
+// 兑换相关
+//////////////////////////////////
 UserRemote.prototype.getExchangeList = function (msg, cb) {
-    playerService.getExchangeList(msg, cb);
+    exchangeService.getExchangeList(msg, cb);
 }
 
 UserRemote.prototype.getMyExchangeRecordList = function (msg, cb) {
-    playerService.getMyExchangeRecordList(msg, cb);
+    exchangeService.getMyExchangeRecordList(msg, cb);
 }
 
 UserRemote.prototype.exchange = function (msg, cb) {
-    playerService.exchange(msg, cb);
+    exchangeService.exchange(msg, cb);
 }
 
 
-/**
- * get user by sessionId from cache.
- *
- * @param {String} msg
- *
- */
+///////////////////////////
+/// 玩家状态相关
+///////////////////////////
 UserRemote.prototype.getUserCacheBySessionId = function(msg, cb) {
     playerService.getUserCacheBySessionId(msg, function(ret) {
         cb(ret);

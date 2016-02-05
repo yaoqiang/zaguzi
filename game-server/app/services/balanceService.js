@@ -1,22 +1,25 @@
-var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+
+var _ = require('lodash');
 var pomelo = require('pomelo');
+
+var consts = require('../consts/consts');
+var Code = require('../../../shared/code');
+
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+
 var async = require('async');
 
 var eventManager = require('../domain/event/eventManager');
 var GameRecord = require('../domain/entity/gameRecord');
 
-var Code = require('../../../shared/code');
-var _ = require('lodash');
 
+var balanceService = module.exports;
 
-var exp = module.exports;
-
-exp.balance = function (game, cb) {
-    exp.balanceCommon(game, cb);
+balanceService.balance = function (game, cb) {
+    balanceService.balanceCommon(game, cb);
 }
 
-exp.balanceCommon = function (game, cb) {
+balanceService.balanceCommon = function (game, cb) {
     //结算结构
     //{game: {result: consts.GAME.RESULT.x, share: x},
     // details: [{uid:x, actorNr:x, actorAvatar:x, actorName:x, actualIdentity:[], result: consts.GAME.ACTOR_RESULT.x, 
@@ -201,7 +204,7 @@ exp.balanceCommon = function (game, cb) {
 
 }
 
-exp.balanceMatch = function () {
+balanceService.balanceMatch = function () {
 
 }
 

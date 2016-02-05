@@ -1,7 +1,8 @@
 {
   "name": "zgz",
-  "version": "0.0.1",
-  "private": false,
+  "version": "1.0.0",
+  "description": "zaguzi game-server",
+  "private": true,
   "dependencies": {
     "async": "1.4.0",
     "body-parser": "^1.14.2",

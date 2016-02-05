@@ -43,23 +43,8 @@ app.all('*', function (req, res, next) {
 });
 
 
-app.get('/auth_success', function (req, res) {
-    if (req.session.userId) {
-        var token = Token.create(req.session.userId, Date.now(), secret);
-        res.render('auth', {
-            code: 200,
-            token: token,
-            uid: req.session.userId
-        });
-    } else {
-        res.render('auth', {
-            code: 500
-        });
-    }
-});
-
 app.post('/autoLogin', function (req, res) {
-    var password = Math.floor(Math.random()*(9999-1000)+1000);
+    var password = Math.floor(Math.random() * (9999 - 1000) + 1000);
     var user = {
         username: '',
         password: passwordHash.generate(password),
@@ -80,17 +65,84 @@ app.post('/autoLogin', function (req, res) {
             },
             function (err, doc) {
                 if (err) {
-                    res.send({code: 500, err: ''})
+                    res.send({ code: 500, err: '' })
                 }
                 res.send({
                     code: 200,
-                    token: Token.create(doc._id, Date.now(), secret),
+                    token: Token.create(doc._id, Date.now(), password, secret),
                     uid: doc._id
                 });
             }
-        );
+            );
 
     });
+});
+
+
+app.post('/loginByToken', function (req, res) {
+    var data = req.body;
+    if (!data.token) {
+        res.send({
+            code: 1003
+        });
+        return;
+    }
+    
+    //result: [uid, timestamp, password]
+    var result = Token.parse(data.token, secret);
+    if (result == null) {
+        res.send({
+            code: 1002
+        });
+        return;
+    }
+
+    var uid = result[0], password = result[1];
+
+
+    db.user.findOne({
+        _id: mongojs.ObjectId(uid)
+    }, function (err, user) {
+        if (err || !user) {
+            logger.warn('用户不存在! uid: ' + uid);
+            res.jsonp({
+                code: 1001
+            });
+            return;
+        }
+
+        //密码validate
+        if (!passwordHash.verify(password, user.password)) {
+            // password is wrong
+            logger.warn('用户密码错误! uid: ' + uid);
+            res.jsonp({
+                code: 1002
+            });
+            return;
+        }
+
+        db.user.update(
+            {
+                _id: mongojs.ObjectId(user._id)
+            },
+            {
+                $inc: {
+                    loginCount: 1
+                },
+                $set: {
+                    lastLoginAt: new Date()
+                }
+            },
+            function () {
+                logger.debug(result[0] + ' 登录成功!');
+                res.jsonp({
+                    code: 200,
+                    token: Token.create(user._id, Date.now(), password, secret),
+                    uid: user._id
+                });
+            });
+    });
+
 });
 
 
@@ -111,7 +163,7 @@ app.post('/login', function (req, res) {
     db.user.findOne({
         $or: [{
             username: username
-        }, {mobile: username}]
+        }, { mobile: username }]
     }, function (err, user) {
         if (err || !user) {
             logger.warn('用户名不存在! username: ' + username);
@@ -149,7 +201,7 @@ app.post('/login', function (req, res) {
                 logger.debug(username + ' 登录成功!');
                 res.jsonp({
                     code: 200,
-                    token: Token.create(user._id, Date.now(), secret),
+                    token: Token.create(user._id, Date.now(), pwd, secret),
                     uid: user._id
                 });
             });
@@ -158,49 +210,6 @@ app.post('/login', function (req, res) {
 
 });
 
-
-app.post('/bindingMobile', function (req, res) {
-
-    var data = req.body;
-
-    if (!data.captcha || !data.mobile || !data.uid) {
-        res.send({
-            code: 500,
-            msg: '参数错误'
-        });
-        return;
-    }
-
-    db.captcha.findOne({
-        mobile: data.mobile
-    }, function (err, doc) {
-        if (doc.captcha != data.captcha) {
-            res.send({
-                code: 500,
-                msg: '验证码错误, 请重新输入'
-            })
-            return;
-        }
-        
-        db.user.findAndModify({
-            query: {
-                _id: mongojs.ObjectId(data.uid)
-            }, update: {
-                $set: {mobile: data.mobile, password: passwordHash.generate(data.password)}
-            }, new: true,
-        }, function (err, doc) {
-            res.send({
-                code: 200,
-                msg: '绑定成功'
-            })
-        })
-    })
-
-});
-
-app.post('/registerByMobile', function (req, res) {
-
-})
 
 app.post('/register', function (req, res) {
     var msg = req.body;

@@ -8,9 +8,9 @@ var commonDao = require('../dao/commonDao');
 
 var compareVersions = require('compare-versions');
 
-var exp = module.exports
+var commonService = module.exports
 
-exp.getRankingList = function (data, cb) {
+commonService.getRankingList = function (data, cb) {
 
     commonDao.getRankingList(data, function (err, doc) {
 
@@ -35,7 +35,7 @@ exp.getRankingList = function (data, cb) {
 }
 
 
-exp.getTopOfAppReleaseRecord = function (data) {
+commonService.getTopOfAppReleaseRecord = function (data) {
     commonDao.getTopOfAppReleaseRecord(data, function (err, doc) {
         if (doc) {
             //version: 1.0.0, 1.0.1, 1.0.2 ...
@@ -54,12 +54,12 @@ exp.getTopOfAppReleaseRecord = function (data) {
 }
 
 
-exp.bindingMobile = function (data, cb) {
+commonService.bindingMobile = function (data, cb) {
     if (!data.captcha || !data.mobile || !data.password || !data.uid) {
         cb({code: Code.FAIL});
         return;
     }
 
     commonDao.bindingMobile(data, cb);
-
 }
+

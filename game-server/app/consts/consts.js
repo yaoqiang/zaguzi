@@ -304,14 +304,25 @@ module.exports = {
         MEETING: 'MEETING'
     },
 
+    // LOG: {
+    //     SYSTEM: 'system',
+    //     GAME: 'game',
+    //     USER: 'user',
+    //     BALANCE: 'balance',
+    //     PAYMENT: 'payment',
+    //     SYNC: 'sync',
+    //     NORMAL: 'normal',
+    //     OPEN_API: 'open_api'
+    // }
+    
     LOG: {
-        SYSTEM: 'system',
-        GAME: 'game',
-        USER: 'user',
-        BALANCE: 'balance',
+        SYSTEM: 'game-all',
+        GAME: 'game-all',
+        USER: 'game-all',
+        BALANCE: 'game-all',
+        SYNC: 'game-all',
+        NORMAL: 'game-all',
         PAYMENT: 'payment',
-        SYNC: 'sync',
-        NORMAL: 'normal',
-        OPEN_API: 'open_api'
+        OPEN_API: 'open-api'
     }
 }

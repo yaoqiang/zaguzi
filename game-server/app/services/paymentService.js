@@ -1,19 +1,21 @@
-var shopConf = require('../../config/data/shop');
-var appConf = require('../../config/app.json');
+
 var _ = require('lodash');
 var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.PAYMENT);
+var shopConf = require('../../config/data/shop');
+var appConf = require('../../config/app.json');
 var Code = require('../../../shared/code');
+
+var logger = require('pomelo-logger').getLogger(consts.LOG.PAYMENT);
 
 var Promise = require('promise');
 
 var pingpp = require('pingpp')(appConf.payment.pingxx.testSecretKey);
 
-var exp = module.exports
+var paymentService = module.exports
 
-exp.requestChargesPingxx = function (data, cb) {
+paymentService.requestChargesPingxx = function (data, cb) {
 
     pingpp.charges.create({
         subject: data.subject,
@@ -29,11 +31,11 @@ exp.requestChargesPingxx = function (data, cb) {
     });
 }
 
-exp.webhooksPingxx = function () {
+paymentService.webhooksPingxx = function () {
     //
 }
 
-exp.payment = function (uid, productId, state, device, source) {
+paymentService.payment = function (uid, productId, state, device, source) {
     //
 }
 

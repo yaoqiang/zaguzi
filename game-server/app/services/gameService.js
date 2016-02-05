@@ -1,18 +1,20 @@
 /**
  * Module dependencies
  */
-var Game = require('../domain/entity/game');
-var gameResponse = require('../domain/response/gameResponse');
-var consts = require('../consts/consts');
-var gameUtil = require('../util/gameUtil');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var _ = require('lodash');
 var pomelo = require('pomelo');
 
+var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
-var _ = require('lodash');
 
+var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
 
-var exp = module.exports;
+var Game = require('../domain/entity/game');
+var gameResponse = require('../domain/response/gameResponse');
+
+var gameUtil = require('../util/gameUtil');
+
+var gameService = module.exports;
 
 //variables
 var gGameId = 0;
@@ -20,7 +22,7 @@ var gGameList = [];
 
 
 
-exp.join = function(data, cb)
+gameService.join = function(data, cb)
 {
     //检查金币是否可加入
     var goldValidator = gameUtil.getJoinAvailable(data.roomId, data.player);
@@ -58,8 +60,8 @@ exp.join = function(data, cb)
     });
 }
 
-exp.leave = function (data, cb) {
-    var game = exp.getGameById(data.gameId);
+gameService.leave = function (data, cb) {
+    var game = gameService.getGameById(data.gameId);
     //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
     if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
         logger.error('game||leave||离开游戏失败, 游戏正在进行中||用户&ID: %j', data.uid);
@@ -83,7 +85,7 @@ exp.leave = function (data, cb) {
 }
 
 
-exp.ready = function(data, cb)
+gameService.ready = function(data, cb)
 {
     var game = this.getGameById(data.gameId);
     //如果玩家已准备，则返回已准备
@@ -96,27 +98,27 @@ exp.ready = function(data, cb)
     game.ready(data, cb);
 }
 
-exp.talk = function(data, cb)
+gameService.talk = function(data, cb)
 {
     var game = this.getGameById(data.gameId);
 
     game.talk(data, cb);
 }
 
-exp.fan = function (data, cb) {
+gameService.fan = function (data, cb) {
     var game = this.getGameById(data.gameId);
     game.fan(data, cb);
 }
 
-exp.trusteeship = function (data, cb) {
+gameService.trusteeship = function (data, cb) {
     this.getGameById(data.gameId).trusteeship(data, cb)
 }
 
-exp.cancelTrusteeship = function (data, cb) {
+gameService.cancelTrusteeship = function (data, cb) {
     this.getGameById(data.gameId).cancelTrusteeship(data, cb)
 }
 
-exp.kick = function()
+gameService.kick = function()
 {
 
 }
@@ -125,7 +127,7 @@ exp.kick = function()
  * 通过游戏ID获得当前游戏状态明细信息
  * @param data {uid: xx, gameId: xx}
  */
-exp.getGameStatusDetailsById = function(data, cb)
+gameService.getGameStatusDetailsById = function(data, cb)
 {
     var game = this.getGameById(data.gameId)
     // 当前游戏信息结构
@@ -166,7 +168,7 @@ exp.getGameStatusDetailsById = function(data, cb)
 }
 
 
-exp.getGameById = function(gameId)
+gameService.getGameById = function(gameId)
 {
     return _.findWhere(gGameList, {gameId: gameId});
 }

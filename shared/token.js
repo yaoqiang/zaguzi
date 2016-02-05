@@ -5,12 +5,13 @@ var crypto = require('crypto');
  *
  * @param  {String} uid user id
  * @param  {String|Number} timestamp
- * @param  {String} pwd encrypt password
+ * @param  {String} password 
+ * @param  {String} salt
  * @return {String}     token string
  */
-module.exports.create = function(uid, timestamp, pwd) {
-    var msg = uid + '|' + timestamp;
-    var cipher = crypto.createCipher('aes256', pwd);
+module.exports.create = function(uid, timestamp, password, salt) {
+    var msg = uid + '|' + timestamp + '|' + password;
+    var cipher = crypto.createCipher('aes256', salt);
     var enc = cipher.update(msg, 'utf8', 'hex');
     enc += cipher.final('hex');
     return enc;
@@ -20,11 +21,11 @@ module.exports.create = function(uid, timestamp, pwd) {
  * Parse token to validate it and get the uid and timestamp.
  *
  * @param  {String} token token string
- * @param  {String} pwd   decrypt password
- * @return {Object}  uid and timestamp that exported from token. null for illegal token.
+ * @param  {String} salt   decrypt password
+ * @return {Object}  {uid: xx, timestamp: xx, password: xx}
  */
-module.exports.parse = function(token, pwd) {
-    var decipher = crypto.createDecipher('aes256', pwd);
+module.exports.parse = function(token, salt) {
+    var decipher = crypto.createDecipher('aes256', salt);
     var dec;
     try {
         dec = decipher.update(token, 'hex', 'utf8');
@@ -34,9 +35,9 @@ module.exports.parse = function(token, pwd) {
         return null;
     }
     var ts = dec.split('|');
-    if(ts.length !== 2) {
+    if(ts.length !== 3) {
         // illegal token
         return null;
     }
-    return {uid: ts[0], timestamp: Number(ts[1])};
+    return {uid: ts[0], timestamp: Number(ts[1]), password: ts[2]};
 };

@@ -17,8 +17,14 @@ module.exports = function (app) {
         console.log('-- req --', req);
         var result = req.query;
         
+        //如果回调信息不标识失败, 则不处理
+        if (result.state == 0 || result.state == 1) {
+            res.sendStatus(200);
+            return;
+        }
+        //如果充值失败, 发RPC处理;
         app.rpc.manager.universalRemote.mobileRechargeHandler(null, result, function() {
-            console.log('..ok');
+            logger.debug('处理充值失败rpc invoke finished.');
         });
         
         res.sendStatus(200);

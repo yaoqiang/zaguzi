@@ -23,11 +23,11 @@ var userDao = module.exports;
  * @param {String} passwd
  * @param {function} cb
  */
-userDao.getUserInfo = function(username, passwd, cb) {
+userDao.getUserInfo = function (username, passwd, cb) {
 
     db.user.findOne({
         username: username
-    }, function(err, user) {
+    }, function (err, user) {
         if (err !== null) {
             utils.invokeCallback(cb, err, null);
         } else {
@@ -50,10 +50,10 @@ userDao.getUserInfo = function(username, passwd, cb) {
  * @param {Number} uid User Id.
  * @param {function} cb Callback function.
  */
-userDao.getPlayerByUid = function(uid, cb) {
+userDao.getPlayerByUid = function (uid, cb) {
     db.player.findOne({
         uid: mongojs.ObjectId(uid)
-    }, function(err, doc) {
+    }, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err.message, null);
             return;
@@ -96,10 +96,10 @@ userDao.getPlayerByUid = function(uid, cb) {
  * @param {String} uid UserId
  * @param {function} cb Callback function
  */
-userDao.getUserById = function(uid, cb) {
+userDao.getUserById = function (uid, cb) {
     db.user.findOne({
         _id: mongojs.ObjectId(uid)
-    }, function(err, doc) {
+    }, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err.message, null);
             return;
@@ -120,7 +120,7 @@ userDao.getUserById = function(uid, cb) {
  * @param {String} uid User id.
  * @param {function} cb Callback function
  */
-userDao.createPlayer = function(uid, cb) {
+userDao.createPlayer = function (uid, cb) {
 
     var nickName = globals.defaultNickname[Math.floor(Math.random() * globals.defaultNickname.length)];
     var avatar = Math.floor(Math.random() * globals.defaultAvatar.length);
@@ -152,7 +152,7 @@ userDao.createPlayer = function(uid, cb) {
         createdAt: new Date()
     };
 
-    db.player.save(player, function(err, doc) {
+    db.player.save(player, function (err, doc) {
         if (err || _.isNull(doc)) {
             logger.error('create player failed! ' + err.message);
             logger.error(err);
@@ -165,22 +165,31 @@ userDao.createPlayer = function(uid, cb) {
 };
 
 
-/**
- * Update a player
- * @param {Object} player The player need to update, all the properties will be update.
- * @param {function} cb Callback function.
- */
-userDao.updatePlayer = function(player, cb) {
 
-};
+/**
+ * 更新玩家元宝数
+ * data: {uid: xx, fragment: xx}
+ */
+userDao.updatePlayerFragment = function (data, cb) {
+    db.player.findAndModify({
+        query: { uid: mongojs.ObjectId(data.uid) },
+        update: { $inc: { fragment: -data.fragment } }
+    }, function (err, doc, lastErrorObject) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        } else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
 
 /**
  * 根据mobile查询用户是否存在，true: 存在，false: 不存在
  */
-userDao.findByMobile = function(mobile, cb) {
+userDao.findByMobile = function (mobile, cb) {
     db.user.findOne({
         mobile: mobile
-    }, function(err, doc) {
+    }, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err.message, null);
             return;

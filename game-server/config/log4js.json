@@ -123,14 +123,47 @@
       }
     ,"backups": 5,
       "category":"user"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/game-all.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"game-all"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/open-api.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"open-api"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/payment.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      }
+    ,"backups": 5,
+      "category":"payment"
     }
+    
   ],
 
   "levels": {
     "rpc-log" : "ERROR",
     "forward-log": "ERROR",
     "pomelo": "DEBUG",
-    "game": "DEBUG"
+    "game-all": "DEBUG",
+    "payment": "DEBUG",
+    "open-api": "DEBUG"
   },
 
   "replaceConsole": true

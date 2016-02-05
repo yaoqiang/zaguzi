@@ -1,14 +1,14 @@
 var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger(__filename);
 
-var exp = module.exports;
+var messageService = module.exports;
 
-exp.pushMessageByUids = function (uids, route, msg) {
+messageService.pushMessageByUids = function (uids, route, msg) {
     pomelo.app.get('channelService').pushMessageByUids(route, msg, uids, errHandler);
 };
 
-exp.pushMessageToPlayer = function (uid, route, msg) {
-    exp.pushMessageByUids([uid], route, msg);
+messageService.pushMessageToPlayer = function (uid, route, msg) {
+    messageService.pushMessageByUids([uid], route, msg);
 };
 
 

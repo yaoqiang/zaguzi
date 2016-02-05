@@ -3,9 +3,9 @@ var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
 var open = require('../consts/open');
-var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
 var Code = require('../../../shared/code');
-var utils = require('../util/utils');
+
+var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
 var userDao = require('../dao/userDao');
 var commonDao = require('../dao/commonDao');
 
@@ -19,12 +19,19 @@ var crypto = require('crypto');
 
 var md5 = crypto.createHash('md5');
 
-var exp = module.exports
+var utils = require('../util/utils');
+
+
+var openService = module.exports
+
+//////////////////////////////////////
+// 第三方调用接口
+//////////////////////////////////////
 
 /**
  * 聚合API发送短信
  */
-exp.sendSMS = function (data, cb) {
+openService.sendSMS = function (data, cb) {
     //mobile=手机号码&tpl_id=短信模板ID&tpl_value=%23code%23%3D654654&key=
     if (_.isElement(data.mobile)) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_BLANK});
@@ -69,9 +76,9 @@ exp.sendSMS = function (data, cb) {
                     return;
                 }
 
-                var body = JSON.parse(body);
+                var bodyJson = JSON.parse(body);
 
-                if (body.error_code != 0) {
+                if (bodyJson.error_code != 0) {
                     logger.error('------- send SMS ERR ----------2');
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
                     return;
@@ -86,7 +93,7 @@ exp.sendSMS = function (data, cb) {
 
 }
 
-exp.mobileRecharge = function (data, cb) {
+openService.mobileRecharge = function (data, cb) {
 
     var options = {
         method: open.APIX.MOBILE_RECHARGE.METHOD,

@@ -221,6 +221,12 @@ module.exports = {
 
     },
 
+    CHAT_SCOPE: {
+      ALL: 'ALL',
+      PRIVATE: 'PRIVATE',
+      GAME: 'GAME'  
+    },
+
     UI_COMMAND: {
         ALERT: 'onAlert',
         PROMPT: 'onPrompt',

@@ -4,6 +4,8 @@ var sync = require('pomelo-sync-plugin');
 var logger = require('pomelo-logger');
 var log4jsConf = require('./config/log4js.json')
 
+var ChatService = require('./app/services/chatService');
+
 var onlineUserAnalysis = require ('./app/components/onlineUserAnalysis');
 
 
@@ -73,7 +75,22 @@ app.configure('production|development', function() {
   //    app: app
   //  });
   //}
+  
+  // proxy configures
+	app.set('proxyConfig', {
+		cacheMsg: true,
+		interval: 30,
+		lazyConnection: true
+		// enableRpcLog: true
+	});
 
+	// remote configures
+	app.set('remoteConfig', {
+		cacheMsg: true,
+		interval: 30
+	});
+
+  // ??
   app.userCache = [];
 
   // filter configures
@@ -126,6 +143,11 @@ app.configure ('production|development', 'manager', function() {
   require('./app/http/httpServer')(app, {});
 
 });
+
+// Configure for chat server
+// app.configure('production|development', 'chat', function() {
+// 	app.set('chatService', new ChatService(app));
+// });
 
 // start app
 app.start();

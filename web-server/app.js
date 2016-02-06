@@ -44,10 +44,10 @@ app.all('*', function (req, res, next) {
 
 
 app.post('/autoLogin', function (req, res) {
-    var password = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {
         username: '',
-        password: passwordHash.generate(password),
+        password: passwordHash.generate(password.toString()),
         loginCount: 1,
         lastLoginAt: new Date(),
         createdAt: new Date()
@@ -63,13 +63,13 @@ app.post('/autoLogin', function (req, res) {
                     username: doc._id
                 }
             },
-            function (err, doc) {
+            function (err, updateResult) {
                 if (err) {
                     res.send({ code: 500, err: '' })
                 }
                 res.send({
                     code: 200,
-                    token: Token.create(doc._id, Date.now(), password, secret),
+                    token: Token.create(doc._id, Date.now(), password.toString(), secret),
                     uid: doc._id
                 });
             }
@@ -97,8 +97,7 @@ app.post('/loginByToken', function (req, res) {
         return;
     }
 
-    var uid = result[0], password = result[1];
-
+    var uid = result.uid, password = result.password;
 
     db.user.findOne({
         _id: mongojs.ObjectId(uid)
@@ -134,7 +133,7 @@ app.post('/loginByToken', function (req, res) {
                 }
             },
             function () {
-                logger.debug(result[0] + ' 登录成功!');
+                logger.debug(uid + ' 登录成功!');
                 res.jsonp({
                     code: 200,
                     token: Token.create(user._id, Date.now(), password, secret),

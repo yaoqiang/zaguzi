@@ -111,7 +111,7 @@ app.post('/loginByToken', function (req, res) {
         }
 
         //密码validate
-        if (!passwordHash.verify(password, user.password)) {
+        if (!passwordHash.verify(password.toString(), user.password.toString())) {
             // password is wrong
             logger.warn('用户密码错误! uid: ' + uid);
             res.jsonp({

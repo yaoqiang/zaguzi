@@ -136,7 +136,7 @@ app.post('/loginByToken', function (req, res) {
                 logger.debug(uid + ' 登录成功!');
                 res.jsonp({
                     code: 200,
-                    token: Token.create(user._id, Date.now(), password, secret),
+                    token: Token.create(user._id, Date.now(), password.toString(), secret),
                     uid: user._id
                 });
             });

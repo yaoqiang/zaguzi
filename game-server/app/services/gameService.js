@@ -7,7 +7,7 @@ var pomelo = require('pomelo');
 var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 
 var Game = require('../domain/entity/game');
 var gameResponse = require('../domain/response/gameResponse');
@@ -116,6 +116,11 @@ gameService.trusteeship = function (data, cb) {
 
 gameService.cancelTrusteeship = function (data, cb) {
     this.getGameById(data.gameId).cancelTrusteeship(data, cb)
+}
+
+gameService.chat = function (data, cb) {
+    var game = this.getGameById(data.gameId);
+    game.chat(data, cb);
 }
 
 gameService.kick = function()

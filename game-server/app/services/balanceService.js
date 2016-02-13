@@ -5,7 +5,7 @@ var pomelo = require('pomelo');
 var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 
 var async = require('async');
 

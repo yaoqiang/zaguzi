@@ -6,7 +6,7 @@ var consts = require('../consts/consts');
 var globals = require('../../config/data/globals');
 var Code = require('../../../shared/code');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
+var logger = require('log4js').getLogger(consts.LOG.SYSTEM);
 
 require('date-utils');
 

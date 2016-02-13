@@ -7,7 +7,7 @@ var gameUtil = require('../../../util/gameUtil');
 var rooms = require('../../../../config/data/room');
 var messageService = require('../../../services/messageService');
 var consts = require('../../../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 var _ = require('lodash');
 
@@ -187,6 +187,12 @@ function onUserEnter(session, uid, msg, self, player, userData, next) {
     session.set('serverId', msg.serverId);
     session.on('closed', onUserDisconnect.bind(null, self.app, uid));
     session.pushAll();
+    
+    self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName,
+				channelUtil.getGlobalChannelName(), function() {
+                    
+                });
+                
     self.app.rpc.manager.userRemote.onUserEnter(session, {
         uid: uid,
         serverId: msg.serverId,
@@ -259,6 +265,9 @@ var onUserDisconnect = function (app, session, reason) {
     doUserDisconnect(app, session.uid, function () {
 
     });
+    
+    //chat
+    app.rpc.chat.chatRemote.kick(session, session.uid, null);
 
 };
 
@@ -266,6 +275,7 @@ var doUserDisconnect = function (app, uid, cb) {
     app.rpc.manager.userRemote.onUserDisconnect(null, {uid: uid}, function () {
         cb();
     });
+    
 }
 
 var generateSimplePlayerResponse = function (player, userData) {

@@ -1,5 +1,6 @@
 var mongojs = require('mongojs');
-var logger = require('pomelo-logger').getLogger('sync');
+var consts = require('../../consts/consts');
+var logger = require('log4js').getLogger(consts.LOG.SYNC);
 
 module.exports = {
     update: function(dbclient, val, cb) {

@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 var utils = require('../util/utils');
 
 module.exports = function(opts) {

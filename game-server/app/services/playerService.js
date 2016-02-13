@@ -8,7 +8,7 @@ var Code = require('../../../shared/code');
 var globals = require('../../config/data/globals');
 
 //logger
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
+var logger = require('log4js').getLogger(consts.LOG.USER);
 
 //event
 var eventManager = require('../domain/event/eventManager');
@@ -31,7 +31,7 @@ var Promise = require('promise');
 var playerService = module.exports;
 
 /**
- * 获得用户信息
+ * 获得DB中最新用户个人信息
  */
 playerService.getUserInfo = function (uid, cb) {
 

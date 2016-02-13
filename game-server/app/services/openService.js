@@ -5,7 +5,7 @@ var consts = require('../consts/consts');
 var open = require('../consts/open');
 var Code = require('../../../shared/code');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
+var logger = require('log4js').getLogger(consts.LOG.SYSTEM);
 var userDao = require('../dao/userDao');
 var commonDao = require('../dao/commonDao');
 

@@ -51,6 +51,7 @@ exp.generateActorResponse = function (actor) {
         properties: {
             nickName: actor.properties.nickName,
             avatar: actor.properties.avatar,
+            gender: actor.properties.gender,
             gold: actor.properties.gold,
             winNr: actor.properties.winNr,
             loseNr: actor.properties.loseNr,

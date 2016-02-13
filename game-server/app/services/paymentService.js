@@ -7,7 +7,7 @@ var shopConf = require('../../config/data/shop');
 var appConf = require('../../config/app.json');
 var Code = require('../../../shared/code');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.PAYMENT);
+var logger = require('log4js').getLogger(consts.LOG.PAYMENT);
 
 var Promise = require('promise');
 

@@ -1,5 +1,5 @@
 var consts = require('../../../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 var pomelo = require('pomelo');
 
 module.exports = function() {

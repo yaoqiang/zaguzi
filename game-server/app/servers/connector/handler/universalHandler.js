@@ -2,7 +2,7 @@ var Code = require('../../../../../shared/code');
 var async = require('async');
 var utils = require('../../../util/utils');
 var consts = require('../../../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.NORMAL);
+var logger = require('log4js').getLogger(consts.LOG.NORMAL);
 var _ = require('lodash');
 var pomelo = require('pomelo');
 

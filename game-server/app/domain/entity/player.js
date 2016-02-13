@@ -3,7 +3,7 @@
  */
 var util = require('util');
 var consts = require('../../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
+var logger = require('log4js').getLogger(consts.LOG.USER);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
 var messageService = require('../../services/messageService');
@@ -184,7 +184,7 @@ Player.prototype.addItem = function (type, item) {
             value = i.value + item.value;
         }
     }
-    this.items.push({id: i.id, name: i.name, title: i.title, value: value, mode: data.mode});
+    this.items.push({id: i.id, name: i.name, title: i.title, icon: i.icon, value: value, mode: data.mode});
     return true;
 }
 
@@ -207,6 +207,14 @@ Player.prototype.addItems = function (type, items, cb) {
     cb({code: Code.OK});
 }
 
+Player.prototype.getTrumptValue = function() {
+    var trumptValue = _.findWhere(this.items, {id: 2});
+    if (trumptValue) {
+        return trumptValue.value;
+    }
+    return 0;
+}
+
 Player.prototype.exist = function (item) {
     if (_.isNull(this.items) || _.isUndefined(this.items)) {
         return false;
@@ -225,9 +233,6 @@ Player.prototype.exist = function (item) {
     return !_.isUndefined(exist);
 }
 
-Player.prototype.isExpired = function (k, cb) {
-
-}
 
 Player.prototype.consumeItem = function (type, item) {
     //查询玩家是否有该物品

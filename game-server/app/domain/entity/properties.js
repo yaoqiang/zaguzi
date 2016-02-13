@@ -4,7 +4,7 @@
  */
 var util = require('util');
 var consts = require('../../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER, __filename);
+var logger = require('log4js').getLogger(consts.LOG.USER);
 var pomelo = require('pomelo');
 var utils = require('../../util/utils');
 require('date-utils');

@@ -28,6 +28,9 @@
                 "args": " --debug=32313 "
             }
         ],
+        "chat": [
+			{"id": "chat-server-1", "host": "127.0.0.1", "port": 3250}
+		],
         "auth": [
             {"id": "auth-server-1", "host": "127.0.0.1", "port": 3350}
         ],
@@ -66,6 +69,9 @@
                 "args": ""
             }
         ],
+        "chat": [
+			{"id": "chat-server-1", "host": "101.200.128.237", "port": 3250}
+		],
         "auth": [
             {"id": "auth-server-1", "host": "101.200.128.237", "port": 3350}
         ],

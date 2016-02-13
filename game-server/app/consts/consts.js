@@ -7,6 +7,8 @@ module.exports = {
         },
         GOLD_INIT: 5000,
         BINDING_MOBILE_GRANT: 3000,
+        JOIN_MIN_GOLD: 1000,
+        
         ADD_GOLD_TYPE: {
             RECHARGE: 1,
             BATTLE: 2,
@@ -33,7 +35,7 @@ module.exports = {
             TERM: 'term',
             COUNT: 'count'
         },
-        JOIN_MIN_GOLD: 1000,
+        
         KICK_REASON: {
             ANOTHER_LOGIN: 'ANOTHER_LOGIN',
             SERVICE_MAINTENANCE: 'SERVICE_MAINTENANCE',
@@ -88,6 +90,11 @@ module.exports = {
             NOT_GAMING: 7004,
             ERR: 7005
         },
+        CHAT: {
+            NOT_MORE_TRUMPET: 7101,
+            NOT_INT_GAME: 7102,
+            ERR: 7103
+        },
         CHECK_IN: {
             ALREADY_CHECK_IN: 8001,
             ERR: 8002
@@ -124,11 +131,11 @@ module.exports = {
         1001: "您已在游戏中, 无法加入",   //在其他牌桌
         1002: "您的金币不足, 无法加入",
         1003: "您的金币太多了, 请前往高倍区",
-        1004: "系统错误, 请联系管理员",    //参数错误等
+        1004: "加入失败",    //参数错误等
 
         2001: "您没有在牌桌中, 请重新加入",
         2002: "您已准备",
-        2003: "系统错误, 请联系管理员",
+        2003: "准备失败",
 
         3001: "您没有红3, 不能进行亮3操作", //没3 亮3（非法操作）
         3002: "您有红3, 不能叫股子",   //有3 扎股子,
@@ -138,16 +145,16 @@ module.exports = {
         3006: "叫股子时, 附加黑3不在手牌里",
         3007: "亮3时, 附加牌不是3",
         3008: "亮3时, 附加3不在手牌里",    //参数错误等
-        3009: "系统错误, 请联系管理员",    //参数错误等
+        3009: "说话失败",    //参数错误等
 
         4001: "您已成功离开牌桌",
         4002: "游戏中, 无法离开",
-        4003: "系统错误, 请联系管理员",    //参数错误等
+        4003: "离开游戏失败",    //参数错误等
 
         5001: "没有该手牌, 请检查",
         5002: "不能大过上手牌, 请检查",
         5003: "必须出所有5",
-        5004: "系统错误, 请联系管理员",    //参数错误等
+        5004: "出牌失败",    //参数错误等
 
         6001: "系统错误, 请联系管理员",    //参数错误等
 
@@ -155,7 +162,11 @@ module.exports = {
         7002: "您已托管成功",
         7003: "您不在托管状态",
         7004: "游戏还未开始, 无法托管",
-        7005: "系统错误, 请联系管理员",    //参数错误等
+        7005: "托管失败",    //参数错误等
+        
+        7101: "您的喇叭不够",
+        7102: "发送聊天失败, 玩家不在线或不在游戏",
+        7103: "发送失败",
 
         8001: "玩家已签到",
         8002: "签到失败",
@@ -192,6 +203,7 @@ module.exports = {
     EVENT: {
         CHAT: 'onChat',
         BROADCAST: 'onBroadcast',
+        CHAT_PRIVATE: 'onChatPrivate',
         JOIN: 'onJoin',
         READY: 'onReady',
         LEAVE: 'onLeave',
@@ -221,7 +233,12 @@ module.exports = {
       PRIVATE: 'PRIVATE',
       GAME: 'GAME'  
     },
-
+    CHAT_IN_GAME_TYPE: {
+        QUICK: 1,
+        EXPRESSION: 2,
+        CUSTOM: 3
+    },
+    
     UI_COMMAND: {
         ALERT: 'onAlert',
         PROMPT: 'onPrompt',

@@ -1,5 +1,6 @@
 var pomelo = require('pomelo');
-var logger = require('pomelo-logger').getLogger(__filename);
+var consts = require('../consts/consts');
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 
 var messageService = module.exports;
 

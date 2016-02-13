@@ -1,9 +1,11 @@
+var consts = require('../../../consts/consts');
+
 var Code = require('../../../../../shared/code');
 var SCOPE = require('../../../consts/consts').CHAT_SCOPE;
 var channelUtil = require('../../../util/channelUtil');
-var logger = require('pomelo-logger').getLogger(__filename);
+var gameUtil = require('../../../util/gameUtil');
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 var utils = require('../../../util/utils');
-var consts = require('../../../consts/consts');
 var pomelo = require('pomelo');
 
 module.exports = function(app) {
@@ -22,45 +24,98 @@ function setContent(str) {
 }
 
 ChannelHandler.prototype.send = function(msg, session, next) {
-  var scope, content, message, channelName, uid, code;
-  var playerId = session.get('playerId');
-  uid = session.uid;
+  var scope, content, channelName, uid, code;
+  msg.uid = session.uid;
   scope = msg.scope;
-  channelName = getChannelName(msg);
+  channelName = getChannelName();
   utils.myPrint('channelName = ', channelName);
   msg.content = setContent(msg.content);
-  content = {playerId: playerId, uid: uid, content: msg.content, scope: scope, kind: msg.kind || 0, from: msg.from};
-  if (scope !== SCOPE.PRI) {
+  if (scope !== SCOPE.PRIVATE) {
     utils.myPrint('ByChannel ~ msg = ', JSON.stringify(msg));
     utils.myPrint('ByChannel ~ scope = ', scope);
-    utils.myPrint('ByChannel ~ content = ', JSON.stringify(content));
-    utils.myPrint('ByChannel ~ msg.teamId = ', msg.teamId);
-    if (scope === SCOPE.TEAM) {
-      if (msg.teamId > consts.TEAM.AREA_ID_NONE) {
-        var args = {teamId: msg.teamId, content: content};
+    // utils.myPrint('ByChannel ~ content = ', JSON.stringify(content));
+    utils.myPrint('ByChannel ~ msg.gameId = ', msg.gameId);
+    //牌局内聊天
+    if (scope === SCOPE.GAME) {
+        var args = {gameId: msg.gameId, content: content};
         utils.myPrint('ByChannel ~ args = ', JSON.stringify(args));
-        pomelo.app.rpc.manager.teamRemote.chatInTeam(null, args, function(_, res) {
-          code = res.results ? Code.OK : Code.FAIL;
-          next(null, {code: code});
-        });
-      } else {
-        next(null, {code: Code.FAIL});
-      }
-    } else {
-      this.chatService.pushByChannel(channelName, content, function(err, res) {
-        if(err) {
-          logger.error(err.stack);
-          code = Code.FAIL;
-        } else if(res){
-          code = res;
-        } else {
-          code = Code.OK;
-        }
+        
+        // 牌局聊天参数
+        // uid: data.uid,
+        // gameId: data.gameId,
+        // type: data.type,
+        // item: data.item,
+        // content: data.content
+        
+        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, uid, function (user) {
+            if (user == undefined || user == null) {
+                logger.debug('game||chat||发送聊天失败, 玩家已下线||用户&ID: %j', user.uid);
+                next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
+                return;
+            }
+            
+            if (user.gameId == null) {
+                logger.debug('game||chat||发送聊天失败, 玩家不在牌桌中||用户&ID: %j', user.uid);
+                next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
+                return;
+            }
+            
+            //rpc invoke
+            var chatParams = {
+                namespace: 'user',
+                service: 'gameRemote',
+                method: 'chat',
+                args: [msg]
+            };
 
-        next(null, {code: code});
-      });
+            var room = gameUtil.getRoomById(user.roomId);
+
+            pomelo.app.rpcInvoke(room.serverId, chatParams, function (result) {
+                next();
+            });
+        });
+        
+        
+    } 
+    //小喇叭，检查玩家是否有喇叭, 如果没有提示失败, 如果有则发送并扣除喇叭数
+    else {
+        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, uid, function (user) {
+            if (user == undefined || user == null) {
+                logger.debug('game||chat||发送喇叭失败, 玩家已下线||用户&ID: %j', user.uid);
+                next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
+                return;
+            }
+            
+            if (user.player.getTrumptValue() <= 0) {
+                logger.debug('game||chat||发送喇叭失败, 玩家喇叭数不够||用户&ID: %j', user.uid);
+                next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
+                return;
+            }
+            
+            content = {from: user.player.nickName, msg: msg.content};
+            
+            this.chatService.pushByChannel(channelName, content, function(err, res) {
+                if(err) {
+                    logger.error(err.stack);
+                    code = Code.FAIL;
+                } else if(res){
+                    code = res;
+                } else {
+                    code = Code.OK;
+                    //TODO 扣除喇叭数
+                    
+                }
+
+                next(null, {code: code});
+            });
+        });
+        
+        
+      
     }
-  } else {
+  } 
+  // 私人聊天
+  else {
     utils.myPrint('Private ~ scope = ', scope);
     utils.myPrint('Private ~ content = ', JSON.stringify(content));
     this.chatService.pushByPlayerName(msg.toName, content, function(err, res) {
@@ -77,10 +132,6 @@ ChannelHandler.prototype.send = function(msg, session, next) {
   }
 };
 
-var getChannelName = function(msg){
-  var scope = msg.scope;
-  if (scope === SCOPE.AREA) {
-    return channelUtil.getAreaChannelName(msg.areaId);
-  }
+var getChannelName = function(){
   return channelUtil.getGlobalChannelName();
 };

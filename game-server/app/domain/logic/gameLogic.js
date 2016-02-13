@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 
 
 var GameLogic = function (game) {

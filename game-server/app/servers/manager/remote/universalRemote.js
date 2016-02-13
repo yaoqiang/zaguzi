@@ -4,7 +4,7 @@ var Code = require('../../../../../shared/code');
 var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.USER);
+var logger = require('log4js').getLogger(consts.LOG.USER);
 
 var utils = require('../../../util/utils');
 

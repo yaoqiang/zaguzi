@@ -1,5 +1,5 @@
 var consts = require('../consts/consts');
-var logger = require('pomelo-logger').getLogger(consts.LOG.SYSTEM);
+var logger = require('log4js').getLogger(consts.LOG.SYSTEM);
 var pomelo = require('pomelo');
 var _ = require('lodash');
 

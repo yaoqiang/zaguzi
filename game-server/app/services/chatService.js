@@ -73,8 +73,8 @@ ChatService.prototype.kick = function(uid) {
   if(channelNames && record) {
     // remove user from channels
     var channel;
-    for(var name in channelNames) {
-      channel = this.app.get('channelService').getChannel(name);
+    for(var i = 0; i < channelNames.length; i++) {
+      channel = this.app.get('channelService').getChannel(channelNames[i]);
       if(channel) {
         channel.leave(uid, record.sid);
       }
@@ -98,7 +98,7 @@ ChatService.prototype.pushByChannel = function(channelName, msg, cb) {
     return;
   }
 
-  channel.pushMessage(Event.CHAT, msg, cb);
+  channel.pushMessage(Event.BROADCAST, msg, cb);
 };
 
 /**
@@ -118,8 +118,18 @@ ChatService.prototype.pushByPlayerName = function(playerName, msg, cb) {
   this.app.get('channelService').pushMessageByUids(Event.CHAT, msg, [{uid: record.uid, sid: record.sid}], cb);
 };
 
+ChatService.prototype.pushByUid = function(uid, msg, cb) {
+  var record = this.uidMap[uid];
+  if(!record) {
+    cb(null, Code.CHAT.FA_USER_NOT_ONLINE);
+    return;
+  }
+
+  this.app.get('channelService').pushMessageByUids(Event.CHAT_PRIVATE, msg, [{uid: record.uid, sid: record.sid}], cb);
+};
+
 /**
- * Cehck whether the user has already in the channel
+ * check whether the user has already in the channel
  */
 var checkDuplicate = function(service, uid, channelName) {
   return !!service.channelMap[uid] && !!service.channelMap[uid][channelName];

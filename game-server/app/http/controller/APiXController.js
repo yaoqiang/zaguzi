@@ -2,7 +2,7 @@ var express = require('express');
 var qs = require('qs');
 var consts = require('../../consts/consts');
 
-var logger = require('pomelo-logger').getLogger(consts.LOG.OPEN_API);
+var logger = require('log4js').getLogger(consts.LOG.OPEN_API);
 
 var apix = express.Router();
 

@@ -1,0 +1,43 @@
+{
+  "appenders": [
+    {
+      "type": "dateFile",
+      "filename": "./logs/game-all.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "game-all"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/open-api.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "open-api"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/payment.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "payment"
+    },
+    {
+      "type": "console"
+    }
+  ],
+  "levels": {
+    "game-all": "DEBUG",
+    "payment": "DEBUG",
+    "open-api": "DEBUG"
+  },
+  "replaceConsole": true
+}

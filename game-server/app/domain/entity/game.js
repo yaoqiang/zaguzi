@@ -3,7 +3,7 @@ var _ = require('lodash');
 var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
 var Code = require('../../../../shared/code');
-var logger = require('pomelo-logger').getLogger(consts.LOG.GAME);
+var logger = require('log4js').getLogger(consts.LOG.GAME);
 var schedule = require('pomelo-scheduler');
 var GameLogic = require('../logic/gameLogic');
 var CardLogic = require('../logic/cardLogic');
@@ -102,7 +102,7 @@ Game.prototype.ready = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
-        logger.error('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
+        logger.debug('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_INT_GAME});
         return;
     }
@@ -230,7 +230,7 @@ Game.prototype.start = function () {
             self.talkCountdown();
         })
         .catch(function (err) {
-            logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
+            logger.debug('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
         })
         .done();
 
@@ -309,20 +309,20 @@ Game.prototype.talk = function (data, cb) {
     var self = this;
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME});
         return;
     }
 
     if (!_.isArray(data.append) || !!data.append == false) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.PARAMETER_ERR, goal: data.goal, append: data.append})
-        logger.error('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
         return;
     }
 
     if (this.gameLogic.talkNumber == this.maxActor || actor.gameStatus.hasTalk) {
         cb({code: Code.FAIL})
-        logger.error('game-talk||%j||说话失败, 牌局已开始, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 牌局已开始, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
         return;
     }
 
@@ -336,7 +336,7 @@ Game.prototype.talk = function (data, cb) {
             var cards = actor.gameStatus.getHoldingCards();
             if (this.maxActor == consts.GAME.TYPE.FIVE) {
                 if (_.contains(cards, 116) || _.contains(cards, 216)) {
-                    logger.error('game||talk||说话失败, 有3叫股子||用户&ID: %j', data.uid);
+                    logger.debug('game||talk||说话失败, 有3叫股子||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_WITH3, goal: data.goal, append: data.append})
                     return;
                 }
@@ -646,21 +646,21 @@ Game.prototype.fan = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
 
     if (!!actor == false) {
-        logger.error('game||fan||出牌错误，非法玩家||用户&ID: %j', data.uid);
+        logger.debug('game||fan||出牌错误，非法玩家||用户&ID: %j', data.uid);
         cb({code: Code.FAIL});
         return;
     }
 
     var cards = data.cards;
     if (!_.isArray(cards) || !!cards == false || !cards) {
-        logger.error('game||fan||出牌错误，非法出牌||用户&ID: %j', data.uid);
+        logger.debug('game||fan||出牌错误，非法出牌||用户&ID: %j', data.uid);
         cb({code: Code.FAIL});
         return;
     }
 
     //如果当前出牌玩家是上轮Boss，并且没有出牌，则非法
     if (this.gameLogic.currentBoss.actorNr == actor.actorNr && cards.length == 0) {
-        logger.error('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
+        logger.debug('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
         cb({code: Code.FAIL});
         return;
     }
@@ -965,22 +965,22 @@ Game.prototype.over = function () {
 Game.prototype.trusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game-trusteeship||%j||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
     if (this.gameLogic == null) {
-        logger.error('game-trusteeship||%j||托管失败, 游戏未开始||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||托管失败, 游戏未开始||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
-        logger.error('game-trusteeship||%j||托管失败, 游戏未开始或已结束||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||托管失败, 游戏未开始或已结束||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (actor.gameStatus.isTrusteeship) {
-        logger.error('game-trusteeship||%j||玩家已托管||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||玩家已托管||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_TRUSTEESHIP})
         return;
     }
@@ -1011,22 +1011,22 @@ Game.prototype.trusteeship = function (data, cb) {
 Game.prototype.cancelTrusteeship = function (data, cb) {
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game-cancelTrusteeship||%j||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-cancelTrusteeship||%j||取消托管失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME})
         return;
     }
     if (this.gameLogic == null) {
-        logger.error('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (this.gameLogic.currentPhase != consts.GAME.PHASE.FAN) {
-        logger.error('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-trusteeship||%j||托管失败, 玩家还未开始游戏||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_GAMING})
         return;
     }
     if (!actor.gameStatus.isTrusteeship) {
-        logger.error('game||cancelTrusteeship||玩家没有托管||用户&ID: %j', data.uid);
+        logger.debug('game||cancelTrusteeship||玩家没有托管||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ALREADY_CANCELED_TRUSTEESHIP})
         return;
     }
@@ -1058,7 +1058,7 @@ Game.prototype.leave = function (data, cb) {
     }
 
     if (this.gameLogic != null && this.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-        logger.error('game-leave||%j||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-leave||%j||离开游戏失败, 玩家在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.GAMING})
         return;
     }
@@ -1111,6 +1111,33 @@ Game.prototype.scheduleNotReady = function (data) {
     }, {uid: data.uid});
 
     this.jobQueue.push({uid: data.uid, jobId: jobId});
+}
+
+Game.prototype.chat = function (data, cb) {
+    /*
+    switch (data.type) {
+        case consts.CHAT_IN_GAME_TYPE.QUICK: 
+            
+            break;
+        case consts.CHAT_IN_GAME_TYPE.EXPRESSION: 
+            break;
+        case consts.CHAT_IN_GAME_TYPE.CUSTOM: 
+            break;
+        default:
+            break;
+    }
+    */
+    
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+    this.channel.pushMessage(consts.EVENT.CHAT, {
+        uid: data.uid,
+        actorNr: actor.actorNr,
+        type: data.type,
+        item: data.item,
+        content: data.content
+    }, null, null);
+    
+    cb();
 }
 
 Game.prototype.getReceiver = function (actors) {

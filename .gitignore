@@ -19,6 +19,7 @@ game-server/logs
 .idea/tasks.xml
 .idea/dictionaries
 
+.DS_Store
 
 ## File-based project format:
 *.ipr

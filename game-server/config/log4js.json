@@ -1,9 +1,6 @@
 {
   "appenders": [
     {
-      "type": "console"
-    },
-    {
       "type": "file",
       "filename": "${opts:base}/logs/con-log-${opts:serverId}.log",
       "pattern": "connector",
@@ -11,7 +8,7 @@
       "layout": {
         "type": "basic"
       },
-      "backups": 5,
+      "backups": 3,
       "category": "con-log"
     },
     {
@@ -21,7 +18,7 @@
       "layout": {
         "type": "basic"
       },
-      "backups": 5,
+      "backups": 3,
       "category": "rpc-log"
     },
     {
@@ -31,18 +28,18 @@
       "layout": {
         "type": "basic"
       },
-      "backups": 5,
+      "backups": 3,
       "category": "forward-log"
     },
     {
-     "type": "file",
-     "filename": "${opts:base}/logs/rpc-debug-${opts:serverId}.log",
-     "maxLogSize": 1048576,
-     "layout": {
-      "type": "basic"
-     },
-     "backups": 5,
-     "category": "rpc-debug"
+      "type": "file",
+      "filename": "${opts:base}/logs/rpc-debug-${opts:serverId}.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "rpc-debug"
     },
     {
       "type": "file",
@@ -51,121 +48,57 @@
       "layout": {
         "type": "basic"
       },
-      "backups": 5,
-      "category":"crash-log"
+      "backups": 3,
+      "category": "crash-log"
     },
     {
       "type": "file",
       "filename": "${opts:base}/logs/admin.log",
       "maxLogSize": 1048576,
       "layout": {
-          "type": "basic"
-        }
-      ,"backups": 5,
-      "category":"admin-log"
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "admin-log"
     },
     {
       "type": "file",
       "filename": "${opts:base}/logs/pomelo-${opts:serverId}.log",
       "maxLogSize": 1048576,
       "layout": {
-          "type": "basic"
-        }
-      ,"backups": 5,
-      "category":"pomelo"
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "pomelo"
     },
     {
       "type": "file",
       "filename": "${opts:base}/logs/pomelo-admin.log",
       "maxLogSize": 1048576,
       "layout": {
-          "type": "basic"
-        }
-      ,"backups": 5,
-      "category":"pomelo-admin"
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "pomelo-admin"
     },
     {
       "type": "file",
       "filename": "${opts:base}/logs/pomelo-rpc.log",
       "maxLogSize": 1048576,
       "layout": {
-          "type": "basic"
-        }
-      ,"backups": 5,
-      "category":"pomelo-rpc"
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "pomelo-rpc"
     },
     {
-      "type": "file",
-      "filename": "./logs/system.log",
-      "maxLogSize": 1048576,
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"system"
-    },
-    {
-      "type": "file",
-      "filename": "./logs/game.log",
-      "maxLogSize": 1048576,
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"game"
-    },
-    {
-      "type": "file",
-      "filename": "./logs/user.log",
-      "maxLogSize": 1048576,
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"user"
-    },
-    {
-      "type": "dateFile",
-      "filename": "./logs/game-all.log",
-      "pattern": "-yyyy-MM-dd",
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"game-all"
-    },
-    {
-      "type": "dateFile",
-      "filename": "./logs/open-api.log",
-      "pattern": "-yyyy-MM-dd",
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"open-api"
-    },
-    {
-      "type": "dateFile",
-      "filename": "./logs/payment.log",
-      "pattern": "-yyyy-MM-dd",
-      "layout": {
-        "type": "basic"
-      }
-    ,"backups": 5,
-      "category":"payment"
+      "type": "console"
     }
-    
   ],
-
   "levels": {
-    "rpc-log" : "ERROR",
+    "rpc-log": "ERROR",
     "forward-log": "ERROR",
-    "pomelo": "DEBUG",
-    "game-all": "DEBUG",
-    "payment": "DEBUG",
-    "open-api": "DEBUG"
+    "pomelo": "DEBUG"
   },
-
   "replaceConsole": true
-
 }

@@ -4,25 +4,23 @@
             "id": 1001,
             "title": "1元夺金",
             "currency": "RMB",
-            "gold": 2999,
+            "gold": 1388,
             "amount": 1,
             "desc": "1元夺金",
-            "icon": "",
+            "icon": "1",
+            "hot": true,
             "items": []
         },
         {
             "id": 1002,
             "title": "经典套餐",
             "currency": "RMB",
-            "gold": 3999,
+            "gold": 2999,
             "amount": 3,
-            "desc": "经典久久，买就送小喇叭、1天记牌器和7天超级表情包",
-            "icon": "",
+            "desc": "经典久久,买就送小喇叭记牌器",
+            "icon": "1",
+            "hot": true,
             "items": [
-                {
-                    "id": 1,
-                    "count": 7
-                },
                 {
                     "id": 2,
                     "count": 1
@@ -35,29 +33,108 @@
         },
         {
             "id": 1003,
-            "title": "超值金币特惠套餐",
+            "title": "超值金币套餐",
             "currency": "RMB",
-            "gold": 9999,
+            "gold": 8888,
             "amount": 6,
             "desc": "超值金币特惠套餐",
-            "icon": "",
+            "icon": "2",
+            "hot": true,
             "items": []
+        },
+        {
+            "id": 1004,
+            "title": "超值金币包-1",
+            "currency": "RMB",
+            "gold": 18888,
+            "amount": 12,
+            "desc": "超值金币包",
+            "icon": "2",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 1005,
+            "title": "超值金币包-2",
+            "currency": "RMB",
+            "gold": 28888,
+            "amount": 18,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 1006,
+            "title": "超值金币包-3",
+            "currency": "RMB",
+            "gold": 60888,
+            "amount": 36,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 1007,
+            "title": "超值金币包-4",
+            "currency": "RMB",
+            "gold": 118888,
+            "amount": 68,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 1008,
+            "title": "超值大礼包!",
+            "currency": "RMB",
+            "gold": 168888,
+            "amount": 98,
+            "desc": "超值金币 + 小喇叭10个 + 记牌器7天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 1009,
+            "title": "小喇叭专卖!",
+            "currency": "RMB",
+            "gold": 0,
+            "amount": 3,
+            "desc": "超值小喇叭10个",
+            "icon": "3",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                }
+            ]
         }
+
     ],
     "ios": [
         {
-            "id": 2001,
+            "id": 2002,
             "title": "经典套餐",
             "currency": "RMB",
-            "gold": 3999,
+            "gold": 2999,
             "amount": 3,
-            "desc": "经典久久，买就送小喇叭、1天记牌器和7天超级表情包",
-            "icon": "",
+            "desc": "经典久久，买就送小喇叭 + 记牌器",
+            "icon": "1",
+            "hot": true,
             "items": [
-                {
-                    "id": 1,
-                    "count": 7
-                },
                 {
                     "id": 2,
                     "count": 1
@@ -69,14 +146,95 @@
             ]
         },
         {
-            "id": 2002,
-            "title": "超值金币特惠套餐",
+            "id": 2003,
+            "title": "超值金币套餐",
             "currency": "RMB",
-            "gold": 9999,
+            "gold": 8888,
             "amount": 6,
             "desc": "超值金币特惠套餐",
-            "icon": "",
+            "icon": "2",
+            "hot": true,
             "items": []
+        },
+        {
+            "id": 2004,
+            "title": "超值金币包-1",
+            "currency": "RMB",
+            "gold": 18888,
+            "amount": 12,
+            "desc": "超值金币包",
+            "icon": "2",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 2005,
+            "title": "超值金币包-2",
+            "currency": "RMB",
+            "gold": 28888,
+            "amount": 18,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 2006,
+            "title": "超值金币包-3",
+            "currency": "RMB",
+            "gold": 60888,
+            "amount": 36,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 2007,
+            "title": "超值金币包-4",
+            "currency": "RMB",
+            "gold": 118888,
+            "amount": 68,
+            "desc": "超值金币包",
+            "icon": "3",
+            "hot": false,
+            "items": []
+        },
+        {
+            "id": 2008,
+            "title": "超值大礼包!",
+            "currency": "RMB",
+            "gold": 168888,
+            "amount": 98,
+            "desc": "超值金币+小喇叭10个+记牌器7天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 2009,
+            "title": "小喇叭专卖!",
+            "currency": "RMB",
+            "gold": 0,
+            "amount": 3,
+            "desc": "超值小喇叭10个",
+            "icon": "3",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                }
+            ]
         }
     ]
 }

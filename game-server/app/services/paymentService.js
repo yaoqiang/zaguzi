@@ -35,7 +35,7 @@ paymentService.webhooksPingxx = function () {
     //
 }
 
-paymentService.payment = function (uid, productId, state, device, source) {
+paymentService.payment = function (uid, productId, state, device, channel) {
     //
 }
 

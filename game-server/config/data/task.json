@@ -11,7 +11,7 @@
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": 300
+          "grant": 168
         }
       ]
     },
@@ -26,7 +26,7 @@
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": 1000
+          "grant": 500
         }
       ]
     },
@@ -35,9 +35,9 @@
       "tasks": [
         {
           "id": 100301,
-          "name": "在大师对决房间对战10把",
+          "name": "在大师对决房玩5把",
           "desc": "每日参加大师对决，赢更多金币",
-          "target": 10,
+          "target": 5,
           "icon": "",
           "roomId": [
             13,
@@ -45,7 +45,7 @@
             33
           ],
           "type": "battle",
-          "grant": 3000
+          "grant": 588
         }
       ]
     },
@@ -60,7 +60,7 @@
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": 500
+          "grant": 188
         }
       ]
     },
@@ -75,7 +75,7 @@
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": 1500
+          "grant": 688
         }
       ]
     },
@@ -84,7 +84,7 @@
       "tasks": [
         {
           "id": 101201,
-          "name": "在大师对决房间获胜10把",
+          "name": "在大师对决房赢10把",
           "desc": "在大师对决房获胜10局，赢更多金币",
           "target": 10,
           "icon": "",
@@ -94,7 +94,7 @@
             33
           ],
           "type": "win",
-          "grant": 10000
+          "grant": 1688
         }
       ]
     }
@@ -121,7 +121,7 @@
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": 800
+          "grant": 500
         },
         {
           "id": 300103,
@@ -131,7 +131,7 @@
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": 2000
+          "grant": 1500
         },
         {
           "id": 300104,
@@ -177,6 +177,26 @@
           "roomId": [],
           "type": "win",
           "grant": 1888
+        },
+        {
+          "id": 300204,
+          "name": "胜利50把",
+          "desc": "胜利50把，可获得任务奖励",
+          "target": 50,
+          "icon": "",
+          "roomId": [],
+          "type": "win",
+          "grant": 2888
+        },
+        {
+          "id": 300205,
+          "name": "胜利100把",
+          "desc": "胜利100把，可获得任务奖励",
+          "target": 100,
+          "icon": "",
+          "roomId": [],
+          "type": "win",
+          "grant": 3888
         }
       ]
     },
@@ -191,7 +211,7 @@
           "icon": "",
           "roomId": [],
           "type": "meeting",
-          "grant": 800
+          "grant": 600
         },
         {
           "id": 200102,
@@ -206,7 +226,7 @@
         {
           "id": 200103,
           "name": "开会30把",
-          "desc": "开会10把，可获得任务奖励",
+          "desc": "开会30把，可获得任务奖励",
           "target": 30,
           "icon": "",
           "roomId": [],

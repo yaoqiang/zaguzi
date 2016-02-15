@@ -111,8 +111,6 @@ handler.enter = function (msg, session, next) {
                             //isBackGame: true, 为客户端处理页面逻辑需要而提供
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
-                            logger.debug("向游戏服务器查询游戏信息并返回");
-
                             //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
                             if (!!u.sessionId) {
 
@@ -128,6 +126,8 @@ handler.enter = function (msg, session, next) {
                                         pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
                                             sendBackGameEvent(uid, u, room, msg);
                                         });
+                                        self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
+                                        });
                                     });
                                 });
                             }
@@ -141,6 +141,8 @@ handler.enter = function (msg, session, next) {
 
                                 pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
                                     sendBackGameEvent(uid, u, room, msg);
+                                });
+                                self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
                                 });
                             }
 
@@ -185,14 +187,12 @@ handler.enter = function (msg, session, next) {
 function onUserEnter(session, uid, msg, self, player, userData, next) {
     session.bind(uid);
     session.set('serverId', msg.serverId);
-    session.on('closed', onUserDisconnect.bind(null, self.app, uid));
+    session.on('closed', onUserDisconnect.bind(null, self.app));
     session.pushAll();
-    
-    self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName,
-				channelUtil.getGlobalChannelName(), function() {
-                    
-                });
-                
+
+    self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
+    });
+
     self.app.rpc.manager.userRemote.onUserEnter(session, {
         uid: uid,
         serverId: msg.serverId,
@@ -265,7 +265,7 @@ var onUserDisconnect = function (app, session, reason) {
     doUserDisconnect(app, session.uid, function () {
 
     });
-    
+
     //chat
     app.rpc.chat.chatRemote.kick(session, session.uid, null);
 
@@ -275,7 +275,7 @@ var doUserDisconnect = function (app, uid, cb) {
     app.rpc.manager.userRemote.onUserDisconnect(null, {uid: uid}, function () {
         cb();
     });
-    
+
 }
 
 var generateSimplePlayerResponse = function (player, userData) {

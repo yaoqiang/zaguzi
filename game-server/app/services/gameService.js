@@ -88,11 +88,11 @@ gameService.leave = function (data, cb) {
 gameService.ready = function(data, cb)
 {
     //检查金币是否可加入
-    var goldValidator = gameUtil.getJoinAvailable(data.roomId, data.player);
-    if (goldValidator.code == Code.FAIL) {
-        cb(goldValidator);
-        return;
-    }
+    //var goldValidator = gameUtil.getJoinAvailable(data.roomId, data.player);
+    //if (goldValidator.code == Code.FAIL) {
+    //    cb(goldValidator);
+    //    return;
+    //}
     var game = this.getGameById(data.gameId);
     //如果玩家已准备，则返回已准备
     var actor = _.findWhere(game.actors, {uid: data.uid});

@@ -239,9 +239,7 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
-    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, function () {
-        
-    });
+    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
 }
 
 

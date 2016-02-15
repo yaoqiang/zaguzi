@@ -34,9 +34,8 @@ UniversalRemote.prototype = {
     },
 
     //notify
-    getTopOfAppReleaseRecord: function (data, cb) {
+    getTopOfAppReleaseRecord: function (data) {
         commonService.getTopOfAppReleaseRecord(data);
-        cb();
     },
 
 

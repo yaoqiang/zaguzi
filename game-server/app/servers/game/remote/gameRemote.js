@@ -83,6 +83,7 @@ GameRemote.prototype.ready = function (data, cb) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_IN_GAME});
             return;
         }
+        data.player = user.player;
         gameService.ready(data, cb);
     });
 }

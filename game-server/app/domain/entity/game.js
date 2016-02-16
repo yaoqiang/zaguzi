@@ -70,8 +70,6 @@ Game.prototype.join = function (data, cb) {
 
     actor.setProperties(data.player);
 
-    var self = this;
-
     //如果玩家加入牌桌[?]秒内没准备则自动离开
     this.scheduleNotReady({uid: data.uid});
 
@@ -569,6 +567,7 @@ Game.prototype.fanCountdown = function () {
 
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
+        logger.debug('game||fan||玩家[%j]托管出牌, ||用户&ID: %j, actorNr: %j', this.gameLogic.currentFanActor.properties.nickName, this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.actorNr);
         this.fanTimeout(fanTimeoutActor);
         return;
     }
@@ -579,10 +578,9 @@ Game.prototype.fanCountdown = function () {
         lastFanCardRecognization: this.gameLogic.lastFanCardRecognization,
         second: consts.GAME.TIMER.FAN
     }, null, function () {
-
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.debug('game||fan||玩家[%j]秒内未出牌, 出牌超时, ||用户&ID: %j', consts.GAME.TIMER.FAN, jobData.uid);
+            logger.debug('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
@@ -601,13 +599,9 @@ Game.prototype.fanTimeout = function (actor) {
     var act = _.findWhere(this.actors, {uid: actor.uid});
     var cards = [];
 
-    //如果玩家已托管 - 智能出牌(后期完善)
-    if (act.gameStatus.isTrusteeship) {
-
-    }
-
     //出牌超时，如果当前出牌者是本轮Boss，则出第一张，如果不是，则不出
     if (this.gameLogic.currentBoss.actorNr == this.gameLogic.currentFanActor.actorNr) {
+        //如果是第一手牌, 那必须出全部5
         if (this.gameLogic.round == 0) {
             _.each(act.gameStatus.getHoldingCards(), function (c) {
                 if (c % 100 == 5) {
@@ -619,7 +613,9 @@ Game.prototype.fanTimeout = function (actor) {
             cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
         }
     }
-    else {
+
+    //如果玩家已托管 - 智能出牌(后期完善)
+    if (act.gameStatus.isTrusteeship) {
 
     }
 
@@ -627,6 +623,7 @@ Game.prototype.fanTimeout = function (actor) {
     act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
     //如果玩家连续consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES次出牌超时，则托管
     if (act.gameStatus.fanTimeoutTimes == consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES) {
+        logger.debug('game||fanTimeout||玩家[%j]出牌超时次数到达,自动托管, ||用户&ID: %j, actorNr: %j, 超时次数: %j', act.properties.nickName, act.uid, act.actorNr, act.gameStatus.fanTimeoutTimes);
         act.gameStatus.isTrusteeship = true;
         //push 托管消息
         this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
@@ -667,10 +664,13 @@ Game.prototype.fan = function (data, cb) {
 
     var isTimeout = data.isTimeout;
 
+    if (!isTimeout) {
+        actor.gameStatus.fanTimeoutTimes = 0;
+        actor.gameStatus.isTrusteeship = false;
+    }
+
     //玩家不出（传空数组）
     if (cards.length == 0) {
-        if (!isTimeout) actor.gameStatus.fanTimeoutTimes = 0;
-        if (!isTimeout) actor.gameStatus.isTrusteeship = false;
 
         //response
         cb({code: Code.OK, cards: cards, cardRecognization: null});
@@ -758,8 +758,6 @@ Game.prototype.fan = function (data, cb) {
 
             //设置玩家相关属性
             actor.gameStatus.fanCards(cards);
-            if (!isTimeout) actor.gameStatus.fanTimeoutTimes = 0;
-            if (!isTimeout) actor.gameStatus.isTrusteeship = false;
 
             //设置游戏逻辑相关
             this.gameLogic.lastFanActor = actor;
@@ -778,8 +776,6 @@ Game.prototype.fan = function (data, cb) {
                     return j.jobId != job.jobId;
                 });
             }
-
-            var isOver = false;
 
             this.channel.pushMessage(consts.EVENT.FAN, {
                 uid: data.uid,
@@ -867,6 +863,7 @@ Game.prototype.fan = function (data, cb) {
 
                         self.gameLogic.isGiveLogic = true;
                         self.gameLogic.giveLogicFanRound = 0;
+                        //刚跑了的玩家(出完所有手牌), 根据此值获得接风玩家, 并把该变量赋值为接风玩家
                         self.gameLogic.lastFanOverNextCountdownActor = actor;
 
 
@@ -996,6 +993,8 @@ Game.prototype.trusteeship = function (data, cb) {
         return;
     }
 
+    logger.debug('game-trusteeship||%j||玩家[%j]主动请求托管, ||actorNr: %j', actor.uid, actor.properties.nickName, actor.actorNr);
+
     //设置玩家超时出牌N次, 为超时出牌逻辑代码通用
     actor.gameStatus.fanTimeoutTimes = consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES - 1;
     this.fanTimeout(actor);
@@ -1052,7 +1051,7 @@ Game.prototype.leave = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game-leave||%j||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-leave||%j||离开游戏失败, 玩家不在牌桌中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME})
         return;
     }

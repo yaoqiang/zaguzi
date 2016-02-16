@@ -27,7 +27,7 @@ app.configure('production|development', 'connector', function () {
         //      'heartbeat timeout': 30
         //  },
         heartbeat: 30,
-        disconnectOnTimeout: true,
+        //disconnectOnTimeout: true,
         useDict: true,
         useProtobuf: true,
         handshake: function (msg, cb) {

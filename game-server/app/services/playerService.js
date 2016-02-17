@@ -9,6 +9,7 @@ var globals = require('../../config/data/globals');
 
 //logger
 var logger = require('log4js').getLogger(consts.LOG.USER);
+var loggerGameRecord = require('log4js').getLogger(consts.LOG.GAME_RECORD);
 
 //event
 var eventManager = require('../domain/event/eventManager');
@@ -312,11 +313,12 @@ playerService.balance = function (data, cb) {
         .then(cb(result))
         .done();
 
-    var gameRecord = new GameRecord(data.gameRecord);
-
-    eventManager.addGameRecordEvent(gameRecord);
-
-    gameRecord.save();
+    // 日志存储游戏记录
+    loggerGameRecord.info('game-record||%j', data.gameRecord);
+    // NOTE: 弃用
+    // var gameRecord = new GameRecord(data.gameRecord);
+    // eventManager.addGameRecordEvent(gameRecord);
+    // gameRecord.save();
 }
 
 playerService.getDailyTodoInfo = function (data, cb) {

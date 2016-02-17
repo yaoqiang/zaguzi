@@ -336,6 +336,7 @@ module.exports = {
     LOG: {
         SYSTEM: 'game-all',
         GAME: 'game-all',
+        GAME_RECORD: 'game-record',
         USER: 'game-all',
         BALANCE: 'game-all',
         SYNC: 'game-all',

@@ -12,6 +12,16 @@
     },
     {
       "type": "dateFile",
+      "filename": "./logs/game-record.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "game-record"
+    },
+    {
+      "type": "dateFile",
       "filename": "./logs/open-api.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
@@ -35,7 +45,8 @@
     }
   ],
   "levels": {
-    "game-all": "DEBUG",
+    "game-all": "INFO",
+    "game-record": "INFO",
     "payment": "DEBUG",
     "open-api": "DEBUG"
   },

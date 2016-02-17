@@ -12,6 +12,10 @@ var GameRecord = function (opts) {
     this.createdAt = new Date();
 }
 
+
+util.inherits(GameRecord, Entity);
+
+
 /////////////////
 //emit..
 /////////////////
@@ -19,6 +23,5 @@ GameRecord.prototype.save = function () {
     this.emit('save');
 }
 
-util.inherits(GameRecord, Entity);
 
 module.exports = GameRecord;

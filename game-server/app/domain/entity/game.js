@@ -100,7 +100,7 @@ Game.prototype.ready = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
-        logger.debug('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
+        logger.error('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_INT_GAME});
         return;
     }
@@ -228,7 +228,7 @@ Game.prototype.start = function () {
             self.talkCountdown();
         })
         .catch(function (err) {
-            logger.debug('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
+            logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
         })
         .done();
 
@@ -260,7 +260,6 @@ Game.prototype.talkCountdown = function () {
 
             self.jobQueue.push({uid: self.gameLogic.currentTalker.uid, jobId: jobId});
 
-            self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
 
         });
 }
@@ -307,20 +306,26 @@ Game.prototype.talk = function (data, cb) {
     var self = this;
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.debug('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
+        logger.error('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME});
         return;
     }
 
     if (!_.isArray(data.append) || !!data.append == false) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.PARAMETER_ERR, goal: data.goal, append: data.append})
-        logger.debug('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
+        logger.error('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
+        return;
+    }
+    
+    if (this.gameLogic.currentTalker.uid != data.uid) {
+        cb({code: Code.FAIL})
+        logger.error('game-talk||%j - %j - %j - %j||说话失败, 不轮到当前玩家说话||用户&ID: %j', this.gameLogic.currentTalker.uid, data.goal, data.append, data.uid, data.uid);
         return;
     }
 
     if (this.gameLogic.talkNumber == this.maxActor || actor.gameStatus.hasTalk) {
         cb({code: Code.FAIL})
-        logger.debug('game-talk||%j||说话失败, 牌局已开始, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
+        logger.error('game-talk||%j||说话失败, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
         return;
     }
 
@@ -510,6 +515,9 @@ Game.prototype.talk = function (data, cb) {
             self.afterTalk();
         }
         else {
+            
+            self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
+            
             self.talkCountdown();
         }
     })
@@ -580,7 +588,7 @@ Game.prototype.fanCountdown = function () {
     }, null, function () {
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.debug('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
+            logger.info('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
@@ -623,7 +631,7 @@ Game.prototype.fanTimeout = function (actor) {
     act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
     //如果玩家连续consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES次出牌超时，则托管
     if (act.gameStatus.fanTimeoutTimes == consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES) {
-        logger.debug('game||fanTimeout||玩家[%j]出牌超时次数到达,自动托管, ||用户&ID: %j, actorNr: %j, 超时次数: %j', act.properties.nickName, act.uid, act.actorNr, act.gameStatus.fanTimeoutTimes);
+        logger.info('game||fanTimeout||玩家[%j]出牌超时次数到达,自动托管, ||用户&ID: %j, actorNr: %j, 超时次数: %j', act.properties.nickName, act.uid, act.actorNr, act.gameStatus.fanTimeoutTimes);
         act.gameStatus.isTrusteeship = true;
         //push 托管消息
         this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
@@ -939,7 +947,7 @@ Game.prototype.over = function () {
 
     var self = this;
     balanceService.balance(this, function (data) {
-        logger.debug('向客户端发送游戏结束消息');
+        logger.debug('游戏结束||%j||向客户端发送游戏结束消息', self.gameId);
         self.channel.pushMessage(consts.EVENT.OVER, {
             game: {result: self.gameLogic.result, share: self.gameLogic.share},
             details: data.details
@@ -993,7 +1001,7 @@ Game.prototype.trusteeship = function (data, cb) {
         return;
     }
 
-    logger.debug('game-trusteeship||%j||玩家[%j]主动请求托管, ||actorNr: %j', actor.uid, actor.properties.nickName, actor.actorNr);
+    logger.info('game-trusteeship||%j||玩家[%j]主动请求托管, ||actorNr: %j', actor.uid, actor.properties.nickName, actor.actorNr);
 
     //设置玩家超时出牌N次, 为超时出牌逻辑代码通用
     actor.gameStatus.fanTimeoutTimes = consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES - 1;

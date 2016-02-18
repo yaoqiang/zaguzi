@@ -12,40 +12,16 @@ var OnlineUserAnalysis = function (app, opts) {
     this.interval = opts.interval | DEFAULT_INTERVAL;
     this.timerId = null;
 
-    //init online user;
-    this.initOnlineState = {
-        total: 0,
-        lobby: [
-            {id: 0, online: 0},
-            {id: 1, online: 0},
-            {id: 2, online: 0}
-        ],
-        room: [
-            {id: 11, online: 0},
-            {id: 12, online: 0},
-            {id: 13, online: 0},
-            {id: 14, online: 0},
-            {id: 21, online: 0},
-            {id: 22, online: 0},
-            {id: 23, online: 0},
-            {id: 24, online: 0},
-            {id: 31, online: 0},
-            {id: 32, online: 0},
-            {id: 33, online: 0},
-            {id: 34, online: 0}
-        ]
-    }
-
 };
 
 OnlineUserAnalysis.name = '__OnlineUserAnalysis__';
 
 OnlineUserAnalysis.prototype.start = function (cb) {
     var self = this;
-    self.app.onlineUserResultCache = this.initOnlineState;
+    self.app.onlineUserResultCache = initOnlineState();
     this.timerId = setInterval(function () {
         //获取在线人数情况并将结果缓存在manager server;
-        var result = self.getOnlineUserList();
+        var result = getOnlineUserList(self.app.userCache);
         self.app.onlineUserResultCache = result;
         self.save(result);
 
@@ -66,91 +42,97 @@ OnlineUserAnalysis.prototype.stop = function (force, cb) {
 /////////////////
 // 获取在线人数
 /////////////////
-OnlineUserAnalysis.prototype.getOnlineUserList = function () {
-    var self = this;
-    var userList = this.app.userCache;
+var getOnlineUserList = function (userList) {
 
     if (userList == null || userList === undefined) {
-        return this.initOnlineState;
+        return initOnlineState();
     }
 
-    var result = _.reduce(userList, function (result, value) {
+    var result = initOnlineState();
+    result.total = userList.length;
 
-        return {
-            total: result.total + 1,
-            lobby: [
-                {
-                    id: result.lobby[0].id,
-                    online: value.roomId > 0 && value.roomId < 20 ? result.lobby[0].online + 1 : result.lobby[0].online
-                },
-                {
-                    id: result.lobby[1].id,
-                    online: value.roomId > 20 && value.roomId < 30 ? result.lobby[1].online + 1 : result.lobby[1].online
-                },
-                {
-                    id: result.lobby[2].id,
-                    online: value.roomId > 30 && value.roomId < 40 ? result.lobby[2].online + 1 : result.lobby[2].online
-                }
-            ],
-            room: [
-                {
-                    id: result.room[0].id,
-                    online: value.roomId == result.room[0].id ? result.room[0].online + 1 : result.room[0].online
-                },
-                {
-                    id: result.room[1].id,
-                    online: value.roomId == result.room[1].id ? result.room[1].online + 1 : result.room[1].online
-                },
-                {
-                    id: result.room[2].id,
-                    online: value.roomId == result.room[2].id ? result.room[2].online + 1 : result.room[2].online
-                },
-                {
-                    id: result.room[3].id,
-                    online: value.roomId == result.room[3].id ? result.room[3].online + 1 : result.room[3].online
-                },
-                {
-                    id: result.room[4].id,
-                    online: value.roomId == result.room[4].id ? result.room[4].online + 1 : result.room[4].online
-                },
-                {
-                    id: result.room[5].id,
-                    online: value.roomId == result.room[5].id ? result.room[5].online + 1 : result.room[5].online
-                },
-                {
-                    id: result.room[6].id,
-                    online: value.roomId == result.room[6].id ? result.room[6].online + 1 : result.room[6].online
-                },
-                {
-                    id: result.room[7].id,
-                    online: value.roomId == result.room[7].id ? result.room[7].online + 1 : result.room[7].online
-                },
-                {
-                    id: result.room[8].id,
-                    online: value.roomId == result.room[8].id ? result.room[8].online + 1 : result.room[8].online
-                },
-                {
-                    id: result.room[9].id,
-                    online: value.roomId == result.room[9].id ? result.room[9].online + 1 : result.room[9].online
-                },
-                {
-                    id: result.room[10].id,
-                    online: value.roomId == result.room[10].id ? result.room[10].online + 1 : result.room[10].online
-                },
-                {
-                    id: result.room[11].id,
-                    online: value.roomId == result.room[11].id ? result.room[11].online + 1 : result.room[11].online
-                }
-            ],
-
+    _.each(userList, function (user) {
+        //lobby count
+        if (user.roomId > 0 && user.roomId < 20) {
+            result.lobby[0].online += 1;
         }
-    }, self.initOnlineState);
-
+        else if (user.roomId > 20 && user.roomId < 30) {
+            result.lobby[1].online += 1;
+        }
+        else if (user.roomId > 30 && user.roomId < 40) {
+            result.lobby[2].online += 1;
+        }
+        //room count
+        switch (user.roomId) {
+            case 11:
+                result.room[0].online += 1;
+                break;
+            case 12:
+                result.room[1].online += 1;
+                break;
+            case 13:
+                result.room[2].online += 1;
+                break;
+            case 14:
+                result.room[3].online += 1;
+                break;
+            case 21:
+                result.room[4].online += 1;
+                break;
+            case 22:
+                result.room[5].online += 1;
+                break;
+            case 23:
+                result.room[6].online += 1;
+                break;
+            case 24:
+                result.room[7].online += 1;
+                break;
+            case 31:
+                result.room[8].online += 1;
+                break;
+            case 32:
+                result.room[9].online += 1;
+                break;
+            case 33:
+                result.room[10].online += 1;
+                break;
+            case 34:
+                result.room[11].online += 1;
+                break;
+        }
+    });
     return result;
+}
 
+//init online user;
+var initOnlineState = function () {
+    return {
+        total: 0,
+        lobby: [
+            { id: 0, online: 0 },
+            { id: 1, online: 0 },
+            { id: 2, online: 0 }
+        ],
+        room: [
+            { id: 11, online: 0 },
+            { id: 12, online: 0 },
+            { id: 13, online: 0 },
+            { id: 14, online: 0 },
+            { id: 21, online: 0 },
+            { id: 22, online: 0 },
+            { id: 23, online: 0 },
+            { id: 24, online: 0 },
+            { id: 31, online: 0 },
+            { id: 32, online: 0 },
+            { id: 33, online: 0 },
+            { id: 34, online: 0 }
+        ]
+    }
 }
 
 OnlineUserAnalysis.prototype.save = function (result) {
-    this.app.get('dbclient').onlineUserAnalysis.save(_.assign(result, {createdAt: new Date()}), function (err, doc) {
+    var bson = _.assign(_.omit(result, '_id'), { createdAt: new Date() });
+    this.app.get('dbclient').onlineUserAnalysis.save(bson, function (err, doc) {
     })
 }

@@ -120,9 +120,9 @@ GameLogic.prototype.randomFirstActor = function () {
 
 GameLogic.prototype.getHeartAActor = function () {
     var heartA = [214]; //红桃A
-    for (var a in this.game.actors) {
-        if (this.game.actors[a].gameStatus.hasCards(heartA)) {
-            return this.game.actors[a];
+    for (var i = 0; i < this.game.actors.length; i++) {
+        if (this.game.actors[i].gameStatus.hasCards(heartA)) {
+            return this.game.actors[i];
         }
     }
 
@@ -130,9 +130,9 @@ GameLogic.prototype.getHeartAActor = function () {
 
 GameLogic.prototype.getHeart5Actor = function () {
     var heart5 = [205]; //红桃5
-    for (var a in this.game.actors) {
-        if (this.game.actors[a].gameStatus.hasCards(heart5)) {
-            return this.game.actors[a];
+    for (var i = 0; i < this.game.actors.length; i++) {
+        if (this.game.actors[i].gameStatus.hasCards(heart5)) {
+            return this.game.actors[i];
         }
     }
 }

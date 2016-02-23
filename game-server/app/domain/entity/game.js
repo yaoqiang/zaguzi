@@ -119,11 +119,12 @@ Game.prototype.ready = function (data, cb) {
     if (this.isFull) {
         var exceptedAllReady = true;
 
-        for (var act in this.actors) {
-            if (!this.actors[act].isReady) {
+        _.each(this.actors, function(act) {
+            if (!act.isReady) {
                 exceptedAllReady = false;
             }
-        }
+        });
+            
 
         this.isAllReady = exceptedAllReady;
 
@@ -144,24 +145,24 @@ Game.prototype.ready = function (data, cb) {
 }
 
 Game.prototype.start = function () {
+    var self = this;
     //标识当前游戏局与上把局玩家是否变化
     var isActorsChanged = false;
-    for (var i in this.actors) {
-        if (_.isUndefined(_.findWhere(this.actorsWithLastGame, {
-                uid: this.actors[i].uid,
-                actorNr: this.actors[i].actorNr
+    _.each(this.actors, function (act) {
+        if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
+                uid: act.uid,
+                actorNr: act.actorNr
             }))) {
             isActorsChanged = true;
         }
-    }
+        
+        //重置玩家牌局状态
+        act.gameStatus.reset()
+        
+    });
     //如果有变化，清空上把大油
     if (isActorsChanged) {
         this.bigActorWithLastGame = null;
-    }
-
-    //重置玩家牌局状态
-    for (var i in this.actors) {
-        this.actors[i].gameStatus.reset()
     }
 
     //释放上局gameLogic
@@ -280,10 +281,10 @@ Game.prototype.talkTimeout = function (actor) {
 }
 
 /**
- * 所有玩家都说话超时，则强制解散牌局。（防止全部掉线形成僵尸房）
+ * 重开次数达到上限，则强制解散牌局。
  */
 Game.prototype.dissolve = function () {
-    logger.debug('game||dissolve||牌局里所有玩家都说话超时,强制解散牌局 ||游戏&ID: %j', this.gameId);
+    logger.debug('game||dissolve||牌局里重开次数达到上限,强制解散牌局 ||游戏&ID: %j', this.gameId);
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
     var self = this;
     _.map(this.actors, function (actor) {
@@ -345,7 +346,7 @@ Game.prototype.talk = function (data, cb) {
                 }
                 //如果亮巴3
                 if (data.append && !!data.append && _.size(data.append) > 0) {
-                    for (var i in data.append) {
+                    for (var i = 0; i < data.append.length; i++) {
                         if (!_.contains([316, 416], data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
@@ -366,7 +367,7 @@ Game.prototype.talk = function (data, cb) {
 
                 //如果亮巴3
                 if (data.append && !!data.append && _.size(data.append) > 0) {
-                    for (var i in data.append) {
+                    for (var i = 0; i < data.append.length; i++) {
                         if (!_.contains([416], data.append[i])) {
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.GUZI_APPEND_NOT_3, goal: data.goal, append: data.append})
                             return;
@@ -408,7 +409,7 @@ Game.prototype.talk = function (data, cb) {
                         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                         return;
                     }
-                    for (var i in data.append) {
+                    for (var i = 0; i < data.append.length; i++) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
                             logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
@@ -444,7 +445,7 @@ Game.prototype.talk = function (data, cb) {
                         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
                         return;
                     }
-                    for (var i in data.append) {
+                    for (var i = 0; i < data.append.length; i++) {
                         if (!_.contains([116, 216, 316, 416], data.append[i])) {
                             logger.debug('game||talk||玩家[%j]亮3附加其他牌，非法操作 ||用户&ID: %j', data.uid, data.uid);
                             cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.LIANG3_APPEND_NOT_3, goal: data.goal, append: data.append})
@@ -505,10 +506,16 @@ Game.prototype.talk = function (data, cb) {
             if (self.gameLogic.share == 0) {
                 self.nobodyTalkTime += 1;
                 if (self.nobodyTalkTime == consts.GAME.DISSOLVE_NOBODY_TALK_TIME) {
-                    self.dissolve();
+                    //没人说话牌局重开次数达到上限, 解散牌桌
+                    this.channel.pushMessage(consts.EVENT.DISSOLVE_GAME, {}, null, function() {
+                        self.dissolve();
+                    });
                 }
                 else {
-                    self.start();
+                    //没人说话，发送重新开始消息
+                    this.channel.pushMessage(consts.EVENT.RESTART_GAME, {}, null, function() {
+                        self.start();
+                    });
                 }
                 return;
             }
@@ -526,12 +533,6 @@ Game.prototype.talk = function (data, cb) {
 
 Game.prototype.afterTalk = function () {
     var self = this;
-    //如果没人说话，则重新发牌；如果有人说话，则第一个出牌人出牌。
-    if (!this.gameLogic.hasTalk) {
-        //重新开始
-        this.start();
-        return;
-    }
 
     //设置上局玩家[{uid:xx, actorNr: xx}]
     _.each(this.actors, function (actor) {
@@ -592,7 +593,10 @@ Game.prototype.fanCountdown = function () {
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
-            self.fanTimeout(fanTimeoutActor);
+            if (jobData.uid == self.gameLogic.currentFanActor.uid) {
+                self.fanTimeout(fanTimeoutActor);
+            }
+            
         }, {uid: self.gameLogic.currentFanActor.uid});
 
 
@@ -666,6 +670,13 @@ Game.prototype.fan = function (data, cb) {
     //如果当前出牌玩家是上轮Boss，并且没有出牌，则非法
     if (this.gameLogic.currentBoss.actorNr == actor.actorNr && cards.length == 0) {
         logger.debug('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL});
+        return;
+    }
+    
+    //如果当前出牌玩家不是本轮出牌玩家（客户端发送的出牌玩家ID和服务器端状态中当前出牌者ID），则非法
+    if (this.gameLogic.currentFanActor.uid !== data.uid) {
+        logger.info('game||fan||出牌错误，此次不轮您出牌||用户&ID: %j', data.uid);
         cb({code: Code.FAIL});
         return;
     }

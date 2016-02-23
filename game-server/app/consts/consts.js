@@ -224,7 +224,9 @@ module.exports = {
         BACK_TO_GAME: 'onBackToGame',
         UI_COMMAND: 'onUICommand',
         VERSION_UPGRADE: 'onVersionUpgrade',
-        INGOT_CHANGE: 'onIngotChange'
+        INGOT_CHANGE: 'onIngotChange',
+        RESTART_GAME: 'onRestartGame',
+        DISSOLVE_GAME: 'onDissolveGame'
 
     },
 

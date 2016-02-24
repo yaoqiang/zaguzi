@@ -26,12 +26,12 @@ app.configure('production|development', 'connector', function () {
         //      'heartbeat interval': 10,
         //      'heartbeat timeout': 30
         //  },
-        heartbeat: 30,
-        //disconnectOnTimeout: true,
+        heartbeat: 300,
+        disconnectOnTimeout: true,
         useDict: true,
         useProtobuf: true,
         handshake: function (msg, cb) {
-            cb(null, {});
+            cb(null, {heartbeat: 10, handshakeTime: new Date()});
         }
     });
 });

@@ -256,7 +256,12 @@ Game.prototype.talkCountdown = function () {
                 self.jobQueue = _.filter(self.jobQueue, function (j) {
                     return j.uid != jobData.uid;
                 });
-                self.talkTimeout(talkTimeoutActor);
+                if (talkTimeoutActor.uid == jobData.uid) {
+                    self.talkTimeout(talkTimeoutActor);
+                }
+                else {
+                    logger.error('game||talk||玩家说话时, 倒计时发生问题, schedule的uid和当前说话的uid是一人, 当前:%s -- schedule:%s', talkTimeoutActor.uid, jobData.uid);
+                }
             }, {uid: talkTimeoutActor.uid});
 
             self.jobQueue.push({uid: self.gameLogic.currentTalker.uid, jobId: jobId});
@@ -595,6 +600,8 @@ Game.prototype.fanCountdown = function () {
             });
             if (jobData.uid == self.gameLogic.currentFanActor.uid) {
                 self.fanTimeout(fanTimeoutActor);
+            } else {
+                logger.error('game||fan||玩家出牌倒计时发生错误, 当前出牌者和schedule出牌者不同, 当前:%s, schedule:%s', fanTimeoutActor.uid, jobData.uid);
             }
             
         }, {uid: self.gameLogic.currentFanActor.uid});

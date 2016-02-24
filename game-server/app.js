@@ -31,7 +31,7 @@ app.configure('production|development', 'connector', function () {
         useDict: true,
         useProtobuf: true,
         handshake: function (msg, cb) {
-            cb(null, {heartbeat: 10, handshakeTime: new Date()});
+            cb(null, {heartbeat: 300, handshakeTime: new Date()});
         }
     });
 });

@@ -17,7 +17,7 @@
             "currency": "RMB",
             "gold": 2999,
             "amount": 3,
-            "desc": "经典久久,买就送小喇叭记牌器",
+            "desc": "经典久久，买就送小喇叭 + 记牌器",
             "icon": "1",
             "hot": true,
             "items": [
@@ -68,8 +68,8 @@
             "id": 1006,
             "title": "超值金币包-3",
             "currency": "RMB",
-            "gold": 60888,
-            "amount": 36,
+            "gold": 46888,
+            "amount": 30,
             "desc": "超值金币包",
             "icon": "3",
             "hot": false,
@@ -90,9 +90,9 @@
             "id": 1008,
             "title": "超值大礼包!",
             "currency": "RMB",
-            "gold": 168888,
-            "amount": 98,
-            "desc": "超值金币 + 小喇叭10个 + 记牌器7天",
+            "gold": 208888,
+            "amount": 128,
+            "desc": "超值金币+小喇叭10个+记牌器7天",
             "icon": "4",
             "hot": true,
             "items": [
@@ -108,6 +108,46 @@
         },
         {
             "id": 1009,
+            "title": "超值大礼包-2!",
+            "currency": "RMB",
+            "gold": 338888,
+            "amount": 198,
+            "desc": "超值金币+小喇叭20个+记牌器14天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 1010,
+            "title": "超值大礼包!",
+            "currency": "RMB",
+            "gold": 508888,
+            "amount": 328,
+            "desc": "超值金币+小喇叭30个+记牌器30天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 1011,
             "title": "小喇叭专卖!",
             "currency": "RMB",
             "gold": 0,
@@ -119,6 +159,22 @@
                 {
                     "id": 2,
                     "count": 10
+                }
+            ]
+        },
+        {
+            "id": 1012,
+            "title": "小喇叭专卖!",
+            "currency": "RMB",
+            "gold": 0,
+            "amount": 30,
+            "desc": "超值小喇叭100个",
+            "icon": "3",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 100
                 }
             ]
         }
@@ -182,8 +238,8 @@
             "id": 2006,
             "title": "超值金币包-3",
             "currency": "RMB",
-            "gold": 60888,
-            "amount": 36,
+            "gold": 46888,
+            "amount": 30,
             "desc": "超值金币包",
             "icon": "3",
             "hot": false,
@@ -204,8 +260,8 @@
             "id": 2008,
             "title": "超值大礼包!",
             "currency": "RMB",
-            "gold": 168888,
-            "amount": 98,
+            "gold": 208888,
+            "amount": 128,
             "desc": "超值金币+小喇叭10个+记牌器7天",
             "icon": "4",
             "hot": true,
@@ -222,6 +278,46 @@
         },
         {
             "id": 2009,
+            "title": "超值大礼包-2!",
+            "currency": "RMB",
+            "gold": 338888,
+            "amount": 198,
+            "desc": "超值金币+小喇叭20个+记牌器14天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 2010,
+            "title": "超值大礼包!",
+            "currency": "RMB",
+            "gold": 508888,
+            "amount": 328,
+            "desc": "超值金币+小喇叭30个+记牌器30天",
+            "icon": "4",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 10
+                },
+                {
+                    "id": 3,
+                    "count": 7
+                }
+            ]
+        },
+        {
+            "id": 2011,
             "title": "小喇叭专卖!",
             "currency": "RMB",
             "gold": 0,
@@ -233,6 +329,22 @@
                 {
                     "id": 2,
                     "count": 10
+                }
+            ]
+        },
+        {
+            "id": 2012,
+            "title": "小喇叭专卖!",
+            "currency": "RMB",
+            "gold": 0,
+            "amount": 30,
+            "desc": "超值小喇叭100个",
+            "icon": "3",
+            "hot": true,
+            "items": [
+                {
+                    "id": 2,
+                    "count": 100
                 }
             ]
         }

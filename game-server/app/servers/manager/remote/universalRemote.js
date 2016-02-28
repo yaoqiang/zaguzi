@@ -4,6 +4,8 @@ var Code = require('../../../../../shared/code');
 var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
+var pomelo = require('pomelo');
+
 var logger = require('log4js').getLogger(consts.LOG.USER);
 var logger4payment = require('log4js').getLogger(consts.LOG.PAYMENT);
 
@@ -92,7 +94,7 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
-    payment4IAP: function (data) {
+    payment4IAP: function (data, cb) {
 
         //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
         var options = {
@@ -111,7 +113,7 @@ UniversalRemote.prototype = {
 
             var connectors = pomelo.app.getServersByType('connector');
 
-            var bodyJson = JSON.parse(body);
+            var bodyJson = response.body;
             if (response.statusCode != Code.OK) {
                 logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,HTTP失败.||%j', data.uid, {productId: data.productId, device: 'ios'})
 
@@ -119,7 +121,7 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-
+                cb();
                 return;
             }
             if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
@@ -128,6 +130,7 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                cb();
                 return;
             }
             paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
@@ -136,18 +139,19 @@ UniversalRemote.prototype = {
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    cb();
                     return;
                 }
-                logger4payment.info('支付后逻辑成功||%s||OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
+                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
 
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+
+                cb();
             });
         });
-
-
 
     },
 

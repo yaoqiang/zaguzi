@@ -95,7 +95,13 @@ UniversalRemote.prototype = {
             'receipt-data': data.product.receiptCipheredPayload
         }
 
-        request(open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX, requestContents, function (err, response, body) {
+        var options = {
+            method: 'POST',
+            url: open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX,
+            qs: requestContents
+        }
+
+        request(options, function (err, response, body) {
            logger.info('from iap!====> %j', {err: err, response: response, body: body});
         });
 

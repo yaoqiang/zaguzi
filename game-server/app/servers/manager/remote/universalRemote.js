@@ -138,6 +138,8 @@ UniversalRemote.prototype = {
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     return;
                 }
+                logger4payment.info('支付后逻辑成功||%s||OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
+
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id

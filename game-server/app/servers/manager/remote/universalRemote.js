@@ -5,6 +5,7 @@ var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
 var logger = require('log4js').getLogger(consts.LOG.USER);
+var logger4payment = require('log4js').getLogger(consts.LOG.PAYMENT);
 
 var utils = require('../../../util/utils');
 
@@ -90,8 +91,7 @@ UniversalRemote.prototype = {
 
     payment4IAP: function (data, cb) {
 
-        //IAP服务器端支付凭证校验
-
+        //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
         var options = {
             method: open.APPLE_IAP.VERIFY_RECEIPT.METHOD,
             url: open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX,
@@ -105,10 +105,15 @@ UniversalRemote.prototype = {
         }
 
         request(options, function (err, response, body) {
-           logger.info('from iap!====> %j', {err: err, response: response, body: body});
 
             var bodyJson = JSON.parse(body);
+            if (response.statusCode != Code.OK) {
+                logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,HTTP失败.||%j', data.uid, {productId: data.productId, device: 'ios'})
+                cb({code: Code.FAIL});
+                return;
+            }
             if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
+                logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,RECEIPT失败(可能非法).||%j', data.uid, {productId: data.productId, device: 'ios'})
                 cb({code: Code.FAIL});
                 return;
             }

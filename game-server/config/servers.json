@@ -51,13 +51,6 @@
                 "port": 3150,
                 "clientPort": 3010,
                 "frontend": true
-            },
-            {
-                "id": "connector-server-2",
-                "host": "101.200.128.237",
-                "port": 3151,
-                "clientPort": 3011,
-                "frontend": true
             }
         ],
         "gate": [

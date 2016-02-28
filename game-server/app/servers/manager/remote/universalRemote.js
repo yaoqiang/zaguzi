@@ -13,6 +13,7 @@ var openService = require('../../../services/openService');
 var commonService = require('../../../services/commonService');
 var exchangeService = require('../../../services/exchangeService');
 var shopService = require('../../../services/shopService');
+var paymentService = require('../../../services/paymentService');
 
 
 ////////////////////////////////////////////
@@ -85,8 +86,19 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
+    payment4IAP: function (data, cb) {
+
+        //IAP服务器端支付凭证校验
 
 
+        paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
+            if (err) {
+                cb({code: Code.FAIL});
+                return;
+            }
+            cb({code: Code.OK});
+        });
+    },
 
 
     getShopList: function (data, cb) {

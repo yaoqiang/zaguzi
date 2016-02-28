@@ -229,6 +229,13 @@ handler.getShopList = function (msg, session, next) {
     })
 }
 
+handler.sendPaymentResult = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.payment4IAP(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 /**
  * 获得最新版本信息
  * @param msg

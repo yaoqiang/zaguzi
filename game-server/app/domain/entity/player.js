@@ -68,19 +68,25 @@ Player.prototype.updateProfile = function (data, cb) {
 
 Player.prototype.addGold = function (type, gold, cb) {
 
-    gold = parseInt(gold);
-    var self = this;
-    logger.info("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j", this.uid, type, gold, this.uid);
-    this.gold += gold;
+    try {
+        gold = parseInt(gold);
+        var self = this;
+        logger.info("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j", this.uid, type, gold, this.uid);
+        this.gold += gold;
 
-    this.gold = this.gold < 0 ? 0 : this.gold;
+        this.gold = this.gold < 0 ? 0 : this.gold;
 
-    messageService.pushMessageToPlayer({
-        uid: this.uid,
-        sid: dispatcher(this.uid, this.connectors).id
-    }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
+        messageService.pushMessageToPlayer({
+            uid: this.uid,
+            sid: dispatcher(this.uid, this.connectors).id
+        }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
 
-    cb({gold: this.gold});
+        cb({code: Code.OK, gold: this.gold});
+    } catch (err) {
+        logger.error("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j, 添加失败, 异常信息: %o", this.uid, type, gold, this.uid, err);
+        cb({code: Code.FAIL});
+    }
+
 
 }
 

@@ -91,19 +91,23 @@ UniversalRemote.prototype = {
     payment4IAP: function (data, cb) {
 
         //IAP服务器端支付凭证校验
-        var requestContents = {
-            'receipt-data': data.product.receiptCipheredPayload
-        }
 
         var options = {
-            method: 'POST',
+            method: open.APPLE_IAP.VERIFY_RECEIPT.METHOD,
             url: open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX,
-            qs: requestContents
+            qs: {
+                'receipt-data': data.product.receiptCipheredPayload
+            }
         }
 
         request(options, function (err, response, body) {
            logger.info('from iap!====> %j', {err: err, response: response, body: body});
 
+            var bodyJson = JSON.parse(body);
+            if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
+                cb({code: Code.FAIL});
+                return;
+            }
             paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
                 if (err) {
                     cb({code: Code.FAIL});

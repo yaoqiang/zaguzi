@@ -21,7 +21,9 @@ module.exports = {
     APPLE_IAP: {
         VERIFY_RECEIPT: {
             SANDBOX: 'https://sandbox.itunes.apple.com/verifyReceipt',
-            PRODUCTION: 'https://buy.itunes.apple.com/verifyReceipt'
+            PRODUCTION: 'https://buy.itunes.apple.com/verifyReceipt',
+            METHOD: 'POST',
+            OK_STATUS: 0
         }
     }
 }

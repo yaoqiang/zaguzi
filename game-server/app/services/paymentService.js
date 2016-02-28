@@ -56,7 +56,8 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
     var product = _.findWhere(shopConf[device], {id: productId});
     if (product == undefined) {
         logger.error('支付失败||%s||在服务器端没有找到该产品||%s', uid, productId);
-        cb({code: Code.FAIL})
+        cb({code: Code.FAIL});
+        return;
     }
 
     playerService.getUserCacheByUid(uid, function (user) {
@@ -98,9 +99,10 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                 }
 
             }, function (err) {
-                logger.error("支付||%s||金币添加失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付失败||%s||金币添加失败||%s||%s-%s", uid, productId, device, channel);
 
                 utils.invokeCallback(cb, err, null);
+                return;
             })
             .then(function (items) {
                 //存储订单
@@ -123,15 +125,16 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                     }
                 })
             }, function (err) {
-                logger.error("支付||%s||物品添加失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付失败||%s||物品添加失败||%s||%s-%s", uid, productId, device, channel);
                 utils.invokeCallback(cb, err, null);
+                return;
             })
             .then(function (order) {
                 user.player.save();
                 user.player.saveItem();
                 utils.invokeCallback(cb, null, null);
             }, function (err) {
-                logger.error("支付||%s||订单记录创建失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付失败||%s||订单记录创建失败||%s||%s-%s", uid, productId, device, channel);
                 utils.invokeCallback(cb, err, null);
             });
 

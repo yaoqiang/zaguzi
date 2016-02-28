@@ -86,7 +86,7 @@ ChannelHandler.prototype.send = function(msg, session, next) {
                 return;
             }
             
-            if (user.player.getTrumptValue() <= 0) {
+            if (user.player.getTrumpetValue() <= 0) {
                 logger.debug('game||chat||发送喇叭失败, 玩家喇叭数不够||用户&ID: %j', user.uid);
                 next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
                 return;

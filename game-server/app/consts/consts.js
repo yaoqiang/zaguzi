@@ -226,8 +226,8 @@ module.exports = {
         VERSION_UPGRADE: 'onVersionUpgrade',
         INGOT_CHANGE: 'onIngotChange',
         RESTART_GAME: 'onRestartGame',
-        DISSOLVE_GAME: 'onDissolveGame'
-
+        DISSOLVE_GAME: 'onDissolveGame',
+        PAYMENT_RESULT: 'onPaymentResult'
     },
 
     CHAT_SCOPE: {

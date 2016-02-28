@@ -218,10 +218,10 @@ Player.prototype.addItems = function (type, items, cb) {
     cb({code: Code.OK});
 }
 
-Player.prototype.getTrumptValue = function() {
-    var trumptValue = _.findWhere(this.items, {id: 2});
-    if (trumptValue) {
-        return trumptValue.value;
+Player.prototype.getTrumpetValue = function() {
+    var trumpetValue = _.findWhere(this.items, {id: 2});
+    if (trumpetValue) {
+        return trumpetValue.value;
     }
     return 0;
 }

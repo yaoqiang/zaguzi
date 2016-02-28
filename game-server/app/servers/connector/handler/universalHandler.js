@@ -229,11 +229,9 @@ handler.getShopList = function (msg, session, next) {
     })
 }
 
-handler.sendPaymentResult = function (msg, session, next) {
+handler.sendPaymentResult = function (msg, session) {
     msg.uid = session.uid;
-    this.app.rpc.manager.universalRemote.payment4IAP(session, msg, function (data) {
-        next(null, data);
-    });
+    this.app.rpc.manager.universalRemote.payment4IAP(session, msg, null);
 }
 
 /**

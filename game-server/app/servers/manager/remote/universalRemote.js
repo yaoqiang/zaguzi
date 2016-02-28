@@ -8,6 +8,7 @@ var logger = require('log4js').getLogger(consts.LOG.USER);
 var logger4payment = require('log4js').getLogger(consts.LOG.PAYMENT);
 
 var utils = require('../../../util/utils');
+var dispatcher = require('../../../util/dispatcher').dispatch;
 
 var request = require('request');
 
@@ -17,6 +18,8 @@ var commonService = require('../../../services/commonService');
 var exchangeService = require('../../../services/exchangeService');
 var shopService = require('../../../services/shopService');
 var paymentService = require('../../../services/paymentService');
+
+var messageService = require('../../../services/messageService');
 
 
 ////////////////////////////////////////////
@@ -89,7 +92,7 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
-    payment4IAP: function (data, cb) {
+    payment4IAP: function (data) {
 
         //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
         var options = {
@@ -106,23 +109,39 @@ UniversalRemote.prototype = {
 
         request(options, function (err, response, body) {
 
+            var connectors = pomelo.app.getServersByType('connector');
+
             var bodyJson = JSON.parse(body);
             if (response.statusCode != Code.OK) {
                 logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,HTTP失败.||%j', data.uid, {productId: data.productId, device: 'ios'})
-                cb({code: Code.FAIL});
+
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+
                 return;
             }
             if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
                 logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,RECEIPT失败(可能非法).||%j', data.uid, {productId: data.productId, device: 'ios'})
-                cb({code: Code.FAIL});
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                 return;
             }
             paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
                 if (err) {
-                    cb({code: Code.FAIL});
+                    messageService.pushMessageToPlayer({
+                        uid: data.uid,
+                        sid: dispatcher(data.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     return;
                 }
-                cb({code: Code.OK});
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
             });
         });
 

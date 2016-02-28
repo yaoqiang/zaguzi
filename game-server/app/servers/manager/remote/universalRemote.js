@@ -103,16 +103,18 @@ UniversalRemote.prototype = {
 
         request(options, function (err, response, body) {
            logger.info('from iap!====> %j', {err: err, response: response, body: body});
+
+            paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
+                if (err) {
+                    cb({code: Code.FAIL});
+                    return;
+                }
+                cb({code: Code.OK});
+            });
         });
 
 
-        paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
-            if (err) {
-                cb({code: Code.FAIL});
-                return;
-            }
-            cb({code: Code.OK});
-        });
+
     },
 
 

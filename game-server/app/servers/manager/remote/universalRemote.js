@@ -8,6 +8,8 @@ var logger = require('log4js').getLogger(consts.LOG.USER);
 
 var utils = require('../../../util/utils');
 
+var request = require('request');
+
 var playerService = require('../../../services/playerService');
 var openService = require('../../../services/openService');
 var commonService = require('../../../services/commonService');
@@ -89,6 +91,13 @@ UniversalRemote.prototype = {
     payment4IAP: function (data, cb) {
 
         //IAP服务器端支付凭证校验
+        var requestContents = {
+            'receipt-data': data.product.receiptCipheredPayload
+        }
+
+        request(open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX, requestContents, function (err, response, body) {
+           logger.info('from iap!====> %j', {err: err, response: response, body: body});
+        });
 
 
         paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {

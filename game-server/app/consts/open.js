@@ -17,5 +17,11 @@ module.exports = {
             METHOD: 'GET',
             CALLBACK_URL: ''
         }
+    },
+    APPLE_IAP: {
+        VERIFY_RECEIPT: {
+            SANDBOX: 'https://sandbox.itunes.apple.com/verifyReceipt',
+            PRODUCTION: 'https://buy.itunes.apple.com/verifyReceipt'
+        }
     }
 }

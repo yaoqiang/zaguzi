@@ -52,10 +52,11 @@ paymentService.webhooksPingxx = function () {
  * @param cb
  */
 paymentService.payment = function (uid, productId, state, device, channel, cb) {
+    productId = parseInt(productId);
     //
     var product = _.findWhere(shopConf[device], {id: productId});
     if (product == undefined) {
-        logger.error('支付失败||%s||在服务器端没有找到该产品||%s', uid, productId);
+        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', uid, {productId: productId, device: device, channel: channel});
         cb({code: Code.FAIL});
         return;
     }
@@ -63,7 +64,7 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
     playerService.getUserCacheByUid(uid, function (user) {
         //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
         if (user == null || _.isUndefined(user)) {
-            logger.info("支付||%s||玩家不在线, 转为离线处理||%s||%s-%s", uid, productId, device, channel);
+            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", uid, {productId: productId, device: device, channel: channel});
             //
         }
         else {
@@ -89,7 +90,6 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                             Promise.resolve(data);
                         }
                         else {
-
                             Promise.reject({code: Code.FAIL});
                         }
                     });
@@ -99,7 +99,7 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                 }
 
             }, function (err) {
-                logger.error("支付失败||%s||金币添加失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付后逻辑失败||%s||金币添加失败||%j", uid, {productId: productId, device: device, channel: channel});
 
                 utils.invokeCallback(cb, err, null);
                 return;
@@ -125,7 +125,7 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                     }
                 })
             }, function (err) {
-                logger.error("支付失败||%s||物品添加失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付后逻辑失败||%s||物品添加失败||%j", uid, {productId: productId, device: device, channel: channel});
                 utils.invokeCallback(cb, err, null);
                 return;
             })
@@ -134,7 +134,7 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
                 user.player.saveItem();
                 utils.invokeCallback(cb, null, null);
             }, function (err) {
-                logger.error("支付失败||%s||订单记录创建失败||%s||%s-%s", uid, productId, device, channel);
+                logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", uid, {productId: productId, device: device, channel: channel});
                 utils.invokeCallback(cb, err, null);
             });
 
@@ -144,4 +144,3 @@ paymentService.payment = function (uid, productId, state, device, channel, cb) {
 
 
 }
-

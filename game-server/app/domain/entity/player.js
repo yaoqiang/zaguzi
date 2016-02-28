@@ -152,21 +152,20 @@ Player.prototype.addExp = function (exp, args) {
 // item: {id: Int, value: Int}
 Player.prototype.addItem = function (type, item) {
     if (!_.isObject(item)) {
-        logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.value, this.uid);
+        logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.id, item.value, this.uid);
         return false;
     }
 
-    //查找物品是否在配置表中
+    //查找物品是否在配置表中, data: item.json的item对象
     var data = _.findWhere(itemConf, {id: item.id});
 
     if (_.isUndefined(data)) {
         logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.value, this.uid);
         return false;
     }
-
-    //查询玩家是否有该物品
+    //查询玩家是否有该物品, i: player.items
     var i = _.findWhere(this.items, {id: item.id});
-    logger.info("items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天,用户ID:%j", this.uid, type, item.value, this.uid);
+    logger.info("items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天,用户ID:%j", this.uid, type, data.title, item.value, this.uid);
     var value;
     var now = new Date();
     //如果玩家没有该物品, 则添加; 否则叠加
@@ -180,17 +179,23 @@ Player.prototype.addItem = function (type, item) {
     } else {
         if (data.mode == consts.GLOBAL.ITEM_MODE.TERM) {
             //如果已过期, 则从现在叠加
-            if (i.value.isBefore(now)) {
+            if (new Date(i.value).isBefore(now)) {
                 value = now.add({days: item.value});
             } else {
-                value = i.value.add({days: item.value});
+                value = new Date(i.value).add({days: item.value});
             }
         }
         else {
             value = i.value + item.value;
         }
     }
-    this.items.push({id: i.id, name: i.name, title: i.title, icon: i.icon, value: value, mode: data.mode});
+    //如果玩家之前没有该物品, 则push; 如果有,则修改
+    if (_.isUndefined(i)) {
+        this.items.push({id: data.id, name: data.name, title: data.title, icon: data.icon, value: value, mode: data.mode});
+    } else {
+        i.value = value;
+    }
+
     return true;
 }
 

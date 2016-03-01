@@ -19,24 +19,24 @@ function initUser(users) {
     })
 }
 
-var u1 = new User('a', 'a');
-var u2 = new User('b', 'b');
-var u3 = new User('c', 'c');
-var u4 = new User('d', 'd');
-var u5 = new User('e', 'e');
-var u6 = new User('f', 'f');
-var u7 = new User('g', 'g');
-var u8 = new User('h', 'h');
-var u9 = new User('i', 'i');
-var u10 = new User('j', 'j');
+var u1 = new User('a', 'sha1$5b1432f8$1$34eef7e9b27474c1471596820235c2ed5abb8e2f');
+var u2 = new User('b', 'sha1$3153aa46$1$2b8aaf463cfb7670fa64b851d9ec00d5d01389f0');
+var u3 = new User('c', 'sha1$e3ec0dd8$1$9ab0e904573dcd472a8463ea82e2f4624f4343fd');
+var u4 = new User('d', 'sha1$ca8bbaa4$1$b995f176ca094351f1da76b134fbcce22250e6af');
+var u5 = new User('e', 'sha1$1f698781$1$7f2018578e4a6fb4419d6a469f797f36a08171fa');
+var u6 = new User('f', 'sha1$362cb3e2$1$0304bd32a3196e1f3f5e71615bba1e224be08bdb');
+var u7 = new User('g', 'sha1$b497bed8$1$df2963983f6b861cd9bf85fad26b05e9f52c8879');
+var u8 = new User('h', 'sha1$9aa06ca6$1$a8ec85907b064bd0d7114ed68d79acb1b65acc6b');
+var u9 = new User('i', 'sha1$6936b73f$1$b3ad6639a4d9016ff704fa7d9054d8afb718026b');
+var u10 = new User('j', 'sha1$5d05cbc4$1$e994a2d6f1221fa77211d75a76b6e15505b31615');
 
-var yaoqiang = new User('yaoqiang', '0');
-var lvjiancheng = new User('lvjiancheng', '0');
-var lijianxin = new User('lijianxin', '0');
-var xuewen = new User('xuewen', '0');
-var zhangjianyang = new User('zhangjianyang', '0');
-var fanyiwei = new User('fanyiwei', '0');
-var zanghongwen = new User('zanghongwen', '0');
+var yaoqiang = new User('yaoqiang', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var lvjiancheng = new User('lvjiancheng', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var lijianxin = new User('lijianxin', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var xuewen = new User('xuewen', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var zhangjianyang = new User('zhangjianyang', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var fanyiwei = new User('fanyiwei', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
+var zanghongwen = new User('zanghongwen', 'sha1$34063f9b$1$4b0ea3bad14424310bc0a2145917e86c7fe98019');
 
 var users = new Array(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, yaoqiang, lvjiancheng, lijianxin, xuewen, zhangjianyang, fanyiwei, zanghongwen);
 

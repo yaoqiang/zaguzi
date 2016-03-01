@@ -173,8 +173,8 @@ app.post('/login', function (req, res) {
         }
 
         //密码加密
-        //passwordHash.verify(pwd, user.password)
-        if (pwd != user.password) {
+        
+        if (!passwordHash.verify(pwd.toString(), user.password.toString())) {
             // TODO code
             // password is wrong
             logger.warn('用户密码错误! username: ' + username);

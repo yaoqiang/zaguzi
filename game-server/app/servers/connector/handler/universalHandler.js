@@ -81,6 +81,18 @@ handler.getProfileByUid = function (msg, session, next) {
 }
 
 /**
+ * 获取个人物品
+ */
+handler.getItems = function (msg, session, next) {
+    
+    msg.uid = session.uid
+    
+    this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
+        next(null, {items: data.player.items});
+    });
+}
+
+/**
  * 更新个人信息
  * @param msg
  * @param session

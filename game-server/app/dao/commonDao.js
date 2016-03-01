@@ -70,8 +70,20 @@ commonDao.getTopOfAppReleaseRecord = function (data, cb) {
     })
 }
 
+//获取系统消息
+commonDao.getSystemMessage = function (data, cb) {
+    db.systemMessage.find({}).sort({_id: -1}).limit(10, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
 
 
+//更新验证码
 commonDao.updateCaptchaCode = function (data, cb) {
     //
     db.captcha.findAndModify({

@@ -46,6 +46,10 @@ UniversalRemote.prototype = {
     getTopOfAppReleaseRecord: function (data) {
         commonService.getTopOfAppReleaseRecord(data);
     },
+    
+    getSystemMessage: function (data, cb) {
+        commonService.getSystemMessage(data, cb);
+    },
 
 
     sendBindingSMS: function (data, cb) {

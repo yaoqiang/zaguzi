@@ -25,6 +25,9 @@ var handler = Handler.prototype;
 // 游戏其他附加功能相关
 ///////////////////////////
 
+/**
+ * 获取个人信息 - 个人信息功能
+ */
 handler.getProfile = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
@@ -42,6 +45,36 @@ handler.getProfile = function (msg, session, next) {
             profile.meetingTimes = data.player.meetingTimes;
             profile.summary = data.player.summary;
             profile.mobile = data.userInfo ? data.userInfo.mobile : undefined;
+        }
+        next(null, profile);
+    });
+}
+
+/**
+ * 获取个人信息 - 牌局中获取玩家基本信息
+ * @param msg: {uid: xx};
+ */
+handler.getProfileByUid = function (msg, session, next) {
+    
+    if (!!msg.uid) {
+        next(null, {code: Code.FAIL});
+        return;
+    }
+    
+    this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
+
+        var profile = {};
+        if (!_.isUndefined(data)) {
+            profile.nickName = data.player.nickName;
+            profile.avatar = data.player.avatar;
+            profile.gender = data.player.gender;
+            profile.winNr = data.player.winNr;
+            profile.tieNr = data.player.tieNr;
+            profile.loseNr = data.player.loseNr;
+            profile.gold = data.player.gold;
+            profile.fragment = data.player.fragment;
+            profile.meetingTimes = data.player.meetingTimes;
+            profile.summary = data.player.summary;
         }
         next(null, profile);
     });
@@ -246,8 +279,20 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
+    
+    next();
 }
 
+/**
+ * 获取系统消息
+ */
+handler.getSystemMessage = function (msg, session, next) {
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getSystemMessage(session, msg, function (result) {
+        next(null, result);
+    });
+}
 
 ////////////
 //

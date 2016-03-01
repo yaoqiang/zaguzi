@@ -53,6 +53,18 @@ commonService.getTopOfAppReleaseRecord = function (data) {
     })
 }
 
+commonService.getSystemMessage = function (data, cb) {
+    commonDao.getSystemMessage(data, function (err, doc) {
+        if (doc) {
+            cb({code: Code.OK, systemMessageList: doc});
+        }
+        else {
+            cb({code: Code.FAIL});
+        }
+
+    })
+}
+
 
 commonService.bindingMobile = function (data, cb) {
     if (!data.captcha || !data.mobile || !data.password || !data.uid) {

@@ -25,5 +25,16 @@ module.exports = {
             METHOD: 'POST',
             OK_STATUS: 0
         }
-    }
+    },
+    PAYMENT: {
+        PINGXX: {
+            "testSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",
+            "testPublishableKey": "pk_test_KOKWjLHij10CrvLC8CmTenzT",
+            "liveSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",
+            "livePublishableKey": "pk_test_KOKWjLHij10CrvLC8CmTenzT",
+            "appid": "app_jrLOqTOyTmb9fv5m",
+            "currency": "cny",
+            "channel": ["alipay", "alipay_wap", "alipay_qr", "alipay_pc_direct", "apple_pay", "upacp", "upacp_wap", "upacp_pc", "cp_b2b", "wx"]
+        }
+     }
 }

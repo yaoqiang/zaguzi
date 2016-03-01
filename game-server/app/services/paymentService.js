@@ -3,6 +3,7 @@ var _ = require('lodash');
 var pomelo = require('pomelo');
 
 var consts = require('../consts/consts');
+var open = require('../consts/open');
 var shopConf = require('../../config/data/shop');
 var appConf = require('../../config/app.json');
 var Code = require('../../../shared/code');
@@ -13,7 +14,7 @@ var Promise = require('promise');
 
 var mongojs = require('mongojs');
 
-var pingpp = require('pingpp')(appConf.payment.pingxx.testSecretKey);
+var pingpp = require('pingpp')(open.PAYMENT.PINGXX.testSecretKey);
 
 var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');

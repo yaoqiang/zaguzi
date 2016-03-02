@@ -141,9 +141,9 @@ paymentService.payment = function (order, charge, cb) {
                     return;
                 })
                 .then(function (items) {
-                    logger.info('-----3-1')
+                    logger.info('-----3-1 %j', order)
                     //存储订单
-                    var order = {
+                    var orderData = {
                         uid: order.uid,
                         orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
                         productId: order.productId,
@@ -154,7 +154,7 @@ paymentService.payment = function (order, charge, cb) {
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
                     logger.info('-----3-2')
-                    commonDao.saveOrUpdateOrder(order, charge, function (err, o) {
+                    commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
                         logger.error("error => %o", err);
                         if (err) {
                             Promise.reject({ code: Code.FAIL });

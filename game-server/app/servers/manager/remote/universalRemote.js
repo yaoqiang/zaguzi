@@ -137,7 +137,22 @@ UniversalRemote.prototype = {
                 cb();
                 return;
             }
-            paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', null, function (err, result) {
+
+            var order = {
+                uid: data.uid,
+                productId: data.productId,
+                state: consts.ORDER.STATE.FINISHED,
+                device: 'ios',
+                channel: 'IAP',
+                charge: null
+            }
+
+            logger.info('receipt ---> %o', response);
+
+            //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
+            //commonService.searchOrderByTransactionId(bodyJson.)
+
+            paymentService.payment(order, function (err, result) {
                 if (err) {
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -146,7 +161,7 @@ UniversalRemote.prototype = {
                     cb();
                     return;
                 }
-                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
+                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios', channel: 'IAP'})
 
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
@@ -159,31 +174,47 @@ UniversalRemote.prototype = {
 
     },
     
-    payment4Pingxx: function (data, cb) {
+    payment4Pingpp: function (data, cb) {
         
         var connectors = pomelo.app.getServersByType('connector');
-        
-        paymentService.payment(data.uid, data.productId, 
-            data.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED, 
-            null, null, {charge: data}, 
-            function (err, result) {
-                if (err) {
+
+        commonService.searchOrderByNumber(data.order_no, function (err, originalOrder) {
+            if (err) {
+                logger4payment.error('支付后逻辑失败||%s||Pingpp Webhooks参数中order_no 未找到订单.||%j', data);
+                return;
+            }
+
+            var order = {
+                uid: originalOrder.uid,
+                productId: originalOrder.productId,
+                state: originalOrder.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
+                device: originalOrder.device,
+                channel: originalOrder.channel,
+                charge: data
+            };
+
+            paymentService.payment(order, data,
+                function (err, result) {
+                    if (err) {
+                        messageService.pushMessageToPlayer({
+                            uid: data.uid,
+                            sid: dispatcher(data.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                        cb();
+                        return;
+                    }
+                    logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', originalOrder.uid, {productId: originalOrder.productId, device: originalOrder.device, channel: originalOrder.channel})
+
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
-                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+
                     cb();
-                    return;
-                }
-                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
+                });
+        })
 
-                messageService.pushMessageToPlayer({
-                    uid: data.uid,
-                    sid: dispatcher(data.uid, connectors).id
-                }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
 
-                cb();
-        });
     },
 
 
@@ -194,7 +225,7 @@ UniversalRemote.prototype = {
 
 
 
-//处理话费充值回调
+    //处理话费充值回调
     // data: ↓
     // state         string     充值状态（0为充值中 1为成功 其他为失败）
     // orderid       string     商家订单号 

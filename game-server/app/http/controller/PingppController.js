@@ -9,13 +9,13 @@ var consts = require('../../consts/consts');
 
 var logger = require('log4js').getLogger(consts.LOG.PAYMENT);
 
-var pingxx = express.Router();
+var pingpp = express.Router();
 
 /**
  * @param app: Pomelo App
  */
 module.exports = function (app) {
-    pingxx.get('/notify', function (req, res) {
+    pingpp.get('/notify', function (req, res) {
         logger.debug('responsed from pingxx notify route.');
         
         // 验证 webhooks 签名
@@ -30,7 +30,7 @@ module.exports = function (app) {
         // 签名在头部信息的 x-pingplusplus-signature 字段
         var signature = req.headers['x-pingplusplus-signature'];
         // 请从 https://dashboard.pingxx.com 获取「Webhooks 验证 Ping++ 公钥」
-        var pub_key_path = __dirname + "../../../config/pingxx_rsa_public_key.pem";
+        var pub_key_path = __dirname + "../../../config/pingpp_rsa_public_key.pem";
 
         if (!verify_signature(rawData, signature, pub_key_path)) {
             logger.error('verification failed');
@@ -49,6 +49,9 @@ module.exports = function (app) {
                 case "charge.succeeded":
                     // 开发者在此处加入对支付异步通知的处理代码
                     res.sendStatus(200);
+                     app.rpc.manager.universalRemote.payment4Pingpp(null, result.data.object, function () {
+                         logger.debug('处理Pingpp Webhooks rpc invoke finished.');
+                     });
                     break;
                 case "refund.succeeded":
                     // 开发者在此处加入对退款异步通知的处理代码
@@ -73,12 +76,12 @@ module.exports = function (app) {
 
     });
 
-    pingxx.get('/', function (req, res) {
+    pingpp.get('/', function (req, res) {
         logger.debug('responsed from pingxx root route.');
         res.sendStatus(200);
     });
 
 
 
-    return pingxx;
+    return pingpp;
 }

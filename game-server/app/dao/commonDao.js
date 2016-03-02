@@ -25,7 +25,7 @@ var commonDao = module.exports;
 
 //单独为Player处理元宝
 commonDao.addFragment = function(data, cb) {
-    
+
 }
 
 //////////////////////////////////////////////////////////////
@@ -34,9 +34,9 @@ commonDao.addFragment = function(data, cb) {
 // 2、如果是走Pingxx则在发起支付时生成，支付完成后更新订单状态
 //////////////////////////////////////////////////////////////
 commonDao.saveOrUpdateOrder = function(data, cb) {
-    //data: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx, 
+    //data: { order: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx}, charge:{}
     //player: {nickName: xx, avatar: xx}}   //player info for rankingList
-    
+
     if (_.isUndefined(data.charge) || _.isNull(data.charge)) {
         db.order.save(data, function(err, doc) {
             if (err) {
@@ -55,8 +55,7 @@ commonDao.saveOrUpdateOrder = function(data, cb) {
                     state: data.state,
                     charge: data.charge
                 }
-            },
-            function (err, doc) {
+            }}, function (err, doc) {
                 if (err) {
                     utils.invokeCallback(cb, err, null);
                 }
@@ -64,9 +63,32 @@ commonDao.saveOrUpdateOrder = function(data, cb) {
                     utils.invokeCallback(cb, null, doc);
                 }
             }
-        });
+        );
     }
-    
+
+}
+
+commonDao.searchOrderByNumber = function (data, cb) {
+    db.order.findOne({orderSerialNumber: mongojs.ObjectId(data.orderSerialNumber)}, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
+
+//for Apple IAP
+commonDao.searchOrderByTransactionId = function (data, cb) {
+    db.order.findOne({transactionId: data.transactionId}, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
 }
 
 
@@ -169,10 +191,10 @@ commonDao.generateSerialCodeByType = function (data, cb) {
         else {
             if (doc) {
                 db.serialCode.findAndModify({
-                	query: {_id: mongojs.ObjectId(doc._id)}, 
+                	query: {_id: mongojs.ObjectId(doc._id)},
                 	update: {$inc: {number: 1}},
                 	new: true
-                }, 
+                },
             	function (err, doc, lastErrorObject) {
                 	cb(null, {number: doc.type.concat(doc.number.toString())});
             	});
@@ -182,7 +204,7 @@ commonDao.generateSerialCodeByType = function (data, cb) {
                     cb(null, {number: doc.type.concat(doc.number.toString())});
                 });
             }
-            
+
         }
     })
 }

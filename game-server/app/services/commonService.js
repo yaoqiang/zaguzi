@@ -75,3 +75,23 @@ commonService.bindingMobile = function (data, cb) {
     commonDao.bindingMobile(data, cb);
 }
 
+
+
+commonService.searchOrderByNumber = function (data, cb) {
+    if (data.orderSerialNumber == '' || data.orderSerialNumber == undefined || data.orderSerialNumber == null) {
+        cb({code: Code.FAIL});
+        return;
+    }
+
+    commonDao.searchOrderByNumber(data, cb);
+}
+
+
+commonService.searchOrderByTransactionId = function (data, cb) {
+    if (data.transactionId == '' || data.transactionId == undefined || data.transactionId == null) {
+        cb({code: Code.FAIL});
+        return;
+    }
+
+    commonDao.searchOrderByTransactionId(data, cb);
+}

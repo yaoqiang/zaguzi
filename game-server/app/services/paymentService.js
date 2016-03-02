@@ -80,20 +80,20 @@ paymentService.webhooksPingxx = function () {
  * @param channel
  * @param cb
  */
-paymentService.payment = function (uid, productId, state, device, channel, charge, cb) {
-    productId = parseInt(productId);
+paymentService.payment = function (order, charge, cb) {
+    order.productId = parseInt(order.productId);
     //
-    var product = _.findWhere(shopConf[device], { id: productId });
+    var product = _.findWhere(shopConf[order.device], { id: order.productId });
     if (product == undefined) {
-        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', uid, { productId: productId, device: device, channel: channel });
+        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', order.uid, { productId: order.productId, device: order.device, channel: order.channel });
         cb({ code: Code.FAIL });
         return;
     }
 
-    playerService.getUserCacheByUid(uid, function (user) {
+    playerService.getUserCacheByUid(order.uid, function (user) {
         //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
         if (user == null || _.isUndefined(user)) {
-            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", uid, { productId: productId, device: device, channel: channel });
+            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
             //
         }
         else {
@@ -128,7 +128,7 @@ paymentService.payment = function (uid, productId, state, device, channel, charg
                     }
 
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||金币添加失败||%j", uid, { productId: productId, device: device, channel: channel });
+                    logger.error("支付后逻辑失败||%s||金币添加失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
 
                     utils.invokeCallback(cb, err, null);
                     return;
@@ -138,11 +138,11 @@ paymentService.payment = function (uid, productId, state, device, channel, charg
                     var order = {
                         uid: uid,
                         orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
-                        productId: productId,
+                        productId: order.productId,
                         amount: product.amount,
-                        state: state,
-                        device: device,
-                        channel: channel,
+                        state: order.state,
+                        device: order.device,
+                        channel: order.channel,
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary },
                         charge: charge
                     }
@@ -155,7 +155,7 @@ paymentService.payment = function (uid, productId, state, device, channel, charg
                         }
                     })
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||物品添加失败||%j", uid, { productId: productId, device: device, channel: channel });
+                    logger.error("支付后逻辑失败||%s||物品添加失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
                     //Note: 回滚已添加的金币
                     //
                     utils.invokeCallback(cb, err, null);
@@ -166,7 +166,7 @@ paymentService.payment = function (uid, productId, state, device, channel, charg
                     user.player.saveItem();
                     utils.invokeCallback(cb, null, null);
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", uid, { productId: productId, device: device, channel: channel });
+                    logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
                     //Note: 回滚已添加的金币和物品
                     //
                     utils.invokeCallback(cb, err, null);

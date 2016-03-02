@@ -152,7 +152,7 @@ UniversalRemote.prototype = {
             //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
             //commonService.searchOrderByTransactionId(bodyJson.)
 
-            paymentService.payment(order, function (err, result) {
+            paymentService.payment(order, null, function (err, result) {
                 if (err) {
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -189,8 +189,7 @@ UniversalRemote.prototype = {
                 productId: originalOrder.productId,
                 state: originalOrder.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
                 device: originalOrder.device,
-                channel: originalOrder.channel,
-                charge: data
+                channel: originalOrder.channel
             };
 
             paymentService.payment(order, data,

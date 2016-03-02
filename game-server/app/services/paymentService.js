@@ -170,7 +170,7 @@ paymentService.payment = function (order, charge, cb) {
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
-                .then(function (order) {
+                .then(function (orderResult) {
                     user.player.save();
                     user.player.saveItem();
                     utils.invokeCallback(cb, null, null);

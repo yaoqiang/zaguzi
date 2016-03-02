@@ -77,9 +77,9 @@ commonService.bindingMobile = function (data, cb) {
 
 
 
-commonService.searchOrderByNumber = function (data, cb) {
-    if (data.orderSerialNumber == '' || data.orderSerialNumber == undefined || data.orderSerialNumber == null) {
-        cb({code: Code.FAIL});
+commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
+    if (orderSerialNumber == '' || orderSerialNumber == undefined || orderSerialNumber == null) {
+        cb({code: Code.FAIL}, null);
         return;
     }
 
@@ -87,8 +87,8 @@ commonService.searchOrderByNumber = function (data, cb) {
 }
 
 
-commonService.searchOrderByTransactionId = function (data, cb) {
-    if (data.transactionId == '' || data.transactionId == undefined || data.transactionId == null) {
+commonService.searchOrderByTransactionId = function (transactionId, cb) {
+    if (transactionId == '' || transactionId == undefined || transactionId == null) {
         cb({code: Code.FAIL}, null);
         return;
     }

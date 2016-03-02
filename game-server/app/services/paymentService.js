@@ -147,6 +147,7 @@ paymentService.payment = function (order, charge, cb) {
                         charge: charge
                     }
                     commonDao.saveOrUpdateOrder(order, charge, function (err, o) {
+                        logger.error("error => %o", err);
                         if (err) {
                             Promise.reject({ code: Code.FAIL });
                         }

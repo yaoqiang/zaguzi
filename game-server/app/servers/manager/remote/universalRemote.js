@@ -147,7 +147,7 @@ UniversalRemote.prototype = {
                 charge: null
             }
 
-            logger.info('receipt ---> %o', response.body.receipt.in_app);
+            logger.info('receipt ---> %o', response.body.receipt.in_app.transaction_id);
 
             //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
             //commonService.searchOrderByTransactionId(bodyJson.)

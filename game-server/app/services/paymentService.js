@@ -143,8 +143,7 @@ paymentService.payment = function (order, charge, cb) {
                         state: order.state,
                         device: order.device,
                         channel: order.channel,
-                        player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary },
-                        charge: charge
+                        player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
                     commonDao.saveOrUpdateOrder(order, charge, function (err, o) {
                         logger.error("error => %o", err);

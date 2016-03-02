@@ -5,7 +5,6 @@ var pomelo = require('pomelo');
 var consts = require('../consts/consts');
 var open = require('../consts/open');
 var shopConf = require('../../config/data/shop');
-var appConf = require('../../config/app.json');
 var Code = require('../../../shared/code');
 
 var logger = require('log4js').getLogger(consts.LOG.PAYMENT);

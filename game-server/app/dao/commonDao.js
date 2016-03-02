@@ -82,6 +82,7 @@ commonDao.searchOrderByNumber = function (data, cb) {
 //for Apple IAP
 commonDao.searchOrderByTransactionId = function (data, cb) {
     db.order.findOne({transactionId: data.transactionId}, function (err, doc) {
+        logger.info('11111=== %o === %o', err, doc)
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

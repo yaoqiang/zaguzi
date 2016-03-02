@@ -167,8 +167,9 @@ UniversalRemote.prototype = {
 
             //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
             commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
+                logger4payment.info("----> %o --- %doc", err, doc)
                 if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
-                    logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中没有transaction_id已使用, 可能是非法请求或漏单||%j', data.uid, {productId: data.productId, device: 'ios'})
+                    logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单||%j', data.uid, {productId: data.productId, device: 'ios'})
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id

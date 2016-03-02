@@ -89,7 +89,7 @@ commonService.searchOrderByNumber = function (data, cb) {
 
 commonService.searchOrderByTransactionId = function (data, cb) {
     if (data.transactionId == '' || data.transactionId == undefined || data.transactionId == null) {
-        cb({code: Code.FAIL});
+        cb({code: Code.FAIL}, null);
         return;
     }
 

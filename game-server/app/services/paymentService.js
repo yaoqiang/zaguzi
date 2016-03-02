@@ -144,7 +144,7 @@ paymentService.payment = function (order, charge, cb) {
                     logger.info('-----3-1')
                     //存储订单
                     var order = {
-                        uid: uid,
+                        uid: order.uid,
                         orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
                         productId: order.productId,
                         amount: product.amount,

@@ -146,7 +146,7 @@ paymentService.payment = function (order, charge, cb) {
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary },
                         charge: charge
                     }
-                    commonDao.saveOrUpdateOrder(order, function (err, o) {
+                    commonDao.saveOrUpdateOrder(order, charge, function (err, o) {
                         if (err) {
                             Promise.reject({ code: Code.FAIL });
                         }

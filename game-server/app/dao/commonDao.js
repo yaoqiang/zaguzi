@@ -33,11 +33,11 @@ commonDao.addFragment = function(data, cb) {
 // 1、如果是Apple IAP则在充值后生成；
 // 2、如果是走Pingxx则在发起支付时生成，支付完成后更新订单状态
 //////////////////////////////////////////////////////////////
-commonDao.saveOrUpdateOrder = function(data, cb) {
+commonDao.saveOrUpdateOrder = function(data, charge, cb) {
     //data: { order: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx}, charge:{}
     //player: {nickName: xx, avatar: xx}}   //player info for rankingList
 
-    if (_.isUndefined(data.charge) || _.isNull(data.charge)) {
+    if (_.isUndefined(charge) || _.isNull(charge)) {
         db.order.save(data, function(err, doc) {
             if (err) {
                 utils.invokeCallback(cb, err, null);
@@ -53,7 +53,7 @@ commonDao.saveOrUpdateOrder = function(data, cb) {
             update: {
                 $set: {
                     state: data.state,
-                    charge: data.charge
+                    charge: charge
                 }
             }}, function (err, doc) {
                 if (err) {

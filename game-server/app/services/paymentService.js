@@ -18,25 +18,54 @@ var pingpp = require('pingpp')(open.PAYMENT.PINGXX.testSecretKey);
 
 var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');
+var userDao = require('../dao/userDao');
 
 var utils = require('../util/utils');
 
 var paymentService = module.exports
 
 paymentService.requestChargesPingxx = function (data, cb) {
-
+    
+    var orderSerialNumber = mongojs.ObjectId().toString();
+    
     pingpp.charges.create({
         subject: data.subject,
         body: data.body,
-        amount: 100,
-        order_no: "123456789",
+        amount: data.amount * 100,
+        order_no: orderSerialNumber,
         channel: data.channel,
         currency: "cny",
         client_ip: data.clientIp,
-        app: {id: appConf.payment.pingxx.appid}
-    }, function(err, charge) {
+        app: { id: appConf.payment.pingxx.appid }
+    }, function (err, charge) {
         // YOUR CODE
+        if (err) {
+            cb({code: Code.FAIL});
+            return;
+        }
+        
+        userDao.getPlayerByUid(data.uid, function(player) {
+            var order = {
+                uid: data.uid,
+                orderSerialNumber: orderSerialNumber,
+                productId: data.productId,
+                amount: data.product.amount,
+                state: consts.ORDER.STATE.PENDING,
+                device: data.device,
+                channel: data.channel,
+                player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+            }
+            
+            commonDao.saveOrUpdateOrder(order);
+        
+            cb({code: Code.OK, charge: charge});
+        })
+        
+        
     });
+
+
+
 }
 
 paymentService.webhooksPingxx = function () {
@@ -52,92 +81,97 @@ paymentService.webhooksPingxx = function () {
  * @param channel
  * @param cb
  */
-paymentService.payment = function (uid, productId, state, device, channel, cb) {
+paymentService.payment = function (uid, productId, state, device, channel, charge, cb) {
     productId = parseInt(productId);
     //
-    var product = _.findWhere(shopConf[device], {id: productId});
+    var product = _.findWhere(shopConf[device], { id: productId });
     if (product == undefined) {
-        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', uid, {productId: productId, device: device, channel: channel});
-        cb({code: Code.FAIL});
+        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', uid, { productId: productId, device: device, channel: channel });
+        cb({ code: Code.FAIL });
         return;
     }
 
     playerService.getUserCacheByUid(uid, function (user) {
         //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
         if (user == null || _.isUndefined(user)) {
-            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", uid, {productId: productId, device: device, channel: channel});
+            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", uid, { productId: productId, device: device, channel: channel });
             //
         }
         else {
             new Promise(function (resolve, reject) {
                 //添加金币
-                if (product.gold > 0 ) {
+                if (product.gold > 0) {
                     user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.RECHARGE, product.gold, function (data) {
                         if (data.code === Code.OK) {
                             resolve(data);
                         } else {
-                            reject({code: Code.FAIL});
+                            reject({ code: Code.FAIL });
                         }
                     });
                 } else {
-                    resolve({code: Code.OK});
+                    resolve({ code: Code.OK });
                 }
             })
-            .then(function (gold) {
-                //添加物品
-                if (product.items.length > 0) {
-                    user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
-                        if (data.code === Code.OK) {
-                            Promise.resolve(data);
+                .then(function (gold) {
+                    //添加物品
+                    if (product.items.length > 0) {
+                        user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
+                            if (data.code === Code.OK) {
+                                Promise.resolve(data);
+                            }
+                            else {
+                                Promise.reject({ code: Code.FAIL });
+                            }
+                        });
+
+                    } else {
+                        Promise.resolve({ code: Code.OK });
+                    }
+
+                }, function (err) {
+                    logger.error("支付后逻辑失败||%s||金币添加失败||%j", uid, { productId: productId, device: device, channel: channel });
+
+                    utils.invokeCallback(cb, err, null);
+                    return;
+                })
+                .then(function (items) {
+                    //存储订单
+                    var order = {
+                        uid: uid,
+                        orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
+                        productId: productId,
+                        amount: product.amount,
+                        state: state,
+                        device: device,
+                        channel: channel,
+                        player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary },
+                        charge: charge
+                    }
+                    commonDao.saveOrUpdateOrder(order, function (err, o) {
+                        if (err) {
+                            Promise.reject({ code: Code.FAIL });
                         }
                         else {
-                            Promise.reject({code: Code.FAIL});
+                            Promise.resolve({ code: Code.OK });
                         }
-                    });
-
-                } else {
-                    Promise.resolve({code: Code.OK});
-                }
-
-            }, function (err) {
-                logger.error("支付后逻辑失败||%s||金币添加失败||%j", uid, {productId: productId, device: device, channel: channel});
-
-                utils.invokeCallback(cb, err, null);
-                return;
-            })
-            .then(function (items) {
-                //存储订单
-                var order = {
-                    uid: uid,
-                    orderSerialNumber: mongojs.ObjectId().toString(),
-                    productId: productId,
-                    amount: product.amount,
-                    state: consts.ORDER.STATE.FINISHED,
-                    device: device,
-                    channel: channel,
-                    player: {nickName: user.player.nickName, avatar: user.player.avatar}
-                }
-                commonDao.saveOrder(order, function (err, o) {
-                    if (err) {
-                        Promise.reject({code: Code.FAIL});
-                    }
-                    else {
-                        Promise.resolve({code: Code.OK});
-                    }
+                    })
+                }, function (err) {
+                    logger.error("支付后逻辑失败||%s||物品添加失败||%j", uid, { productId: productId, device: device, channel: channel });
+                    //Note: 回滚已添加的金币
+                    //
+                    utils.invokeCallback(cb, err, null);
+                    return;
                 })
-            }, function (err) {
-                logger.error("支付后逻辑失败||%s||物品添加失败||%j", uid, {productId: productId, device: device, channel: channel});
-                utils.invokeCallback(cb, err, null);
-                return;
-            })
-            .then(function (order) {
-                user.player.save();
-                user.player.saveItem();
-                utils.invokeCallback(cb, null, null);
-            }, function (err) {
-                logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", uid, {productId: productId, device: device, channel: channel});
-                utils.invokeCallback(cb, err, null);
-            });
+                .then(function (order) {
+                    user.player.save();
+                    user.player.saveItem();
+                    utils.invokeCallback(cb, null, null);
+                }, function (err) {
+                    logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", uid, { productId: productId, device: device, channel: channel });
+                    //Note: 回滚已添加的金币和物品
+                    //
+                    utils.invokeCallback(cb, err, null);
+                });
 
         }
     });

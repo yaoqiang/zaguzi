@@ -137,7 +137,7 @@ UniversalRemote.prototype = {
                 cb();
                 return;
             }
-            paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', function (err, result) {
+            paymentService.payment(data.uid, data.productId, consts.ORDER.STATE.FINISHED, 'ios', 'ios', null, function (err, result) {
                 if (err) {
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -157,6 +157,33 @@ UniversalRemote.prototype = {
             });
         });
 
+    },
+    
+    payment4Pingxx: function (data, cb) {
+        
+        var connectors = pomelo.app.getServersByType('connector');
+        
+        paymentService.payment(data.uid, data.productId, 
+            data.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED, 
+            null, null, {charge: data}, 
+            function (err, result) {
+                if (err) {
+                    messageService.pushMessageToPlayer({
+                        uid: data.uid,
+                        sid: dispatcher(data.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    cb();
+                    return;
+                }
+                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios'})
+
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+
+                cb();
+        });
     },
 
 

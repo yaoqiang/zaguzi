@@ -312,8 +312,12 @@ module.exports = {
             SUBMIT: "SUBMIT",
             PENDING: "PENDING",
             PAYMENT: "PAYMENT",
+            PAYMENT_FAILED: "PAYMENT_FAILED",
             CANCELED: "CANCELED",
-            FINISHED: "FINISHED"
+            FINISHED: "FINISHED",
+            REFUND_PENDING: "REFUND_PENDING",
+            REFUND_SUCCESS: "REFUND_SUCCESS",
+            REFUND_FAILED: "REFUND_FAILED"
         }
     },
 

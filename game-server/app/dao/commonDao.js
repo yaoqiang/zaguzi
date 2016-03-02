@@ -28,20 +28,45 @@ commonDao.addFragment = function(data, cb) {
     
 }
 
-//////////////////
-//充值后，生成订单
-/////////////////
-commonDao.saveOrder = function(data, cb) {
+//////////////////////////////////////////////////////////////
+//充值后，生成订单；
+// 1、如果是Apple IAP则在充值后生成；
+// 2、如果是走Pingxx则在发起支付时生成，支付完成后更新订单状态
+//////////////////////////////////////////////////////////////
+commonDao.saveOrUpdateOrder = function(data, cb) {
     //data: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx, 
     //player: {nickName: xx, avatar: xx}}   //player info for rankingList
-    db.order.save(data, function(err, doc) {
-        if (err) {
-            utils.invokeCallback(cb, err, null);
-        }
-        else {
-            utils.invokeCallback(cb, null, doc);
-        }
-    })
+    
+    if (_.isUndefined(data.charge) || _.isNull(data.charge)) {
+        db.order.save(data, function(err, doc) {
+            if (err) {
+                utils.invokeCallback(cb, err, null);
+            }
+            else {
+                utils.invokeCallback(cb, null, doc);
+            }
+        });
+    }
+    else {
+        db.order.findAndModify({
+            query: {orderSerialNumber: mongojs.ObjectId(data.orderSerialNumber)},
+            update: {
+                $set: {
+                    state: data.state,
+                    charge: data.charge
+                }
+            },
+            function (err, doc) {
+                if (err) {
+                    utils.invokeCallback(cb, err, null);
+                }
+                else {
+                    utils.invokeCallback(cb, null, doc);
+                }
+            }
+        });
+    }
+    
 }
 
 
@@ -130,5 +155,34 @@ commonDao.bindingMobile = function (data, cb) {
                 cb({code: Code.OK});
             }
         })
+    })
+}
+
+
+//生成序列号消息
+commonDao.generateSerialCodeByType = function (data, cb) {
+    var initNumber = 100000001;
+    db.serialCode.findOne({type: data.type}, function (err, doc) {
+        if (err) {
+            cb(err, null);
+        }
+        else {
+            if (doc) {
+                db.serialCode.findAndModify({
+                	query: {_id: mongojs.ObjectId(doc._id)}, 
+                	update: {$inc: {number: 1}},
+                	new: true
+                }, 
+            	function (err, doc, lastErrorObject) {
+                	cb(null, {number: doc.type.concat(doc.number.toString())});
+            	});
+            }
+            else {
+                db.serialCode.save({type: data.type, number: initNumber}, function (err, doc) {
+                    cb(null, {number: doc.type.concat(doc.number.toString())});
+                });
+            }
+            
+        }
     })
 }

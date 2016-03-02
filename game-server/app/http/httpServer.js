@@ -72,6 +72,7 @@ var httpStart = function (app) {
 
     //router
     server.use('/callback/apix', require('./controller/APiXController')(app));
+    server.use('/pingxx/webhooks', require('./controller/PingxxController')(app));
 
 
     //root path

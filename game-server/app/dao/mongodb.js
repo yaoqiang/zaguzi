@@ -34,6 +34,7 @@ db.order.ensureIndex({device: 1});
 db.order.ensureIndex({channel: 1});
 db.order.ensureIndex({productId: 1});
 db.order.ensureIndex({createdAt: 1});
+db.order.ensureIndex({transactionId: 1});
 
 db.appReleaseRecord.ensureIndex({version: 1});
 

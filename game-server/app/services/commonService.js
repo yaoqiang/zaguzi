@@ -88,6 +88,7 @@ commonService.searchOrderByNumber = function (data, cb) {
 
 
 commonService.searchOrderByTransactionId = function (data, cb) {
+    logger.info('!!!!!!!!!')
     if (data.transactionId == '' || data.transactionId == undefined || data.transactionId == null) {
         cb({code: Code.FAIL}, null);
         return;

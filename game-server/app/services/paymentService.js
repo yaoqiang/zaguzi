@@ -55,7 +55,9 @@ paymentService.requestChargesPingxx = function (data, cb) {
                 player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
             }
             
-            commonDao.saveOrUpdateOrder(order);
+            commonDao.saveOrUpdateOrder(order, null, function () {
+                
+            });
         
             cb({code: Code.OK, charge: charge});
         })
@@ -91,7 +93,6 @@ paymentService.payment = function (order, charge, cb) {
     }
 
     playerService.getUserCacheByUid(order.uid, function (user) {
-        logger.info('-----------')
         //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
         if (user == null || _.isUndefined(user)) {
             logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
@@ -103,15 +104,12 @@ paymentService.payment = function (order, charge, cb) {
                 if (product.gold > 0) {
                     user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.RECHARGE, product.gold, function (data) {
                         if (data.code === Code.OK) {
-                            logger.info('-----1-1')
                             resolve(data);
                         } else {
-                            logger.info('-----1-2')
                             reject({ code: Code.FAIL });
                         }
                     });
                 } else {
-                    logger.info('-----1-3')
                     resolve({ code: Code.OK });
                 }
             })
@@ -120,17 +118,14 @@ paymentService.payment = function (order, charge, cb) {
                     if (product.items.length > 0) {
                         user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
                             if (data.code === Code.OK) {
-                                logger.info('-----2-1')
                                 Promise.resolve(data);
                             }
                             else {
-                                logger.info('-----2-2')
                                 Promise.reject({ code: Code.FAIL });
                             }
                         });
 
                     } else {
-                        logger.info('-----2-3')
                         Promise.resolve({ code: Code.OK });
                     }
 
@@ -141,7 +136,6 @@ paymentService.payment = function (order, charge, cb) {
                     return;
                 })
                 .then(function (items) {
-                    logger.info('-----3-1 %j', order)
                     //存储订单
                     var orderData = {
                         uid: order.uid,
@@ -153,9 +147,7 @@ paymentService.payment = function (order, charge, cb) {
                         channel: order.channel,
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
-                    logger.info('-----3-2')
                     commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
-                        logger.error("error => %o", err);
                         if (err) {
                             Promise.reject({ code: Code.FAIL });
                         }

@@ -138,6 +138,8 @@ UniversalRemote.prototype = {
                 return;
             }
 
+            logger4payment.info(response.body);
+
             var order = {
                 uid: data.uid,
                 productId: data.productId,
@@ -147,13 +149,26 @@ UniversalRemote.prototype = {
                 charge: null
             }
 
-            logger.info('receipt ---> %s', response.body.receipt.in_app[0].transaction_id);
+            var transactionId = -1;
+            if (response.body.receipt.in_app.length > 0) {
+                transactionId = response.body.receipt.in_app[0].transaction_id;
+            }
+
+            if (transactionId == -1) {
+                logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中没有transaction_id||%j', data.uid, {productId: data.productId, device: 'ios'})
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                cb();
+                return;
+            }
+
 
             //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
-            //commonService.searchOrderByTransactionId(bodyJson.)
-
-            paymentService.payment(order, null, function (err, result) {
-                if (err) {
+            commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
+                if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
+                    logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中没有transaction_id已使用, 可能是非法请求或漏单||%j', data.uid, {productId: data.productId, device: 'ios'})
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
@@ -161,15 +176,28 @@ UniversalRemote.prototype = {
                     cb();
                     return;
                 }
-                logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios', channel: 'IAP'})
 
-                messageService.pushMessageToPlayer({
-                    uid: data.uid,
-                    sid: dispatcher(data.uid, connectors).id
-                }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+                paymentService.payment(order, null, function (err, result) {
+                    if (err) {
+                        messageService.pushMessageToPlayer({
+                            uid: data.uid,
+                            sid: dispatcher(data.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                        cb();
+                        return;
+                    }
+                    logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios', channel: 'IAP'})
 
-                cb();
-            });
+                    messageService.pushMessageToPlayer({
+                        uid: data.uid,
+                        sid: dispatcher(data.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+
+                    cb();
+                });
+            })
+
+
         });
 
     },

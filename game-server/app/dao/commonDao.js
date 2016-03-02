@@ -36,11 +36,8 @@ commonDao.addFragment = function(data, cb) {
 commonDao.saveOrUpdateOrder = function(data, charge, cb) {
     //data: { order: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx}, charge:{}
     //player: {nickName: xx, avatar: xx}}   //player info for rankingList
-    logger.info('save or update %j, %j', data, charge);
     if (_.isUndefined(charge) || _.isNull(charge)) {
-        logger.info('11111')
         db.order.save(data, function(err, doc) {
-            logger.info('11111 - > %o', err);
             if (err) {
                 utils.invokeCallback(cb, err, null);
             }
@@ -59,7 +56,6 @@ commonDao.saveOrUpdateOrder = function(data, charge, cb) {
                     charge: charge
                 }
             }}, function (err, doc) {
-                logger.info('last----%o', err);
                 if (err) {
                     utils.invokeCallback(cb, err, null);
                 }

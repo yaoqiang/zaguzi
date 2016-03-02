@@ -83,7 +83,7 @@ commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
         return;
     }
 
-    commonDao.searchOrderByNumber(data, cb);
+    commonDao.searchOrderByNumber(orderSerialNumber, cb);
 }
 
 
@@ -93,5 +93,5 @@ commonService.searchOrderByTransactionId = function (transactionId, cb) {
         return;
     }
 
-    commonDao.searchOrderByTransactionId(data, cb);
+    commonDao.searchOrderByTransactionId(transactionId, cb);
 }

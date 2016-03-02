@@ -145,6 +145,7 @@ paymentService.payment = function (order, charge, cb) {
                         state: order.state,
                         device: order.device,
                         channel: order.channel,
+                        transactionId: order.transactionId,
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
                     commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {

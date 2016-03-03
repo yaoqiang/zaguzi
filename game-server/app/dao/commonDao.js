@@ -47,7 +47,6 @@ commonDao.saveOrUpdateOrder = function(data, charge, cb) {
         });
     }
     else {
-        logger.info('22222')
         db.order.findAndModify({
             query: {orderSerialNumber: mongojs.ObjectId(data.orderSerialNumber)},
             update: {
@@ -82,7 +81,6 @@ commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
 //for Apple IAP
 commonDao.searchOrderByTransactionId = function (transactionId, cb) {
     db.order.findOne({transactionId: transactionId}, function (err, doc) {
-        logger.info('11111=== %o === %o', err, doc)
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

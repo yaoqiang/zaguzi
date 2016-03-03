@@ -98,6 +98,9 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
+    /**
+     * Apple IAP支付完成后调用
+     */
     payment4IAP: function (data, cb) {
 
         //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
@@ -204,6 +207,9 @@ UniversalRemote.prototype = {
 
     },
     
+    /**
+     * ping++支付回调（Webhooks）
+     */
     payment4Pingpp: function (data, cb) {
         
         var connectors = pomelo.app.getServersByType('connector');
@@ -246,6 +252,14 @@ UniversalRemote.prototype = {
 
     },
 
+
+    /**
+     * 客户端请求支付，获取ping++支付凭证
+     */
+    requestPaymentByPingpp: function (data, cb) {
+        paymentService.requestChargesPingxx(data, cb);
+    },
+    
 
     getShopList: function (data, cb) {
         cb({code: Code.OK, shopList: shopService.getShopList(data.device)});

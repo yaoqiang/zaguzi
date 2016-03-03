@@ -33,14 +33,23 @@
         },
         {
             "id": 1003,
-            "title": "超值金币套餐",
+            "title": "经典套餐升级版",
             "currency": "RMB",
             "gold": 8888,
             "amount": 6,
-            "desc": "超值金币特惠套餐",
+            "desc": "买就送小喇叭 + 记牌器",
             "icon": "2",
             "hot": true,
-            "items": []
+            "items": [
+                {
+                    "id": 2,
+                    "value": 1
+                },
+                {
+                    "id": 3,
+                    "value": 1
+                }
+            ]
         },
         {
             "id": 1004,
@@ -203,14 +212,23 @@
         },
         {
             "id": 2003,
-            "title": "超值金币套餐",
+            "title": "经典套餐升级版",
             "currency": "RMB",
             "gold": 8888,
             "amount": 6,
-            "desc": "超值金币特惠套餐",
+            "desc": "买就送小喇叭 + 记牌器",
             "icon": "2",
             "hot": true,
-            "items": []
+            "items": [
+                {
+                    "id": 2,
+                    "value": 1
+                },
+                {
+                    "id": 3,
+                    "value": 1
+                }
+            ]
         },
         {
             "id": 2004,

@@ -35,7 +35,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
         channel: data.channel,
         currency: "cny",
         client_ip: data.clientIp,
-        app: { id: appConf.payment.pingxx.appid }
+        app: { id: open.PAYMENT.PINGPP.appid }
     }, function (err, charge) {
         // YOUR CODE
         if (err) {

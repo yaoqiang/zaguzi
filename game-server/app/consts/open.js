@@ -27,7 +27,7 @@ module.exports = {
         }
     },
     PAYMENT: {
-        PINGXX: {
+        PINGPP: {
             "testSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",
             "testPublishableKey": "pk_test_KOKWjLHij10CrvLC8CmTenzT",
             "liveSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",

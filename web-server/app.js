@@ -87,8 +87,6 @@ app.post('/loginByToken', function (req, res) {
         });
         return;
     }
-
-    console.log('token -> ', data.token);
     
     //result: [uid, timestamp, password]
     var result = Token.parse(data.token, secret);
@@ -98,8 +96,6 @@ app.post('/loginByToken', function (req, res) {
         });
         return;
     }
-
-    console.log('result -> ', result);
 
     var uid = result.uid, password = result.password;
 

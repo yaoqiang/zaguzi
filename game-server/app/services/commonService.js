@@ -5,6 +5,7 @@ var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 var messageService = require('./messageService');
 var commonDao = require('../dao/commonDao');
+var userDao = require('../dao/userDao');
 
 var compareVersions = require('compare-versions');
 
@@ -71,8 +72,17 @@ commonService.bindingMobile = function (data, cb) {
         cb({code: Code.FAIL});
         return;
     }
+    
+    userDao.findByMobile(data.mobile, function (err, result) {
+        if (result) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_ALREADY_BINDING});
+            return;
+        }
+        
+        commonDao.bindingMobile(data, cb);
+    });
 
-    commonDao.bindingMobile(data, cb);
+    
 }
 
 

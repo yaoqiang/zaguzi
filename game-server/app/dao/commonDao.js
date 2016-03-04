@@ -19,6 +19,9 @@ var passwordHash = require('password-hash');
 
 var utils = require('../util/utils');
 
+var Token = require('../../../shared/token');
+var secret = require('../../../shared/config/session').secret;
+
 var commonDao = module.exports;
 
 
@@ -159,8 +162,7 @@ commonDao.bindingMobile = function (data, cb) {
             return;
         }
 
-        //var password = passwordHash.generate(data.password);
-        var password = data.password;
+        var password = passwordHash.generate(data.password);
 
         db.user.findAndModify({
             query: {
@@ -173,7 +175,9 @@ commonDao.bindingMobile = function (data, cb) {
                 cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
             }
             else {
-                cb({code: Code.OK});
+                //生成Token，用于绑定后更新客户端Token.
+                var token = Token.create(data.uid, Date.now(), password.toString(), secret);
+                cb({code: Code.OK, token: token});
             }
         })
     })

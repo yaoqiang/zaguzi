@@ -274,11 +274,31 @@ handler.getShopList = function (msg, session, next) {
     })
 }
 
+/**
+ * 发送支付结果（Apple IAP使用）
+ */
 handler.sendPaymentResult = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.universalRemote.payment4IAP(session, msg, null);
     next();
 }
+
+/**
+ * 请求获取ping++支付charge
+ * msg: {device: xx, channel: xx, productId: xx}
+ */
+handler.requestPaymentByPingpp = function (msg, session, next) {
+    var sessionService = self.app.get('sessionService');
+    var remoteAddress = sessionService.getClientAddressBySessionId(session.id);
+    msg.uid = session.uid;
+    msg.clientIp = remoteAddress.ip;
+    
+    this.app.rpc.manager.universalRemote.payment4IAP(session, msg, function (data) {
+        next(null, data);
+    });
+    
+    
+} 
 
 /**
  * 获得最新版本信息

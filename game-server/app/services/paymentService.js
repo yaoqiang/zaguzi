@@ -23,19 +23,32 @@ var utils = require('../util/utils');
 
 var paymentService = module.exports
 
+/**
+ * 生成ping++ charge对象, 
+ * data: {productId: xx, clientIp: xx, device: xx, channel: xx}
+ */
 paymentService.requestChargesPingxx = function (data, cb) {
+
+    data.productId = parseInt(data.productId);
+    //
+    var product = _.findWhere(shopConf[data.device], { id: data.productId });
+    if (product == undefined) {
+        logger.error('请求支付charge失败||%s||在服务器端没有找到该产品||%j', data.uid, { productId: data.productId, device: data.device, channel: data.channel });
+        cb({ code: Code.FAIL });
+        return;
+    }
     
     var orderSerialNumber = mongojs.ObjectId().toString();
     
     pingpp.charges.create({
-        subject: data.subject,
-        body: data.body,
-        amount: data.amount * 100,
+        subject: product.title,
+        body: product.desc,
+        amount: product.amount * 100,
         order_no: orderSerialNumber,
         channel: data.channel,
         currency: "cny",
         client_ip: data.clientIp,
-        app: { id: appConf.payment.pingxx.appid }
+        app: { id: open.PAYMENT.PINGPP.appid }
     }, function (err, charge) {
         // YOUR CODE
         if (err) {
@@ -48,7 +61,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
                 uid: data.uid,
                 orderSerialNumber: orderSerialNumber,
                 productId: data.productId,
-                amount: data.product.amount,
+                amount: product.amount,
                 state: consts.ORDER.STATE.PENDING,
                 device: data.device,
                 channel: data.channel,

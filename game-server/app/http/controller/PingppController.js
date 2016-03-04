@@ -18,9 +18,11 @@ module.exports = function (app) {
     pingpp.get('/notify', function (req, res) {
         logger.debug('responsed from pingxx notify route.');
         
+        logger.debug('-- req from pingpp --> %o', req);
+        
         // 验证 webhooks 签名
-        var verify_signature = function (raw_data, signature, pub_key_path) {
-            var verifier = crypto.createVerify('RSA-SHA256').update(raw_data, "utf8");
+        var verifySignature = function (rawData, signature, pub_key_path) {
+            var verifier = crypto.createVerify('RSA-SHA256').update(rawData, "utf8");
             var pub_key = fs.readFileSync(pub_key_path, "utf8");
             return verifier.verify(pub_key, signature, 'base64');
         }
@@ -32,15 +34,14 @@ module.exports = function (app) {
         // 请从 https://dashboard.pingxx.com 获取「Webhooks 验证 Ping++ 公钥」
         var pub_key_path = __dirname + "../../../config/pingpp_rsa_public_key.pem";
 
-        if (!verify_signature(rawData, signature, pub_key_path)) {
+        if (!verifySignature(rawData, signature, pub_key_path)) {
             logger.error('verification failed');
             res.sendStatus(400);
             return;
-            
         } 
         logger.info('verification succeeded');
 
-        logger.debug('-- req -- %o', req);
+        
         // 异步通知
         try {
             var result = req.body;

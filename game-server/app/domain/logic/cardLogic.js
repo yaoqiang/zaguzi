@@ -26,7 +26,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
 {
     if (!cards || cards == undefined || cards.length < 1 || cards.length > 4)
     {
-        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0);
+        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0, []);
     }
 
     //校验牌型
@@ -52,7 +52,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
                 {
                     if (type == consts.GAME.TYPE.FIVE)
                     {
-                        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_6, cards);
+                        return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_6, tmp[0], cards);
                     }
                 }
                 return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_2, tmp[0], cards);
@@ -62,12 +62,12 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
                 //如果是双王
                 if (_.contains(tmp, 18) && _.contains(tmp, 19))
                 {
-                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_5, cards);
+                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_5, tmp[0], cards);
                 }
                 //错误牌型
                 else
                 {
-                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0);
+                    return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0, []);
                 }
             }
         }
@@ -81,7 +81,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
             }
             else
             {
-                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0);
+                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0, []);
             }
         }
         else
@@ -93,7 +93,7 @@ CardLogic.recognizeSeries = function(cards, type, liang3)
             }
             else
             {
-                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0);
+                return new CardRecognization(CardLogic.CardSeriesCode.cardSeries_99, 0, []);
             }
         }
 
@@ -187,15 +187,21 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
                 //6人平3可打；5人如果块3不亮也可打；
                 if (type == consts.GAME.TYPE.FIVE || type == consts.GAME.TYPE.SEVEN)
                 {
+                    //如果上手牌是红3，那4大不了
                     if (cr2.originalCard[0] == 216) {
                         return false;
                     }
+                    //如果上手牌是方块3
                     if (cr2.originalCard[0] == 116) {
+                        //如果当前是5人局，如果方块3亮了，则4大不了3
                         if (type == consts.GAME.TYPE.FIVE) {
                             if (_.contains(liang3, 116)) return false;
                             return true;
                         }
+                        //如果当前是7人局，方块3大不了4
+                        return true;
                     }
+                    //正常比较即可
                     if (cr1.maxCardPoint > cr2.maxCardPoint)
                     {
                         return true;
@@ -273,6 +279,9 @@ CardLogic.isCurrentBiggerThanLast = function(cr1, cr2, type, liang3)
             return true;
         }
     }
+    
+    //上手牌是单牌, 当前牌型是对子; 或者 上手牌是对子, 当前牌型是单牌; 无法匹配则返回undefined;
+    return undefined;
 
 }
 
@@ -299,14 +308,12 @@ CardLogic.simpleAnalysis = function (lastFanCardRecognization, holdingCards, typ
 
     //分析手牌, 得出各牌型结果{cardSeries_1: [CardRecognization,], cardSeries_2: [...], ...}
     function analysisHoldingCards(holdingCards) {
-        holdingCards = holdingCards.reverse();
+        // holdingCards = holdingCards.reverse();
         var result = {};
         _.each(holdingCards, function (card) {
             var cardRecognization = CardLogic.recognizeSeries(card, type, liang3);
             result.cardSeries_1.push(cardRecognization);
         });
-
-
 
 
     }

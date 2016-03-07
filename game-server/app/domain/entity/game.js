@@ -759,6 +759,11 @@ Game.prototype.fan = function (data, cb) {
             //如果不是Boss出牌，则需比较上手牌
             if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, this.gameLogic.appends);
+                if (_.isUndefined(result)) {
+                    logger.debug('game||fan||出牌错误，玩家出牌是单牌或对子, 与上手牌型不匹配||用户&ID: %j', data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
+                    return;
+                }
                 if (!result) {
                     logger.debug('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});

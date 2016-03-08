@@ -6,13 +6,13 @@ var consts = require('../../consts/consts');
 var CardLogic = {}
 
 CardLogic.CardSeriesCode = {
-    cardSeries_1: 0, //单牌
-    cardSeries_2: 1, //对子
-    cardSeries_3: 2, //炸弹
-    cardSeries_4: 3, //四轮车
-    cardSeries_5: 4, //对王
-    cardSeries_6: 5, //双三满天飞
-    cardSeries_99: 6 //无法识别，错误牌型
+    cardSeries_1: 1, //单牌
+    cardSeries_2: 2, //对子
+    cardSeries_3: 3, //炸弹
+    cardSeries_4: 4, //四轮车
+    cardSeries_5: 5, //对王
+    cardSeries_6: 6, //双三满天飞
+    cardSeries_99: 7 //无法识别，错误牌型
 }
 
 /**
@@ -289,36 +289,87 @@ CardLogic.simpleAnalysis = function (lastFanCardRecognization, holdingCards, typ
     if (lastFanCardRecognization.cardSeries == CardLogic.CardSeriesCode.cardSeries_99) {
         return [];
     }
+    // 分析手牌牌型
+    var holdingCardsRecognization = analysisHoldingCards(holdingCards);
+    // 从小到大排序手牌牌型
+    var sortedCardRecognizationList = _.flatten(_.map(holdingCardsRecognization, function(crList) {
+      return crList.reverse();
+    }));
 
-    switch (lastFanCardRecognization.cardSeries) {
-        case CardLogic.CardSeriesCode.cardSeries_1 :
-            
-            break;
-        case CardLogic.CardSeriesCode.cardSeries_2 :
-            break;
-        case CardLogic.CardSeriesCode.cardSeries_3 :
-            break;
-        case CardLogic.CardSeriesCode.cardSeries_4 :
-            break;
-        case CardLogic.CardSeriesCode.cardSeries_5 :
-            break;
-        case CardLogic.CardSeriesCode.cardSeries_6 :
-            break;
-    }
+    // 手牌与上手牌型比较, 得出大于的牌型, 并获取第一个
+    var biggerCardRecognizationList = _.filter(sortedCardRecognizationList, function (cr) {
+        return CardLogic.isCurrentBiggerThanLast(cr, lastFanCardRecognization, type, liang3);
+    });
+
+    var simpleAnalysisResult = _.first(biggerCardRecognizationList);
+
+
+    return _.isUndefined(simpleAnalysisResult) ? [] : simpleAnalysisResult.originalCard;
+
 
     //分析手牌, 得出各牌型结果{cardSeries_1: [CardRecognization,], cardSeries_2: [...], ...}
-    function analysisHoldingCards(holdingCards) {
+    function analysisHoldingCards (holdingCards) {
         // holdingCards = holdingCards.reverse();
-        var result = {};
-        _.each(holdingCards, function (card) {
-            var cardRecognization = CardLogic.recognizeSeries(card, type, liang3);
-            result.cardSeries_1.push(cardRecognization);
-        });
+        var initState = {
+          cardSeries_1: [],
+          cardSeries_2: [],
+          cardSeries_3: [],
+          cardSeries_4: [],
+          cardSeries_5: [],
+          cardSeries_6: []
+        };
 
+        var result = _.reduce(holdingCards, function (current, card, key) {
+            //识别单牌
+            var cardRecognization = CardLogic.recognizeSeries([card], type, liang3);
+            //放入单牌数组
+            initState.cardSeries_1.push(cardRecognization);
+            //如果是1张以上牌, 分析对子、炸弹、4个、双3、双王
+            if (key > 0) {
+              var originalCard1 = initState.cardSeries_1[key].originalCard;
+              var originalCard2 = initState.cardSeries_1[key-1].originalCard;
 
+              //如果两张一样, 则分析是双3、双王还是对子
+              var originalCards = [originalCard1, originalCard2];
+              var recognizationOfSameTwoCards = CardLogic.recognizeSeries(_.flatten(originalCards), type, liang3);
+              switch (recognizationOfSameTwoCards.cardSeries) {
+                case CardLogic.CardSeriesCode.cardSeries_2:
+                  initState.cardSeries_2.push(recognizationOfSameTwoCards);
+                  break;
+                case CardLogic.CardSeriesCode.cardSeries_5:
+                  initState.cardSeries_5.push(recognizationOfSameTwoCards);
+                  break;
+                case CardLogic.CardSeriesCode.cardSeries_6:
+                  initState.cardSeries_6.push(recognizationOfSameTwoCards);
+                  break;
+                default:
+                  break;
+              }
+
+              if (key > 1) {
+                var originalCard3 = initState.cardSeries_1[key-2].originalCard;
+                //如果3张一样, 则是炸弹
+                if (originalCard1[0]%100 == originalCard2[0]%100 && originalCard2[0]%100 == originalCard3[0]%100) {
+                    var originalCards = [originalCard1, originalCard2, originalCard3];
+                    initState.cardSeries_3.push(CardLogic.recognizeSeries(_.flatten(originalCards), type, liang3))
+                }
+                if (key > 2) {
+                  var originalCard4 = initState.cardSeries_1[key-3].originalCard;
+                  //如果4张一样，则是4个
+                  if (originalCard1[0]%100 == originalCard2[0]%100 && originalCard2[0]%100 == originalCard3[0]%100 && originalCard3[0]%100 == originalCard4[0]%100) {
+                      var originalCards = [originalCard1, originalCard2, originalCard3, originalCard4];
+                      initState.cardSeries_4.push(CardLogic.recognizeSeries(_.flatten(originalCards), type, liang3))
+                  }
+                }
+              }
+            }
+            return initState;
+        }, initState);
+
+        return result;
     }
 
-
 }
+
 
 module.exports = CardLogic;

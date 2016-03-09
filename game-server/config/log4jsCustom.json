@@ -45,8 +45,8 @@
     }
   ],
   "levels": {
-    "game-all": "INFO",
-    "game-record": "INFO",
+    "game-all": "DEBUG",
+    "game-record": "DEBUG",
     "payment": "DEBUG",
     "open-api": "DEBUG"
   },

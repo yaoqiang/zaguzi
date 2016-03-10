@@ -172,7 +172,9 @@ paymentService.payment = function (order, charge, cb) {
                 }, function (err) {
                     logger.error("支付后逻辑失败||%s||物品添加失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
                     //Note: 回滚已添加的金币
-                    //
+                    user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
+                        logger.info("支付后逻辑失败-回滚金币成功||%s||回滚金币||%j", order.uid, { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel });
+                    });
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
@@ -183,7 +185,13 @@ paymentService.payment = function (order, charge, cb) {
                 }, function (err) {
                     logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
                     //Note: 回滚已添加的金币和物品
-                    //
+                    user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
+                        logger.info("支付后逻辑失败-回滚金币成功||%s||回滚金币||%j", order.uid, { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel });
+                    });
+                    user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
+                        logger.info("支付后逻辑失败-回滚物品成功||%s||回滚物品||%j", order.uid, { productId: order.productId, items: product.items, device: order.device, channel: order.channel });    
+                    });
+                    
                     utils.invokeCallback(cb, err, null);
                 });
 

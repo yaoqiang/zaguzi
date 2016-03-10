@@ -18,7 +18,7 @@ var UserRemote = function(app) {
 /**
  * get user by uid from cache.
  *
- * @param {String} msg
+ * msg: String
  *
  */
 UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
@@ -27,6 +27,10 @@ UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
     });
 };
 
+/**
+ * 获取个人信息
+ * msg: {uid: String}
+ */
 UserRemote.prototype.getProfileByUid = function (msg, cb) {
     this.getUserCacheByUid(msg.uid, function (ret) {
         playerService.getUserInfo(msg.uid, function (result) {
@@ -48,6 +52,13 @@ UserRemote.prototype.getUsersCacheByUids = function(msg, cb) {
 
 UserRemote.prototype.updateProfile = function (msg, cb) {
     playerService.updateProfile(msg, cb);
+}
+
+/**
+ * msg: {uid: xx, value: Int}
+ */
+UserRemote.prototype.consumeTrumpet = function (msg, cb) {
+    playerService.consumeTrumpet(msg, cb);
 }
 
 UserRemote.prototype.win = function(msg, cb) {

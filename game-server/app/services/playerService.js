@@ -203,6 +203,23 @@ playerService.updateProfile = function (data, cb) {
     });
 }
 
+playerService.consumeTrumpet = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        if (user == null || _.isUndefined(user)) {
+            logger.debug("user-trumpet consume||%j||玩家刷喇叭后扣除喇叭数, 但玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            cb({ code: Code.FAIL });
+            return;
+        }
+
+        var player = user.player;
+
+        var items = [{id: 2, value: data.value}];
+
+        player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, cb);
+
+    });
+}
+
 /**
  * 玩家胜利
  */

@@ -15,7 +15,8 @@ module.exports = {
             TASK: 3,
             ACTIVITY: 4,
             MATCH: 5,
-            GRANT: 6
+            GRANT: 6,
+            RECHARGE_ROLLBACK: 7
         },
         ADD_ITEM_TYPE: {
             RECHARGE: 1,
@@ -23,7 +24,9 @@ module.exports = {
             TASK: 3,
             ACTIVITY: 4,
             MATCH: 5,
-            GRANT: 6
+            GRANT: 6,
+            RECHARGE_ROLLBACK: 7,
+            CONSUME: 8
         },
         ADD_FRAGMENT_TYPE: {
             TASK: 1,

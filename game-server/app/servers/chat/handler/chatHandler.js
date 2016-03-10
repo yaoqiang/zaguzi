@@ -47,7 +47,7 @@ ChannelHandler.prototype.send = function(msg, session, next) {
         // item: data.item,
         // content: data.content
         
-        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, uid, function (user) {
+        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, msg.uid, function (user) {
             if (user == undefined || user == null) {
                 logger.debug('game||chat||发送聊天失败, 玩家已下线||用户&ID: %j', user.uid);
                 next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
@@ -79,7 +79,7 @@ ChannelHandler.prototype.send = function(msg, session, next) {
     } 
     //小喇叭，检查玩家是否有喇叭, 如果没有提示失败, 如果有则发送并扣除喇叭数
     else {
-        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, uid, function (user) {
+        pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, msg.uid, function (user) {
             if (user == undefined || user == null) {
                 logger.debug('game||chat||发送喇叭失败, 玩家已下线||用户&ID: %j', user.uid);
                 next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});

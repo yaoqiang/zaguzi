@@ -75,12 +75,12 @@ handler.enter = function (msg, session, next) {
             player = res;
             cb();
         }], function (err) {
-        if (err) {
-            next(err, {code: Code.FAIL});
-            return;
-        }
+            if (err) {
+                next(err, {code: Code.FAIL});
+                return;
+            }
 
-        self.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
+            pomelo.app.rpc.manager.userRemote.getUserCacheByUid(session, uid, function (u) {
 
             //u: 缓存用户状态
             //如果用户在线

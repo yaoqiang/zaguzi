@@ -55,14 +55,12 @@ handler.getProfile = function (msg, session, next) {
  * @param msg: {uid: xx};
  */
 handler.getProfileByUid = function (msg, session, next) {
-    
-    if (!!msg.uid) {
+    if (_.isUndefined(msg.uid)) {
         next(null, {code: Code.FAIL});
         return;
     }
     
-    this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
-
+    this.app.rpc.manager.userRemote.getUserCacheByUid(session, msg.uid, function (data) {
         var profile = {};
         if (!_.isUndefined(data)) {
             profile.nickName = data.player.nickName;

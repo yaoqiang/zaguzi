@@ -512,13 +512,13 @@ Game.prototype.talk = function (data, cb) {
                 self.nobodyTalkTime += 1;
                 if (self.nobodyTalkTime == consts.GAME.DISSOLVE_NOBODY_TALK_TIME) {
                     //没人说话牌局重开次数达到上限, 解散牌桌
-                    this.channel.pushMessage(consts.EVENT.DISSOLVE_GAME, {}, null, function() {
+                    self.channel.pushMessage(consts.EVENT.DISSOLVE_GAME, {}, null, function() {
                         self.dissolve();
                     });
                 }
                 else {
                     //没人说话，发送重新开始消息
-                    this.channel.pushMessage(consts.EVENT.RESTART_GAME, {}, null, function() {
+                    self.channel.pushMessage(consts.EVENT.RESTART_GAME, {}, null, function() {
                         self.start();
                     });
                 }

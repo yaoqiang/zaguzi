@@ -678,14 +678,14 @@ Game.prototype.fan = function (data, cb) {
     //如果当前出牌玩家是上轮Boss，并且没有出牌，则非法
     if (this.gameLogic.currentBoss.actorNr == actor.actorNr && cards.length == 0) {
         logger.debug('game||fan||出牌错误，Boss玩家不能不出牌||用户&ID: %j', data.uid);
-        cb({code: Code.FAIL});
+        cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_FAN});
         return;
     }
     
     //如果当前出牌玩家不是本轮出牌玩家（客户端发送的出牌玩家ID和服务器端状态中当前出牌者ID），则非法
     if (this.gameLogic.currentFanActor.uid !== data.uid) {
-        logger.info('game||fan||出牌错误，此次不轮您出牌||用户&ID: %j', data.uid);
-        cb({code: Code.FAIL});
+        logger.debug('game||fan||出牌错误，此次不轮您出牌||用户&ID: %j', data.uid);
+        cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.FAN_REPEAT});
         return;
     }
 

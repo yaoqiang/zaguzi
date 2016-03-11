@@ -632,10 +632,11 @@ Game.prototype.fanTimeout = function (actor) {
             cards.push(act.gameStatus.getHoldingCards()[act.gameStatus.currentHoldingCards.length - 1]);
         }
     }
-
-    //如果玩家已托管 - 智能出牌(后期完善)
-    if (act.gameStatus.isTrusteeship) {
-
+    else {
+        //如果玩家已托管 - 智能出牌
+        if (act.gameStatus.isTrusteeship) {
+            cards = CardLogic.simpleAnalysis(this.gameLogic.lastFanCardRecognization, act.gameStatus.currentHoldingCards, this.maxActor, this.gameLogic.appends);
+        }
     }
 
 

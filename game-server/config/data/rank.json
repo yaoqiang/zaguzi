@@ -7,7 +7,7 @@
   {"rank":6, "title": "科长", "exp": "4000", "icon": ""},
   {"rank":7, "title": "副矿长", "exp": "6000", "icon": ""},
   {"rank":8, "title": "矿长", "exp": "10000", "icon": ""},
-  {"rank":8, "title": "副局", "exp": "20000", "icon": ""},
-  {"rank":8, "title": "局长", "exp": "50000", "icon": ""},
-  {"rank":8, "title": "董事长", "exp": "100000", "icon": ""},
+  {"rank":9, "title": "副局", "exp": "20000", "icon": ""},
+  {"rank":10, "title": "局长", "exp": "50000", "icon": ""},
+  {"rank":11, "title": "董事长", "exp": "100000", "icon": ""}
 ]

@@ -44,6 +44,7 @@ handler.getProfile = function (msg, session, next) {
             profile.fragment = data.player.fragment;
             profile.meetingTimes = data.player.meetingTimes;
             profile.summary = data.player.summary;
+            profile.rank = data.player.rank;
             profile.mobile = data.userInfo ? data.userInfo.mobile : undefined;
         }
         next(null, profile);
@@ -73,6 +74,7 @@ handler.getProfileByUid = function (msg, session, next) {
             profile.fragment = data.player.fragment;
             profile.meetingTimes = data.player.meetingTimes;
             profile.summary = data.player.summary;
+            profile.rank = data.player.rank;
         }
         next(null, profile);
     });

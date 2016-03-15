@@ -176,7 +176,7 @@ commonDao.bindingMobile = function (data, cb) {
             }
             else {
                 //生成Token，用于绑定后更新客户端Token.
-                var token = Token.create(data.uid, Date.now(), password.toString(), secret);
+                var token = Token.create(data.uid, Date.now(), data.password.toString(), secret);
                 cb({code: Code.OK, token: token});
             }
         })

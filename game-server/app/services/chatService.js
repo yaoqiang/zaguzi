@@ -1,7 +1,7 @@
 var Code = require('../../../shared/code');
 var utils = require('../util/utils');
 var dispatcher = require('../util/dispatcher');
-var Event = require('../consts/consts').Event;
+var Event = require('../consts/consts').EVENT;
 
 var ChatService = function(app) {
   this.app = app;

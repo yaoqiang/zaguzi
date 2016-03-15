@@ -213,7 +213,7 @@ playerService.consumeTrumpet = function (data, cb) {
 
         var player = user.player;
 
-        var items = [{id: 2, value: data.value}];
+        var items = [{id: 2, value: -data.value}];
 
         player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, cb);
 

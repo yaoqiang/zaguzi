@@ -7,6 +7,8 @@ var gameUtil = require('../../../util/gameUtil');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var utils = require('../../../util/utils');
 var pomelo = require('pomelo');
+var _ = require('lodash');
+
 
 module.exports = function (app) {
     return new ChannelHandler(app, app.get('chatService'));
@@ -87,7 +89,15 @@ ChannelHandler.prototype.send = function (msg, session, next) {
                     return;
                 }
 
-                if (user.player.getTrumpetValue() <= 0) {
+
+                var trumpetCount = 0;
+                _.each(user.player.items, function (item) {
+                    if (item.id == 2) {
+                        trumpetCount = item.value;
+                    }
+                });
+
+                if (trumpetCount == 0) {
                     logger.debug('game||chat||发送喇叭失败, 玩家喇叭数不够||用户&ID: %j', user.uid);
                     next({code: Code.FAIL, err: consts.ERR_CODE.CHAT.NOT_INT_GAME});
                     return;
@@ -97,7 +107,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
 
                 pomelo.app.rpc.manager.userRemote.consumeTrumpet(null, {
                     uid: msg.uid,
-                    value: data.value
+                    value: msg.value || 1
                 }, function (result) {
                     if (result.code == Code.FAIL) {
                         next(null, {code: result.code});

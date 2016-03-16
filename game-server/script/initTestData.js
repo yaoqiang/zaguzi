@@ -57,3 +57,6 @@ db.exchangeRecord.save({uid: ObjectId('56ac9e72ba27df1c78df57fb'), number: '1', 
 db.appReleaseRecord.save({name: '', version: '1.0', createdAt: new Date(), summary: '【新增】发布第一个版本'});
 
 db.systemMessage.save({title: '大同扎股子公测版上线啦！', content: '全球首款大同扎股子手游已登录地球，尽情享受吧！', enabled: true, createdAt: new Date()});
+db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
+db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
+db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

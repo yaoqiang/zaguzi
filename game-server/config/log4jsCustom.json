@@ -41,12 +41,23 @@
       "category": "payment"
     },
     {
+      "type": "dateFile",
+      "filename": "./logs/login-record.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "login-record"
+    },
+    {
       "type": "console"
     }
   ],
   "levels": {
-    "game-all": "DEBUG",
-    "game-record": "DEBUG",
+    "game-all": "INFO",
+    "game-record": "INFO",
+    "login-record": "INFO",
     "payment": "DEBUG",
     "open-api": "DEBUG"
   },

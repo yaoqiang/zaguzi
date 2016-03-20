@@ -355,6 +355,7 @@ module.exports = {
         SYNC: 'game-all',
         NORMAL: 'game-all',
         PAYMENT: 'payment',
-        OPEN_API: 'open-api'
+        OPEN_API: 'open-api',
+        LOGIN_RECORD: 'login-record'
     }
 }

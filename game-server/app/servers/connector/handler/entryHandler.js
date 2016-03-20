@@ -8,6 +8,7 @@ var rooms = require('../../../../config/data/room');
 var messageService = require('../../../services/messageService');
 var consts = require('../../../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerLogin = require('log4js').getLogger(consts.LOG.LOGIN_RECORD);
 var pomelo = require('pomelo');
 var _ = require('lodash');
 
@@ -189,6 +190,12 @@ function onUserEnter(session, uid, msg, self, player, userData, next) {
     session.set('serverId', msg.serverId);
     session.on('closed', onUserDisconnect.bind(null, self.app));
     session.pushAll();
+
+    var sessionService = self.app.get('sessionService');
+    var remoteAddress = sessionService.getClientAddressBySessionId(session.id);
+
+    //记录登录日志
+    loggerLogin.info('login-record||%j', {uid: uid, serverId: msg.serverId, ip: remoteAddress.ip, date: new Date()});
 
     self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
     });

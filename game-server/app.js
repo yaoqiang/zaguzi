@@ -2,7 +2,7 @@ var pomelo = require('pomelo');
 var routeUtil = require('./app/util/routeUtil');
 var sync = require('pomelo-sync-plugin');
 var log4js = require('log4js');
-var log4jsConf = require('./config/log4jsCustom.json')
+var log4jsConf = require('./config/log4jsCustom.json');
 
 var ChatService = require('./app/services/chatService');
 

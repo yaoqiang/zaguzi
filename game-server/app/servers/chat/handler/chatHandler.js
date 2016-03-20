@@ -21,8 +21,8 @@ var ChannelHandler = function (app, chatService) {
 
 function setContent(str) {
     str = str.replace(/<\/?[^>]*>/g, '');
-    str = str.replace(/[ | ]*\n/g, '\n');
-    return str.replace(/\n[\s| | ]*\r/g, '\n');
+    str = str.replace(/[ | ]*\n/g, '');
+    return str.replace(/\n[\s| | ]*\r/g, '');
 }
 
 ChannelHandler.prototype.send = function (msg, session, next) {
@@ -33,6 +33,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
     channelName = getChannelName();
     utils.myPrint('channelName = ', channelName);
     msg.content = setContent(msg.content);
+    msg.content = utils.replaceContent(msg.content);
     if (scope !== SCOPE.PRIVATE) {
         utils.myPrint('ByChannel ~ msg = ', JSON.stringify(msg));
         utils.myPrint('ByChannel ~ scope = ', scope);

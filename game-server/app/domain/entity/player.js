@@ -61,6 +61,9 @@ Player.prototype.updateProfile = function (data, cb) {
     this.gender = data.gender;
     this.summary = data.summary;
 
+    this.nickName = utils.replaceContent(this.nickName);
+    this.summary = utils.replaceContent(this.summary);
+
     logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
     this.saveProfile();
     cb({code: Code.OK});

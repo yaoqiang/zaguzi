@@ -106,7 +106,7 @@ UniversalRemote.prototype = {
         //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
         var options = {
             method: open.APPLE_IAP.VERIFY_RECEIPT.METHOD,
-            url: open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX,
+            url: open.APPLE_IAP.VERIFY_RECEIPT.PRODUCTION,
             headers: {
                 'Content-type': 'application/json'
             },

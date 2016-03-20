@@ -66,7 +66,7 @@ Player.prototype.updateProfile = function (data, cb) {
 
     logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
     this.saveProfile();
-    cb({code: Code.OK});
+    cb({code: Code.OK, nickName: this.nickName, summary: this.summary});
 }
 
 Player.prototype.addGold = function (type, gold, cb) {

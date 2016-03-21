@@ -15,17 +15,17 @@ commonService.getRankingList = function (data, cb) {
 
     commonDao.getRankingList(data, function (err, doc) {
 
-        var rankingList = doc[0].ranking;
-
-        if (data.type == consts.RANKING_LIST.RICH) {
-            rankingList = _.sortBy(rankingList, 'gold').reverse();
-        } else if (data.type == consts.RANKING_LIST.GOD) {
-            rankingList = _.sortBy(rankingList, 'winning').reverse();
-        } else if (data.type == consts.RANKING_LIST.RECHARGE) {
-            rankingList = _.sortBy(rankingList, 'totalAmount').reverse();
-        }
-
         if (doc && _.size(doc) > 0) {
+            var rankingList = doc[0].ranking;
+
+            if (data.type == consts.RANKING_LIST.RICH) {
+                rankingList = _.sortBy(rankingList, 'gold').reverse();
+            } else if (data.type == consts.RANKING_LIST.GOD) {
+                rankingList = _.sortBy(rankingList, 'winning').reverse();
+            } else if (data.type == consts.RANKING_LIST.RECHARGE) {
+                rankingList = _.sortBy(rankingList, 'totalAmount').reverse();
+            }
+
             cb({code: Code.OK, rankingList: rankingList});
         }
         else {
@@ -84,19 +84,18 @@ commonService.bindingMobile = function (data, cb) {
         cb({code: Code.FAIL});
         return;
     }
-    
+
     userDao.findByMobile(data.mobile, function (err, result) {
         if (result) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_ALREADY_BINDING});
             return;
         }
-        
+
         commonDao.bindingMobile(data, cb);
     });
 
-    
-}
 
+}
 
 
 commonService.searchOrderByNumber = function (orderSerialNumber, cb) {

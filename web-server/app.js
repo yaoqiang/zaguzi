@@ -17,6 +17,8 @@ var methodOverride = require('method-override');
 
 var passwordHash = require('password-hash');
 
+var useragent = require('express-useragent');
+
 app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
@@ -24,6 +26,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
+app.use(useragent.express());
 
 // Populates req.session
 app.use(session({
@@ -44,10 +47,14 @@ app.all('*', function (req, res, next) {
 
 
 app.post('/autoLogin', function (req, res) {
+    
+    var os = req.useragent.os;
+    
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {
         username: '',
         password: passwordHash.generate(password.toString()),
+        os: os,
         loginCount: 1,
         lastLoginAt: new Date(),
         createdAt: new Date()

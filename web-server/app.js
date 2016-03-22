@@ -48,6 +48,7 @@ app.all('*', function (req, res, next) {
 
 app.post('/autoLogin', function (req, res) {
     
+    logger.debug('os info -> %j', req.useragent);
     var os = req.useragent.os;
     
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
@@ -80,7 +81,7 @@ app.post('/autoLogin', function (req, res) {
                     uid: doc._id
                 });
             }
-            );
+        );
 
     });
 });

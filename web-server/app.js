@@ -47,9 +47,9 @@ app.all('*', function (req, res, next) {
 
 
 app.post('/autoLogin', function (req, res) {
-    
-    logger.debug('os info -> %j', req.useragent);
-    var os = req.useragent.os;
+    var data = req.body;
+
+    var os = data.os || 'unkown';
     
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {

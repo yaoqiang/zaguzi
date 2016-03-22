@@ -2,7 +2,7 @@
   "appenders": [
     {
       "type": "dateFile",
-      "filename": "./logs/zaguzi/game-all.log",
+      "filename": "./logs/game-all.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
@@ -12,7 +12,7 @@
     },
     {
       "type": "dateFile",
-      "filename": "./logs/zaguzi/game-record.log",
+      "filename": "./logs/game-record.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
@@ -22,7 +22,7 @@
     },
     {
       "type": "dateFile",
-      "filename": "./logs/zaguzi/open-api.log",
+      "filename": "./logs/open-api.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
@@ -32,7 +32,7 @@
     },
     {
       "type": "dateFile",
-      "filename": "./logs/zaguzi/payment.log",
+      "filename": "./logs/payment.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
@@ -42,7 +42,7 @@
     },
     {
       "type": "dateFile",
-      "filename": "./logs/zaguzi/login-record.log",
+      "filename": "./logs/login-record.log",
       "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"

@@ -286,8 +286,17 @@ UniversalRemote.prototype = {
                 return;
             }
             
+            //后续可能为客服操作预留
             if (exchangeRecord.state == consts.ORDER.STATE.CANCELED) {
                 logger.info('callback-apxi||%j||处理APIX回调时, 该兑换记录已处理过', {number: data.orderid});
+                cb();
+                return;
+            }
+            
+            //如果设置回调, 回调结果是成功, 则不处理; 如果失败, 则为玩家恢复元宝
+            //因为如果第一次调用APIX返回失败就不会扣除元宝, 如果APIX返回成功, 则直接扣除了元宝（但是未必真正充值成功）
+            if (data.state == 1) {
+                logger.info('callback-apxi||%j||处理APIX回调时, 已成功充值', {number: data.orderid});
                 cb();
                 return;
             }
@@ -298,7 +307,7 @@ UniversalRemote.prototype = {
                 playerService.getUserCacheByUid(exchangeRecord.uid, function (user) {
                     //如果玩家不在线，则直接操作DB更新
                     if (user == null || _.isUndefined(user)) {
-                        exchangeService.callbackPlayerFragment({uid: exchangeRecord.uid, fragment: exchangeItem.fragment}, function (err, p) {
+                        exchangeService.callbackPlayerFragment({uid: exchangeRecord.uid, fragment: -exchangeItem.fragment}, function (err, p) {
                             if (err) {
                                 logger.error('callback-apxi||%s||处理APIX充值失败回调异常: %o', data.orderid, err);
                             } else {
@@ -308,7 +317,7 @@ UniversalRemote.prototype = {
                     } 
                     //如果玩家在线，则通过pomelo-sync处理并向客户端发送元宝变化事件
                     else {
-                        user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN, exchangeItem.fragment, function(fragment) {
+                        user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN, -exchangeItem.fragment, function(fragment) {
                             //TODO 可以通过UI_COMMAND发送兑换模块有新状态
                         })
                     }

@@ -10,7 +10,7 @@ var yesterday = new Date((new Date()) - 24*60*60*1000);
 
 //财富榜
 var richRankingList = db.player.aggregate([
-    { $project: { _id: 0, nickName: 1, avatar: 1, gold: 1, uid: 1 }},
+    { $project: { _id: 0, nickName: 1, avatar: 1, gold: 1, uid: 1, summary: 1 }},
     { $match : { gold: { $gt: goldThreshold } } },
     { $sort:  { gold: -1 }},
     { $limit: limit }
@@ -22,7 +22,7 @@ rankingList.insert({ ranking: richRankingList._batch, type: "RICH", date: new Da
 var godRankingList = db.player.aggregate([
     {
         $project: {
-            _id: 0, nickName: 1, avatar: 1, uid: 1, winNr: 1, loseNr: 1,
+            _id: 0, nickName: 1, avatar: 1, uid: 1, winNr: 1, loseNr: 1, summary: 1,
             battleCount: {$add: ["$winNr", "$loseNr"]},
             winning: {
                 $divide: ["$winNr", {$cond: [{$eq: [{ $add: ["$winNr", "$loseNr"] }, 0]}, 1, {$add: ["$winNr", "$loseNr"]}]}]
@@ -60,7 +60,8 @@ var getRechargeList = db.order.aggregate([
                 _id: "$uid",
                 totalAmount: {$sum: "$amount"},
                 nickName: {$first: "$player.nickName"},
-                avatar: {$first: "$player.avatar"}
+                avatar: {$first: "$player.avatar"},
+                summary: {$first: "$player.summary"}
             }
         },
         {$sort: {totalAmount: -1}},

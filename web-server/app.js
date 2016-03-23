@@ -2,7 +2,6 @@ var express = require('express');
 var Token = require('../shared/token');
 var secret = require('../shared/config/session').secret;
 var app = express();
-//var everyauth = require('./lib/oauth');
 
 var mongojs = require('mongojs');
 var db = require('./lib/mongodb');
@@ -17,7 +16,6 @@ var methodOverride = require('method-override');
 
 var passwordHash = require('password-hash');
 
-var useragent = require('express-useragent');
 
 app.use(methodOverride('_method'));
 app.use(cookieParser());
@@ -26,7 +24,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
-app.use(useragent.express());
 
 // Populates req.session
 app.use(session({
@@ -49,7 +46,7 @@ app.all('*', function (req, res, next) {
 app.post('/autoLogin', function (req, res) {
     var data = req.body;
 
-    var os = data.os || 'unkown';
+    var os = data.os || 'unknown';
     
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {

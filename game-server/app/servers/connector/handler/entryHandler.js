@@ -270,7 +270,7 @@ handler.ping = function (msg, session, next) {
 
 var onUserDisconnect = function (app, session, reason) {
     //如果session.uid已不存在, 则不处理; 目前使用场景是, 如果被踢下线, 手动处理了kick流程, 并且原session.uid会被设置为undefined
-    if (!!!session.uid) {
+    if (_.isNull(session.uid) || _.isUndefined((session.uid))) {
         return;
     }
 

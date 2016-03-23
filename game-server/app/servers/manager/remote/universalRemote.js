@@ -122,7 +122,9 @@ UniversalRemote.prototype = {
 
             var bodyJson = response.body;
             if (response.statusCode != Code.OK) {
-                logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,HTTP失败.||%j', data.uid, {productId: data.productId, device: 'ios'})
+
+                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Server验证时,HTTP失败', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
 
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
@@ -132,7 +134,8 @@ UniversalRemote.prototype = {
                 return;
             }
             if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
-                logger4payment.error('支付后逻辑失败||%s||Apple Store Server验证时,RECEIPT失败(可能非法).||%j', data.uid, {productId: data.productId, device: 'ios'})
+                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Server验证时,RECEIPT失败(可能非法)', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
@@ -141,7 +144,7 @@ UniversalRemote.prototype = {
                 return;
             }
 
-            logger4payment.info(response.body);
+            //logger4payment.debug(response.body);
 
             var order = {
                 uid: data.uid,
@@ -151,18 +154,25 @@ UniversalRemote.prototype = {
                 channel: 'IAP',
                 charge: null
             }
+            try {
+                var transactionId = -1;
+                if (response.body.receipt.in_app.length > 0) {
+                    transactionId = response.body.receipt.in_app[0].transaction_id;
+                }
 
-            var transactionId = -1;
-            if (response.body.receipt.in_app.length > 0) {
-                transactionId = response.body.receipt.in_app[0].transaction_id;
-            }
-
-            if (transactionId == -1) {
-                logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中没有transaction_id||%j', data.uid, {productId: data.productId, device: 'ios'})
-                messageService.pushMessageToPlayer({
-                    uid: data.uid,
-                    sid: dispatcher(data.uid, connectors).id
-                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                if (transactionId == -1) {
+                    logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Apple Store Receipt中没有transaction_id', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                    messageService.pushMessageToPlayer({
+                        uid: data.uid,
+                        sid: dispatcher(data.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    cb();
+                    return;
+                }
+            } catch (error) {
+                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Receipt中没有transaction_id', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
                 cb();
                 return;
             }
@@ -171,7 +181,10 @@ UniversalRemote.prototype = {
             //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
             commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
                 if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
-                    logger4payment.error('支付后逻辑失败||%s||Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单||%j', data.uid, {productId: data.productId, device: 'ios'})
+
+                    logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
@@ -184,6 +197,8 @@ UniversalRemote.prototype = {
 
                 paymentService.payment(order, null, function (err, result) {
                     if (err) {
+                        logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '充值成功后, 处理商品失败', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
                         messageService.pushMessageToPlayer({
                             uid: data.uid,
                             sid: dispatcher(data.uid, connectors).id
@@ -191,7 +206,8 @@ UniversalRemote.prototype = {
                         cb();
                         return;
                     }
-                    logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', data.uid, {productId: data.productId, device: 'ios', channel: 'IAP'})
+                    logger4payment.info("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '充值成功, 并完成商品添加', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
 
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -216,7 +232,8 @@ UniversalRemote.prototype = {
 
         commonService.searchOrderByNumber(data.order_no, function (err, originalOrder) {
             if (err) {
-                logger4payment.error('支付后逻辑失败||%s||Pingpp Webhooks参数中order_no 未找到订单.||%j', data);
+                logger4payment.error("%j", {uid: originalOrder.uid, orderId: originalOrder.order_no, type: consts.LOG.CONF.PAYMENT, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Pingpp Webhooks参数中order_no 未找到订单', created: new Date(), detail: {data: data}});
                 return;
             }
 
@@ -232,13 +249,14 @@ UniversalRemote.prototype = {
                 function (err, result) {
                     if (err) {
                         messageService.pushMessageToPlayer({
-                            uid: data.uid,
-                            sid: dispatcher(data.uid, connectors).id
+                            uid: originalOrder.uid,
+                            sid: dispatcher(originalOrder.uid, connectors).id
                         }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                         cb();
                         return;
                     }
-                    logger4payment.info('支付后逻辑成功||%s||一切都很OK.||%j', originalOrder.uid, {productId: originalOrder.productId, device: originalOrder.device, channel: originalOrder.channel})
+                    logger4payment.info("%j", {uid: originalOrder.uid, orderId: originalOrder.order_no, type: consts.LOG.CONF.PAYMENT, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付后逻辑成功', created: new Date(), detail: {data: data}});
 
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -276,32 +294,35 @@ UniversalRemote.prototype = {
     // sign          string     32位小写md5签名：md5(apix-key + orderid+ ordertime)
     // err_msg       string     充值失败时候返回失败信息。成功时为空。
     mobileRechargeHandler: function (data, cb) {
-        console.log('-- mobileRechargeHandler --', data);
+        logger.debug('-- mobileRechargeHandler -- %o', data);
         
         //如果失败，先查询是否订单存在
         exchangeService.getExchangeRecordByNumber(data.orderid, function(err, exchangeRecord) {
             if (err) {
-                logger.info('callback-apxi||%j||处理APIX回调时, 未根据订单号查到兑换记录', {number: data.orderid});
+                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 未根据订单号查到兑换记录', created: new Date(), detail: {exchangeId: data.orderid}});
                 cb();
                 return;
             }
             
-            //后续可能为客服操作预留
+            //CANCELED状态可能后续 预留给客服操作预留
             if (exchangeRecord.state == consts.ORDER.STATE.CANCELED) {
-                logger.info('callback-apxi||%j||处理APIX回调时, 该兑换记录已处理过', {number: data.orderid});
+                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 该兑换记录已处理过', created: new Date(), detail: {exchangeId: data.orderid}});
                 cb();
                 return;
             }
             
             //如果设置回调, 回调结果是成功, 则不处理; 如果失败, 则为玩家恢复元宝
             //因为如果第一次调用APIX返回失败就不会扣除元宝, 如果APIX返回成功, 则直接扣除了元宝（但是未必真正充值成功）
-            if (data.state == 1) {
-                logger.info('callback-apxi||%j||处理APIX回调时, 已成功充值', {number: data.orderid});
+            if (data.state == 1 || data.state == 0) {
+                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 已为玩家成功充值, 无需再处理', created: new Date(), detail: {exchangeId: data.orderid}});
                 cb();
                 return;
             }
             
-            //获取兑换产品信息
+            //如果回调显示充值失败, 则为玩家回滚元宝. 获取兑换产品信息
             exchangeService.getExchangeListById(exchangeRecord._id, function (err, exchangeItem) {
                 //查询玩家是否在线
                 playerService.getUserCacheByUid(exchangeRecord.uid, function (user) {
@@ -309,9 +330,11 @@ UniversalRemote.prototype = {
                     if (user == null || _.isUndefined(user)) {
                         exchangeService.callbackPlayerFragment({uid: exchangeRecord.uid, fragment: -exchangeItem.fragment}, function (err, p) {
                             if (err) {
-                                logger.error('callback-apxi||%s||处理APIX充值失败回调异常: %o', data.orderid, err);
+                                logger.error("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                                    message: '处理APIX充值失败回调异常', created: new Date(), detail: {exchangeId: data.orderid, err: err}});
                             } else {
-                                logger.info('callback-apxi||%s||处理成功', data.orderid);
+                                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                                    message: '处理APIX充值失败后 回滚元宝成功', created: new Date(), detail: {exchangeId: data.orderid}});
                             }
                         });
                     } 

@@ -329,7 +329,7 @@ playerService.balance = function (data, cb) {
         .done();
 
     // 日志存储游戏记录
-    loggerGameRecord.info('game-record||%j', data.gameRecord);
+    loggerGameRecord.info('%j', data.gameRecord);
     // NOTE: 弃用
     // var gameRecord = new GameRecord(data.gameRecord);
     // eventManager.addGameRecordEvent(gameRecord);

@@ -74,7 +74,8 @@ Player.prototype.addGold = function (type, gold, cb) {
     try {
         gold = parseInt(gold);
         var self = this;
-        logger.info("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j", this.uid, type, gold, this.uid);
+        logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
+            message: '添加金币成功', created: new Date(), detail: {type: type, value: gold}});
         this.gold += gold;
 
         this.gold = this.gold < 0 ? 0 : this.gold;
@@ -86,7 +87,8 @@ Player.prototype.addGold = function (type, gold, cb) {
 
         cb({code: Code.OK, gold: this.gold});
     } catch (err) {
-        logger.error("gold-add||%j||用户通过[%j]获得了[%j]金币，用户ID:%j, 添加失败, 异常信息: %o", this.uid, type, gold, this.uid, err);
+        logger.error("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
+            message: '添加金币失败', created: new Date(), detail: {type: type, value: gold}});
         cb({code: Code.FAIL});
     }
 
@@ -132,7 +134,8 @@ Player.prototype.tie = function (roomId, cb) {
 
 Player.prototype.addFragment = function (type, fragment, cb) {
     this.fragment += fragment;
-    logger.info("fragment-add||%j||用户通过[%j]获得了[%j]元宝，用户ID:%j", this.uid, type, fragment, this.uid);
+    logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_FRAGMENT,
+        message: '添加元宝成功', created: new Date(), detail: {type: type, value: fragment}});
     cb({fragment: this.fragment});
     var self = this;
     messageService.pushMessageToPlayer({
@@ -155,7 +158,8 @@ Player.prototype.addExp = function (exp, args) {
 // item: {id: Int, value: Int}
 Player.prototype.addItem = function (type, item) {
     if (!_.isObject(item)) {
-        logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.id, item.value, this.uid);
+        logger.error("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_ITEM,
+            message: '获得物品失败-参数错误', created: new Date(), detail: {type: type, itemId: item.id, value: item.value}});
         return false;
     }
 
@@ -163,12 +167,14 @@ Player.prototype.addItem = function (type, item) {
     var data = _.findWhere(itemConf, {id: item.id});
 
     if (_.isUndefined(data)) {
-        logger.error('items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天失败[参数错误],用户ID:%j', this.uid, type, item.value, this.uid);
+        logger.error("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_ITEM,
+            message: '获得物品失败-参数错误', created: new Date(), detail: {type: type, itemId: item.id, value: item.value}});
         return false;
     }
     //查询玩家是否有该物品, i: player.items
     var i = _.findWhere(this.items, {id: item.id});
-    logger.info("items-add||%j||玩家通过[%j]获得物品[%j] [%j]个/天,用户ID:%j", this.uid, type, data.title, item.value, this.uid);
+    logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_ITEM,
+        message: '添加物品成功', created: new Date(), detail: {type: type, itemId: item.id, item: data.title, value: item.value}});
     var value;
     var now = new Date();
     //如果玩家没有该物品, 则添加; 否则叠加
@@ -252,12 +258,12 @@ Player.prototype.consumeItem = function (type, item) {
     //查询玩家是否有该物品
     var i = _.findWhere(this.items, {id: item.id});
     if (_.isUndefined(i)) {
-        logger.error('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有该物品],用户ID:%j', this.uid, type, item.value, this.uid);
+        logger.debug('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有该物品],用户ID:%j', this.uid, type, item.value, this.uid);
         return false;
     }
 
     if (i.value < item.value) {
-        logger.error('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有足够该物品],用户ID:%j', this.uid, type, item.value, this.uid);
+        logger.debug('items-consume||%j||玩家通过[%j]消耗物品[%j] [%j]个/天失败[玩家没有足够该物品],用户ID:%j', this.uid, type, item.value, this.uid);
         return false;
     }
 

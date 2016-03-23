@@ -38,8 +38,8 @@ module.exports = function (app) {
             logger.error('verification failed');
             res.sendStatus(400);
             return;
-        } 
-        logger.info('verification succeeded');
+        }
+        logger.info('verification succeeded for pingxx');
 
         
         // 异步通知

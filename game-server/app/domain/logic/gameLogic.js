@@ -87,8 +87,9 @@ GameLogic.prototype.newGame = function () {
 
         this.currentPhase = consts.GAME.PHASE.TALKING;
 
-    } catch (e) {
-        logger.error('game||start||游戏开始异常:%j,游戏ID:[%j]', e, this.game.gameId);
+    } catch (err) {
+        logger.error('%j', {gameId: this.game.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
+            message: '游戏开始失败'+err.toString(), createdAt: new Date()});
     }
 
 }

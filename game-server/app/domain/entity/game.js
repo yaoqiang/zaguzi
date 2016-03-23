@@ -100,7 +100,7 @@ Game.prototype.ready = function (data, cb) {
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
-        logger.error('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
+        logger.debug('game||ready||准备失败, 玩家不在游戏中||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_INT_GAME});
         return;
     }
@@ -229,7 +229,8 @@ Game.prototype.start = function () {
             self.talkCountdown();
         })
         .catch(function (err) {
-            logger.error('game||start||游戏开始失败||游戏&ID: %j', self.gameId);
+            logger.error('%j', {gameId: self.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
+                message: '游戏开始失败'+err.toString(), createdAt: new Date()});
         })
         .done();
 
@@ -260,7 +261,7 @@ Game.prototype.talkCountdown = function () {
                     self.talkTimeout(talkTimeoutActor);
                 }
                 else {
-                    logger.error('game||talk||玩家说话时, 倒计时发生问题, schedule的uid和当前说话的uid是一人, 当前:%s -- schedule:%s', talkTimeoutActor.uid, jobData.uid);
+                    logger.debug('game||talk||玩家说话时, 倒计时发生问题, schedule的uid和当前说话的uid是一人, 当前:%s -- schedule:%s', talkTimeoutActor.uid, jobData.uid);
                 }
             }, {uid: talkTimeoutActor.uid});
 
@@ -312,26 +313,26 @@ Game.prototype.talk = function (data, cb) {
     var self = this;
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor || actor == undefined) {
-        logger.error('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 玩家不在游戏中||用户&ID: %j', data.uid, data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME});
         return;
     }
 
     if (!_.isArray(data.append) || !!data.append == false) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.PARAMETER_ERR, goal: data.goal, append: data.append})
-        logger.error('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
         return;
     }
     
     if (this.gameLogic.currentTalker.uid != data.uid) {
         cb({code: Code.FAIL})
-        logger.error('game-talk||%j - %j - %j - %j||说话失败, 不轮到当前玩家说话||用户&ID: %j', this.gameLogic.currentTalker.uid, data.goal, data.append, data.uid, data.uid);
+        logger.debug('game-talk||%j - %j - %j - %j||说话失败, 不轮到当前玩家说话||用户&ID: %j', this.gameLogic.currentTalker.uid, data.goal, data.append, data.uid, data.uid);
         return;
     }
 
     if (this.gameLogic.talkNumber == this.maxActor || actor.gameStatus.hasTalk) {
         cb({code: Code.FAIL})
-        logger.error('game-talk||%j||说话失败, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
+        logger.debug('game-talk||%j||说话失败, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
         return;
     }
 
@@ -601,7 +602,7 @@ Game.prototype.fanCountdown = function () {
             if (jobData.uid == self.gameLogic.currentFanActor.uid) {
                 self.fanTimeout(fanTimeoutActor);
             } else {
-                logger.error('game||fan||玩家出牌倒计时发生错误, 当前出牌者和schedule出牌者不同, 当前:%s, schedule:%s', fanTimeoutActor.uid, jobData.uid);
+                logger.debug('game||fan||玩家出牌倒计时发生错误, 当前出牌者和schedule出牌者不同, 当前:%s, schedule:%s', fanTimeoutActor.uid, jobData.uid);
             }
             
         }, {uid: self.gameLogic.currentFanActor.uid});

@@ -86,43 +86,45 @@ exchangeService.getMyExchangeRecordList = function (data, cb) {
 exchangeService.exchange = function (data, cb) {
     playerService.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
-            logger.warn("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
+            logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
             cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR });
             return;
         }
 
         exchangeDao.getExchangeListById(data.exchangeId, function (err, doc) {
             if (err) {
-                logger.error("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                logger.debug("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                    message: '玩家兑换物品失败', created: new Date(), detail: {exchangeId: data.exchangeId}});
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ERR });
                 return;
             }
             if (_.isNull(doc)) {
-                logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],兑换物品不存在或已下线, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],兑换物品不存在或已下线, 用户ID:%j", data.uid, data.exchangeId, data.uid);
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.ITEM_OFFLINE });
                 return;
             }
 
             if (user.player.fragment < doc.fragment) {
-                logger.warn("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j],玩家元宝不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                logger.debug("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                    message: '玩家兑换物品失败-玩家元宝不足', created: new Date(), detail: {exchangeId: data.exchangeId}});
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.YUANBAO_NOT_ENOUGH });
                 return;
             }
 
             if (data.count > doc.inventory) {
-                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 兑换物品库存不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 兑换物品库存不足, 用户ID:%j", data.uid, data.exchangeId, data.uid);
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVENTORY_NOT_ENOUGH });
                 return;
             }
 
             if (_.isEmpty(data.mobile)) {
-                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE });
                 return;
             }
 
             if (!utils.mobileValidate(data.mobile)) {
-                logger.info("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE });
                 return;
             }
@@ -148,11 +150,13 @@ exchangeService.exchange = function (data, cb) {
                         //如果APIX返回成功，则初步定义为充值成功；后续会根据回调或OSS跟进（如有后续失败并没有收到回调的，可人工在OSS处理）
                         exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.FINISHED, doc.fragment, { mobile: data.mobile }, function (err, result) {
                             if (err) {
-                                logger.error("user-exchange||%s||玩家兑换物品失败(APIX已成功返回), 兑换ID:[%s], 手机号码[%s], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
+                                logger.error("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                                    message: '玩家兑换物品失败(APIX已返回状态=成功)', created: new Date(), detail: {exchangeId: data.exchangeId, mobile: data.mobile}});
                                 cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                                 return;
                             }
-                            logger.info("user-exchange||%s||玩家兑换话费&流量成功, 兑换ID:[%s], 手机号码[%s], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
+                            logger.info("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                                message: '玩家兑换话费|流量成功', created: new Date(), detail: {exchangeId: data.exchangeId, mobile: data.mobile}});
                             //如果充值提交成功, 则更新player.fragment;
                             user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
                                 cb({code: Code.OK});
@@ -179,7 +183,8 @@ exchangeService.exchange = function (data, cb) {
                 //存储兑换记录, 在后台跟进操作
                 exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
                     if (err == null || result == null) {
-                        logger.error("user-exchange||%s||玩家兑换物品失败, 兑换ID:[%s], 手机号码[%j], 用户ID:%s", data.uid, data.exchangeId, data.mobile, data.uid);
+                        logger.error("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                            message: '玩家兑换物品失败(实物)', created: new Date(), detail: {exchangeId: data.exchangeId, mobile: data.mobile, contact: data.contact, address: data.address}});
                         cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });
                         return;
                     }

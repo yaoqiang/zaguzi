@@ -108,7 +108,7 @@ paymentService.payment = function (order, charge, cb) {
     playerService.getUserCacheByUid(order.uid, function (user) {
         //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
         if (user == null || _.isUndefined(user)) {
-            logger.info("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
+            logger.debug("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
             //
         }
         else {
@@ -143,8 +143,8 @@ paymentService.payment = function (order, charge, cb) {
                     }
 
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||金币添加失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
-
+                    logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付后金币添加失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
@@ -170,10 +170,12 @@ paymentService.payment = function (order, charge, cb) {
                         }
                     })
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||物品添加失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
+                    logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付后物品添加失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
                     //Note: 回滚已添加的金币
                     user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
-                        logger.info("支付后逻辑失败-回滚金币成功||%s||回滚金币||%j", order.uid, { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel });
+                        logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     utils.invokeCallback(cb, err, null);
                     return;
@@ -183,13 +185,16 @@ paymentService.payment = function (order, charge, cb) {
                     user.player.saveItem();
                     utils.invokeCallback(cb, null, null);
                 }, function (err) {
-                    logger.error("支付后逻辑失败||%s||订单记录创建失败||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
+                    logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付后订单记录创建失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
                     //Note: 回滚已添加的金币和物品
                     user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
-                        logger.info("支付后逻辑失败-回滚金币成功||%s||回滚金币||%j", order.uid, { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel });
+                        logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
-                        logger.info("支付后逻辑失败-回滚物品成功||%s||回滚物品||%j", order.uid, { productId: order.productId, items: product.items, device: order.device, channel: order.channel });    
+                        logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, items: product.items, device: order.device, channel: order.channel }});
                     });
                     
                     utils.invokeCallback(cb, err, null);

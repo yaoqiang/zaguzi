@@ -1,6 +1,6 @@
 module.exports = {
     GLOBAL: {
-        LOBBY: [0, 1, 2],
+        LOBBY: [0, 1, 2, 3],
         GENDER: {
             MALE: 'MALE',
             FEMALE: 'FEMALE'
@@ -10,29 +10,29 @@ module.exports = {
         JOIN_MIN_GOLD: 1000,
         
         ADD_GOLD_TYPE: {
-            RECHARGE: 1,
-            BATTLE: 2,
-            TASK: 3,
-            ACTIVITY: 4,
-            MATCH: 5,
-            GRANT: 6,
-            RECHARGE_ROLLBACK: 7
+            RECHARGE: 'RECHARGE',
+            BATTLE: 'BATTLE',
+            TASK: 'TASK',
+            ACTIVITY: 'ACTIVITY',
+            MATCH: 'MATCH',
+            GRANT: 'GRANT',
+            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK'
         },
         ADD_ITEM_TYPE: {
-            RECHARGE: 1,
-            BATTLE: 2,
-            TASK: 3,
-            ACTIVITY: 4,
-            MATCH: 5,
-            GRANT: 6,
-            RECHARGE_ROLLBACK: 7,
-            CONSUME: 8
+            RECHARGE: 'RECHARGE',
+            BATTLE: 'BATTLE',
+            TASK: 'TASK',
+            ACTIVITY: 'ACTIVITY',
+            MATCH: 'MATCH',
+            GRANT: 'GRANT',
+            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
+            CONSUME: 'CONSUME'
         },
         ADD_FRAGMENT_TYPE: {
-            TASK: 1,
-            ACTIVITY: 2,
-            EXCHANGE: 3,
-            EXCHANGE_FAILED_RETURN: 4
+            TASK: 'TASK',
+            ACTIVITY: 'ACTIVITY',
+            EXCHANGE: 'EXCHANGE',
+            EXCHANGE_FAILED_RETURN: 'EXCHANGE_FAILED_RETURN'
         },
         ITEM_MODE: {
             TERM: 'term',
@@ -356,6 +356,49 @@ module.exports = {
         NORMAL: 'game-all',
         PAYMENT: 'payment',
         OPEN_API: 'open-api',
-        LOGIN_RECORD: 'login-record'
+        LOGIN_RECORD: 'login-record',
+        
+        CONF: {
+            RECORD: {
+                TYPE: 'RECORD',
+                ACTION: {
+                    LOGIN: 'LOGIN',
+                    GAME: 'GAME'
+                }
+            },
+            GAME: {
+                TYPE: 'GAME',
+                ACTION: {
+                    START: 'START'
+                }
+            },
+            USER: {
+                TYPE: 'USER',
+                ACTION: {
+                    ADD_GOLD: 'ADD_GOLD',
+                    ADD_FRAGMENT: 'ADD_FRAGMENT',
+                    ADD_ITEM: 'ADD_ITEM',
+                    EXCHANGE: 'EXCHANGE'
+                }
+            },
+            PAYMENT: {
+                TYPE: 'PAYMENT',
+                ACTION: {
+                    REQUEST_CHARGE: 'REQUEST_CHARGE',
+                    PAID_OPTION: 'PAID_OPTION'
+                }
+            },
+            OPEN_API: {
+                TYPE: 'OPEN_API',
+                ACTION: {
+                    SEND_SMS: 'SEND_SMS',
+                    RECHARGE_MOBILE_FEE: 'RECHARGE_MOBILE_FEE',
+                    APIX_CALLBACK: 'APIX_CALLBACK'
+                }
+            }
+            
+        }
     }
 }
+
+//{type: "", action: "", uid: "", message: "", createdAt: new Date(), detail: {}}

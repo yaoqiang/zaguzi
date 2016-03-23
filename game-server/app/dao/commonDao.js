@@ -145,7 +145,7 @@ commonDao.updateCaptchaCode = function (data, cb) {
             }
         }, new: true, upsert: true,
     }, function (err, doc, lastErrorObject) {
-        if (err) logger.error('--commonDao.updateCaptchaCode error--')
+        if (err) logger.error('--commonDao.updateCaptchaCode error-- %o', err)
         cb({
             code: err ? Code.FAIL : Code.OK
         })

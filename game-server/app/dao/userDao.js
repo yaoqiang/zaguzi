@@ -155,7 +155,6 @@ userDao.createPlayer = function (uid, cb) {
     db.player.save(player, function (err, doc) {
         if (err || _.isNull(doc)) {
             logger.error('create player failed! ' + err.message);
-            logger.error(err);
             utils.invokeCallback(cb, err.message, null);
             return;
         }

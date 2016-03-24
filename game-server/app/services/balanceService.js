@@ -82,7 +82,7 @@ balanceService.balanceCommon = function (game, cb) {
                 var partition = 0;
 
                 if (isRed) {
-                    //map计算结果为：5人局2家3、6人局全部、7人局3家3
+                    //map计算结果为：5人局2家3、6人局3家3、7人局3家3...(常规局:3分别在不同玩家手里,玩家没有手握2个3以上的)
                     _.map(actor.gameStatus.actualIdentity, function (id) {
                         if (id == consts.GAME.ACTUAL_IDENTITY.Heart3) {
                             partition += heart3Partition;
@@ -91,12 +91,20 @@ balanceService.balanceCommon = function (game, cb) {
                             partition += 1;
                         }
                     });
-                    //如果5人局1家3或7人局2家/1家3,单独处理
+                    //如果5人局1家3, 6人局2家3, 7人局2家/1家3, 单独处理
                     switch (game.maxActor) {
                         case consts.GAME.TYPE.FIVE:
                             //如果是1家3（即双三）
                             if (_.size(game.gameLogic.red) == 1) {
                                 partition = game.maxActor - 1;
+                            }
+                            break;
+                        case consts.GAME.TYPE.SIX:
+                            if (_.size(game.gameLogic.red) == 1) {
+                                partition = game.maxActor - 1;
+                            }
+                            else if (_.size(game.gameLogic.red) == 2) {
+                                partition = 2;
                             }
                             break;
                         case consts.GAME.TYPE.SEVEN:
@@ -115,6 +123,7 @@ balanceService.balanceCommon = function (game, cb) {
                                 }
                             }
                             break;
+
                         default:
                             break;
                     }

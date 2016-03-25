@@ -293,7 +293,7 @@ handler.requestPaymentByPingpp = function (msg, session, next) {
     msg.uid = session.uid;
     msg.clientIp = remoteAddress.ip;
     
-    this.app.rpc.manager.universalRemote.payment4IAP(session, msg, function (data) {
+    this.app.rpc.manager.universalRemote.requestPaymentByPingpp(session, msg, function (data) {
         next(null, data);
     });
     

@@ -42,7 +42,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
     
     pingpp.charges.create({
         subject: product.title,
-        body: product.desc,
+        body: product.title,
         amount: product.amount * 100,
         order_no: orderSerialNumber,
         channel: data.channel,

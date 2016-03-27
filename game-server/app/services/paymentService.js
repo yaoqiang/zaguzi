@@ -13,7 +13,7 @@ var Promise = require('promise');
 
 var mongojs = require('mongojs');
 
-var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
+var pingpp = require('pingpp')(open.PAYMENT.PINGPP.liveSecretKey);
 
 var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');

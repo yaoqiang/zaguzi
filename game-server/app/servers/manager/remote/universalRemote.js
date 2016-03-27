@@ -227,6 +227,8 @@ UniversalRemote.prototype = {
      * ping++支付回调（Webhooks）
      */
     payment4Pingpp: function (data, cb) {
+
+        logger4payment.debug("#### -> payment4pingpp last...");
         
         var connectors = pomelo.app.getServersByType('connector');
 

@@ -39,44 +39,50 @@ paymentService.requestChargesPingxx = function (data, cb) {
     }
     
     var orderSerialNumber = mongojs.ObjectId().toString();
-    
-    pingpp.charges.create({
-        subject: product.title,
-        body: product.title,
-        amount: product.amount * 100,
-        order_no: orderSerialNumber,
-        channel: data.channel,
-        currency: "cny",
-        client_ip: data.clientIp,
-        app: { id: open.PAYMENT.PINGPP.appid }
-    }, function (err, charge) {
-        // YOUR CODE
-        if (err) {
-            cb({code: Code.FAIL});
-            return;
-        }
-        
-        userDao.getPlayerByUid(data.uid, function(player) {
-            var order = {
-                uid: data.uid,
-                orderSerialNumber: orderSerialNumber,
-                productId: data.productId,
-                amount: product.amount,
-                state: consts.ORDER.STATE.PENDING,
-                device: data.device,
-                channel: data.channel,
-                player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+
+    try {
+        pingpp.charges.create({
+            subject: product.title,
+            body: product.title,
+            amount: product.amount * 100,
+            order_no: orderSerialNumber,
+            channel: data.channel,
+            currency: "cny",
+            client_ip: data.clientIp,
+            app: { id: open.PAYMENT.PINGPP.appid }
+        }, function (err, charge) {
+            // YOUR CODE
+            if (err) {
+                cb({code: Code.FAIL});
+                return;
             }
-            
-            commonDao.saveOrUpdateOrder(order, null, function () {
-                
-            });
-        
-            cb({code: Code.OK, charge: charge});
-        })
-        
-        
-    });
+
+            userDao.getPlayerByUid(data.uid, function(err, player) {
+                var order = {
+                    uid: data.uid,
+                    orderSerialNumber: orderSerialNumber,
+                    productId: data.productId,
+                    amount: product.amount,
+                    state: consts.ORDER.STATE.PENDING,
+                    device: data.device,
+                    channel: data.channel,
+                    player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+                }
+
+                commonDao.saveOrUpdateOrder(order, null, function () {
+
+                });
+
+                cb({code: Code.OK, charge: charge});
+            })
+
+
+        });
+    } catch (e) {
+        cb({code: Code.FAIL});
+    }
+    
+
 
 
 

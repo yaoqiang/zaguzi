@@ -195,7 +195,7 @@ function onUserEnter(session, uid, msg, self, player, userData, next) {
     var remoteAddress = sessionService.getClientAddressBySessionId(session.id);
 
     //记录登录日志
-    loggerLogin.info('%j', {uid: uid, serverId: msg.serverId, ip: remoteAddress.ip, os: msg.os || 'unknown', date: new Date()});
+    loggerLogin.info('%j', {uid: uid, serverId: msg.serverId, ip: remoteAddress.ip.substring(7, remoteAddress.ip.length), os: msg.os || 'unknown', date: new Date()});
 
     self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
     });

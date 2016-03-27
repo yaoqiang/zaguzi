@@ -288,11 +288,12 @@ handler.sendPaymentResult = function (msg, session, next) {
  * msg: {device: xx, channel: xx, productId: xx}
  */
 handler.requestPaymentByPingpp = function (msg, session, next) {
-    var sessionService = self.app.get('sessionService');
+    var sessionService = this.app.get('sessionService');
     var remoteAddress = sessionService.getClientAddressBySessionId(session.id);
     msg.uid = session.uid;
-    msg.clientIp = remoteAddress.ip;
-    
+
+    msg.clientIp = remoteAddress.ip.substring(7, remoteAddress.ip.length);
+
     this.app.rpc.manager.universalRemote.requestPaymentByPingpp(session, msg, function (data) {
         next(null, data);
     });

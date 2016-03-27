@@ -398,7 +398,8 @@ module.exports = {
             }
             
         }
-    }
+    },
+
+    DEFAULT_IP: '127.0.0.1'
 }
 
-//{type: "", action: "", uid: "", message: "", createdAt: new Date(), detail: {}}

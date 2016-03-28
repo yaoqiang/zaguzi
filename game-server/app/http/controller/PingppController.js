@@ -23,7 +23,7 @@ module.exports = function (app) {
     pingpp.use('/notify', function (req, res) {
         logger.debug('responsed from pingxx notify route.');
 
-        logger.debug('-- req from pingpp --> %o', req);
+        logger.debug('-- req from pingpp --> %o', req.body);
         // 异步通知
         try {
             // 验证 webhooks 签名
@@ -48,7 +48,7 @@ module.exports = function (app) {
             logger.debug('verification succeeded for pingxx');
 
             var result = req.body;
-
+            logger.debug('swithing.....');
             switch (result.type) {
                 case "charge.succeeded":
                     logger.debug('charge.succeeded..');

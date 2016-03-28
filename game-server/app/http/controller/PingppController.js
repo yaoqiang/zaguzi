@@ -7,6 +7,11 @@ var crypto = require('crypto');
 
 var consts = require('../../consts/consts');
 
+var log4js = require('log4js');
+var log4jsConf = require(__dirname + "/../../..//config/log4jsCustom.json");
+log4js.configure(log4jsConf, {});
+
+
 var logger = require('log4js').getLogger(consts.LOG.PAYMENT);
 
 var pingpp = express.Router();

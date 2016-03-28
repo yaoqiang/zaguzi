@@ -14,7 +14,7 @@ var Promise = require('promise');
 var mongojs = require('mongojs');
 
 var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
-pingpp.setPrivateKeyPath("../../config/rsa_private_key.pem");
+pingpp.setPrivateKeyPath(__dirname + "/../../config/rsa_private_key.pem");
 
 var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');

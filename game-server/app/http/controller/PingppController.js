@@ -68,7 +68,7 @@ module.exports = function (app) {
             }
 
         } catch (err) {
-            logger.error("something wrong..")
+            logger.error("something wrong... %o", err);
             res.sendStatus(500);
         }
 

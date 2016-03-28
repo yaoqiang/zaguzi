@@ -248,6 +248,20 @@ UniversalRemote.prototype = {
                     cb();
                     return;
                 }
+                
+                if (originalOrder == null) {
+                    logger4payment.error("%j", {
+                        uid: originalOrder.uid,
+                        orderId: originalOrder.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Pingpp Webhooks参数中order_no 未找到订单',
+                        created: new Date(),
+                        detail: {data: data}
+                    });
+                    cb();
+                    return;
+                }
 
                 var order = {
                     uid: originalOrder.uid,

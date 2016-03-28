@@ -292,8 +292,8 @@ UniversalRemote.prototype = {
                         });
 
                         messageService.pushMessageToPlayer({
-                            uid: data.uid,
-                            sid: dispatcher(data.uid, connectors).id
+                            uid: originalOrder.uid,
+                            sid: dispatcher(originalOrder.uid, connectors).id
                         }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
 
                         cb();

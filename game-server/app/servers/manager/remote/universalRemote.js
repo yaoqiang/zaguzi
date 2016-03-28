@@ -229,45 +229,64 @@ UniversalRemote.prototype = {
     payment4Pingpp: function (data, cb) {
 
         logger4payment.debug("#### -> payment4pingpp last...");
-        
-        var connectors = pomelo.app.getServersByType('connector');
+        try {
 
-        commonService.searchOrderByNumber(data.order_no, function (err, originalOrder) {
-            if (err) {
-                logger4payment.error("%j", {uid: originalOrder.uid, orderId: originalOrder.order_no, type: consts.LOG.CONF.PAYMENT, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Pingpp Webhooks参数中order_no 未找到订单', created: new Date(), detail: {data: data}});
-                return;
-            }
+            var connectors = pomelo.app.getServersByType('connector');
 
-            var order = {
-                uid: originalOrder.uid,
-                productId: originalOrder.productId,
-                state: originalOrder.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
-                device: originalOrder.device,
-                channel: originalOrder.channel
-            };
+            commonService.searchOrderByNumber(data.order_no, function (err, originalOrder) {
+                if (err) {
+                    logger4payment.error("%j", {
+                        uid: originalOrder.uid,
+                        orderId: originalOrder.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Pingpp Webhooks参数中order_no 未找到订单',
+                        created: new Date(),
+                        detail: {data: data}
+                    });
+                    return;
+                }
 
-            paymentService.payment(order, data,
-                function (err, result) {
-                    if (err) {
-                        messageService.pushMessageToPlayer({
+                var order = {
+                    uid: originalOrder.uid,
+                    productId: originalOrder.productId,
+                    state: originalOrder.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
+                    device: originalOrder.device,
+                    channel: originalOrder.channel
+                };
+
+                paymentService.payment(order, data,
+                    function (err, result) {
+                        if (err) {
+                            messageService.pushMessageToPlayer({
+                                uid: originalOrder.uid,
+                                sid: dispatcher(originalOrder.uid, connectors).id
+                            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                            cb();
+                            return;
+                        }
+                        logger4payment.info("%j", {
                             uid: originalOrder.uid,
-                            sid: dispatcher(originalOrder.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                            orderId: originalOrder.order_no,
+                            type: consts.LOG.CONF.PAYMENT,
+                            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付后逻辑成功',
+                            created: new Date(),
+                            detail: {data: data}
+                        });
+
+                        messageService.pushMessageToPlayer({
+                            uid: data.uid,
+                            sid: dispatcher(data.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+
                         cb();
-                        return;
-                    }
-                    logger4payment.info("%j", {uid: originalOrder.uid, orderId: originalOrder.order_no, type: consts.LOG.CONF.PAYMENT, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '支付后逻辑成功', created: new Date(), detail: {data: data}});
+                    });
+            })
+        } catch (error) {
 
-                    messageService.pushMessageToPlayer({
-                        uid: data.uid,
-                        sid: dispatcher(data.uid, connectors).id
-                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
-
-                    cb();
-                });
-        })
+            cb();
+        }
 
 
     },

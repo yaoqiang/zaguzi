@@ -244,6 +244,7 @@ UniversalRemote.prototype = {
                         created: new Date(),
                         detail: {data: data}
                     });
+                    cb();
                     return;
                 }
 
@@ -285,6 +286,15 @@ UniversalRemote.prototype = {
             })
         } catch (error) {
 
+            logger4payment.error("%j", {
+                        uid: undefined,
+                        orderId: data.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Pingpp Webhooks参数异常',
+                        created: new Date(),
+                        detail: {error: error}
+                    });
             cb();
         }
 

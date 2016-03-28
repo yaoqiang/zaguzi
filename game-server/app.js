@@ -4,6 +4,9 @@ var sync = require('pomelo-sync-plugin');
 var log4js = require('log4js');
 var log4jsConf = require('./config/log4jsCustom.json');
 
+var consts = require('./app/consts/consts');
+var logger = require('log4js').getLogger(consts.LOG.SYSTEM);
+
 var ChatService = require('./app/services/chatService');
 
 var onlineUserAnalysis = require('./app/components/onlineUserAnalysis');
@@ -63,18 +66,8 @@ app.configure('production|development', function () {
     app.before(pomelo.filters.toobusy());
 
 
-    //app.enable('systemMonitor');
+    app.enable('systemMonitor');
 
-    //var lobbyInfo = require('./app/modules/lobbyInfo');
-    //var onlineUser = require('./app/modules/onlineUser');
-    //if (typeof app.registerAdmin === 'function') {
-    //  app.registerAdmin(lobbyInfo, {
-    //    app: app
-    //  });
-    //  app.registerAdmin(onlineUser, {
-    //    app: app
-    //  });
-    //}
 
     // proxy configures
     app.set('proxyConfig', {
@@ -153,4 +146,5 @@ app.start();
 
 process.on('uncaughtException', function (err) {
     console.error(' Caught exception: ' + err.stack);
+    logger.error(' Caught exception: %j', {err: err.stack});
 });

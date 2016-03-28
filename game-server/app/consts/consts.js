@@ -347,7 +347,7 @@ module.exports = {
     // }
     
     LOG: {
-        SYSTEM: 'game-all',
+        SYSTEM: 'game-system',
         GAME: 'game-all',
         GAME_RECORD: 'game-record',
         USER: 'game-all',

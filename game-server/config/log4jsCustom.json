@@ -1,6 +1,16 @@
 {
   "appenders": [
     {
+      "type": "file",
+      "filename": "./logs/game-system.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "game-system"
+    },
+    {
       "type": "dateFile",
       "filename": "./logs/game-all.log",
       "pattern": "-yyyy-MM-dd",
@@ -55,6 +65,7 @@
     }
   ],
   "levels": {
+    "game-system": "INFO",
     "game-all": "DEBUG",
     "game-record": "INFO",
     "login-record": "INFO",

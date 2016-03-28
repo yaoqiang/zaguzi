@@ -51,7 +51,7 @@ commonDao.saveOrUpdateOrder = function(data, charge, cb) {
     }
     else {
         db.order.findAndModify({
-            query: {orderSerialNumber: mongojs.ObjectId(data.orderSerialNumber)},
+            query: {orderSerialNumber: data.orderSerialNumber},
             update: {
                 $set: {
                     state: data.state,
@@ -71,7 +71,7 @@ commonDao.saveOrUpdateOrder = function(data, charge, cb) {
 }
 
 commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
-    db.order.findOne({orderSerialNumber: mongojs.ObjectId(orderSerialNumber)}, function (err, doc) {
+    db.order.findOne({orderSerialNumber: orderSerialNumber}, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

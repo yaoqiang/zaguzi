@@ -234,6 +234,7 @@ UniversalRemote.prototype = {
             var connectors = pomelo.app.getServersByType('connector');
 
             commonService.searchOrderByNumber(data.order_no, function (err, originalOrder) {
+                logger4payment.debug("debug info -> %j", {err: err, originalOrder: originalOrder});
                 if (err) {
                     logger4payment.error("%j", {
                         uid: originalOrder.uid,

@@ -99,7 +99,7 @@ UniversalRemote.prototype = {
     },
 
     /**
-     * Apple IAP支付完成后调用
+     * Apple IAP支付完成后调用, 以便存储订单
      */
     payment4IAP: function (data, cb) {
 
@@ -235,11 +235,7 @@ UniversalRemote.prototype = {
                             created: new Date(),
                             detail: {productId: data.productId, device: 'ios'}
                         });
-                        messageService.pushMessageToPlayer({
-                            uid: data.uid,
-                            sid: dispatcher(data.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                        cb();
+                        
                         return;
                     }
                     logger4payment.info("%j", {
@@ -251,10 +247,7 @@ UniversalRemote.prototype = {
                         detail: {productId: data.productId, device: 'ios'}
                     });
 
-                    messageService.pushMessageToPlayer({
-                        uid: data.uid,
-                        sid: dispatcher(data.uid, connectors).id
-                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+                    
 
                     cb();
                 });
@@ -442,10 +435,6 @@ UniversalRemote.prototype = {
                             detail: {data: data}
                         });
 
-                        messageService.pushMessageToPlayer({
-                            uid: originalOrder.uid,
-                            sid: dispatcher(originalOrder.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
 
                         cb({code: Code.OK});
                     });
@@ -467,6 +456,50 @@ UniversalRemote.prototype = {
 
     },
 
+    /**
+     * 为运营平台提供人工充值（场景：支付宝、微信、银行转账成功后，为玩家添加物品）
+     * 支付成功后, 处理后续逻辑；certificate：相关凭证（如果是客户转账, OSS平台必须上传转账截图或交易流水和玩家信息）
+     * data: {uid: xx, productId: xx, certificate: xx}
+     */
+    payment4OSS: function (data, cb) {
+        //初始化订单信息
+        var order = {
+                uid: data.uid,
+                productId: data.productId,
+                state: consts.ORDER.STATE.FINISHED,
+                device: 'oss',
+                channel: 'oss',
+                charge: null
+            }
+        
+        //处理支付成功后续逻辑
+        paymentService.payment(order, null, function (err, result) {
+                    if (err) {
+                        logger4payment.error("%j", {
+                            uid: data.uid,
+                            type: consts.LOG.CONF.PAYMENT.TYPE,
+                            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '充值成功后, 处理商品失败 - 人工充值',
+                            created: new Date(),
+                            detail: {productId: data.productId}
+                        });
+      
+                        cb();
+                        return;
+                    }
+                    logger4payment.info("%j", {
+                        uid: data.uid,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '充值成功, 并完成商品添加',
+                        created: new Date(),
+                        detail: {productId: data.productId, device: 'ios'}
+                    });
+
+                    cb();
+                });
+        
+    },
 
     /**
      * 客户端请求支付，获取ping++支付凭证

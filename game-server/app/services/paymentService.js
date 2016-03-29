@@ -16,11 +16,14 @@ var mongojs = require('mongojs');
 var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
 pingpp.setPrivateKeyPath(__dirname + "/../../config/rsa_private_key.pem");
 
+var messageService = require('./messageService');
+
 var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');
 var userDao = require('../dao/userDao');
 
 var utils = require('../util/utils');
+var dispatcher = require('../util/dispatcher').dispatch;
 
 var paymentService = module.exports
 
@@ -82,16 +85,10 @@ paymentService.requestChargesPingxx = function (data, cb) {
     } catch (e) {
         cb({code: Code.FAIL});
     }
-    
-
-
 
 
 }
 
-paymentService.webhooksPingxx = function () {
-    //
-}
 
 /**
  * 代表支付成功后最终回调, 用来处理玩家状态和订单状态
@@ -103,25 +100,36 @@ paymentService.webhooksPingxx = function () {
  * @param cb
  */
 paymentService.payment = function (order, charge, cb) {
+    var connectors = pomelo.app.getServersByType('connector');
     order.productId = parseInt(order.productId);
     //
-    var product = _.findWhere(shopConf[order.device], { id: order.productId });
-    if (product == undefined) {
-        logger.error("%j", {
-            uid: order.uid,
-            orderId: charge.order_no,
-            type: consts.LOG.CONF.PAYMENT,
-            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-            message: '支付成功后逻辑处理失败, 在服务器端没有找到该产品',
-            created: new Date(),
-            detail: {order: order, charge: charge}
-        });
-        cb({ code: Code.FAIL }, null);
-        return;
-    }
-
+    
     playerService.getUserCacheByUid(order.uid, function (user) {
-        //如果玩家在线, 走sync方式; 如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB
+        
+        var product = _.findWhere(shopConf[order.device], { id: order.productId });
+        if (product == undefined) {
+            logger.error("%j", {
+                uid: order.uid,
+                orderId: charge.order_no,
+                type: consts.LOG.CONF.PAYMENT,
+                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                message: '支付成功后逻辑处理失败, 在服务器端没有找到该产品',
+                created: new Date(),
+                detail: {order: order, charge: charge}
+            });
+            cb({ code: Code.FAIL }, null);
+        
+            if (user) {
+                messageService.pushMessageToPlayer({
+                            uid: order.uid,
+                            sid: dispatcher(order.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+            }
+            return;
+        }
+        
+        //如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB；；
+        //如果玩家在线, 走sync方式; (else)
         if (user == null || _.isUndefined(user)) {
             logger.debug("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
             //
@@ -224,9 +232,8 @@ paymentService.payment = function (order, charge, cb) {
                     });
                 })
 
-
-
         }
+        //玩家在线情况处理
         else {
             new Promise(function (resolve, reject) {
                 //添加金币
@@ -268,6 +275,13 @@ paymentService.payment = function (order, charge, cb) {
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
+                    
+                    //send message
+                     messageService.pushMessageToPlayer({
+                            uid: order.uid,
+                            sid: dispatcher(order.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                        
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
@@ -302,11 +316,23 @@ paymentService.payment = function (order, charge, cb) {
                             message: '支付成功后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     utils.invokeCallback(cb, err, null);
+                    
+                    //send message
+                     messageService.pushMessageToPlayer({
+                            uid: order.uid,
+                            sid: dispatcher(order.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     return;
                 })
                 .then(function (orderResult) {
                     user.player.save();
                     user.player.saveItem();
+                    //send message
+                    messageService.pushMessageToPlayer({
+                        uid: order.uid,
+                        sid: dispatcher(order.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
+                    
                     utils.invokeCallback(cb, null, null);
                 }, function (err) {
                     logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
@@ -322,6 +348,13 @@ paymentService.payment = function (order, charge, cb) {
                     });
                     user.player.save();
                     user.player.saveItem();
+                    
+                    //send message
+                     messageService.pushMessageToPlayer({
+                            uid: order.uid,
+                            sid: dispatcher(order.uid, connectors).id
+                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                        
                     utils.invokeCallback(cb, err, null);
                 });
 

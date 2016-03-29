@@ -235,7 +235,7 @@ UniversalRemote.prototype = {
                             created: new Date(),
                             detail: {productId: data.productId, device: 'ios'}
                         });
-                        
+
                         return;
                     }
                     logger4payment.info("%j", {
@@ -247,7 +247,6 @@ UniversalRemote.prototype = {
                         detail: {productId: data.productId, device: 'ios'}
                     });
 
-                    
 
                     cb();
                 });
@@ -270,7 +269,7 @@ UniversalRemote.prototype = {
             if (err) {
                 logger4payment.error("%j", {
                     uid: data.uid,
-                    orderId: data.order_no,
+                    orderSerialNumber: data.order_no,
                     type: consts.LOG.CONF.PAYMENT,
                     action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                     message: 'Pingpp Webhooks参数中order_no 未找到订单',
@@ -284,7 +283,7 @@ UniversalRemote.prototype = {
             if (originalOrder == null) {
                 logger4payment.error("%j", {
                     uid: data.uid,
-                    orderId: data.order_no,
+                    orderSerialNumber: data.order_no,
                     type: consts.LOG.CONF.PAYMENT,
                     action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                     message: 'Pingpp Webhooks参数中order_no 未找到订单',
@@ -305,7 +304,7 @@ UniversalRemote.prototype = {
                 if (err || doc == null) {
                     logger4payment.error("%j", {
                         uid: originalOrder.uid,
-                        orderId: data.order_no,
+                        orderSerialNumber: data.order_no,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态异常',
@@ -317,7 +316,7 @@ UniversalRemote.prototype = {
                 else {
                     logger4payment.info("%j", {
                         uid: originalOrder.uid,
-                        orderId: data.order_no,
+                        orderSerialNumber: data.order_no,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态成功',
@@ -353,7 +352,7 @@ UniversalRemote.prototype = {
                 if (err) {
                     logger4payment.error("%j", {
                         uid: undefined,
-                        orderId: data.order_no,
+                        orderSerialNumber: data.order_no,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'Pingpp Webhooks参数中order_no 未找到订单',
@@ -367,7 +366,7 @@ UniversalRemote.prototype = {
                 if (originalOrder == null) {
                     logger4payment.error("%j", {
                         uid: undefined,
-                        orderId: data.order_no,
+                        orderSerialNumber: data.order_no,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'Pingpp Webhooks参数中order_no 未找到订单',
@@ -378,7 +377,7 @@ UniversalRemote.prototype = {
                     return;
                 }
 
-                //use in payment service: NOTE: date.paid是pingpp回调
+                //use in payment service: NOTE: date.paid是pingpp回调参数(true/false)
                 var order = {
                     uid: originalOrder.uid,
                     productId: originalOrder.productId,
@@ -386,14 +385,14 @@ UniversalRemote.prototype = {
                     device: originalOrder.device,
                     channel: originalOrder.channel
                 };
-                
+
                 //如果支付失败, 则只设置订单状态即可
                 if (order.state == consts.ORDER.STATE.PAYMENT_FAILED) {
                     commonService.setOrderStateByNumber(data.order_no, order.state, data, function (err, doc) {
                         if (err || doc == null) {
                             logger4payment.info("%j", {
                                 uid: originalOrder.uid,
-                                orderId: data.order_no,
+                                orderSerialNumber: data.order_no,
                                 type: consts.LOG.CONF.PAYMENT,
                                 action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                                 message: 'pingpp返回支付失败后, 业务系统处理订单状态异常',
@@ -418,23 +417,23 @@ UniversalRemote.prototype = {
                 paymentService.payment(order, data,
                     function (err, result) {
                         if (err) {
-                            messageService.pushMessageToPlayer({
-                                uid: originalOrder.uid,
-                                sid: dispatcher(originalOrder.uid, connectors).id
-                            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                            cb({code: Code.FAIL, err: consts.ERR_CODE.NEED_CUSTOMER});
+                            //在paymentService.payment中已发送消息
+                            //messageService.pushMessageToPlayer({
+                            //    uid: originalOrder.uid,
+                            //    sid: dispatcher(originalOrder.uid, connectors).id
+                            //}, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL, err: consts.ERR_CODE.NEED_CUSTOMER});
+                            cb({code: Code.FAIL});
                             return;
                         }
                         logger4payment.info("%j", {
                             uid: originalOrder.uid,
-                            orderId: data.order_no,
+                            orderSerialNumber: data.order_no,
                             type: consts.LOG.CONF.PAYMENT,
                             action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                             message: '支付成功后逻辑处理成功',
                             created: new Date(),
                             detail: {data: data}
                         });
-
 
                         cb({code: Code.OK});
                     });
@@ -443,7 +442,7 @@ UniversalRemote.prototype = {
 
             logger4payment.error("%j", {
                 uid: undefined,
-                orderId: data.order_no,
+                orderSerialNumber: data.order_no,
                 type: consts.LOG.CONF.PAYMENT,
                 action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                 message: 'Pingpp Webhooks处理异常',
@@ -464,41 +463,42 @@ UniversalRemote.prototype = {
     payment4OSS: function (data, cb) {
         //初始化订单信息
         var order = {
-                uid: data.uid,
-                productId: data.productId,
-                state: consts.ORDER.STATE.FINISHED,
-                device: 'oss',
-                channel: 'oss',
-                charge: null
-            }
-        
+            uid: data.uid,
+            productId: data.productId,
+            state: consts.ORDER.STATE.FINISHED,
+            device: data.device,
+            channel: 'oss',
+            charge: null,
+            certificate: data.certificate
+        }
+
         //处理支付成功后续逻辑
         paymentService.payment(order, null, function (err, result) {
-                    if (err) {
-                        logger4payment.error("%j", {
-                            uid: data.uid,
-                            type: consts.LOG.CONF.PAYMENT.TYPE,
-                            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '充值成功后, 处理商品失败 - 人工充值',
-                            created: new Date(),
-                            detail: {productId: data.productId}
-                        });
-      
-                        cb();
-                        return;
-                    }
-                    logger4payment.info("%j", {
-                        uid: data.uid,
-                        type: consts.LOG.CONF.PAYMENT.TYPE,
-                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '充值成功, 并完成商品添加',
-                        created: new Date(),
-                        detail: {productId: data.productId, device: 'ios'}
-                    });
-
-                    cb();
+            if (err) {
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: '充值成功后, 处理商品失败 - 人工充值',
+                    created: new Date(),
+                    detail: {productId: data.productId}
                 });
-        
+
+                cb({code: Code.FAIL});
+                return;
+            }
+            logger4payment.info("%j", {
+                uid: data.uid,
+                type: consts.LOG.CONF.PAYMENT.TYPE,
+                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                message: '充值成功, 并完成商品添加',
+                created: new Date(),
+                detail: {productId: data.productId, device: 'ios'}
+            });
+
+            cb({code: Code.OK});
+        });
+
     },
 
     /**

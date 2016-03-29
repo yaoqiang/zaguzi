@@ -357,6 +357,7 @@ module.exports = {
         PAYMENT: 'payment',
         OPEN_API: 'open-api',
         LOGIN_RECORD: 'login-record',
+        GAME_HTTP: 'game-http',
         
         CONF: {
             RECORD: {

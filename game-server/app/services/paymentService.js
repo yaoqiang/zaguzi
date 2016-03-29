@@ -92,17 +92,19 @@ paymentService.requestChargesPingxx = function (data, cb) {
 
 /**
  * 代表支付成功后最终回调, 用来处理玩家状态和订单状态
- * @param uid
- * @param productId
- * @param state
- * @param device
- * @param channel
+ * @param order
+ * @param charge
  * @param cb
  */
 paymentService.payment = function (order, charge, cb) {
     var connectors = pomelo.app.getServersByType('connector');
     order.productId = parseInt(order.productId);
     //
+
+    var orderSerialNumber = "";
+    if (charge != null) {
+        orderSerialNumber = charge.order_no;
+    }
     
     playerService.getUserCacheByUid(order.uid, function (user) {
         
@@ -110,7 +112,7 @@ paymentService.payment = function (order, charge, cb) {
         if (product == undefined) {
             logger.error("%j", {
                 uid: order.uid,
-                orderId: charge.order_no,
+                orderSerialNumber: orderSerialNumber,
                 type: consts.LOG.CONF.PAYMENT,
                 action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                 message: '支付成功后逻辑处理失败, 在服务器端没有找到该产品',
@@ -128,8 +130,8 @@ paymentService.payment = function (order, charge, cb) {
             return;
         }
         
-        //如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB；；
-        //如果玩家在线, 走sync方式; (else)
+        //if-如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB；；
+        //else-如果玩家在线, 走sync方式; (else)
         if (user == null || _.isUndefined(user)) {
             logger.debug("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
             //
@@ -138,7 +140,6 @@ paymentService.payment = function (order, charge, cb) {
                     userDao.updatePlayerGold({uid: order.uid, gold: product.gold}, function (err, doc) {
                         if (err) {
                             reject({code: Code.FAIL})
-                            return;
                         }
                         resolve({ code: Code.OK });
                     });
@@ -149,31 +150,41 @@ paymentService.payment = function (order, charge, cb) {
                     if (product.items.length > 0) {
                         userDao.updatePlayerItems({uid: order.uid, items: product.items}, function (err, doc) {
                             if (err) {
-                                reject({code: Code.FAIL})
+                                Promise.reject({code: Code.FAIL})
                                 return;
                             }
-                            resolve({ code: Code.OK });
+                            Promise.resolve({ code: Code.OK });
                         });
                     }
-                    resolve({ code: Code.OK });
+                    Promise.resolve({ code: Code.OK });
 
                 }, function (err) {
                     logger.error("%j", {
                         uid: order.uid,
-                        orderId: charge.order_no,
+                        orderSerialNumber: orderSerialNumber,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: '支付成功后逻辑处理失败, 金币添加失败',
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
+                    utils.invokeCallback(cb, err, null);
+                    return;
                 })
                 .then(function (ok) {
 
                     userDao.getPlayerByUid(order.uid, function (err, player) {
                         if (err) {
-
-                            return;
+                            logger.error("%j", {
+                                uid: order.uid,
+                                orderSerialNumber: orderSerialNumber,
+                                type: consts.LOG.CONF.PAYMENT,
+                                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                                message: '支付成功后逻辑处理失败, 获取玩家信息异常',
+                                created: new Date(),
+                                detail: {order: order, charge: charge, err: err}
+                            });
+                            Promise.reject({ code: Code.FAIL });
                         }
                         //存储订单
                         var orderData = {
@@ -185,6 +196,7 @@ paymentService.payment = function (order, charge, cb) {
                             device: order.device,
                             channel: order.channel,
                             transactionId: order.transactionId,
+                            certificate: order.certificate,
                             player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
                         }
 
@@ -202,34 +214,38 @@ paymentService.payment = function (order, charge, cb) {
                 }, function (err) {
                     logger.error("%j", {
                         uid: order.uid,
-                        orderId: charge.order_no,
+                        orderSerialNumber: orderSerialNumber,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: '支付成功后逻辑处理失败, 订单修改失败',
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
+                    utils.invokeCallback(cb, err, null);
+                    return;
                 })
                 .then(function (ok) {
                     logger.info("%j", {
                         uid: order.uid,
-                        orderId: charge.order_no,
+                        orderSerialNumber: orderSerialNumber,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: '支付成功后逻辑处理成功',
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
+                    utils.invokeCallback(cb, null, {code: Code.OK});
                 }, function (err) {
                     logger.error("%j", {
                         uid: order.uid,
-                        orderId: charge.order_no,
+                        orderSerialNumber: orderSerialNumber,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '支付成功后逻辑处理失败',
+                        message: '支付成功后逻辑处理失败-订单数据处理失败',
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
+                    utils.invokeCallback(cb, err, null);
                 })
 
         }
@@ -289,6 +305,7 @@ paymentService.payment = function (order, charge, cb) {
                     //存储订单
                     var orderData = {
                         uid: order.uid,
+                        //如果是pingpp支付则有预先创建订单, 订单号在charge里; 如果是IAP,则没有预先创建订单, 订单号及时生成
                         orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
                         productId: order.productId,
                         amount: product.amount,
@@ -296,6 +313,7 @@ paymentService.payment = function (order, charge, cb) {
                         device: order.device,
                         channel: order.channel,
                         transactionId: order.transactionId,
+                        certificate: order.certificate,
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
                     commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {

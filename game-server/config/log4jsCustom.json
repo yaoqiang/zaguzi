@@ -11,6 +11,16 @@
       "category": "game-system"
     },
     {
+      "type": "file",
+      "filename": "./logs/game-http.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "game-http"
+    },
+    {
       "type": "dateFile",
       "filename": "./logs/game-all.log",
       "pattern": "-yyyy-MM-dd",
@@ -66,6 +76,7 @@
   ],
   "levels": {
     "game-system": "INFO",
+    "game-http": "DEBUG",
     "game-all": "DEBUG",
     "game-record": "INFO",
     "login-record": "INFO",

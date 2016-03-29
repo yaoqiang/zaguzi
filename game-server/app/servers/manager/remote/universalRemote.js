@@ -393,6 +393,8 @@ UniversalRemote.prototype = {
                     device: originalOrder.device,
                     channel: originalOrder.channel
                 };
+                
+                logger4payment.debug('debug..-> %j', {order: order, data: data});
 
                 //如果支付失败, 则只设置订单状态即可
                 if (order.state == consts.ORDER.STATE.PAYMENT_FAILED) {
@@ -424,6 +426,7 @@ UniversalRemote.prototype = {
                 //order: Mongo中的订单数据, data: pingpp的charge数据
                 paymentService.payment(order, data,
                     function (err, result) {
+                        logger4payment.debug('payment -> %j', {err: err, result: result})
                         if (err) {
                             messageService.pushMessageToPlayer({
                                 uid: originalOrder.uid,

@@ -437,7 +437,7 @@ UniversalRemote.prototype = {
                             orderId: data.order_no,
                             type: consts.LOG.CONF.PAYMENT,
                             action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '支付后逻辑成功',
+                            message: '支付成功后逻辑处理成功',
                             created: new Date(),
                             detail: {data: data}
                         });

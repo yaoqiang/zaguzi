@@ -385,17 +385,15 @@ UniversalRemote.prototype = {
                     return;
                 }
 
-                //use in payment service
+                //use in payment service: NOTE: date.paid是pingpp回调
                 var order = {
                     uid: originalOrder.uid,
                     productId: originalOrder.productId,
-                    state: data.state == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
+                    state: data.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
                     device: originalOrder.device,
                     channel: originalOrder.channel
                 };
                 
-                logger4payment.debug('debug..-> %j', {order: order, data: data});
-
                 //如果支付失败, 则只设置订单状态即可
                 if (order.state == consts.ORDER.STATE.PAYMENT_FAILED) {
                     commonService.setOrderStateByNumber(data.order_no, order.state, data, function (err, doc) {
@@ -426,7 +424,6 @@ UniversalRemote.prototype = {
                 //order: Mongo中的订单数据, data: pingpp的charge数据
                 paymentService.payment(order, data,
                     function (err, result) {
-                        logger4payment.debug('payment -> %j', {err: err, result: result})
                         if (err) {
                             messageService.pushMessageToPlayer({
                                 uid: originalOrder.uid,

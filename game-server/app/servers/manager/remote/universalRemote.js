@@ -46,7 +46,7 @@ UniversalRemote.prototype = {
     getTopOfAppReleaseRecord: function (data, cb) {
         commonService.getTopOfAppReleaseRecord(data, cb);
     },
-    
+
     getSystemMessage: function (data, cb) {
         commonService.getSystemMessage(data, cb);
     },
@@ -56,7 +56,7 @@ UniversalRemote.prototype = {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
                 logger.error("user-send SMS||%j||发送短信失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
-                cb({ code: Code.FAIL });
+                cb({code: Code.FAIL});
                 return;
             }
             data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.MOBILE_BINDING;
@@ -68,7 +68,7 @@ UniversalRemote.prototype = {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
                 logger.error("user-binding mobile||%j||绑定失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
-                cb({ code: Code.FAIL });
+                cb({code: Code.FAIL});
                 return;
             }
             commonService.bindingMobile(data, function (data) {
@@ -123,8 +123,14 @@ UniversalRemote.prototype = {
             var bodyJson = response.body;
             if (response.statusCode != Code.OK) {
 
-                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Apple Store Server验证时,HTTP失败', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Server验证时,HTTP失败',
+                    created: new Date(),
+                    detail: {productId: data.productId, device: 'ios'}
+                });
 
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
@@ -134,8 +140,14 @@ UniversalRemote.prototype = {
                 return;
             }
             if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
-                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Apple Store Server验证时,RECEIPT失败(可能非法)', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Server验证时,RECEIPT失败(可能非法)',
+                    created: new Date(),
+                    detail: {productId: data.productId, device: 'ios'}
+                });
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
@@ -161,8 +173,14 @@ UniversalRemote.prototype = {
                 }
 
                 if (transactionId == -1) {
-                    logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Apple Store Receipt中没有transaction_id', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                    logger4payment.error("%j", {
+                        uid: data.uid,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Apple Store Receipt中没有transaction_id',
+                        created: new Date(),
+                        detail: {productId: data.productId, device: 'ios'}
+                    });
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
@@ -171,8 +189,14 @@ UniversalRemote.prototype = {
                     return;
                 }
             } catch (error) {
-                logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Apple Store Receipt中没有transaction_id', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Receipt中没有transaction_id',
+                    created: new Date(),
+                    detail: {productId: data.productId, device: 'ios'}
+                });
                 cb();
                 return;
             }
@@ -182,8 +206,14 @@ UniversalRemote.prototype = {
             commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
                 if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
 
-                    logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                    logger4payment.error("%j", {
+                        uid: data.uid,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单',
+                        created: new Date(),
+                        detail: {productId: data.productId, device: 'ios'}
+                    });
 
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -197,8 +227,14 @@ UniversalRemote.prototype = {
 
                 paymentService.payment(order, null, function (err, result) {
                     if (err) {
-                        logger4payment.error("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '充值成功后, 处理商品失败', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                        logger4payment.error("%j", {
+                            uid: data.uid,
+                            type: consts.LOG.CONF.PAYMENT.TYPE,
+                            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '充值成功后, 处理商品失败',
+                            created: new Date(),
+                            detail: {productId: data.productId, device: 'ios'}
+                        });
                         messageService.pushMessageToPlayer({
                             uid: data.uid,
                             sid: dispatcher(data.uid, connectors).id
@@ -206,8 +242,14 @@ UniversalRemote.prototype = {
                         cb();
                         return;
                     }
-                    logger4payment.info("%j", {uid: data.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '充值成功, 并完成商品添加', created: new Date(), detail: {productId: data.productId, device: 'ios'}});
+                    logger4payment.info("%j", {
+                        uid: data.uid,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '充值成功, 并完成商品添加',
+                        created: new Date(),
+                        detail: {productId: data.productId, device: 'ios'}
+                    });
 
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
@@ -222,13 +264,93 @@ UniversalRemote.prototype = {
         });
 
     },
-    
+
     /**
-     * ping++支付回调（Webhooks）
+     * 当客户端支付失败或取消支付时, 维护订单状态并通知客户端, 失败不会走webhook(只有成功才回调)
+     * @param data: {uid: xx, state: xx} state: success, fail, cancel, invalid
+     * @param cb
+     */
+    payment4PingppFromClient: function (data, cb) {
+
+        commonService.searchOrderByUid(data.uid, function (err, originalOrder) {
+            logger4payment.debug("debug info -> %j", {err: err, originalOrder: originalOrder});
+            if (err) {
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    orderId: data.order_no,
+                    type: consts.LOG.CONF.PAYMENT,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Pingpp Webhooks参数中order_no 未找到订单',
+                    created: new Date(),
+                    detail: {data: data}
+                });
+                cb({code: Code.FAIL});
+                return;
+            }
+
+            if (originalOrder == null) {
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    orderId: data.order_no,
+                    type: consts.LOG.CONF.PAYMENT,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Pingpp Webhooks参数中order_no 未找到订单',
+                    created: new Date(),
+                    detail: {data: data}
+                });
+                cb({code: Code.FAIL});
+                return;
+            }
+
+
+            var state = consts.ORDER.STATE.PAYMENT_FAILED;
+            if (state === 'cancel') {
+                state = consts.ORDER.STATE.CANCELED;
+            }
+            //如果支付失败, 则只设置订单状态即可
+            commonService.setOrderStateByNumber(originalOrder.orderSerialNumber, state, data, function (err, doc) {
+                if (err || doc == null) {
+                    logger4payment.error("%j", {
+                        uid: originalOrder.uid,
+                        orderId: data.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态异常',
+                        created: new Date(),
+                        detail: {data: data}
+                    });
+                    cb({code: Code.FAIL});
+                }
+                else {
+                    logger4payment.info("%j", {
+                        uid: originalOrder.uid,
+                        orderId: data.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态成功',
+                        created: new Date(),
+                        detail: {data: data}
+                    });
+                    cb({code: Code.OK});
+                }
+            });
+
+            messageService.pushMessageToPlayer({
+                uid: originalOrder.uid,
+                sid: dispatcher(originalOrder.uid, connectors).id
+            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+            return;
+        })
+
+    },
+
+    /**
+     * * ping++支付成功回调（Webhooks）
+     * @param data: charge
+     * @param cb
      */
     payment4Pingpp: function (data, cb) {
 
-        logger4payment.debug("#### -> payment4pingpp last...");
         try {
 
             var connectors = pomelo.app.getServersByType('connector');
@@ -237,40 +359,69 @@ UniversalRemote.prototype = {
                 logger4payment.debug("debug info -> %j", {err: err, originalOrder: originalOrder});
                 if (err) {
                     logger4payment.error("%j", {
-                        uid: originalOrder.uid,
-                        orderId: originalOrder.order_no,
+                        uid: undefined,
+                        orderId: data.order_no,
                         type: consts.LOG.CONF.PAYMENT,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'Pingpp Webhooks参数中order_no 未找到订单',
                         created: new Date(),
                         detail: {data: data}
                     });
-                    cb();
-                    return;
-                }
-                
-                if (originalOrder == null) {
-                    logger4payment.error("%j", {
-                        uid: originalOrder.uid,
-                        orderId: originalOrder.order_no,
-                        type: consts.LOG.CONF.PAYMENT,
-                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Pingpp Webhooks参数中order_no 未找到订单',
-                        created: new Date(),
-                        detail: {data: data}
-                    });
-                    cb();
+                    cb({code: Code.FAIL});
                     return;
                 }
 
+                if (originalOrder == null) {
+                    logger4payment.error("%j", {
+                        uid: undefined,
+                        orderId: data.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: 'Pingpp Webhooks参数中order_no 未找到订单',
+                        created: new Date(),
+                        detail: {data: data}
+                    });
+                    cb({code: Code.FAIL});
+                    return;
+                }
+
+                //use in payment service
                 var order = {
                     uid: originalOrder.uid,
                     productId: originalOrder.productId,
-                    state: originalOrder.paid == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
+                    state: data.state == true ? consts.ORDER.STATE.FINISHED : consts.ORDER.STATE.PAYMENT_FAILED,
                     device: originalOrder.device,
                     channel: originalOrder.channel
                 };
 
+                //如果支付失败, 则只设置订单状态即可
+                if (order.state == consts.ORDER.STATE.PAYMENT_FAILED) {
+                    commonService.setOrderStateByNumber(data.order_no, order.state, data, function (err, doc) {
+                        if (err || doc == null) {
+                            logger4payment.info("%j", {
+                                uid: originalOrder.uid,
+                                orderId: data.order_no,
+                                type: consts.LOG.CONF.PAYMENT,
+                                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                                message: 'pingpp返回支付失败后, 业务系统处理订单状态异常',
+                                created: new Date(),
+                                detail: {data: data}
+                            });
+                            cb({code: Code.FAIL});
+                        }
+                        else {
+                            cb({code: Code.OK});
+                        }
+                    });
+
+                    messageService.pushMessageToPlayer({
+                        uid: originalOrder.uid,
+                        sid: dispatcher(originalOrder.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL, err: consts.ERR_CODE.NEED_CUSTOMER});
+                    return;
+                }
+
+                //order: Mongo中的订单数据, data: pingpp的charge数据
                 paymentService.payment(order, data,
                     function (err, result) {
                         if (err) {
@@ -278,12 +429,12 @@ UniversalRemote.prototype = {
                                 uid: originalOrder.uid,
                                 sid: dispatcher(originalOrder.uid, connectors).id
                             }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                            cb();
+                            cb({code: Code.FAIL, err: consts.ERR_CODE.NEED_CUSTOMER});
                             return;
                         }
                         logger4payment.info("%j", {
                             uid: originalOrder.uid,
-                            orderId: originalOrder.order_no,
+                            orderId: data.order_no,
                             type: consts.LOG.CONF.PAYMENT,
                             action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                             message: '支付后逻辑成功',
@@ -296,21 +447,21 @@ UniversalRemote.prototype = {
                             sid: dispatcher(originalOrder.uid, connectors).id
                         }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
 
-                        cb();
+                        cb({code: Code.OK});
                     });
             })
         } catch (error) {
 
             logger4payment.error("%j", {
-                        uid: undefined,
-                        orderId: data.order_no,
-                        type: consts.LOG.CONF.PAYMENT,
-                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Pingpp Webhooks参数异常',
-                        created: new Date(),
-                        detail: {error: error}
-                    });
-            cb();
+                uid: undefined,
+                orderId: data.order_no,
+                type: consts.LOG.CONF.PAYMENT,
+                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                message: 'Pingpp Webhooks处理异常',
+                created: new Date(),
+                detail: {error: error}
+            });
+            cb({code: Code.FAIL});
         }
 
 
@@ -323,13 +474,11 @@ UniversalRemote.prototype = {
     requestPaymentByPingpp: function (data, cb) {
         paymentService.requestChargesPingxx(data, cb);
     },
-    
+
 
     getShopList: function (data, cb) {
         cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
     },
-
-
 
 
     //处理话费充值回调
@@ -341,61 +490,94 @@ UniversalRemote.prototype = {
     // err_msg       string     充值失败时候返回失败信息。成功时为空。
     mobileRechargeHandler: function (data, cb) {
         logger.debug('-- mobileRechargeHandler -- %o', data);
-        
+
         //如果失败，先查询是否订单存在
-        exchangeService.getExchangeRecordByNumber(data.orderid, function(err, exchangeRecord) {
+        exchangeService.getExchangeRecordByNumber(data.orderid, function (err, exchangeRecord) {
             if (err) {
-                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
-                    message: '处理APIX回调时, 未根据订单号查到兑换记录', created: new Date(), detail: {exchangeId: data.orderid}});
+                logger.info("%j", {
+                    uid: exchangeRecord.uid,
+                    type: consts.LOG.CONF.OPEN_API.TYPE,
+                    action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 未根据订单号查到兑换记录',
+                    created: new Date(),
+                    detail: {exchangeId: data.orderid}
+                });
                 cb();
                 return;
             }
-            
+
             //CANCELED状态可能后续 预留给客服操作预留
             if (exchangeRecord.state == consts.ORDER.STATE.CANCELED) {
-                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
-                    message: '处理APIX回调时, 该兑换记录已处理过', created: new Date(), detail: {exchangeId: data.orderid}});
+                logger.info("%j", {
+                    uid: exchangeRecord.uid,
+                    type: consts.LOG.CONF.OPEN_API.TYPE,
+                    action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 该兑换记录已处理过',
+                    created: new Date(),
+                    detail: {exchangeId: data.orderid}
+                });
                 cb();
                 return;
             }
-            
+
             //如果设置回调, 回调结果是成功, 则不处理; 如果失败, 则为玩家恢复元宝
             //因为如果第一次调用APIX返回失败就不会扣除元宝, 如果APIX返回成功, 则直接扣除了元宝（但是未必真正充值成功）
             if (data.state == 1 || data.state == 0) {
-                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
-                    message: '处理APIX回调时, 已为玩家成功充值, 无需再处理', created: new Date(), detail: {exchangeId: data.orderid}});
+                logger.info("%j", {
+                    uid: exchangeRecord.uid,
+                    type: consts.LOG.CONF.OPEN_API.TYPE,
+                    action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                    message: '处理APIX回调时, 已为玩家成功充值, 无需再处理',
+                    created: new Date(),
+                    detail: {exchangeId: data.orderid}
+                });
                 cb();
                 return;
             }
-            
+
             //如果回调显示充值失败, 则为玩家回滚元宝. 获取兑换产品信息
             exchangeService.getExchangeListById(exchangeRecord._id, function (err, exchangeItem) {
                 //查询玩家是否在线
                 playerService.getUserCacheByUid(exchangeRecord.uid, function (user) {
                     //如果玩家不在线，则直接操作DB更新
                     if (user == null || _.isUndefined(user)) {
-                        exchangeService.callbackPlayerFragment({uid: exchangeRecord.uid, fragment: -exchangeItem.fragment}, function (err, p) {
+                        exchangeService.callbackPlayerFragment({
+                            uid: exchangeRecord.uid,
+                            fragment: -exchangeItem.fragment
+                        }, function (err, p) {
                             if (err) {
-                                logger.error("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
-                                    message: '处理APIX充值失败回调异常', created: new Date(), detail: {exchangeId: data.orderid, err: err}});
+                                logger.error("%j", {
+                                    uid: exchangeRecord.uid,
+                                    type: consts.LOG.CONF.OPEN_API.TYPE,
+                                    action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                                    message: '处理APIX充值失败回调异常',
+                                    created: new Date(),
+                                    detail: {exchangeId: data.orderid, err: err}
+                                });
                             } else {
-                                logger.info("%j", {uid: exchangeRecord.uid, type: consts.LOG.CONF.OPEN_API.TYPE, action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
-                                    message: '处理APIX充值失败后 回滚元宝成功', created: new Date(), detail: {exchangeId: data.orderid}});
+                                logger.info("%j", {
+                                    uid: exchangeRecord.uid,
+                                    type: consts.LOG.CONF.OPEN_API.TYPE,
+                                    action: consts.LOG.CONF.OPEN_API.APIX_CALLBACK,
+                                    message: '处理APIX充值失败后 回滚元宝成功',
+                                    created: new Date(),
+                                    detail: {exchangeId: data.orderid}
+                                });
                             }
                         });
-                    } 
+                    }
                     //如果玩家在线，则通过pomelo-sync处理并向客户端发送元宝变化事件
                     else {
-                        user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN, -exchangeItem.fragment, function(fragment) {
+                        user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN, -exchangeItem.fragment, function (fragment) {
                             //TODO 可以通过UI_COMMAND发送兑换模块有新状态
                         })
                     }
                 });
                 cb()
             });
-            
+
         });
-        
-        
+
+
     }
 }

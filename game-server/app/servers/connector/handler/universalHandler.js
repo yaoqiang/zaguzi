@@ -299,7 +299,20 @@ handler.requestPaymentByPingpp = function (msg, session, next) {
     });
     
     
-} 
+}
+
+
+/**
+ * 当客户端支付失败或取消支付时, 维护订单状态并通知客户端, 失败不会走webhook(只有成功才回调)
+ * @param msg: {state: xx} state: success, fail, cancel, invalid
+ * @param cb
+ */
+handler.payment4PingppFromClient = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.payment4PingppFromClient(session, msg, function (data) {
+        next(null, data);
+    });
+}
 
 /**
  * 获得最新版本信息

@@ -81,6 +81,17 @@ commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
     })
 }
 
+commonDao.searchOrderByUid = function (uid, cb) {
+    db.order.findOne({uid: mongojs.ObjectId(uid)}, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            utils.invokeCallback(cb, null, doc);
+        }
+    })
+}
+
 //for Apple IAP
 commonDao.searchOrderByTransactionId = function (transactionId, cb) {
     db.order.findOne({transactionId: transactionId}, function (err, doc) {

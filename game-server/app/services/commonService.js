@@ -97,6 +97,21 @@ commonService.bindingMobile = function (data, cb) {
 
 }
 
+commonService.setOrderStateByNumber = function (orderSerialNumber, state, charge, cb) {
+    if (orderSerialNumber == '' || orderSerialNumber == undefined || orderSerialNumber == null) {
+        //utils.invokeCallback
+        cb({code: Code.FAIL}, null);
+        return;
+    }
+
+    var orderData = {
+        orderSerialNumber: orderSerialNumber,
+        state: state,
+        charge: charge
+    }
+
+    commonDao.saveOrUpdateOrder(orderData, charge, cb);
+}
 
 commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
     if (orderSerialNumber == '' || orderSerialNumber == undefined || orderSerialNumber == null) {
@@ -105,6 +120,15 @@ commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
     }
 
     commonDao.searchOrderByNumber(orderSerialNumber, cb);
+}
+
+commonService.searchOrderByUid = function (uid, cb) {
+    if (uid == '' || uid == undefined || uid == null) {
+        cb({code: Code.FAIL}, null);
+        return;
+    }
+
+    commonDao.searchOrderByNumber(uid, cb);
 }
 
 

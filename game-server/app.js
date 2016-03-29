@@ -66,7 +66,7 @@ app.configure('production|development', function () {
     app.before(pomelo.filters.toobusy());
 
 
-    app.enable('systemMonitor');
+    //app.enable('systemMonitor');
 
 
     // proxy configures

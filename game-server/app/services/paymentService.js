@@ -107,8 +107,16 @@ paymentService.payment = function (order, charge, cb) {
     //
     var product = _.findWhere(shopConf[order.device], { id: order.productId });
     if (product == undefined) {
-        logger.error('支付后逻辑失败||%s||在服务器端没有找到该产品||%j', order.uid, { productId: order.productId, device: order.device, channel: order.channel });
-        cb({ code: Code.FAIL });
+        logger.error("%j", {
+            uid: order.uid,
+            orderId: charge.order_no,
+            type: consts.LOG.CONF.PAYMENT,
+            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+            message: '支付成功后逻辑处理失败, 在服务器端没有找到该产品',
+            created: new Date(),
+            detail: {order: order, charge: charge}
+        });
+        cb({ code: Code.FAIL }, null);
         return;
     }
 
@@ -117,6 +125,107 @@ paymentService.payment = function (order, charge, cb) {
         if (user == null || _.isUndefined(user)) {
             logger.debug("支付后逻辑||%s||玩家不在线, 转为离线处理||%j", order.uid, { productId: order.productId, device: order.device, channel: order.channel });
             //
+            new Promise(function (resolve, reject) {
+                if (product.gold > 0) {
+                    userDao.updatePlayerGold({uid: order.uid, gold: product.gold}, function (err, doc) {
+                        if (err) {
+                            reject({code: Code.FAIL})
+                            return;
+                        }
+                        resolve({ code: Code.OK });
+                    });
+                }
+                resolve({ code: Code.OK });
+            })
+                .then(function (ok) {
+                    if (product.items.length > 0) {
+                        userDao.updatePlayerItems({uid: order.uid, items: product.items}, function (err, doc) {
+                            if (err) {
+                                reject({code: Code.FAIL})
+                                return;
+                            }
+                            resolve({ code: Code.OK });
+                        });
+                    }
+                    resolve({ code: Code.OK });
+
+                }, function (err) {
+                    logger.error("%j", {
+                        uid: order.uid,
+                        orderId: charge.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付成功后逻辑处理失败, 金币添加失败',
+                        created: new Date(),
+                        detail: {order: order, charge: charge}
+                    });
+                })
+                .then(function (ok) {
+
+                    userDao.getPlayerByUid(order.uid, function (err, player) {
+                        if (err) {
+
+                            return;
+                        }
+                        //存储订单
+                        var orderData = {
+                            uid: order.uid,
+                            orderSerialNumber: charge == null ? mongojs.ObjectId().toString() : charge.order_no,
+                            productId: order.productId,
+                            amount: product.amount,
+                            state: order.state,
+                            device: order.device,
+                            channel: order.channel,
+                            transactionId: order.transactionId,
+                            player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+                        }
+
+                        commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
+                            logger.debug("commonDao.saveOrUpdateOrder -> %j", {err: err, o: o});
+                            if (err) {
+                                Promise.reject({ code: Code.FAIL });
+                            }
+                            else {
+                                Promise.resolve({ code: Code.OK });
+                            }
+                        });
+                    });
+
+                }, function (err) {
+                    logger.error("%j", {
+                        uid: order.uid,
+                        orderId: charge.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付成功后逻辑处理失败, 订单修改失败',
+                        created: new Date(),
+                        detail: {order: order, charge: charge}
+                    });
+                })
+                .then(function (ok) {
+                    logger.info("%j", {
+                        uid: order.uid,
+                        orderId: charge.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付成功后逻辑处理成功',
+                        created: new Date(),
+                        detail: {order: order, charge: charge}
+                    });
+                }, function (err) {
+                    logger.error("%j", {
+                        uid: order.uid,
+                        orderId: charge.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付成功后逻辑处理失败',
+                        created: new Date(),
+                        detail: {order: order, charge: charge}
+                    });
+                })
+
+
+
         }
         else {
             new Promise(function (resolve, reject) {
@@ -150,8 +259,15 @@ paymentService.payment = function (order, charge, cb) {
                     }
 
                 }, function (err) {
-                    logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '支付后金币添加失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
+                    logger.error("%j", {
+                        uid: order.uid,
+                        orderId: charge.order_no,
+                        type: consts.LOG.CONF.PAYMENT,
+                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                        message: '支付成功后逻辑处理失败, 金币添加失败',
+                        created: new Date(),
+                        detail: {order: order, charge: charge}
+                    });
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
@@ -169,6 +285,7 @@ paymentService.payment = function (order, charge, cb) {
                         player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
                     }
                     commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
+                        logger.debug("commonDao.saveOrUpdateOrder -> %j", {err: err, o: o});
                         if (err) {
                             Promise.reject({ code: Code.FAIL });
                         }
@@ -178,11 +295,11 @@ paymentService.payment = function (order, charge, cb) {
                     })
                 }, function (err) {
                     logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '支付后物品添加失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
+                        message: '支付成功后逻辑处理失败, 物品添加失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
                     //Note: 回滚已添加的金币
                     user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
                         logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
+                            message: '支付成功后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     utils.invokeCallback(cb, err, null);
                     return;
@@ -193,17 +310,18 @@ paymentService.payment = function (order, charge, cb) {
                     utils.invokeCallback(cb, null, null);
                 }, function (err) {
                     logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '支付后订单记录创建失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
+                        message: '支付成功后订单记录修改失败', created: new Date(), detail: {productId: order.productId, device: order.device, channel: order.channel}});
                     //Note: 回滚已添加的金币和物品
                     user.player.addGold(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE_ROLLBACK, product.gold, function (rollBackData) {
-                        logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
+                        logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付成功后订单修改失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, product.items, function (data) {
-                        logger.info("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '支付后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, items: product.items, device: order.device, channel: order.channel }});
+                        logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                            message: '支付成功后订单修改失败-回滚物品成功', created: new Date(), detail: { productId: order.productId, items: product.items, device: order.device, channel: order.channel }});
                     });
-                    
+                    user.player.save();
+                    user.player.saveItem();
                     utils.invokeCallback(cb, err, null);
                 });
 

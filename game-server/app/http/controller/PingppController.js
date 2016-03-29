@@ -23,7 +23,6 @@ module.exports = function (app) {
     pingpp.use('/notify', function (req, res) {
         logger.debug('responsed from pingxx notify route.');
 
-        logger.debug('-- req from pingpp --> %o', req.body);
         // 异步通知
         try {
             // 验证 webhooks 签名
@@ -41,21 +40,20 @@ module.exports = function (app) {
             var pub_key_path = __dirname + "/../../../config/pingpp_rsa_public_key.pem";
 
             if (!verifySignature(rawData, signature, pub_key_path)) {
-                logger.error('verification failed');
+                logger.error('验证签名失败, 怀疑可能是非法请求, 或pingpp发送参数错误');
                 res.sendStatus(400);
                 return;
             }
             logger.debug('verification succeeded for pingxx');
 
             var result = req.body;
-            logger.debug('swithing.....');
             switch (result.type) {
                 case "charge.succeeded":
-                    logger.debug('charge.succeeded..');
                     // 开发者在此处加入对支付异步通知的处理代码
-                    res.sendStatus(200);
-                    app.rpc.manager.universalRemote.payment4Pingpp(null, result.data.object, function () {
-                        logger.debug('处理Pingpp Webhooks rpc invoke finished.');
+
+                    app.rpc.manager.universalRemote.payment4Pingpp(null, result.data.object, function (data) {
+                        logger.debug('处理Pingpp Webhooks的 rpc invoke finished.');
+                        res.sendStatus(data.code);
                     });
                     break;
                 case "refund.succeeded":
@@ -68,15 +66,10 @@ module.exports = function (app) {
             }
 
         } catch (err) {
-            logger.error("something wrong... %j", {err: err});
+            logger.error("处理pingpp webhooks回调时候发生异常 %j", {err: err, req: {header: req.headers, body: req.body}});
             res.sendStatus(500);
         }
 
-
-        //如果充值失败, 发RPC处理;
-        // app.rpc.manager.universalRemote.mobileRechargeHandler(null, result, function () {
-        //     logger.debug('处理充值失败rpc invoke finished.');
-        // });
 
     });
 

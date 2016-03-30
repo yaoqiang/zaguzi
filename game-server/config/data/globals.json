@@ -19,34 +19,34 @@
         },
         {
             "day": 2,
-            "gold": 1500
+            "gold": 1100
         },
         {
             "day": 3,
-            "gold": 1800
+            "gold": 1200
         },
         {
             "day": 4,
-            "gold": 2000
+            "gold": 1300
         },
         {
             "day": 5,
-            "gold": 2300
+            "gold": 1400
         },
         {
             "day": 6,
-            "gold": 2500
+            "gold": 1500
         },
         {
             "day": 7,
-            "gold": 3000,
+            "gold": 1600,
             "items": []
         }
     ],
     "bankruptcyGrant": {
-        "times": 3,
+        "times": 1,
         "threshold": 1000,
-        "gold": 1500
+        "gold": 1000
     }
 
 }

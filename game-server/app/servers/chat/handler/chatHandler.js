@@ -32,7 +32,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
     scope = msg.scope;
     channelName = getChannelName();
     utils.myPrint('channelName = ', channelName);
-    msg.content = setContent(msg.content);
+    msg.content = utils.setContent(msg.content);
     msg.content = utils.replaceContent(msg.content);
     if (scope !== SCOPE.PRIVATE) {
         utils.myPrint('ByChannel ~ msg = ', JSON.stringify(msg));

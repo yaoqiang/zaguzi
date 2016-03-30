@@ -100,3 +100,9 @@ utils.replaceContent = function (content) {
     });
     return content;
 }
+
+utils.setContent = function (str) {
+    str = str.replace(/<\/?[^>]*>/g, '');
+    str = str.replace(/[ | ]*\n/g, '');
+    return str.replace(/\n[\s| | ]*\r/g, '');
+}

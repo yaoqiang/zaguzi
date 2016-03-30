@@ -1,21 +1,6 @@
 {
   "daily": [
     {
-      "groupId": 1001,
-      "tasks": [
-        {
-          "id": 100101,
-          "name": "每日扎一股",
-          "desc": "每日扎一股，开开心心拿金币",
-          "target": 1,
-          "icon": "",
-          "roomId": [],
-          "type": "battle",
-          "grant": 168
-        }
-      ]
-    },
-    {
       "groupId": 1002,
       "tasks": [
         {
@@ -26,7 +11,7 @@
           "icon": "",
           "roomId": [],
           "type": "battle",
-          "grant": 500
+          "grant": 300
         }
       ]
     },
@@ -35,9 +20,9 @@
       "tasks": [
         {
           "id": 100301,
-          "name": "在高手PK房玩5把",
+          "name": "在高手PK房玩10把",
           "desc": "每日参加高手PK，赢更多金币",
-          "target": 5,
+          "target": 10,
           "icon": "",
           "roomId": [
             13,
@@ -46,21 +31,6 @@
           ],
           "type": "battle",
           "grant": 588
-        }
-      ]
-    },
-    {
-      "groupId": 1010,
-      "tasks": [
-        {
-          "id": 101001,
-          "name": "每日赢一把",
-          "desc": "每日赢一把，开开心心拿金币",
-          "target": 1,
-          "icon": "",
-          "roomId": [],
-          "type": "win",
-          "grant": 188
         }
       ]
     },
@@ -75,7 +45,7 @@
           "icon": "",
           "roomId": [],
           "type": "win",
-          "grant": 688
+          "grant": 588
         }
       ]
     },
@@ -94,7 +64,7 @@
             33
           ],
           "type": "win",
-          "grant": 1688
+          "grant": 988
         }
       ]
     }

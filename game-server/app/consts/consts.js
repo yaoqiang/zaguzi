@@ -6,7 +6,7 @@ module.exports = {
             FEMALE: 'FEMALE'
         },
         GOLD_INIT: 5000,
-        BINDING_MOBILE_GRANT: 3000,
+        BINDING_MOBILE_GRANT: 1800,
         JOIN_MIN_GOLD: 1000,
         
         ADD_GOLD_TYPE: {
@@ -276,9 +276,9 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 15,
-            TALK: 15,
-            FAN: 15
+            NOT_READY: 10,
+            TALK: 10,
+            FAN: 10
         },
         PHASE: {
             STARTING: 0,
@@ -287,7 +287,7 @@ module.exports = {
             OVER: 3
         },
         TRUSTEESHIP: {
-            TIMEOUT_TIMES: 3
+            TIMEOUT_TIMES: 2
         },
         RESULT: {
             RED_WIN: 'RED_WIN',
@@ -299,7 +299,7 @@ module.exports = {
             LOSE: 'LOSE',
             TIE: 'TIE'
         },
-        DISSOLVE_NOBODY_TALK_TIME: 3
+        DISSOLVE_NOBODY_TALK_TIME: 2
 
 
     },

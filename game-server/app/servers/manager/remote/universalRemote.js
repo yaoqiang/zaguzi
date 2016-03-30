@@ -264,7 +264,7 @@ UniversalRemote.prototype = {
      */
     payment4PingppFromClient: function (data, cb) {
 
-        commonService.searchOrderByUid(data.uid, function (err, originalOrder) {
+        commonService.searchLastOrderByUid(data.uid, function (err, originalOrder) {
             logger4payment.debug("debug info -> %j", {err: err, originalOrder: originalOrder});
             if (err) {
                 logger4payment.error("%j", {

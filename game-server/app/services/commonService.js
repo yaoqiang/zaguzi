@@ -15,6 +15,10 @@ commonService.getRankingList = function (data, cb) {
 
     commonDao.getRankingList(data, function (err, doc) {
 
+        if (err) {
+            cb({code: Code.OK, rankingList: []});
+            return;
+        }
         if (doc && _.size(doc) > 0) {
             var rankingList = doc[0].ranking;
 
@@ -122,13 +126,20 @@ commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
     commonDao.searchOrderByNumber(orderSerialNumber, cb);
 }
 
-commonService.searchOrderByUid = function (uid, cb) {
+commonService.searchLastOrderByUid = function (uid, cb) {
     if (uid == '' || uid == undefined || uid == null) {
         cb({code: Code.FAIL}, null);
         return;
     }
 
-    commonDao.searchOrderByNumber(uid, cb);
+    commonDao.searchLastOrderByUid(uid, function (err, doc) {
+        if (doc && _.size(doc) > 0) {
+            cb(null, doc[0]);
+        }
+        else {
+            cb({code: Code.FAIL}, null);
+        }
+    });
 }
 
 

@@ -263,7 +263,7 @@ UniversalRemote.prototype = {
      * @param cb
      */
     payment4PingppFromClient: function (data, cb) {
-
+        var connectors = pomelo.app.getServersByType('connector');
         commonService.searchLastOrderByUid(data.uid, function (err, originalOrder) {
             logger4payment.debug("debug info -> %j", {err: err, originalOrder: originalOrder});
             if (err) {

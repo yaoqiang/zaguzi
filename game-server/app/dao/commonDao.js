@@ -82,7 +82,7 @@ commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
 }
 
 commonDao.searchLastOrderByUid = function (uid, cb) {
-    db.order.find({uid: mongojs.ObjectId(uid)}).sort({_id: -1}).limit(1, function (err, doc) {
+    db.order.find({uid: uid}).sort({_id: -1}).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }

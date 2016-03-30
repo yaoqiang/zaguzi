@@ -277,6 +277,10 @@ UniversalRemote.prototype = {
                     detail: {data: data}
                 });
                 cb({code: Code.FAIL});
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                 return;
             }
 
@@ -291,6 +295,10 @@ UniversalRemote.prototype = {
                     detail: {data: data}
                 });
                 cb({code: Code.FAIL});
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                 return;
             }
 
@@ -312,6 +320,7 @@ UniversalRemote.prototype = {
                         detail: {data: data}
                     });
                     cb({code: Code.FAIL});
+
                 }
                 else {
                     logger4payment.info("%j", {
@@ -325,11 +334,12 @@ UniversalRemote.prototype = {
                     });
                     cb({code: Code.OK});
                 }
+
             });
 
             messageService.pushMessageToPlayer({
-                uid: originalOrder.uid,
-                sid: dispatcher(originalOrder.uid, connectors).id
+                uid: data.uid,
+                sid: dispatcher(data.uid, connectors).id
             }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
             return;
         })

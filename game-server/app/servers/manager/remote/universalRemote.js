@@ -304,7 +304,7 @@ UniversalRemote.prototype = {
 
 
             var state = consts.ORDER.STATE.PAYMENT_FAILED;
-            if (state === 'cancel') {
+            if (data.state === 'cancel') {
                 state = consts.ORDER.STATE.CANCELED;
             }
             //如果支付失败, 则只设置订单状态即可
@@ -335,13 +335,13 @@ UniversalRemote.prototype = {
                     cb({code: Code.OK});
                 }
 
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+
             });
 
-            messageService.pushMessageToPlayer({
-                uid: data.uid,
-                sid: dispatcher(data.uid, connectors).id
-            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-            return;
         })
 
     },

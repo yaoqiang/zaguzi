@@ -54,7 +54,7 @@ rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date
 
 //昨日充值榜
 var getRechargeList = db.order.aggregate([
-        { $match: { createdAt: { $gt: yesterday } } },    
+        { $match: { createdAt: { $gt: yesterday }, state: 'FINISHED' } },
         { $group: 
             {
                 _id: "$uid",

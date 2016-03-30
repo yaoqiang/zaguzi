@@ -210,8 +210,8 @@ UniversalRemote.prototype = {
                             cb();
                             return;
                         }
-                        
-                        payment4IAPProcessOrder(data, responseSandbox, connectors, cb);
+
+                        this.payment4IAPProcessOrder(data, responseSandbox, connectors, cb);
                         
                     });
                     
@@ -234,7 +234,7 @@ UniversalRemote.prototype = {
                 return;
             }
             
-            payment4IAPProcessOrder(data, responseProduction, connectors, cb);
+            this.payment4IAPProcessOrder(data, responseProduction, connectors, cb);
 
         });
 

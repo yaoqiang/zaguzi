@@ -76,12 +76,12 @@
   ],
   "levels": {
     "game-system": "INFO",
-    "game-http": "INFO",
-    "game-all": "INFO",
+    "game-http": "DEBUG",
+    "game-all": "DEBUG",
     "game-record": "INFO",
     "login-record": "INFO",
-    "payment": "INFO",
-    "open-api": "INFO"
+    "payment": "DEBUG",
+    "open-api": "DEBUG"
   },
   "replaceConsole": true
 }

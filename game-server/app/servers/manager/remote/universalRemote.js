@@ -295,10 +295,11 @@ UniversalRemote.prototype = {
                     detail: {data: data}
                 });
                 cb({code: Code.FAIL});
-                messageService.pushMessageToPlayer({
-                    uid: data.uid,
-                    sid: dispatcher(data.uid, connectors).id
-                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                //NOTE: 暂时去掉消息, 如果玩家取消支付或支付失败, 统一不处理.
+                // messageService.pushMessageToPlayer({
+                //     uid: data.uid,
+                //     sid: dispatcher(data.uid, connectors).id
+                // }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                 return;
             }
 

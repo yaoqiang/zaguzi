@@ -100,11 +100,34 @@ UniversalRemote.prototype = {
 
     /**
      * Apple IAP支付完成后调用, 以便存储订单
+     * IAP错误代码信息（方便查阅）
+     * 21000 - The App Store could not read the JSON object you provided.
+     * 21002 - The data in the receipt-data property was malformed or missing.
+     * 21003 - The receipt could not be authenticated.
+     * 21004 - The shared secret you provided does not match the shared secret on file for your account. Only returned for iOS 6 style transaction receipts for auto-renewable subscriptions.
+     * 21005 - The receipt server is not currently available.
+     * 21006 - This receipt is valid but the subscription has expired. When this status code is returned to your server, the receipt data is also decoded and returned as part of the response. Only returned for iOS 6 style transaction receipts for auto-renewable subscriptions.
+     * 21007 - This receipt is from the test environment, but it was sent to the production environment for verification. Send it to the test environment instead.
+     * 21008 - This receipt is from the production environment, but it was sent to the test environment for verification. Send it to the production environment instead.
      */
     payment4IAP: function (data, cb) {
 
-        //IAP服务器端支付凭证校验, NOTE: 线上需改为production环境
-        var options = {
+        //IAP服务器端支付凭证校验, NOTE: 优先从Production验证, 如果得到Code=21007 则去Sandbox再验证
+        //官方推荐做法，这样可以不需要硬编码或设置动态开关
+        //see: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html
+        var optionsProduction = {
+            method: open.APPLE_IAP.VERIFY_RECEIPT.METHOD,
+            url: open.APPLE_IAP.VERIFY_RECEIPT.PRODUCTION,
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: {
+                'receipt-data': data.product.receiptCipheredPayload
+            },
+            json: true
+        }
+        
+        var optionsSandbox = {
             method: open.APPLE_IAP.VERIFY_RECEIPT.METHOD,
             url: open.APPLE_IAP.VERIFY_RECEIPT.SANDBOX,
             headers: {
@@ -116,18 +139,20 @@ UniversalRemote.prototype = {
             json: true
         }
 
-        request(options, function (err, response, body) {
+        //请求Production验证Receipt
+        request(optionsProduction, function (err, responseProduction, bodyProduction) {
 
             var connectors = pomelo.app.getServersByType('connector');
 
-            var bodyJson = response.body;
-            if (response.statusCode != Code.OK) {
+            var bodyJsonProduction = responseProduction.body;
+            //如果http状态错误
+            if (responseProduction.statusCode != Code.OK) {
 
                 logger4payment.error("%j", {
                     uid: data.uid,
                     type: consts.LOG.CONF.PAYMENT.TYPE,
                     action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Apple Store Server验证时,HTTP失败',
+                    message: 'Apple Store Server验证时,HTTP失败-可能导致在Apple玩家已真实付款,而客户端或服务器端网络极差导致物品未到账',
                     created: new Date(),
                     detail: {productId: data.productId, device: 'ios'}
                 });
@@ -139,56 +164,99 @@ UniversalRemote.prototype = {
                 cb();
                 return;
             }
-            if (bodyJson.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
-                logger4payment.error("%j", {
-                    uid: data.uid,
-                    type: consts.LOG.CONF.PAYMENT.TYPE,
-                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                    message: 'Apple Store Server验证时,RECEIPT失败(可能非法)',
-                    created: new Date(),
-                    detail: {productId: data.productId, device: 'ios'}
-                });
-                messageService.pushMessageToPlayer({
-                    uid: data.uid,
-                    sid: dispatcher(data.uid, connectors).id
-                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                cb();
-                return;
-            }
+            
+            //如果Production没有返回成功
+            if (bodyJsonProduction.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
+                
+                //如果是在Production没有找到Receipt，并且苹果返回确定Receipt是Sandbox，则去Sandbox验证（为apple上线审核）
+                if (bodyJsonProduction.status === open.APPLE_IAP.VERIFY_RECEIPT.USE_SANDBOX_IN_PRODUCTION) {
+                    //请求Sandbox验证Receipt
+                    request(optionsSandbox, function (err, responseSandbox, bodySandbox) {
+                        var bodyJsonSandbox = responseSandbox.body;
+                        //如果http状态错误
+                        if (responseSandbox.statusCode != Code.OK) {
 
-            //logger4payment.debug(response.body);
+                            logger4payment.error("%j", {
+                                uid: data.uid,
+                                type: consts.LOG.CONF.PAYMENT.TYPE,
+                                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                                message: 'Apple Store Server验证时,HTTP失败-可能导致在Apple玩家已真实付款,而客户端或服务器端网络极差导致物品未到账',
+                                created: new Date(),
+                                detail: {productId: data.productId, device: 'ios'}
+                            });
 
-            var order = {
-                uid: data.uid,
-                productId: data.productId,
-                state: consts.ORDER.STATE.FINISHED,
-                device: 'ios',
-                channel: 'IAP',
-                charge: null
-            }
-            try {
-                var transactionId = -1;
-                if (response.body.receipt.in_app.length > 0) {
-                    transactionId = response.body.receipt.in_app[0].transaction_id;
+                            messageService.pushMessageToPlayer({
+                                uid: data.uid,
+                                sid: dispatcher(data.uid, connectors).id
+                            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                            cb();
+                            return;
+                        }
+                        
+                        //如果Sandbox没有返回成功
+                        if (bodyJsonSandbox.status != open.APPLE_IAP.VERIFY_RECEIPT.OK_STATUS) {
+                            logger4payment.error("%j", {
+                                uid: data.uid,
+                                type: consts.LOG.CONF.PAYMENT.TYPE,
+                                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                                message: 'Apple Store Server验证时,RECEIPT失败(可能非法)',
+                                created: new Date(),
+                                detail: {productId: data.productId, device: 'ios', statusCode: bodyJsonSandbox.status}
+                            });
+                            messageService.pushMessageToPlayer({
+                                uid: data.uid,
+                                sid: dispatcher(data.uid, connectors).id
+                            }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                            cb();
+                            return;
+                        }
+                        
+                        payment4IAPProcessOrder(data, responseSandbox, connectors, cb);
+                        
+                    });
+                    
                 }
-
-                if (transactionId == -1) {
+                else {
                     logger4payment.error("%j", {
                         uid: data.uid,
                         type: consts.LOG.CONF.PAYMENT.TYPE,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Apple Store Receipt中没有transaction_id',
+                        message: 'Apple Store Server验证时,RECEIPT失败(可能非法)',
                         created: new Date(),
-                        detail: {productId: data.productId, device: 'ios'}
+                        detail: {productId: data.productId, device: 'ios', statusCode: bodyJsonProduction.status}
                     });
                     messageService.pushMessageToPlayer({
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     cb();
-                    return;
                 }
-            } catch (error) {
+                return;
+            }
+            
+            payment4IAPProcessOrder(data, responseProduction, connectors, cb);
+
+        });
+
+    },
+    
+    //因production和sandbox后续处理是一样的，所以封装公用代码
+    payment4IAPProcessOrder: function (data, response, connectors, cb) {
+        var order = {
+            uid: data.uid,
+            productId: data.productId,
+            state: consts.ORDER.STATE.FINISHED,
+            device: 'ios',
+            channel: 'IAP',
+            charge: null
+        }
+        try {
+            var transactionId = -1;
+            if (response.body.receipt.in_app.length > 0) {
+                transactionId = response.body.receipt.in_app[0].transaction_id;
+            }
+
+            if (transactionId == -1) {
                 logger4payment.error("%j", {
                     uid: data.uid,
                     type: consts.LOG.CONF.PAYMENT.TYPE,
@@ -197,64 +265,75 @@ UniversalRemote.prototype = {
                     created: new Date(),
                     detail: {productId: data.productId, device: 'ios'}
                 });
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                cb();
+                return;
+            }
+        } catch (error) {
+            logger4payment.error("%j", {
+                uid: data.uid,
+                type: consts.LOG.CONF.PAYMENT.TYPE,
+                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                message: 'Apple Store Receipt中没有transaction_id',
+                created: new Date(),
+                detail: {productId: data.productId, device: 'ios'}
+            });
+            cb();
+            return;
+        }
+
+
+        //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
+        commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
+            if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
+
+                logger4payment.error("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单',
+                    created: new Date(),
+                    detail: {productId: data.productId, device: 'ios'}
+                });
+
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: dispatcher(data.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                 cb();
                 return;
             }
 
+            order.transactionId = transactionId;
 
-            //根据receipt的transaction_id 查询已有订单是否存在, 如果存在并且已完成, 则认为是非法receipt
-            commonService.searchOrderByTransactionId(transactionId, function (err, doc) {
-                if (err || (doc && doc.state == consts.ORDER.STATE.FINISHED)) {
-
+            paymentService.payment(order, null, function (err, result) {
+                if (err) {
                     logger4payment.error("%j", {
                         uid: data.uid,
                         type: consts.LOG.CONF.PAYMENT.TYPE,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: 'Apple Store Receipt中transaction_id已使用, 可能是非法请求或漏单',
+                        message: '充值成功后, 处理商品失败',
                         created: new Date(),
                         detail: {productId: data.productId, device: 'ios'}
                     });
-
-                    messageService.pushMessageToPlayer({
-                        uid: data.uid,
-                        sid: dispatcher(data.uid, connectors).id
-                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     cb();
                     return;
                 }
-
-                order.transactionId = transactionId;
-
-                paymentService.payment(order, null, function (err, result) {
-                    if (err) {
-                        logger4payment.error("%j", {
-                            uid: data.uid,
-                            type: consts.LOG.CONF.PAYMENT.TYPE,
-                            action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                            message: '充值成功后, 处理商品失败',
-                            created: new Date(),
-                            detail: {productId: data.productId, device: 'ios'}
-                        });
-
-                        return;
-                    }
-                    logger4payment.info("%j", {
-                        uid: data.uid,
-                        type: consts.LOG.CONF.PAYMENT.TYPE,
-                        action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                        message: '充值成功, 并完成商品添加',
-                        created: new Date(),
-                        detail: {productId: data.productId, device: 'ios'}
-                    });
-
-
-                    cb();
+                logger4payment.info("%j", {
+                    uid: data.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: '充值成功, 并完成商品添加',
+                    created: new Date(),
+                    detail: {productId: data.productId, device: 'ios'}
                 });
-            })
 
-
+                cb();
+            });
         });
-
     },
 
     /**

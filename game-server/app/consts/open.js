@@ -23,7 +23,8 @@ module.exports = {
             SANDBOX: 'https://sandbox.itunes.apple.com/verifyReceipt',
             PRODUCTION: 'https://buy.itunes.apple.com/verifyReceipt',
             METHOD: 'POST',
-            OK_STATUS: 0
+            OK_STATUS: 0,
+            USE_SANDBOX_IN_PRODUCTION: 21007
         }
     },
     PAYMENT: {

@@ -111,6 +111,7 @@ UniversalRemote.prototype = {
      * 21008 - This receipt is from the production environment, but it was sent to the test environment for verification. Send it to the production environment instead.
      */
     payment4IAP: function (data, cb) {
+        var self = this;
 
         //IAP服务器端支付凭证校验, NOTE: 优先从Production验证, 如果得到Code=21007 则去Sandbox再验证
         //官方推荐做法，这样可以不需要硬编码或设置动态开关
@@ -211,7 +212,7 @@ UniversalRemote.prototype = {
                             return;
                         }
 
-                        this.payment4IAPProcessOrder(data, responseSandbox, connectors, cb);
+                        self.payment4IAPProcessOrder(data, responseSandbox, connectors, cb);
                         
                     });
                     
@@ -233,8 +234,8 @@ UniversalRemote.prototype = {
                 }
                 return;
             }
-            
-            this.payment4IAPProcessOrder(data, responseProduction, connectors, cb);
+
+            self.payment4IAPProcessOrder(data, responseProduction, connectors, cb);
 
         });
 

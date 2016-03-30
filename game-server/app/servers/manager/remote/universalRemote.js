@@ -326,7 +326,7 @@ UniversalRemote.prototype = {
                     logger4payment.info("%j", {
                         uid: originalOrder.uid,
                         orderSerialNumber: data.order_no,
-                        type: consts.LOG.CONF.PAYMENT,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态成功',
                         created: new Date(),
@@ -334,6 +334,8 @@ UniversalRemote.prototype = {
                     });
                     cb({code: Code.OK});
                 }
+                
+                logger4payment.debug("#call service finished, will send message to client");
 
                 messageService.pushMessageToPlayer({
                     uid: data.uid,

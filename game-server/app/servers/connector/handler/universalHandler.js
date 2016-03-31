@@ -310,8 +310,9 @@ handler.requestPaymentByPingpp = function (msg, session, next) {
 handler.payment4PingppFromClient = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.universalRemote.payment4PingppFromClient(session, msg, function (data) {
-        next(null, data);
+        //next(null, data);
     });
+    next();
 }
 
 /**

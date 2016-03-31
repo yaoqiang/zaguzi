@@ -394,7 +394,7 @@ UniversalRemote.prototype = {
                     logger4payment.error("%j", {
                         uid: originalOrder.uid,
                         orderSerialNumber: data.order_no,
-                        type: consts.LOG.CONF.PAYMENT,
+                        type: consts.LOG.CONF.PAYMENT.TYPE,
                         action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                         message: 'pingpp客户端取消支付或支付失败后向服务器上报订单信息, 处理订单状态异常',
                         created: new Date(),

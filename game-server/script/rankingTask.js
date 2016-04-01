@@ -3,7 +3,7 @@ var db = connect('zgz');
 var rankingList = db.rankingList;
 
 //上榜临界值
-var goldThreshold = 100000, battleThreshold = 100, rechargeThreshold = 1000;
+var goldThreshold = 100000, battleThreshold = 100, rechargeThreshold = 100;
 var limit = 20;
 var yesterday = new Date((new Date()) - 24*60*60*1000);
 
@@ -52,9 +52,9 @@ rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date
  //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 11, productId: 4, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
 
 
-//昨日充值榜
+//历史充值榜
 var getRechargeList = db.order.aggregate([
-        { $match: { createdAt: { $gt: yesterday }, state: 'FINISHED' } },
+        { $match: { state: 'FINISHED' } },
         { $group: 
             {
                 _id: "$uid",

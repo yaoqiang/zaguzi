@@ -15,31 +15,31 @@
     "checkIn": [
         {
             "day": 1,
-            "gold": 1000
+            "gold": 500
         },
         {
             "day": 2,
-            "gold": 1100
+            "gold": 600
         },
         {
             "day": 3,
-            "gold": 1200
+            "gold": 700
         },
         {
             "day": 4,
-            "gold": 1300
+            "gold": 800
         },
         {
             "day": 5,
-            "gold": 1400
+            "gold": 900
         },
         {
             "day": 6,
-            "gold": 1500
+            "gold": 1000
         },
         {
             "day": 7,
-            "gold": 1600,
+            "gold": 1100,
             "items": []
         }
     ],

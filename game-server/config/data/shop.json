@@ -33,7 +33,7 @@
         },
         {
             "id": 100003,
-            "title": "经典套餐升级版",
+            "title": "经典套餐+",
             "currency": "RMB",
             "gold": 8888,
             "amount": 6,
@@ -53,7 +53,7 @@
         },
         {
             "id": 100004,
-            "title": "超值金币包-1",
+            "title": "超值金币包1",
             "currency": "RMB",
             "gold": 18888,
             "amount": 12,
@@ -64,7 +64,7 @@
         },
         {
             "id": 100005,
-            "title": "超值金币包-2",
+            "title": "超值金币包2",
             "currency": "RMB",
             "gold": 28888,
             "amount": 18,
@@ -75,7 +75,7 @@
         },
         {
             "id": 100006,
-            "title": "超值金币包-3",
+            "title": "超值金币包3",
             "currency": "RMB",
             "gold": 46888,
             "amount": 30,
@@ -86,7 +86,7 @@
         },
         {
             "id": 100007,
-            "title": "超值金币包-4",
+            "title": "超值金币包4",
             "currency": "RMB",
             "gold": 118888,
             "amount": 68,
@@ -97,7 +97,7 @@
         },
         {
             "id": 100008,
-            "title": "超值大礼包!",
+            "title": "超值大礼包",
             "currency": "RMB",
             "gold": 208888,
             "amount": 128,
@@ -117,7 +117,7 @@
         },
         {
             "id": 100009,
-            "title": "超值大礼包-2!",
+            "title": "超值大礼包2",
             "currency": "RMB",
             "gold": 338888,
             "amount": 198,
@@ -137,7 +137,7 @@
         },
         {
             "id": 100010,
-            "title": "超值大礼包-3!",
+            "title": "超值大礼包3",
             "currency": "RMB",
             "gold": 508888,
             "amount": 328,
@@ -157,7 +157,7 @@
         },
         {
             "id": 100011,
-            "title": "小喇叭专卖!",
+            "title": "小喇叭专卖",
             "currency": "RMB",
             "gold": 0,
             "amount": 3,
@@ -173,7 +173,7 @@
         },
         {
             "id": 100012,
-            "title": "小喇叭大礼包!",
+            "title": "小喇叭大礼包",
             "currency": "RMB",
             "gold": 0,
             "amount": 30,
@@ -212,7 +212,7 @@
         },
         {
             "id": 200003,
-            "title": "经典套餐升级版",
+            "title": "经典套餐+",
             "currency": "RMB",
             "gold": 8888,
             "amount": 6,
@@ -232,7 +232,7 @@
         },
         {
             "id": 200004,
-            "title": "超值金币包-1",
+            "title": "超值金币包1",
             "currency": "RMB",
             "gold": 18888,
             "amount": 12,
@@ -243,7 +243,7 @@
         },
         {
             "id": 200005,
-            "title": "超值金币包-2",
+            "title": "超值金币包2",
             "currency": "RMB",
             "gold": 28888,
             "amount": 18,
@@ -254,7 +254,7 @@
         },
         {
             "id": 200006,
-            "title": "超值金币包-3",
+            "title": "超值金币包3",
             "currency": "RMB",
             "gold": 46888,
             "amount": 30,
@@ -265,7 +265,7 @@
         },
         {
             "id": 200007,
-            "title": "超值金币包-4",
+            "title": "超值金币包4",
             "currency": "RMB",
             "gold": 118888,
             "amount": 68,
@@ -276,7 +276,7 @@
         },
         {
             "id": 200008,
-            "title": "超值大礼包!",
+            "title": "超值大礼包",
             "currency": "RMB",
             "gold": 208888,
             "amount": 128,
@@ -296,7 +296,7 @@
         },
         {
             "id": 200009,
-            "title": "超值大礼包-2!",
+            "title": "超值大礼包2",
             "currency": "RMB",
             "gold": 338888,
             "amount": 198,
@@ -316,7 +316,7 @@
         },
         {
             "id": 200010,
-            "title": "超值大礼包-3!",
+            "title": "超值大礼包3",
             "currency": "RMB",
             "gold": 508888,
             "amount": 328,
@@ -336,7 +336,7 @@
         },
         {
             "id": 200011,
-            "title": "小喇叭专卖!",
+            "title": "小喇叭专卖",
             "currency": "RMB",
             "gold": 0,
             "amount": 3,
@@ -352,7 +352,7 @@
         },
         {
             "id": 200012,
-            "title": "小喇叭大礼包!",
+            "title": "小喇叭大礼包",
             "currency": "RMB",
             "gold": 0,
             "amount": 30,

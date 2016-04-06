@@ -31,7 +31,7 @@ module.exports = {
         PINGPP: {
             "testSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",
             "testPublishableKey": "pk_test_KOKWjLHij10CrvLC8CmTenzT",
-            "liveSecretKey": "sk_test_XTGyXLL0qPu1bXHKyHnzrTOS",
+            "liveSecretKey": "sk_live_GCWjr1WLWTa5nXzTO89SWLSG",
             "livePublishableKey": "pk_test_KOKWjLHij10CrvLC8CmTenzT",
             "appid": "app_jrLOqTOyTmb9fv5m",
             "currency": "cny",

@@ -37,23 +37,9 @@ var godRankingList = db.player.aggregate([
 rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date() });
 
 
-// db.order.remove({});
-
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 1, productId: 1, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 2, productId: 2, amount: 2, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 3, productId: 1, amount: 3, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 4, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 5, productId: 3, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 6, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 7, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 8, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 9, productId: 4, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 10, productId: 1, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 11, productId: 4, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
-
 
 //历史充值榜
-var getRechargeList = db.order.aggregate([
+var rechargeList = db.order.aggregate([
         { $match: { state: 'FINISHED' } },
         { $group: 
             {
@@ -68,5 +54,18 @@ var getRechargeList = db.order.aggregate([
         {$limit: limit}
 ]);
 
+var rechargeRankingResult = [];
+if (rechargeList._batch && rechargeList._batch.length > 0) {
+    rechargeList._batch.forEach(function (item) {
+        var player = db.player.findOne({uid: ObjectId(item._id)});
+        if (player) {
+            item.nickName = player.nickName;
+            item.avatar = player.avatar;
+            item.summary = player.summary;
+            rechargeRankingResult.push(item);
+        }
+    });
+}
 
-rankingList.insert({ ranking: getRechargeList._batch, type: "RECHARGE", date: new Date() });
+
+rankingList.insert({ ranking: rechargeRankingResult, type: "RECHARGE", date: new Date() });

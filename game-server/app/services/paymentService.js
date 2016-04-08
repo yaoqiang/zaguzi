@@ -13,8 +13,7 @@ var Promise = require('promise');
 
 var mongojs = require('mongojs');
 
-//var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
-var pingpp = require('pingpp')(open.PAYMENT.PINGPP.liveSecretKey);
+var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
 pingpp.setPrivateKeyPath(__dirname + "/../../config/rsa_private_key.pem");
 
 var messageService = require('./messageService');
@@ -29,7 +28,7 @@ var dispatcher = require('../util/dispatcher').dispatch;
 var paymentService = module.exports
 
 /**
- * 生成ping++ charge对象, 
+ * 生成ping++ charge对象,
  * data: {productId: xx, clientIp: xx, device: xx, channel: xx}
  */
 paymentService.requestChargesPingxx = function (data, cb) {
@@ -42,7 +41,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
         cb({ code: Code.FAIL });
         return;
     }
-    
+
     var orderSerialNumber = mongojs.ObjectId().toString();
 
     try {
@@ -106,9 +105,9 @@ paymentService.payment = function (order, charge, cb) {
     if (charge != null) {
         orderSerialNumber = charge.order_no;
     }
-    
+
     playerService.getUserCacheByUid(order.uid, function (user) {
-        
+
         var product = _.findWhere(shopConf[order.device], { id: order.productId });
         if (product == undefined) {
             logger.error("%j", {
@@ -121,16 +120,16 @@ paymentService.payment = function (order, charge, cb) {
                 detail: {order: order, charge: charge}
             });
             cb({ code: Code.FAIL }, null);
-        
+
             if (user) {
                 messageService.pushMessageToPlayer({
-                            uid: order.uid,
-                            sid: dispatcher(order.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    uid: order.uid,
+                    sid: dispatcher(order.uid, connectors).id
+                }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
             }
             return;
         }
-        
+
         //if-如果玩家下线(可能将来开通PC充值, 外部充值等), 直接操作DB；；
         //else-如果玩家在线, 走sync方式; (else)
         if (user == null || _.isUndefined(user)) {
@@ -292,13 +291,13 @@ paymentService.payment = function (order, charge, cb) {
                         created: new Date(),
                         detail: {order: order, charge: charge}
                     });
-                    
+
                     //send message
-                     messageService.pushMessageToPlayer({
-                            uid: order.uid,
-                            sid: dispatcher(order.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                        
+                    messageService.pushMessageToPlayer({
+                        uid: order.uid,
+                        sid: dispatcher(order.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+
                     utils.invokeCallback(cb, err, null);
                     return;
                 })
@@ -335,12 +334,12 @@ paymentService.payment = function (order, charge, cb) {
                             message: '支付成功后物品添加失败失败-回滚金币成功', created: new Date(), detail: { productId: order.productId, gold: product.gold, device: order.device, channel: order.channel }});
                     });
                     utils.invokeCallback(cb, err, null);
-                    
+
                     //send message
-                     messageService.pushMessageToPlayer({
-                            uid: order.uid,
-                            sid: dispatcher(order.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+                    messageService.pushMessageToPlayer({
+                        uid: order.uid,
+                        sid: dispatcher(order.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
                     return;
                 })
                 .then(function (orderResult) {
@@ -351,7 +350,7 @@ paymentService.payment = function (order, charge, cb) {
                         uid: order.uid,
                         sid: dispatcher(order.uid, connectors).id
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.OK});
-                    
+
                     utils.invokeCallback(cb, null, null);
                 }, function (err) {
                     logger.error("%j", {uid: order.uid, type: consts.LOG.CONF.PAYMENT.TYPE, action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
@@ -367,13 +366,13 @@ paymentService.payment = function (order, charge, cb) {
                     });
                     user.player.save();
                     user.player.saveItem();
-                    
+
                     //send message
-                     messageService.pushMessageToPlayer({
-                            uid: order.uid,
-                            sid: dispatcher(order.uid, connectors).id
-                        }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                        
+                    messageService.pushMessageToPlayer({
+                        uid: order.uid,
+                        sid: dispatcher(order.uid, connectors).id
+                    }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
+
                     utils.invokeCallback(cb, err, null);
                 });
 

@@ -53,20 +53,28 @@ rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date
 
 
 //历史充值榜
-var getRechargeList = db.order.aggregate([
+var rechargeList = db.order.aggregate([
         { $match: { state: 'FINISHED' } },
-        { $group: 
+        { $group:
             {
                 _id: "$uid",
-                totalAmount: {$sum: "$amount"},
-                nickName: {$first: "$player.nickName"},
-                avatar: {$first: "$player.avatar"},
-                summary: {$first: "$player.summary"}
+                totalAmount: {$sum: "$amount"}
             }
         },
         {$sort: {totalAmount: -1}},
-        {$limit: limit}
+        {$limit: 20}
 ]);
 
+var rechargeRankingResult = [];
 
-rankingList.insert({ ranking: getRechargeList._batch, type: "RECHARGE", date: new Date() });
+if (rechargeList && rechargeList._batch.length > 0) {
+    rechargeList._batch.forEach(function (item) {
+        var player = db.player.findOne({uid: ObjectId(item._id)});
+        item.nickName = player.nickName;
+        item.avatar = player.avatar;
+        item.summary = player.summary;
+        rechargeRankingResult.push(item);
+    });
+}
+
+db.rankingList.insert({ ranking: rechargeRankingResult, type: "RECHARGE", date: new Date() });

@@ -142,7 +142,7 @@ Player.prototype.addFragment = function (type, fragment, cb) {
     var self = this;
     messageService.pushMessageToPlayer({
         uid: this.uid,
-        sid: dispatcher.dispatch(this.uid, this.connectors).id
+        sid: dispatcher(this.uid, this.connectors).id
     }, consts.EVENT.INGOT_CHANGE, {ingot: self.fragment});
 }
 

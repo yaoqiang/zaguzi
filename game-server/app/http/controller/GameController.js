@@ -3,6 +3,8 @@ var qs = require('qs');
 
 var fs = require('fs');
 
+var _ = require('lodash');
+
 var crypto = require('crypto');
 
 var consts = require('../../consts/consts');
@@ -13,9 +15,12 @@ var log4jsConf = require(__dirname + "/../../..//config/log4jsCustom.json");
 log4js.configure(log4jsConf, {});
 
 
-var logger = require('log4js').getLogger(consts.LOG.GAME_HTTP);
+var logger = require('log4js').getLogger(consts.LOG.PAYMENT);
 
 var game = express.Router();
+
+//
+var acceptIpList = ['101.200.128.237', '101.201.154.38'];
 
 /**
  * @param app: Pomelo App
@@ -23,15 +28,26 @@ var game = express.Router();
 module.exports = function (app) {
     game.post('/payment4OSS', function (req, res) {
         logger.debug('payment4OSS  route....');
-
-        //NOTE: 身份验证(线上IP验证)
-        logger.debug('# ip -> %s', req.connection.remoteAddress);
-
-        logger.debug('# ip -> %s', utils.getIpAddress(req.connection.remoteAddress));
-        // if (req.connection.remoteAddress)
-
         //参数
         var paymentData = req.body;
+
+        //NOTE: 身份验证(线上IP验证)
+        var ipAddress = utils.getIpAddress(req.connection.remoteAddress);
+        logger.debug('# from ip -> %s', ipAddress);
+
+        if (!_.contains(acceptIpList, ipAddress)) {
+            logger.error("%j", {
+                uid: paymentData.uid,
+                orderSerialNumber: null,
+                type: consts.LOG.CONF.PAYMENT,
+                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                message: '非法IP直接操作HTTP，为玩家充值',
+                created: new Date(),
+                detail: {ipAddress: ipAddress}
+            });
+            res.sendStatus(401);
+            return;
+        }
 
         if (paymentData.uid == null || paymentData.uid == undefined || paymentData.productId == null || paymentData.productId == undefined) {
             res.send(400);

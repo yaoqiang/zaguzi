@@ -85,7 +85,7 @@ utils.myPrint = function() {
 
 
 //
-utils.getIpAddress = (function (ipString) {
+utils.getIpAddress = function (ipString) {
     var ipaddr = require('ipaddr.js');
 
     if (ipaddr.isValid(ipString)) {
@@ -100,7 +100,7 @@ utils.getIpAddress = (function (ipString) {
         }
     }
     return 'unknown';
-}(ipString));
+}
 
 
 /////////////////////////////

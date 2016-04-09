@@ -83,6 +83,26 @@ utils.myPrint = function() {
 // print the file name and the line number ~ end
 
 
+
+//
+utils.getIpAddress = (function (ipString) {
+    var ipaddr = require('ipaddr.js');
+
+    if (ipaddr.isValid(ipString)) {
+        try {
+            var addr = ipaddr.parse(ipString);
+            if (ipaddr.IPv6.isValid(ipString) && addr.isIPv4MappedAddress()) {
+                return addr.toIPv4Address().toString();
+            }
+            return addr.toNormalizedString();
+        } catch (e) {
+            return ipString;
+        }
+    }
+    return 'unknown';
+}(ipString));
+
+
 /////////////////////////////
 ///// validation 
 /////////////////////////////

@@ -6,6 +6,7 @@ var fs = require('fs');
 var crypto = require('crypto');
 
 var consts = require('../../consts/consts');
+var utils = require('../../util/utils');
 
 var log4js = require('log4js');
 var log4jsConf = require(__dirname + "/../../..//config/log4jsCustom.json");
@@ -25,6 +26,8 @@ module.exports = function (app) {
 
         //NOTE: 身份验证(线上IP验证)
         logger.debug('# ip -> %s', req.connection.remoteAddress);
+
+        logger.debug('# ip -> %s', utils.getIpAddress(req.connection.remoteAddress));
         // if (req.connection.remoteAddress)
 
         //参数

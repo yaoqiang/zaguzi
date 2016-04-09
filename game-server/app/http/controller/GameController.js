@@ -24,6 +24,8 @@ module.exports = function (app) {
         logger.debug('payment4OSS  route....');
 
         //NOTE: 身份验证(线上IP验证)
+        logger.debug('# ip -> %s', req.connection.remoteAddress);
+        // if (req.connection.remoteAddress)
 
         //参数
         var paymentData = req.body;

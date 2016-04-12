@@ -62,7 +62,7 @@ var rechargeList = db.order.aggregate([
             }
         },
         {$sort: {totalAmount: -1}},
-        {$limit: 20}
+        {$limit: limit}
 ]);
 
 var rechargeRankingResult = [];
@@ -77,4 +77,4 @@ if (rechargeList && rechargeList._batch.length > 0) {
     });
 }
 
-db.rankingList.insert({ ranking: rechargeRankingResult, type: "RECHARGE", date: new Date() });
+rankingList.insert({ ranking: rechargeRankingResult, type: "RECHARGE", date: new Date() });

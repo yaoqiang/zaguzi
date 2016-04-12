@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var mongojs = require('mongojs');
 var fs = require('fs');
 var readline = require('readline');
@@ -87,12 +86,3 @@ function parse(str) {
 	}
 	return _parse(str, 0, [''])
 }
-=======
-var _ = require('lodash');
-var fs = require('fs');
-var mongojs = require('mongojs');
-
-
-
-
->>>>>>> 7309dc19f95cfddab31b9f38fd4e312852cbe281

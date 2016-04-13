@@ -168,6 +168,12 @@ Game.prototype.start = function () {
     //    this.bigActorWithLastGame = null;
     //}
 
+    //
+    _.each(this.actors, function (act) {
+        //重置玩家牌局状态
+        act.gameStatus.reset()
+    });
+
     //标识上把大油=null,
     this.bigActorWithLastGame = null;
 

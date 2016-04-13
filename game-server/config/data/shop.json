@@ -127,11 +127,11 @@
             "items": [
                 {
                     "id": 2,
-                    "value": 10
+                    "value": 20
                 },
                 {
                     "id": 3,
-                    "value": 7
+                    "value": 14
                 }
             ]
         },
@@ -147,11 +147,11 @@
             "items": [
                 {
                     "id": 2,
-                    "value": 10
+                    "value": 30
                 },
                 {
                     "id": 3,
-                    "value": 7
+                    "value": 30
                 }
             ]
         },
@@ -306,11 +306,11 @@
             "items": [
                 {
                     "id": 2,
-                    "value": 10
+                    "value": 20
                 },
                 {
                     "id": 3,
-                    "value": 7
+                    "value": 14
                 }
             ]
         },
@@ -326,11 +326,11 @@
             "items": [
                 {
                     "id": 2,
-                    "value": 10
+                    "value": 30
                 },
                 {
                     "id": 3,
-                    "value": 7
+                    "value": 30
                 }
             ]
         },

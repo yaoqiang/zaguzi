@@ -54,7 +54,7 @@ db.exchangeList.save({name: '50元充值卡', denomination: 50, icon: '', invent
 db.exchangeRecord.save({uid: ObjectId('56ac9e72ba27df1c78df57fb'), number: '1', createdAt: new Date(), exchangeId: 1, productName: '1元话费', state: 'FINISHED', mobile: '18600000000', address: '', contact: ''});
 
 
-db.appReleaseRecord.save({name: '', version: '1.0', createdAt: new Date(), summary: '【新增】发布第一个版本'});
+db.appReleaseRecord.save({name: '', version: '1.0', createdAt: new Date(), summary: '【新增】发布第一个版本', releaseUrlAndroid: 'http://www.pgyer.com/zgza', releaseUrlApple: ''});
 
 db.systemMessage.save({title: '大同扎股子公测版上线啦！', content: '全球首款大同扎股子手游已登录地球，尽情享受吧！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});

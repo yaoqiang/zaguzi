@@ -350,6 +350,7 @@ module.exports = {
         SYSTEM: 'game-system',
         GAME: 'game-all',
         GAME_RECORD: 'game-record',
+        ONLINE_RECORD: 'online-record',
         USER: 'game-all',
         BALANCE: 'game-all',
         SYNC: 'game-all',
@@ -364,7 +365,8 @@ module.exports = {
                 TYPE: 'RECORD',
                 ACTION: {
                     LOGIN: 'LOGIN',
-                    GAME: 'GAME'
+                    GAME: 'GAME',
+                    ONLINE: 'ONLINE'
                 }
             },
             GAME: {

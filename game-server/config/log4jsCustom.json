@@ -71,6 +71,16 @@
       "category": "login-record"
     },
     {
+      "type": "dateFile",
+      "filename": "./logs/online-record.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "online-record"
+    },
+    {
       "type": "console"
     }
   ],
@@ -80,6 +90,7 @@
     "game-all": "DEBUG",
     "game-record": "DEBUG",
     "login-record": "DEBUG",
+    "online-record": "INFO",
     "payment": "DEBUG",
     "open-api": "DEBUG"
   },

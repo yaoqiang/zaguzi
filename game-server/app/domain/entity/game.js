@@ -179,7 +179,7 @@ Game.prototype.start = function () {
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {
         actors: this.actors,
-        bigActorWithLastGame: this.bigActorWithLastGame,
+        bigActorWithLastGame: null,
         maxActor: this.maxActor,
         gameId: this.gameId
     };

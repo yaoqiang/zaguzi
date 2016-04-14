@@ -2,3 +2,5 @@ curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: a
 
 
 mama:570d08a0d7958a093765d942
+
+db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 20000}});

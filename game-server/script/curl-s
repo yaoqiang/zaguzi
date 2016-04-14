@@ -1,0 +1,4 @@
+curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "56f0dd59707db8f177af5647", "productId": 100012}'
+
+
+mama:570d08a0d7958a093765d942

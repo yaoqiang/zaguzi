@@ -146,24 +146,36 @@ Game.prototype.ready = function (data, cb) {
 
 Game.prototype.start = function () {
     var self = this;
+
+    //////// Note: 居然偶尔的偶尔会出现问题, 导致已经换人, 但是还计算出上把老大, 而且上把老大可能已下线, 总之导致僵尸房
+    ///////////////
     //标识当前游戏局与上把局玩家是否变化
-    var isActorsChanged = false;
+    //var isActorsChanged = false;
+    //_.each(this.actors, function (act) {
+    //    if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
+    //            uid: act.uid,
+    //            actorNr: act.actorNr
+    //        }))) {
+    //        isActorsChanged = true;
+    //    }
+    //
+    //    //重置玩家牌局状态
+    //    act.gameStatus.reset()
+    //
+    //});
+    ////如果有变化，清空上把大油
+    //if (isActorsChanged) {
+    //    this.bigActorWithLastGame = null;
+    //}
+
+    //
     _.each(this.actors, function (act) {
-        if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
-                uid: act.uid,
-                actorNr: act.actorNr
-            }))) {
-            isActorsChanged = true;
-        }
-        
         //重置玩家牌局状态
         act.gameStatus.reset()
-        
     });
-    //如果有变化，清空上把大油
-    if (isActorsChanged) {
-        this.bigActorWithLastGame = null;
-    }
+
+    //标识上把大油=null,
+    this.bigActorWithLastGame = null;
 
     //释放上局gameLogic
     for (var i in this.gameLogic) {
@@ -595,7 +607,7 @@ Game.prototype.fanCountdown = function () {
     }, null, function () {
         //玩家[%j]秒内未出牌, 出牌超时
         var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
-            logger.info('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
+            logger.debug('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
             });
@@ -644,7 +656,7 @@ Game.prototype.fanTimeout = function (actor) {
     act.gameStatus.fanTimeoutTimes = act.gameStatus.fanTimeoutTimes + 1;
     //如果玩家连续consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES次出牌超时，则托管
     if (act.gameStatus.fanTimeoutTimes == consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES) {
-        logger.info('game||fanTimeout||玩家[%j]出牌超时次数到达,自动托管, ||用户&ID: %j, actorNr: %j, 超时次数: %j', act.properties.nickName, act.uid, act.actorNr, act.gameStatus.fanTimeoutTimes);
+        logger.debug('game||fanTimeout||玩家[%j]出牌超时次数到达,自动托管, ||用户&ID: %j, actorNr: %j, 超时次数: %j', act.properties.nickName, act.uid, act.actorNr, act.gameStatus.fanTimeoutTimes);
         act.gameStatus.isTrusteeship = true;
         //push 托管消息
         this.channel.pushMessage(consts.EVENT.TRUSTEESHIP, gameResponse.generateActorPoorResponse(actor), null, null);
@@ -1026,7 +1038,7 @@ Game.prototype.trusteeship = function (data, cb) {
         return;
     }
 
-    logger.info('game-trusteeship||%j||玩家[%j]主动请求托管, ||actorNr: %j', actor.uid, actor.properties.nickName, actor.actorNr);
+    logger.debug('game-trusteeship||%j||玩家[%j]主动请求托管, ||actorNr: %j', actor.uid, actor.properties.nickName, actor.actorNr);
 
     //设置玩家超时出牌N次, 为超时出牌逻辑代码通用
     actor.gameStatus.fanTimeoutTimes = consts.GAME.TRUSTEESHIP.TIMEOUT_TIMES - 1;

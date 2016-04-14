@@ -1,11 +1,14 @@
 var _ = require('lodash');
 
+var consts = require('../consts/consts');
+var logger = require('log4js').getLogger(consts.LOG.ONLINE_RECORD);
+
 module.exports = function (app, opts) {
     return new OnlineUserAnalysis(app, opts);
 };
 
 //var DEFAULT_INTERVAL = 10000; // print cycle
-var DEFAULT_INTERVAL = 60 * 1000 * 30; //scheduler setting
+var DEFAULT_INTERVAL = 60 * 1000 * 1; //scheduler setting
 
 var OnlineUserAnalysis = function (app, opts) {
     this.app = app;
@@ -23,7 +26,9 @@ OnlineUserAnalysis.prototype.start = function (cb) {
         //获取在线人数情况并将结果缓存在manager server;
         var result = getOnlineUserList(self.app.userCache);
         self.app.onlineUserResultCache = result;
-        self.save(result);
+        logger.info('%j', {createdAt: new Date(), data: result});
+        //self.save(result);
+
 
     }, this.interval);
     process.nextTick(cb);

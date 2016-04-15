@@ -3,7 +3,9 @@ var mongoConfig = require('../../../shared/config/mongo');
 
 var db = mongojs(mongoConfig.url,
     ['user', 'player', 'gameRecord', 'exchangeList', 'exchangeRecord', 'rankingList',
-        'appReleaseRecord', 'onlineUserAnalysis', 'order', 'captcha', 'systemMessage', 'serialCode']);
+        'appReleaseRecord', 'onlineUserAnalysis', 'order', 'captcha', 'systemMessage', 'serialCode',
+        'appleSetting'
+    ]);
 
 db.player.ensureIndex({uid: 1, meetingTimes: 1, createdAt: 1});
 db.player.ensureIndex({meetingTimes: 1, createdAt: 1});

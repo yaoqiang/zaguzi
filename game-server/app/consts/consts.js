@@ -16,7 +16,8 @@ module.exports = {
             ACTIVITY: 'ACTIVITY',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
-            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK'
+            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
+            EXCHANGE: 'EXCHANGE'
         },
         ADD_ITEM_TYPE: {
             RECHARGE: 'RECHARGE',
@@ -26,7 +27,8 @@ module.exports = {
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
-            CONSUME: 'CONSUME'
+            CONSUME: 'CONSUME',
+            EXCHANGE: 'EXCHANGE'
         },
         ADD_FRAGMENT_TYPE: {
             TASK: 'TASK',
@@ -70,7 +72,9 @@ module.exports = {
             GUZI_APPEND_NOT_HOLDING_CARD: 3006, //股子附加3，但是手牌里没有
             LIANG3_APPEND_NOT_3: 3007,  //亮3附加牌不是3
             LIANG3_APPEND_NOT_HOLDING_CARD: 3008,   //亮3附加3，但是手牌里没有
-            ERR: 3009   //未知错误
+            ERR: 3009,   //未知错误,
+            ALREADY_TALK: 3010, //已说话
+            NOT_YOU: 3011   //不轮他说
         },
         LEAVE: {
             NOT_IN_GAME: 4001,
@@ -122,7 +126,8 @@ module.exports = {
             NOT_BLANK_ADDRESS: 9206,
             INVALID_MOBILE: 9207,
             ERR: 9208,
-            NEED_CUSTOMER: 9209
+            NEED_CUSTOMER: 9209,
+            APIX_INVALID: 9210
         },
         SMS: {
             MOBILE_NOT_BLANK: 9301,
@@ -151,6 +156,8 @@ module.exports = {
         3007: "亮3时, 附加牌不是3",
         3008: "亮3时, 附加3不在手牌里",    //参数错误等
         3009: "说话失败",    //参数错误等
+        3010: "您已说过话了",    //参数错误等
+        3011: "当前不轮您说话",    //参数错误等
 
         4001: "您已成功离开牌桌",
         4002: "游戏中, 无法离开",
@@ -194,6 +201,7 @@ module.exports = {
         9207: "手机号码无效",
         9208: "兑换失败",
         9209: "兑换失败, 请联系客服",
+        9210: "运营商接口当前不可用, 请稍后重试",
 
         9301: "请输入手机号",
         9302: "手机号格式有误",
@@ -278,7 +286,8 @@ module.exports = {
         TIMER: {
             NOT_READY: 15,
             TALK: 15,
-            FAN: 15
+            FAN: 15,
+            TRUSTEESHIP: 2
         },
         PHASE: {
             STARTING: 0,
@@ -306,6 +315,7 @@ module.exports = {
 
     EXCHANGE: {
         TYPE: {
+            VIRTUAL: "VIRTUAL", //虚拟物品
             INBOX_CALL: "INBOX_CALL", //话费类
             INBOX_DATA_MOBILE: "INBOX_DATA_MOBILE", //流量类, 移动
             INBOX_DATA_UNICOM: "INBOX_DATA_UNICOM", //流量类, 联通

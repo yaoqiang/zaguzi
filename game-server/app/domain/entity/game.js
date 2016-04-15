@@ -337,13 +337,13 @@ Game.prototype.talk = function (data, cb) {
     }
     
     if (this.gameLogic.currentTalker.uid != data.uid) {
-        cb({code: Code.FAIL})
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_YOU})
         logger.debug('game-talk||%j - %j - %j - %j||说话失败, 不轮到当前玩家说话||用户&ID: %j', this.gameLogic.currentTalker.uid, data.goal, data.append, data.uid, data.uid);
         return;
     }
 
     if (this.gameLogic.talkNumber == this.maxActor || actor.gameStatus.hasTalk) {
-        cb({code: Code.FAIL})
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.ALREADY_TALK})
         logger.debug('game-talk||%j||说话失败, 用户重复说话, 可能因为客户端点击2次..||用户&ID: %j', data.uid, data.uid);
         return;
     }
@@ -595,7 +595,10 @@ Game.prototype.fanCountdown = function () {
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         logger.debug('game||fan||玩家[%j]托管出牌, ||用户&ID: %j, actorNr: %j', this.gameLogic.currentFanActor.properties.nickName, this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.actorNr);
-        this.fanTimeout(fanTimeoutActor);
+        var self = this;
+        schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TRUSTEESHIP * 1000}, function (jobData) {
+            self.fanTimeout(fanTimeoutActor);
+        })
         return;
     }
 

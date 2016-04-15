@@ -217,6 +217,15 @@ handler.getExchangeList = function (msg, session, next) {
     });
 }
 
+//
+handler.getExchangeListNew = function (msg, session, next) {
+    msg.uid = session.uid;
+    //
+    this.app.rpc.manager.universalRemote.getExchangeListNew(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 /**
  * 获得我的兑换记录
  * @param msg

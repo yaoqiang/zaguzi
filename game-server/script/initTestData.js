@@ -3,7 +3,7 @@ var db = connect('zgz');
 db.player.remove({});
 db.user.remove({});
 
-var User = function(username, password) {
+var User = function (username, password) {
     this.username = username;
     this.password = password;
     this.mobile = '';
@@ -44,19 +44,132 @@ var users = new Array(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, yaoqiang, lvjianc
 initUser(users);
 
 //exchange list
-db.exchangeList.save({name: '1元充值卡', denomination: 1, icon: '', inventory: 9999, fragment: 2, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '5元充值卡', denomination: 5, icon: '', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '10元充值卡', denomination: 10, icon: '', inventory: 9999, fragment: 10, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '30元充值卡', denomination: 30, icon: '', inventory: 9999, fragment: 30, createdAt: new Date(), enabled: true, type: 'INBOX_CALL'});
-db.exchangeList.save({name: '50元充值卡', denomination: 50, icon: '', inventory: 9999, fragment: 50, createdAt: new Date(), enabled: false, type: 'INBOX_CALL'});
+db.exchangeList.save({
+    name: '1元充值卡',
+    denomination: 1,
+    icon: '',
+    inventory: 9999,
+    fragment: 2,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'INBOX_CALL'
+});
+db.exchangeList.save({
+    name: '5元充值卡',
+    denomination: 5,
+    icon: '',
+    inventory: 9999,
+    fragment: 5,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'INBOX_CALL'
+});
+db.exchangeList.save({
+    name: '10元充值卡',
+    denomination: 10,
+    icon: '',
+    inventory: 9999,
+    fragment: 10,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'INBOX_CALL'
+});
+db.exchangeList.save({
+    name: '30元充值卡',
+    denomination: 30,
+    icon: '',
+    inventory: 9999,
+    fragment: 30,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'INBOX_CALL'
+});
+db.exchangeList.save({
+    name: '50元充值卡',
+    denomination: 50,
+    icon: '',
+    inventory: 9999,
+    fragment: 50,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'INBOX_CALL'
+});
 
 
-db.exchangeRecord.save({uid: ObjectId('56ac9e72ba27df1c78df57fb'), number: '1', createdAt: new Date(), exchangeId: 1, productName: '1元话费', state: 'FINISHED', mobile: '18600000000', address: '', contact: ''});
+db.exchangeList.save({
+    name: '6888金+喇叭3+记', gold: 6888,
+    items: [
+        {
+        "id": 2,
+        "value": 3
+        },
+        {
+            "id": 3,
+            "value": 1
+        }],
+    icon: 'GIFT', inventory: 9999, fragment: 5, createdAt: new Date(), enabled: true, type: 'VIRTUAL'
+});
+db.exchangeList.save({
+    name: '小喇叭20个', gold: 0,
+    items: [
+        {
+            "id": 2,
+            "value": 20
+        }],
+    icon: 'TRUMPET',
+    inventory: 9999,
+    fragment: 5,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'VIRTUAL'
+});
+
+db.exchangeList.save({
+    name: '记牌器7天', gold: 0,
+    items: [
+    {
+        "id": 3,
+        "value": 7
+    }],
+    icon: 'NOTE_CARD',
+    inventory: 9999,
+    fragment: 2,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'VIRTUAL'
+});
 
 
-db.appReleaseRecord.save({name: '', version: '1.0', createdAt: new Date(), summary: '【新增】发布第一个版本', releaseUrlAndroid: 'http://www.pgyer.com/zgza', releaseUrlApple: ''});
+db.appleSetting.save({inReview: false});
 
-db.systemMessage.save({title: '大同扎股子公测版上线啦！', content: '全球首款大同扎股子手游已登录地球，尽情享受吧！', enabled: true, createdAt: new Date()});
+db.exchangeRecord.save({
+    uid: ObjectId('56ac9e72ba27df1c78df57fb'),
+    number: '1',
+    createdAt: new Date(),
+    exchangeId: 1,
+    productName: '1元话费',
+    state: 'FINISHED',
+    mobile: '18600000000',
+    address: '',
+    contact: ''
+});
+
+
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.0',
+    createdAt: new Date(),
+    summary: '【新增】发布第一个版本',
+    releaseUrlAndroid: 'http://www.pgyer.com/zgza',
+    releaseUrlApple: ''
+});
+
+db.systemMessage.save({
+    title: '大同扎股子公测版上线啦！',
+    content: '全球首款大同扎股子手游已登录地球，尽情享受吧！',
+    enabled: true,
+    createdAt: new Date()
+});
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

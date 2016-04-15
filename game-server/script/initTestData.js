@@ -97,7 +97,7 @@ db.exchangeList.save({
 
 
 db.exchangeList.save({
-    name: '5888金币+小喇叭3+记牌器', gold: 5888,
+    name: '6888金+喇叭3+记', gold: 6888,
     items: [
         {
         "id": 2,

@@ -154,7 +154,7 @@ exchangeService.exchange = function (data, cb) {
             //先处理虚拟兑换
             if (doc.type == consts.EXCHANGE.TYPE.VIRTUAL) {
 
-                exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.FINISHED, doc.fragment, function (err, result) {
+                exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.FINISHED, doc.fragment, {}, function (err, result) {
                     if (err) {
                         logger.error("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
                             message: '玩家兑换虚拟物品失败', created: new Date(), detail: {exchangeId: data.exchangeId}});
@@ -166,11 +166,12 @@ exchangeService.exchange = function (data, cb) {
                     //如果兑换提交成功, 则更新player.fragment;
                     user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
 
-                        user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, cb)
+                        user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
+                            cb({code: Code.OK});
+                        })
 
                     });
                 });
-
                 return;
             }
 

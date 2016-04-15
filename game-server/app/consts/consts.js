@@ -286,7 +286,8 @@ module.exports = {
         TIMER: {
             NOT_READY: 15,
             TALK: 15,
-            FAN: 15
+            FAN: 15,
+            TRUSTEESHIP: 2
         },
         PHASE: {
             STARTING: 0,

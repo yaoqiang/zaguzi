@@ -595,7 +595,10 @@ Game.prototype.fanCountdown = function () {
     //如果玩家已托管
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         logger.debug('game||fan||玩家[%j]托管出牌, ||用户&ID: %j, actorNr: %j', this.gameLogic.currentFanActor.properties.nickName, this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.actorNr);
-        this.fanTimeout(fanTimeoutActor);
+        var self = this;
+        schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TRUSTEESHIP * 1000}, function (jobData) {
+            self.fanTimeout(fanTimeoutActor);
+        })
         return;
     }
 

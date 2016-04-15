@@ -166,14 +166,14 @@ exchangeService.exchange = function (data, cb) {
                     //如果兑换提交成功, 则更新player.fragment;
                     user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
                         if (doc.gold > 0) {
-                            user.player.addGold(consts.GAME.ADD_GOLD_TYPE.EXCHANGE, doc.gold, function () {
-                                user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
+                            user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.EXCHANGE, doc.gold, function () {
+                                user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
                                     cb({code: Code.OK});
                                 })
                             })
                         }
                         else {
-                            user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
+                            user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
                                 cb({code: Code.OK});
                             })
                         }

@@ -26,7 +26,8 @@ module.exports = {
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
-            CONSUME: 'CONSUME'
+            CONSUME: 'CONSUME',
+            EXCHANGE: 'EXCHANGE'
         },
         ADD_FRAGMENT_TYPE: {
             TASK: 'TASK',
@@ -310,6 +311,7 @@ module.exports = {
 
     EXCHANGE: {
         TYPE: {
+            VIRTUAL: "VIRTUAL", //虚拟物品
             INBOX_CALL: "INBOX_CALL", //话费类
             INBOX_DATA_MOBILE: "INBOX_DATA_MOBILE", //流量类, 移动
             INBOX_DATA_UNICOM: "INBOX_DATA_UNICOM", //流量类, 联通

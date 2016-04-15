@@ -90,6 +90,13 @@ UniversalRemote.prototype = {
         exchangeService.getExchangeList(data, cb);
     },
 
+    //新版兑换列表
+    //data: {os: ios/android};
+    getExchangeListNew: function (data, cb) {
+
+        exchangeService.listExchangeListNew(data, cb);
+    },
+
     getMyExchangeRecordList: function (data, cb) {
         exchangeService.getMyExchangeRecordList(data, cb);
     },

@@ -25,6 +25,34 @@ var secret = require('../../../shared/config/session').secret;
 var commonDao = module.exports;
 
 
+//apple设置(审核)
+commonDao.getAppleSetting = function (cb) {
+    db.appleSetting.findOne({}, function (err, doc) {
+        if (doc) return cb(doc);
+        //cb default
+        cb({inReview: true});
+    })
+}
+
+commonDao.setAppleSetting = function (data, cb) {
+    db.appleSetting.upsert({inReview: data.inReview}, function (err, doc) {
+        
+    });
+
+    db.appleSetting.findAndModify({
+        query: {},
+        update: { $set: { inReview: data.inReview } },
+        new: true,
+        upsert: true
+    }, function (err, doc, lastErrorObject) {
+        // doc.tag === 'maintainer'
+        if (err) {
+            return cb({code: Code.FAIL});
+        }
+        cb({code: Code.OK});
+    })
+}
+
 
 //单独为Player处理元宝
 commonDao.addFragment = function(data, cb) {

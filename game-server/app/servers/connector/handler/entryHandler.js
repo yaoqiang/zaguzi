@@ -194,8 +194,14 @@ function onUserEnter(session, uid, msg, self, player, userData, next) {
     var sessionService = self.app.get('sessionService');
     var remoteAddress = sessionService.getClientAddressBySessionId(session.id);
 
+    var ip = '127.0.0.1';
+    try {
+        if (remoteAddress && remoteAddress.ip) ip = remoteAddress.ip.substring(7, remoteAddress.ip.length);
+    } catch (e) {
+    }
+
     //记录登录日志
-    loggerLogin.info('%j', {uid: uid, serverId: msg.serverId, ip: remoteAddress.ip.substring(7, remoteAddress.ip.length), os: msg.os || 'unknown', date: new Date()});
+    loggerLogin.info('%j', {uid: uid, serverId: msg.serverId, ip: ip, os: msg.os || 'unknown', date: new Date()});
 
     self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
     });

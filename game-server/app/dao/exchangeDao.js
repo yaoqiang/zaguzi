@@ -19,6 +19,9 @@ var passwordHash = require('password-hash');
 
 var utils = require('../util/utils');
 
+var commonDao = require('./commonDao');
+
+
 
 var exchangeDao = module.exports;
 
@@ -35,6 +38,39 @@ exchangeDao.listExchangeList = function (data, cb) {
             utils.invokeCallback(cb, null, docs);
         }
     })
+}
+
+
+//new
+exchangeDao.listExchangeListNew = function (data, cb) {
+    var cond = {enabled: true};
+
+    if (data.os === 'ios') {
+        commonDao.getAppleSetting(function (appleSetting) {
+
+            if (appleSetting.inReview) {
+                cond.type = consts.EXCHANGE.TYPE.VIRTUAL;
+            }
+
+            db.exchangeList.find(cond, function (err, docs) {
+                if (err) {
+                    utils.invokeCallback(cb, err, null);
+                } else {
+                    utils.invokeCallback(cb, null, docs);
+                }
+            })
+        })
+    }
+    else {
+        db.exchangeList.find(cond, function (err, docs) {
+            if (err) {
+                utils.invokeCallback(cb, err, null);
+            } else {
+                utils.invokeCallback(cb, null, docs);
+            }
+        })
+    }
+
 }
 
 /**

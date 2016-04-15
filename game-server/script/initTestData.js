@@ -140,6 +140,8 @@ db.exchangeList.save({
 });
 
 
+db.appleSetting.save({inReview: false});
+
 db.exchangeRecord.save({
     uid: ObjectId('56ac9e72ba27df1c78df57fb'),
     number: '1',

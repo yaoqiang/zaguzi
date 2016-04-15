@@ -203,8 +203,10 @@ exchangeService.exchange = function (data, cb) {
                 openService.mobileRecharge(data, function(rechargeResult) {
                     //如果APIX立即返回充值失败, 则通知客户端失败信息
                     if (rechargeResult.code !== Code.OK) {
+                        logger.error("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
+                            message: '玩家兑换物品失败(API立即返回失败.)', created: new Date(), detail: {exchangeId: data.exchangeId, mobile: data.mobile}});
                         //
-                        cb({code: Code.FAIL});
+                        cb({code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.APIX_INVALID});
                     } else {
                         
                         //如果APIX返回成功，则初步定义为充值成功；后续会根据回调或OSS跟进（如有后续失败并没有收到回调的，可人工在OSS处理）

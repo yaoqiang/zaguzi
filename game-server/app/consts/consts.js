@@ -126,7 +126,8 @@ module.exports = {
             NOT_BLANK_ADDRESS: 9206,
             INVALID_MOBILE: 9207,
             ERR: 9208,
-            NEED_CUSTOMER: 9209
+            NEED_CUSTOMER: 9209,
+            APIX_INVALID: 9210
         },
         SMS: {
             MOBILE_NOT_BLANK: 9301,
@@ -200,6 +201,7 @@ module.exports = {
         9207: "手机号码无效",
         9208: "兑换失败",
         9209: "兑换失败, 请联系客服",
+        9210: "运营商接口当前不可用, 请稍后重试",
 
         9301: "请输入手机号",
         9302: "手机号格式有误",

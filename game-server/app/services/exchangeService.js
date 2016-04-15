@@ -110,6 +110,7 @@ exchangeService.getMyExchangeRecordList = function (data, cb) {
  * @param cb
  */
 exchangeService.exchange = function (data, cb) {
+    console.log('1112dddddd')
     playerService.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
@@ -165,33 +166,40 @@ exchangeService.exchange = function (data, cb) {
                         message: '玩家兑换虚拟物品成功', created: new Date(), detail: {exchangeId: data.exchangeId}});
                     //如果兑换提交成功, 则更新player.fragment;
                     user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
+                        if (doc.gold > 0) {
+                            db.player.addGold(consts.GAME.ADD_GOLD_TYPE.EXCHANGE, doc.gold, function () {
+                                user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
+                                    cb({code: Code.OK});
+                                })
+                            })
+                        }
+                        else {
+                            user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
+                                cb({code: Code.OK});
+                            })
+                        }
 
-                        user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
-                            cb({code: Code.OK});
-                        })
 
                     });
                 });
-                return;
             }
-
-
-
-            if (_.isEmpty(data.mobile)) {
-                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
-                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE });
-                return;
-            }
-
-            if (!utils.mobileValidate(data.mobile)) {
-                logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
-                cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE });
-                return;
-            }
-
             //如果是话费类
-            if (doc.type == consts.EXCHANGE.TYPE.INBOX_CALL) {
-                
+            else if (doc.type == consts.EXCHANGE.TYPE.INBOX_CALL) {
+
+                //validation mobile
+                if (_.isEmpty(data.mobile)) {
+                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 未填写手机号码, 用户ID:%j", data.uid, data.exchangeId, data.uid);
+                    cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NOT_BLANK_MOBILE });
+                    return;
+                }
+
+                if (!utils.mobileValidate(data.mobile)) {
+                    logger.debug("user-exchange||%j||玩家兑换物品失败, 兑换ID:[%j], 手机号码无效[%j], 用户ID:%j", data.uid, data.exchangeId, data.mobile, data.uid);
+                    cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.INVALID_MOBILE });
+                    return;
+                }
+
+
                 //调用第三方平台充值(apix.cn)
                 openService.mobileRecharge(data, function(rechargeResult) {
                     //如果APIX立即返回充值失败, 则通知客户端失败信息

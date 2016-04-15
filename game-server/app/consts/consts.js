@@ -16,7 +16,8 @@ module.exports = {
             ACTIVITY: 'ACTIVITY',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
-            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK'
+            RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
+            EXCHANGE: 'EXCHANGE'
         },
         ADD_ITEM_TYPE: {
             RECHARGE: 'RECHARGE',

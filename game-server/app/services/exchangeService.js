@@ -110,7 +110,6 @@ exchangeService.getMyExchangeRecordList = function (data, cb) {
  * @param cb
  */
 exchangeService.exchange = function (data, cb) {
-    console.log('1112dddddd')
     playerService.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {
             logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
@@ -167,7 +166,7 @@ exchangeService.exchange = function (data, cb) {
                     //如果兑换提交成功, 则更新player.fragment;
                     user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE, -doc.fragment, function(fragmentResult) {
                         if (doc.gold > 0) {
-                            db.player.addGold(consts.GAME.ADD_GOLD_TYPE.EXCHANGE, doc.gold, function () {
+                            user.player.addGold(consts.GAME.ADD_GOLD_TYPE.EXCHANGE, doc.gold, function () {
                                 user.player.addItems(consts.GAME.ADD_ITEM_TYPE.EXCHANGE, doc.items, function () {
                                     cb({code: Code.OK});
                                 })

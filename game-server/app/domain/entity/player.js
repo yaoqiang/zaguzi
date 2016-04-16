@@ -103,13 +103,7 @@ Player.prototype.payTax = function (roomId) {
 
     var room = gameUtil.getRoomById(roomId);
 
-    var gold = room.fax * -1;
-
-    logger.debug("gold-add||%j||用户游戏结束扣除[%j]金币税，用户ID:%j", this.uid, gold, this.uid);
-    this.gold += gold;
-    if (this.gold < 0) this.gold = 0;
-
-    return gold;
+   return room.fax * -1;
 
 }
 

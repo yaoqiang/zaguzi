@@ -3,7 +3,7 @@ var db = connect('zgz');
 var rankingList = db.rankingList;
 
 //上榜临界值
-var goldThreshold = 100000, battleThreshold = 100, rechargeThreshold = 100;
+var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100;
 var limit = 20;
 var yesterday = new Date((new Date()) - 24*60*60*1000);
 

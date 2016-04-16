@@ -124,7 +124,7 @@ Game.prototype.ready = function (data, cb) {
                 exceptedAllReady = false;
             }
         });
-            
+
 
         this.isAllReady = exceptedAllReady;
 
@@ -230,12 +230,12 @@ Game.prototype.start = function () {
 
     //
     Promise.all(_.map(self.actors, function (actor) {
-        var receiver = _.pick(actor, 'uid', 'sid');
-        //分别单独为每个人发消息，保证牌底只有各自接受各自的
-        self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], function () {
-        });
-        return Promise.resolve;
-    }))
+            var receiver = _.pick(actor, 'uid', 'sid');
+            //分别单独为每个人发消息，保证牌底只有各自接受各自的
+            self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], function () {
+            });
+            return Promise.resolve;
+        }))
         .then(function () {
             self.gameLogic.currentPhase = consts.GAME.PHASE.TALKING;
             self.talkCountdown();
@@ -335,7 +335,7 @@ Game.prototype.talk = function (data, cb) {
         logger.debug('game-talk||%j||说话失败, 参数错误||用户&ID: %j', data.uid, data.uid);
         return;
     }
-    
+
     if (this.gameLogic.currentTalker.uid != data.uid) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_YOU})
         logger.debug('game-talk||%j - %j - %j - %j||说话失败, 不轮到当前玩家说话||用户&ID: %j', this.gameLogic.currentTalker.uid, data.goal, data.append, data.uid, data.uid);
@@ -540,9 +540,9 @@ Game.prototype.talk = function (data, cb) {
             self.afterTalk();
         }
         else {
-            
+
             self.gameLogic.currentTalker = self.gameLogic.getNextActor(self.gameLogic.currentTalker);
-            
+
             self.talkCountdown();
         }
     })
@@ -592,24 +592,24 @@ Game.prototype.fanCountdown = function () {
 
     var fanTimeoutActor = {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr};
 
-    //如果玩家已托管
+
+    //countdown时间, 默认是出牌时间
+    var countDownSecond = consts.GAME.TIMER.FAN;
+
+    //如果托管状态, countdown时间就是托管时间
     if (this.gameLogic.currentFanActor.gameStatus.isTrusteeship) {
         logger.debug('game||fan||玩家[%j]托管出牌, ||用户&ID: %j, actorNr: %j', this.gameLogic.currentFanActor.properties.nickName, this.gameLogic.currentFanActor.uid, this.gameLogic.currentFanActor.actorNr);
-        var self = this;
-        schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.TRUSTEESHIP * 1000}, function (jobData) {
-            self.fanTimeout(fanTimeoutActor);
-        })
-        return;
+        countDownSecond = consts.GAME.TIMER.TRUSTEESHIP;
     }
 
     this.channel.pushMessage(consts.EVENT.FAN_COUNTDOWN, {
         actor: {uid: this.gameLogic.currentFanActor.uid, actorNr: this.gameLogic.currentFanActor.actorNr},
         isBoss: isBoss,
         lastFanCardRecognization: this.gameLogic.lastFanCardRecognization,
-        second: consts.GAME.TIMER.FAN
+        second: countDownSecond
     }, null, function () {
         //玩家[%j]秒内未出牌, 出牌超时
-        var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.FAN * 1000}, function (jobData) {
+        var jobId = schedule.scheduleJob({start: Date.now() + countDownSecond * 1000}, function (jobData) {
             logger.debug('game||fan||玩家[%j][%j]秒内未出牌, 出牌超时, ||用户&ID: %j, actorNr: %j, 超时次数: %j', self.gameLogic.currentFanActor.properties.nickName, consts.GAME.TIMER.FAN, jobData.uid, self.gameLogic.currentFanActor.actorNr, self.gameLogic.currentFanActor.gameStatus.fanTimeoutTimes+1);
             self.jobQueue = _.filter(self.jobQueue, function (j) {
                 return j.uid != jobData.uid;
@@ -619,7 +619,7 @@ Game.prototype.fanCountdown = function () {
             } else {
                 logger.debug('game||fan||玩家出牌倒计时发生错误, 当前出牌者和schedule出牌者不同, 当前:%s, schedule:%s', fanTimeoutActor.uid, jobData.uid);
             }
-            
+
         }, {uid: self.gameLogic.currentFanActor.uid});
 
 
@@ -697,7 +697,7 @@ Game.prototype.fan = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_FAN});
         return;
     }
-    
+
     //如果当前出牌玩家不是本轮出牌玩家（客户端发送的出牌玩家ID和服务器端状态中当前出牌者ID），则非法
     if (this.gameLogic.currentFanActor.uid !== data.uid) {
         logger.debug('game||fan||出牌错误，此次不轮您出牌||用户&ID: %j', data.uid);
@@ -788,20 +788,27 @@ Game.prototype.fan = function (data, cb) {
                 }
             }
 
-            //如果是红桃5第一次出牌，必须出红桃5或对5或5炸弹或5四轮车
+            //如果是第一轮-红桃5先出牌，必须包含5的
             if (this.gameLogic.round == 0) {
-                var expectedCards = [];
-                _.each(actor.gameStatus.getHoldingCards(), function (c) {
-                    if (c % 100 == 5) {
-                        expectedCards.push(c);
-                    }
-                });
-                var diffCards = _.difference(expectedCards, cards);
-                if (_.size(diffCards) != 0) {
-                    logger.debug('game||fan||出牌错误，红桃5第一次出牌必须出全部5||用户&ID: %j', data.uid);
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_BE_FIVE});
+                if (!_.contains(cards, 205)) {
+                    logger.debug('game||fan||出牌错误，首轮出牌必须含红桃5||用户&ID: %j', data.uid);
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_CONTAINS_HEART5});
                     return;
                 }
+
+                //Note: 这个游戏逻辑是错误的..
+                //var expectedCards = [];
+                //_.each(actor.gameStatus.getHoldingCards(), function (c) {
+                //    if (c % 100 == 5) {
+                //        expectedCards.push(c);
+                //    }
+                //});
+                //var diffCards = _.difference(expectedCards, cards);
+                //if (_.size(diffCards) != 0) {
+                //    logger.debug('game||fan||出牌错误，红桃5第一次出牌必须出全部5||用户&ID: %j', data.uid);
+                //    cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.MUST_BE_FIVE});
+                //    return;
+                //}
             }
 
             //设置玩家相关属性
@@ -1162,19 +1169,19 @@ Game.prototype.scheduleNotReady = function (data) {
 
 Game.prototype.chat = function (data, cb) {
     /*
-    switch (data.type) {
-        case consts.CHAT_IN_GAME_TYPE.QUICK: 
-            
-            break;
-        case consts.CHAT_IN_GAME_TYPE.EXPRESSION: 
-            break;
-        case consts.CHAT_IN_GAME_TYPE.CUSTOM: 
-            break;
-        default:
-            break;
-    }
-    */
-    
+     switch (data.type) {
+     case consts.CHAT_IN_GAME_TYPE.QUICK:
+
+     break;
+     case consts.CHAT_IN_GAME_TYPE.EXPRESSION:
+     break;
+     case consts.CHAT_IN_GAME_TYPE.CUSTOM:
+     break;
+     default:
+     break;
+     }
+     */
+
     var actor = _.findWhere(this.actors, {uid: data.uid});
     this.channel.pushMessage(consts.EVENT.CHAT, {
         uid: data.uid,
@@ -1183,7 +1190,7 @@ Game.prototype.chat = function (data, cb) {
         item: data.item,
         content: data.content
     }, null, null);
-    
+
     cb();
 }
 

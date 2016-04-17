@@ -76,7 +76,7 @@ module.exports = function (app) {
     });
     
     //web(pc or h5)
-    game.use('requestCharge', function (req, res) {
+    game.use('/requestCharge', function (req, res) {
         var chargeData = req.body;
 
         if (chargeData.channel == null || chargeData.channel == undefined || chargeData.channel == ''
@@ -101,11 +101,11 @@ module.exports = function (app) {
     });
 
 
-    game.get('getAllOnlineUser', function (req, res) {
+    game.get('/getOnlineUserTotal', function (req, res) {
         try {
             app.rpc.manager.userRemote.getAllOnlineUser(null, function (data) {
                 logger.debug('获取当前在线用户情况成功');
-                res.send({userList: data.userList});
+                res.send({onlineUserTotal: data.userList.length});
             });
         } catch (err) {
             logger.error("获取当前在线用户情况失败 %j", {err: err});
@@ -113,7 +113,7 @@ module.exports = function (app) {
         }
     });
 
-    game.get('getOnlineUserByUids', function (req, res) {
+    game.get('/getOnlineUserByUids', function (req, res) {
         try {
             var uids = req.query.uids;
             app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (data) {

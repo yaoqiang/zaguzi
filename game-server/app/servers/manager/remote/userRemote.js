@@ -1,5 +1,6 @@
 var _ = require('lodash');
 
+var pomelo = require('pomelo');
 var Code = require('../../../../../shared/code');
 
 var playerService = require('../../../services/playerService');
@@ -162,5 +163,5 @@ UserRemote.prototype.getOnlineUserResultCache = function (data, cb) {
 }
 
 UserRemote.prototype.getAllOnlineUser = function (cb) {
-    cb({code: Code.OK, userList: pomelo.app.pomelo.app.userCache})
+    cb({code: Code.OK, userList: pomelo.app.userCache})
 }

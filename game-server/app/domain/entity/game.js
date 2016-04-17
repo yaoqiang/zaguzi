@@ -777,6 +777,7 @@ Game.prototype.fan = function (data, cb) {
 
             //如果不是Boss出牌，则需比较上手牌
             if (this.gameLogic.currentBoss.actorNr != actor.actorNr) {
+
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, this.gameLogic.appends);
                 if (_.isUndefined(result)) {
                     logger.debug('game||fan||出牌错误，玩家出牌是单牌或对子, 与上手牌型不匹配||用户&ID: %j', data.uid);
@@ -784,6 +785,9 @@ Game.prototype.fan = function (data, cb) {
                     return;
                 }
                 if (!result) {
+                    if (cards.length == 1 && cards[0] === 116) {
+                        loggerErr.error("%j", {handler: "game.gameHandler.fan", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
+                    }
                     logger.debug('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});
                     return;

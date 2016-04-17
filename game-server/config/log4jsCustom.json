@@ -12,6 +12,16 @@
     },
     {
       "type": "file",
+      "filename": "./logs/error-all.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "error-all"
+    },
+    {
+      "type": "file",
       "filename": "./logs/game-http.log",
       "maxLogSize": 1048576,
       "layout": {
@@ -90,9 +100,10 @@
     "game-all": "DEBUG",
     "game-record": "DEBUG",
     "login-record": "DEBUG",
-    "online-record": "INFO",
+    "online-record": "DEBUG",
     "payment": "DEBUG",
-    "open-api": "DEBUG"
+    "open-api": "DEBUG",
+    "error-all": "ERROR"
   },
   "replaceConsole": true
 }

@@ -196,6 +196,10 @@ commonDao.bindingMobile = function (data, cb) {
     db.captcha.findOne({
         mobile: data.mobile
     }, function (err, doc) {
+        if (err || doc == null) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
         if (doc.captcha != data.captcha) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
             return;

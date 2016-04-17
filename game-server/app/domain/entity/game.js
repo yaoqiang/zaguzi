@@ -4,6 +4,7 @@ var channelUtil = require('../../util/channelUtil');
 var consts = require('../../consts/consts');
 var Code = require('../../../../shared/code');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var schedule = require('pomelo-scheduler');
 var GameLogic = require('../logic/gameLogic');
 var CardLogic = require('../logic/cardLogic');
@@ -54,6 +55,7 @@ Game.prototype.init = function () {
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
+        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
         return;
     }
@@ -241,7 +243,7 @@ Game.prototype.start = function () {
             self.talkCountdown();
         })
         .catch(function (err) {
-            logger.error('%j', {gameId: self.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
+            loggerErr.error('%j', {gameId: self.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
                 message: '游戏开始失败'+err.toString(), createdAt: new Date()});
         })
         .done();
@@ -1221,6 +1223,7 @@ Game.prototype.createChannel = function () {
 Game.prototype.doAddActor = function (data) {
     //如果牌局已满
     if (this.maxActor == this.currentActorNum) {
+        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, desc: '加入房间时, 房间已满.'});
         return false;
     }
 
@@ -1246,12 +1249,14 @@ Game.prototype.doAddActor = function (data) {
 
 Game.prototype.addActor2Channel = function (data) {
     if (!this.channel) {
+        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, desc: '加入房间时, this.channel为null 怪异问题.'});
         return false;
     }
     if (data) {
         this.channel.add(data.uid, data.sid);
         return true;
     }
+    loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, data: data, desc: '加入房间时, 参数data为null, 怪异问题.'});
     return false;
 }
 

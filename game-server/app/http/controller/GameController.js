@@ -11,7 +11,7 @@ var consts = require('../../consts/consts');
 var utils = require('../../util/utils');
 
 var log4js = require('log4js');
-var log4jsConf = require(__dirname + "/../../..//config/log4jsCustom.json");
+var log4jsConf = require(__dirname + "/../../../config/log4jsCustom.json");
 log4js.configure(log4jsConf, {});
 
 
@@ -26,6 +26,11 @@ var acceptIpList = ['101.200.128.237', '101.201.154.38'];
  * @param app: Pomelo App
  */
 module.exports = function (app) {
+    game.get('/', function (req, res) {
+        logger.debug('game api root route.');
+        res.sendStatus(200);
+    });
+
     game.post('/payment4OSS', function (req, res) {
         logger.debug('payment4OSS  route....');
         //参数
@@ -71,7 +76,7 @@ module.exports = function (app) {
     });
     
     //web(pc or h5)
-    game.use('requestCharge', function (req, res) {
+    game.use('/requestCharge', function (req, res) {
         var chargeData = req.body;
 
         if (chargeData.channel == null || chargeData.channel == undefined || chargeData.channel == ''
@@ -95,10 +100,36 @@ module.exports = function (app) {
 
     });
 
-    game.get('/', function (req, res) {
-        logger.debug('game api root route.');
-        res.sendStatus(200);
+
+    game.get('/getOnlineUserTotal', function (req, res) {
+        try {
+            app.rpc.manager.userRemote.getAllOnlineUser(null, function (data) {
+                logger.debug('获取当前在线用户情况成功');
+                res.send({onlineUserTotal: data.userList.length});
+            });
+        } catch (err) {
+            logger.error("获取当前在线用户情况失败 %j", {err: err});
+            res.sendStatus(500);
+        }
     });
+
+    game.get('/getOnlineUserByUids', function (req, res) {
+        try {
+            var uids = req.query.uids;
+            uids = uids.split(',');
+            app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (data) {
+                logger.debug('获取指定uids的玩家情况成功');
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("获取指定uids的玩家情况失败 %j", {err: err, req: req.query});
+            res.sendStatus(500);
+        }
+    });
+
+
+
+
 
 
     return game;

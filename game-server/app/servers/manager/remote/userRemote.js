@@ -1,9 +1,13 @@
 var _ = require('lodash');
 
+var pomelo = require('pomelo');
 var Code = require('../../../../../shared/code');
 
 var playerService = require('../../../services/playerService');
 var exchangeService = require('../../../services/exchangeService');
+
+var consts = require('../../../consts/consts');
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var utils = require('../../../util/utils');
 
@@ -33,6 +37,10 @@ UserRemote.prototype.getUserCacheByUid = function(msg, cb) {
  */
 UserRemote.prototype.getProfileByUid = function (msg, cb) {
     this.getUserCacheByUid(msg.uid, function (ret) {
+        if (ret.player === undefined) {
+            var u = _.findWhere(pomelo.app.userCache, { uid: msg.uid });
+            loggerErr.error('%j', {handler: "connector.universalHandler.getProfile", uid: msg.uid, userInCache: u, desc: '根据uid查询玩家信息, 返回的是undefined.'});
+        }
         playerService.getUserInfo(msg.uid, function (result) {
             if (result) {
                 cb({player: ret.player, userInfo: {mobile: result.mobile}});
@@ -152,4 +160,8 @@ UserRemote.prototype.setUserSessionId = function (uid, sessionId, cb) {
 
 UserRemote.prototype.getOnlineUserResultCache = function (data, cb) {
     cb({code: Code.OK, online: playerService.getOnlineUserResultCache()});
+}
+
+UserRemote.prototype.getAllOnlineUser = function (cb) {
+    cb({code: Code.OK, userList: pomelo.app.userCache})
 }

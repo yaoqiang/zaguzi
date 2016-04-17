@@ -371,6 +371,7 @@ module.exports = {
         OPEN_API: 'open-api',
         LOGIN_RECORD: 'login-record',
         GAME_HTTP: 'game-http',
+        ERROR: 'error-all',
         
         CONF: {
             RECORD: {

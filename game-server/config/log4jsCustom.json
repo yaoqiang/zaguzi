@@ -12,6 +12,16 @@
     },
     {
       "type": "file",
+      "filename": "./logs/error-all.log",
+      "maxLogSize": 1048576,
+      "layout": {
+        "type": "basic"
+      },
+      "backups": 3,
+      "category": "error-all"
+    },
+    {
+      "type": "file",
       "filename": "./logs/game-http.log",
       "maxLogSize": 1048576,
       "layout": {
@@ -92,7 +102,8 @@
     "login-record": "INFO",
     "online-record": "INFO",
     "payment": "INFO",
-    "open-api": "INFO"
+    "open-api": "INFO",
+    "error-all": "ERROR"
   },
   "replaceConsole": true
 }

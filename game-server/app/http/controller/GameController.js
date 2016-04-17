@@ -116,6 +116,7 @@ module.exports = function (app) {
     game.get('/getOnlineUserByUids', function (req, res) {
         try {
             var uids = req.query.uids;
+            uids = uids.split(',');
             app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (data) {
                 logger.debug('获取指定uids的玩家情况成功');
                 res.send(data);

@@ -22,7 +22,7 @@ var loggerPayment = require('log4js').getLogger(consts.LOG.PAYMENT);
 var game = express.Router();
 
 //
-var acceptIpList = ['101.200.128.237', '101.201.154.38'];
+var acceptIpList = ['127.0.0.1', '101.200.128.237', '101.201.154.38'];
 
 /**
  * @param app: Pomelo App
@@ -62,7 +62,7 @@ module.exports = function (app) {
         }
 
         if (paymentData.uid == null || paymentData.uid == undefined || paymentData.productId == null || paymentData.productId == undefined) {
-            res.send(400);
+            res.sendStatus(400);
             return;
         }
 
@@ -92,7 +92,7 @@ module.exports = function (app) {
 
         if (chargeData.channel == null || chargeData.channel == undefined || chargeData.channel == ''
             || chargeData.amount == null || chargeData.amount == undefined || chargeData.amount == '') {
-            res.send(400);
+            res.sendStatus(400);
             return;
         }
 
@@ -135,7 +135,7 @@ module.exports = function (app) {
     //根据uid获得玩家兑换记录
     game.get('/getMyExchangeRecordList', function (req, res) {
         if (!req.query.uid) {
-            res.send(400);
+            res.sendStatus(400);
             return;
         }
         app.rpc.manager.universalRemote.getMyExchangeRecordList(null, {uid: req.query.uid}, function (data) {
@@ -147,10 +147,10 @@ module.exports = function (app) {
     //根据排行榜类型获得排行榜信息： type: const.RANKING_LIST.x
     game.get('/getRankingList', function (req, res) {
         if (!req.query.type) {
-            res.send(400);
+            res.sendStatus(400);
             return;
         }
-        app.rpc.manager.universalRemote.getMyExchangeRecordList(null, {uid: req.query.type}, function (data) {
+        app.rpc.manager.universalRemote.getRankingList(null, {uid: req.query.type}, function (data) {
             logger.debug('获得玩家兑换记录 rpc invoke finished.');
                 res.send(data);
         });
@@ -164,8 +164,8 @@ module.exports = function (app) {
     game.post('/addGold', function (req, res) {
         var data = req.body;
         try {
-            if (!data.uid || !data.type || !gold) {
-                res.send(400);
+            if (!data.uid || !data.type || !data.gold) {
+                res.sendStatus(400);
                 return;
             }
        
@@ -175,7 +175,7 @@ module.exports = function (app) {
             });
         } catch (e) {
             logger.debug('手工添加金币异常 %j', {error: e});
-            res.send(500);
+            res.sendStatus(500);
         }
         
     });
@@ -187,18 +187,22 @@ module.exports = function (app) {
     game.post('/addItems', function(req, res) {
         var data = req.body;
         try {
-            if (!data.uid || !data.type || !items || !_.isArray(items) || items.length === 0) {
-                res.send(400);
+            console.log(data.items);
+            console.log(!_.isArray(data.items));
+            console.log(data.items.length === 0);
+            console.log(data.items.length === 0);
+            if (!data.uid || !data.type || !data.items || !_.isArray(data.items) || data.items.length === 0) {
+                res.sendStatus(400);
                 return;
             }
        
-            app.rpc.manager.userRemote.addGold(null, data, function (data) {
+            app.rpc.manager.userRemote.addItems(null, data, function (data) {
                 logger.debug('手工添加物品调用完成');
                 res.send(data);
             });
         } catch (e) {
             logger.error('手工添加物品异常 %j', {error: e});
-            res.send(500);
+            res.sendStatus(500);;
         }
     });
     
@@ -209,18 +213,18 @@ module.exports = function (app) {
     game.post('/addFragment', function(req, res) {
         var data = req.body;
         try {
-            if (!data.uid || !data.type || !fragment) {
-                res.send(400);
+            if (!data.uid || !data.type || !data.fragment) {
+                res.sendStatus(400);
                 return;
             }
        
-            app.rpc.manager.userRemote.addGold(null, data, function (data) {
+            app.rpc.manager.userRemote.addFragment(null, data, function (data) {
                 logger.debug('手工添加元宝调用完成');
                 res.send(data);
             });
         } catch (e) {
             logger.error('手工添加元宝异常 %j', {error: e});
-            res.send(500);
+            res.sendStatus(500);
         }
     });
     

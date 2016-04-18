@@ -536,10 +536,6 @@ playerService.recharge = function (data, cb) {
  */
 playerService.getUserCacheByUid = function (uid, cb) {
     var u = _.findWhere(pomelo.app.userCache, { uid: uid });
-    if (u === undefined) {
-        //
-        loggerErr.error('%j', {method: "service.playerService.getUserCacheByUid", uid: uid, desc: '根据uid查询用户缓存时, 不存在'});
-    }
     cb(u);
 }
 

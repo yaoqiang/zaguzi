@@ -114,7 +114,7 @@ playerService.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, { uid: data.uid });
 
     if (_.isUndefined(u)) {
-        logger.warn('玩家下线处理时，玩家已离线，玩家ID：%j', data.uid);
+        logger.debug('玩家下线处理时，玩家已离线，玩家ID：%j', data.uid);
         cb();
         return;
     }
@@ -211,7 +211,7 @@ playerService.consumeTrumpet = function (data, cb) {
 
         var player = user.player;
 
-        var items = [{id: 2, value: -data.value}];
+        var items = [{ id: 2, value: -data.value }];
 
         player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, cb);
 
@@ -230,7 +230,7 @@ playerService.win = function (data, cb) {
         }
 
         var player = user.player;
-        
+
         //如果开会成功, 添加开会次数
         if (data.meeting) player.meetingTimes += 1;
 
@@ -344,7 +344,8 @@ playerService.getDailyTodoInfo = function (data, cb) {
             return;
         }
 
-        cb({code: Code.OK,
+        cb({
+            code: Code.OK,
             canGetCheckInGrant: !user.player.properties.getCheckInGrant,
             canGetBankruptcyGrant: !user.player.properties.getBankruptcyGrantRunOut,
             threshold: user.player.gold < globals.bankruptcyGrant.threshold
@@ -439,10 +440,91 @@ playerService.getMyItemList = function (data, cb) {
 }
 
 
+/////////////////////////////////////////////////////////////
+// 特殊情况：不走订单系统，为玩家处理金币、道具和元宝。比如活动
+/////////////////////////////////////////////////////////////
 
-playerService.addFragment = function (data, cb) {
-    
+/**
+ * 为玩家添加金币（与player.addGold不同, player.addGold只走sync方式，这个函数同时也直接处理DB）
+ * @param data: {JSON} = {uid: String, type: const.GLOBAL.ADD_GOLD_TYPE.x, gold: Int}
+ */
+playerService.addGold = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        //如果玩家不在线，直接userDao；否则走sync
+        if (user == null || user === undefined) {
+            userDao.updatePlayerGold({ uid: data.uid, gold: data.gold, type: data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY }, function (err, doc) {
+                if (err) {
+                    return cb({ code: Code.FAIL });
+                }
+                return cb({ code: Code.OK });
+            });
+        }
+        else {
+            user.player.addGold(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.gold, function (data) {
+                if (data.code === Code.OK) {
+                    return cb({ code: Code.OK });
+                }
+                return cb({ code: Code.FAIL });
+            });
+        }
+    });
 }
+
+/**
+ * 为玩家添加道具（与player.addItems不同, player.addItems不同只走sync方式，这个函数同时也直接处理DB）
+ * @param data: {JSON} = {uid: String, type: const.GLOBAL.ADD_GOLD_TYPE.x, items: [{id: Int, value: Int}]}
+ */
+playerService.addItems = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        //如果玩家不在线，直接userDao；否则走sync
+        if (user == null || user === undefined) {
+            userDao.updatePlayerItems({ uid: data.uid, items: data.items, type: data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY }, function (err, doc) {
+                if (err) {
+                    return cb({ code: Code.FAIL });
+                }
+                return cb({ code: Code.OK });
+            });
+        }
+        else {
+            user.player.addItems(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.items, function (data) {
+                if (data.code === Code.OK) {
+                    return cb({ code: Code.OK });
+                }
+                return cb({ code: Code.FAIL });
+            });
+        }
+    });
+}
+
+/**
+ * 为玩家添加元宝（与player.addFragment, player.addFragment只走sync方式，这个函数同时也直接处理DB）
+ * @param data: {JSON} = {uid: String, type: const.GLOBAL.ADD_FRAGMENT_TYPE, fragment: Int}
+ */
+playerService.addFragment = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        //如果玩家不在线，直接userDao；否则走sync
+        if (user == null || user === undefined) {
+            userDao.updatePlayerFragment({
+                uid: data.uid,
+                fragment: data.fragment
+            }, function(err, doc) {
+                if (err) {
+                    return cb({ code: Code.FAIL });
+                }
+                return cb({ code: Code.OK });
+            });
+        }
+        else {
+            user.player.addFragment(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.fragment, function (fragment) {
+                if (fragment) {
+                    return cb({ code: Code.OK });
+                }
+                return cb({ code: Code.FAIL });
+            });
+        }
+    });
+}
+
 
 playerService.recharge = function (data, cb) {
 

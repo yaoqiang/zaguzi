@@ -1,6 +1,12 @@
-curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "56f0dd59707db8f177af5647", "productId": 100012}'
+//OSS充值
+curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "", "productId": 100011}'
 
 
+//查询缓存中在线玩家的数据, uids=id,id,id
+curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
+
+
+//
 mama:570d08a0d7958a093765d942
 
-db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 20000}});
+db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 11245}});

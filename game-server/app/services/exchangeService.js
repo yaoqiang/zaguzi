@@ -269,7 +269,7 @@ exchangeService.getExchangeListById = function (data, cb) {
 }
             
 //充值失败后 回滚元宝
-//data: {uid: xx, fragment: xx}
+//data: {uid: xx, fragment: xx, type: xx}
 exchangeService.callbackPlayerFragment = function (data, cb) {
     userDao.updatePlayerFragment(data, cb);
 }

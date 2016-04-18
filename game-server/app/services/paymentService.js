@@ -137,7 +137,7 @@ paymentService.payment = function (order, charge, cb) {
             //
             new Promise(function (resolve, reject) {
                 if (product.gold > 0) {
-                    userDao.updatePlayerGold({uid: order.uid, gold: product.gold}, function (err, doc) {
+                    userDao.updatePlayerGold({uid: order.uid, gold: product.gold, type: consts.GLOBAL.ADD_GOLD_TYPE.RECHARGE}, function (err, doc) {
                         if (err) {
                             reject({code: Code.FAIL})
                         }
@@ -148,7 +148,7 @@ paymentService.payment = function (order, charge, cb) {
             })
                 .then(function (ok) {
                     if (product.items.length > 0) {
-                        userDao.updatePlayerItems({uid: order.uid, items: product.items}, function (err, doc) {
+                        userDao.updatePlayerItems({uid: order.uid, items: product.items, type: consts.GLOBAL.ADD_GOLD_TYPE.RECHARGE}, function (err, doc) {
                             if (err) {
                                 Promise.reject({code: Code.FAIL})
                                 return;

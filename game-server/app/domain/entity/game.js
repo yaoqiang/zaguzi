@@ -768,7 +768,6 @@ Game.prototype.fan = function (data, cb) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
             break;
         default:
-            loggerErr.error("### test log error ---------------.. %j", {cards: cards});
             //玩家手牌中没有所出牌
             if (!actor.gameStatus.hasCards(cards)) {
                 logger.debug('game||fan||出牌错误，玩家没有该牌||用户&ID: %j', data.uid);

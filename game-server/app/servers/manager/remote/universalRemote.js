@@ -4,6 +4,9 @@ var Code = require('../../../../../shared/code');
 var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
+var itemConf = require('../../../../config/data/item');
+
+
 var pomelo = require('pomelo');
 
 var logger = require('log4js').getLogger(consts.LOG.USER);
@@ -612,6 +615,10 @@ UniversalRemote.prototype = {
     getShopList: function (data, cb) {
         cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
     },
+    
+    getItemList: function (data, cb) {
+        cb({code: Code.OK, itemList: itemConf});
+    },
 
 
     //处理话费充值回调
@@ -676,7 +683,8 @@ UniversalRemote.prototype = {
                     if (user == null || _.isUndefined(user)) {
                         exchangeService.callbackPlayerFragment({
                             uid: exchangeRecord.uid,
-                            fragment: -exchangeItem.fragment
+                            fragment: -exchangeItem.fragment,
+                            type: consts.GLOBAL.ADD_FRAGMENT_TYPE.EXCHANGE_FAILED_RETURN
                         }, function (err, p) {
                             if (err) {
                                 logger.error("%j", {

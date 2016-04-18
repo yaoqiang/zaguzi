@@ -165,3 +165,19 @@ UserRemote.prototype.getOnlineUserResultCache = function (data, cb) {
 UserRemote.prototype.getAllOnlineUser = function (cb) {
     cb({code: Code.OK, userList: pomelo.app.userCache})
 }
+
+
+/////////////////////////////////////////////////////////////
+// 特殊情况：不走订单系统，为玩家处理金币、道具和元宝。比如活动；目前主要为http提供接口
+/////////////////////////////////////////////////////////////
+UserRemote.prototype.addGold = function (data, cb) {
+    playerService.addGold(data, cb);
+}
+
+UserRemote.prototype.addItems = function (data, cb) {
+    playerService.addItems(data, cb);
+}
+
+UserRemote.prototype.addFragment = function (data, cb) {
+    playerService.addFragment(data, cb);
+}

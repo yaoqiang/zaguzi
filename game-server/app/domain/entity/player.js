@@ -302,7 +302,7 @@ Player.prototype.upgrade = function () {
 Player.prototype.getCheckInGrant = function (cb) {
     var self = this;
     if (this.properties.getCheckInGrant) {
-        logger.warn("user-check in||%j||玩家签到失败, 玩家已签到, 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-check in||%j||玩家签到失败, 玩家已签到, 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ALREADY_CHECK_IN});
         return;
     }
@@ -310,7 +310,7 @@ Player.prototype.getCheckInGrant = function (cb) {
     var grantData = globals.checkIn[this.properties.continuousCheckInNr];
 
     if (_.isUndefined(grantData)) {
-        logger.warn("user-check in||%j||玩家签到失败, , 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-check in||%j||玩家签到失败, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.CHECK_IN.ERR});
         return;
     }
@@ -351,14 +351,14 @@ Player.prototype.getBankruptcyGrant = function (cb) {
 
     //如果今日已领完
     if (this.properties.getBankruptcyGrantRunOut) {
-        logger.warn("user-grant||%j||玩家已领取今日补助, , 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-grant||%j||玩家已领取今日补助, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.ALREADY_GRANT});
         return;
     }
 
     //如果钱够多, 不能领取
     if (this.gold >= globals.bankruptcyGrant.threshold) {
-        logger.warn("user-grant||%j||玩家金币超出领取最低限, , 用户ID:%j", this.uid, this.uid);
+        logger.debug("user-grant||%j||玩家金币超出领取最低限, , 用户ID:%j", this.uid, this.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.BANKRUPTCY_GRANT.MORE_MONEY});
         return;
     }

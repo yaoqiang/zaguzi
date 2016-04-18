@@ -57,51 +57,38 @@ exchangeService.getExchangeList = function (data, cb) {
 //
 exchangeService.listExchangeListNew = function (data, cb) {
 
-    playerService.getUserCacheByUid(data.uid, function (user) {
-        if (user == null || _.isUndefined(user)) {
-            logger.debug("user-exchange list||%j||玩家获取兑换列表失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({ code: Code.FAIL });
-            return;
+    // return result:
+    // [{id: xx, name: xx, icon: xx, inventory: xx,
+    // fragment: xx, createdAt: xx, enabled: true/false}
+    // 参考initTestData.js
+    exchangeDao.listExchangeListNew(data, function (err, docs) {
+        if (err != null) {
+            cb({ code: Code.OK, exchangeList: [] });
         }
-
-        // return result:
-        // [{id: xx, name: xx, icon: xx, inventory: xx,
-        // fragment: xx, createdAt: xx, enabled: true/false}
-        exchangeDao.listExchangeListNew(data, function (err, docs) {
-            if (err != null) {
-                cb({ code: Code.OK, exchangeList: [] });
-            }
-            else {
-                cb({ code: Code.OK, exchangeList: docs });
-            }
-        });
-
+        else {
+            cb({ code: Code.OK, exchangeList: docs });
+        }
     });
+
 }
 
 
 exchangeService.getMyExchangeRecordList = function (data, cb) {
-    playerService.getUserCacheByUid(data.uid, function (user) {
-        if (user == null || _.isUndefined(user)) {
-            logger.debug("user-exchange record list||%j||玩家获取兑换记录失败, 玩家不在缓存, 用户ID:%j", data.uid, data.uid);
-            cb({ code: Code.FAIL });
-            return;
+
+
+    // return result:
+    // [{id: xx, name: xx, icon: xx, inventory: xx,
+    // fragment: xx, createdAt: xx, enabled: true/false,
+    // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
+    exchangeDao.listExchangeRecordByUid(data.uid, function (err, docs) {
+        if (err != null) {
+            cb({ code: Code.OK, exchangeRecordList: [] });
         }
-
-        // return result:
-        // [{id: xx, name: xx, icon: xx, inventory: xx,
-        // fragment: xx, createdAt: xx, enabled: true/false,
-        // type: consts.EXCHANGE.TYPE.xx, mobile: xx, address: xx, contact: xx}]
-        exchangeDao.listExchangeRecordByUid(data.uid, function (err, docs) {
-            if (err != null) {
-                cb({ code: Code.OK, exchangeRecordList: [] });
-            }
-            else {
-                cb({ code: Code.OK, exchangeRecordList: docs });
-            }
-        });
-
+        else {
+            cb({ code: Code.OK, exchangeRecordList: docs });
+        }
     });
+
 }
 
 /**
@@ -269,7 +256,7 @@ exchangeService.getExchangeListById = function (data, cb) {
 }
             
 //充值失败后 回滚元宝
-//data: {uid: xx, fragment: xx}
+//data: {uid: xx, fragment: xx, type: xx}
 exchangeService.callbackPlayerFragment = function (data, cb) {
     userDao.updatePlayerFragment(data, cb);
 }

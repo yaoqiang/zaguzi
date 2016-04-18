@@ -90,7 +90,8 @@ handler.enter = function (msg, session, next) {
                 player = u.player;
 
                 //如果玩家是掉线状态,并且用户在牌局中
-                if (!!u.gameId) {
+                //gameId的赋值是null, roomId的赋值也是null
+                if (u.gameId) {
                     //查询牌局状态
                     //rpc invoke
                     var getStatusParams = {
@@ -113,9 +114,11 @@ handler.enter = function (msg, session, next) {
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
                             //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
-                            if (!!u.sessionId) {
+                            //sessionId的赋值就是id或undefined.
+                            if (!_.isNull(u.sessionId)) {
 
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
+                                //先模拟掉线操作, 然后将原用户Kick掉
                                 doUserDisconnect(self.app, u.uid, function () {
 
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
@@ -123,7 +126,7 @@ handler.enter = function (msg, session, next) {
                                         session.set('serverId', msg.serverId);
                                         session.on('closed', onUserDisconnect.bind(null, self.app));
                                         session.pushAll();
-
+                                        //原用户还在缓存, 直接设置新的sessionId
                                         pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
                                             sendBackGameEvent(uid, u, room, msg);
                                         });
@@ -134,7 +137,7 @@ handler.enter = function (msg, session, next) {
                             }
                             else {
                                 //如果玩家掉线, 设置新的sessionId(在gameLogic逻辑处理中,如果掉线不会立即清空用户缓存,
-                                // 而会将sessionId设置为undefined or null, 结束后结算完才清空)
+                                // 而会将sessionId设置为null, 结束后结算完才清空)
                                 session.bind(uid);
                                 session.set('serverId', msg.serverId);
                                 session.on('closed', onUserDisconnect.bind(null, self.app));
@@ -150,7 +153,7 @@ handler.enter = function (msg, session, next) {
                         }
                         else {
                             //如果玩家是正常在线, 并且在牌桌, 但是没有开始游戏, 则踢掉
-                            if (!!u.sessionId) {
+                            if (!_.isNull(u.sessionId)) {
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
                                 doUserDisconnect(self.app, u.uid, function () {
 
@@ -166,7 +169,7 @@ handler.enter = function (msg, session, next) {
                 }
                 else {
                     //如果玩家是正常在线, 则踢掉
-                    if (!!u.sessionId) {
+                    if (!_.isNull(u.sessionId)) {
                         doUserDisconnect(self.app, u.uid, function () {
 
                             sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {

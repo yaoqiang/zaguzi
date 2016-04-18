@@ -174,6 +174,14 @@ userDao.updatePlayerGold = function (data, cb) {
         update: {$inc: {gold: data.gold}}
     }, function (err, doc, lastErrorObject) {
         if (err) {
+            logger.info("%j", {
+                uid: data.uid,
+                type: consts.LOG.CONF.USER.TYPE,
+                action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
+                message: '添加金币失败',
+                created: new Date(),
+                detail: {type: data.type, gold: data.gold}
+            });
             utils.invokeCallback(cb, err, null);
         } else {
             logger.info("%j", {
@@ -182,7 +190,7 @@ userDao.updatePlayerGold = function (data, cb) {
                 action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
                 message: '添加金币成功',
                 created: new Date(),
-                detail: {gold: data.gold}
+                detail: {type: data.type, value: data.gold}
             });
             utils.invokeCallback(cb, null, doc);
         }
@@ -288,7 +296,7 @@ userDao.updatePlayerItems = function (data, cb) {
             }
 
             var result = _.map(data.items, function (item) {
-                return addItem(doc, consts.GLOBAL.ADD_ITEM_TYPE.RECHARGE, item);
+                return addItem(doc, data.type, item);
             });
 
             if (_.contains(result, false)) {
@@ -303,16 +311,32 @@ userDao.updatePlayerItems = function (data, cb) {
 
 /**
  * 更新玩家元宝数
- * data: {uid: xx, fragment: xx}
+ * data: {uid: xx, fragment: xx, type: xx}
  */
 userDao.updatePlayerFragment = function (data, cb) {
     db.player.findAndModify({
         query: {uid: mongojs.ObjectId(data.uid)},
-        update: {$inc: {fragment: -data.fragment}}
+        update: {$inc: {fragment: data.fragment}}
     }, function (err, doc, lastErrorObject) {
         if (err) {
+            logger.info("%j", {
+                uid: data.uid,
+                type: consts.LOG.CONF.USER.TYPE,
+                action: consts.LOG.CONF.USER.ACTION.ADD_FRAGMENT,
+                message: '添加元宝失败',
+                created: new Date(),
+                detail: {type: data.type, value: data.fragment}
+            });
             utils.invokeCallback(cb, err, null);
         } else {
+            logger.info("%j", {
+                uid: data.uid,
+                type: consts.LOG.CONF.USER.TYPE,
+                action: consts.LOG.CONF.USER.ACTION.ADD_FRAGMENT,
+                message: '添加元宝成功',
+                created: new Date(),
+                detail: {type: data.type, value: data.fragment}
+            });
             utils.invokeCallback(cb, null, doc);
         }
     })

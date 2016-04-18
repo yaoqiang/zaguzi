@@ -1,6 +1,37 @@
-curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "56f0dd59707db8f177af5647", "productId": 100012}'
+//OSS充值
+curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "", "productId": 100011}'
 
 
+//查询缓存中在线玩家的数据, uids=id,id,id
+curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
+
+
+//test server
+570e5741e63924c69f422701    username=a
+
+curl -X POST http://101.200.128.237:1337/api/game/payment4OSS -H 'Content-Type: application/json' -d '{"uid": "570e5741e63924c69f422701", "productId": 100002}'
+curl -X GET http://101.200.128.237:1337/api/game/getShopList
+curl -X GET http://101.200.128.237:1337/api/game/getItemList
+curl -X GET http://101.200.128.237:1337/api/game/getExchangeListNew         ××
+curl -X GET http://101.200.128.237:1337/api/game/getMyExchangeRecordList?uid=570e5741e63924c69f4227012
+curl -X GET http://101.200.128.237:1337/api/game/getRankingList         ××
+
+curl -X POST http://101.200.128.237:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570e5741e63924c69f422701", "type": "ACTIVITY", "gold": 1000}'
+
+
+//local
+56ac9e72ba27df1c78df57fd    :username=c
+
+curl -X GET http://127.0.0.1:1337/api/game/getExchangeListNew
+curl -X GET http://127.0.0.1:1337/api/game/getMyExchangeRecordList?uid=56ac9e72ba27df1c78df57fd
+curl -X GET http://127.0.0.1:1337/api/game/getRankingList
+
+curl -X POST http://127.0.0.1:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "gold": 1000}'
+curl -X POST http://127.0.0.1:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "items": [{"id": 2, "value": 1}]}'
+curl -X POST http://127.0.0.1:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "fragment": 1}'
+
+
+//
 mama:570d08a0d7958a093765d942
 
-db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 20000}});
+db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 11245}});

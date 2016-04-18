@@ -359,6 +359,7 @@ module.exports = {
     // }
     
     LOG: {
+        //日志文件名称定义
         SYSTEM: 'game-system',
         GAME: 'game-all',
         GAME_RECORD: 'game-record',
@@ -373,6 +374,7 @@ module.exports = {
         GAME_HTTP: 'game-http',
         ERROR: 'error-all',
         
+        //日志具体结果定义
         CONF: {
             RECORD: {
                 TYPE: 'RECORD',

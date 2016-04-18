@@ -55,7 +55,7 @@ Game.prototype.init = function () {
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
-        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
+        loggerErr.error('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
         return;
     }
@@ -781,7 +781,7 @@ Game.prototype.fan = function (data, cb) {
                 var result = CardLogic.isCurrentBiggerThanLast(cardRecognization, this.gameLogic.lastFanCardRecognization, this.maxActor, this.gameLogic.appends);
                 if (_.isUndefined(result)) {
                     if (cards.length == 1 && cards[0] === 116) {
-                        loggerErr.error("%j", {handler: "game.gameHandler.fan - !_.isUndefined!", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
+                        loggerErr.error("%j", {method: "entity.game.fan - !_.isUndefined!", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
                     }
                     logger.debug('game||fan||出牌错误，玩家出牌是单牌或对子, 与上手牌型不匹配||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
@@ -789,7 +789,7 @@ Game.prototype.fan = function (data, cb) {
                 }
                 if (!result) {
                     if (cards.length == 1 && cards[0] === 116) {
-                        loggerErr.error("%j", {handler: "game.gameHandler.fan - !result", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
+                        loggerErr.error("%j", {method: "entity.game.fan - !result", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
                     }
                     logger.debug('game||fan||出牌错误，玩家当前出牌小于上手牌||用户&ID: %j', data.uid);
                     cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.NOT_BIGGER});
@@ -1230,7 +1230,7 @@ Game.prototype.createChannel = function () {
 Game.prototype.doAddActor = function (data) {
     //如果牌局已满
     if (this.maxActor == this.currentActorNum) {
-        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, desc: '加入房间时, 房间已满.'});
+        loggerErr.error('%j', {method: "entity.game.join", uid: data.uid, desc: '加入房间时, 房间已满.'});
         return false;
     }
 
@@ -1256,14 +1256,14 @@ Game.prototype.doAddActor = function (data) {
 
 Game.prototype.addActor2Channel = function (data) {
     if (!this.channel) {
-        loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, desc: '加入房间时, this.channel为null 怪异问题.'});
+        loggerErr.error('%j', {method: "entity.game.join", uid: data.uid, desc: '加入房间时, this.channel为null 怪异问题.'});
         return false;
     }
     if (data) {
         this.channel.add(data.uid, data.sid);
         return true;
     }
-    loggerErr.error('%j', {handler: "connector.gameHandler.join", uid: data.uid, data: data, desc: '加入房间时, 参数data为null, 怪异问题.'});
+    loggerErr.error('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数data为null, 怪异问题.'});
     return false;
 }
 

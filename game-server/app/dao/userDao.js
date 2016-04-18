@@ -180,7 +180,7 @@ userDao.updatePlayerGold = function (data, cb) {
                 action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
                 message: '添加金币失败',
                 created: new Date(),
-                detail: {type: data.type, value: data.gold}
+                detail: {type: data.type, gold: data.gold}
             });
             utils.invokeCallback(cb, err, null);
         } else {

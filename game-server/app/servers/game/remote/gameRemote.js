@@ -3,6 +3,7 @@ var shopService = require('../../../services/shopService');
 var utils = require('../../../util/utils');
 var pomelo = require('pomelo');
 var consts = require('../../../consts/consts');
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var Code = require('../../../../../shared/code');
 
@@ -22,7 +23,8 @@ var GameRemote = function(app) {
  */
 GameRemote.prototype.join = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
+            loggerErr.error('%j', {method: "game.gameRemote.join", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
             logger.debug('game||join||加入游戏失败, 玩家已下线||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
             return;
@@ -49,7 +51,7 @@ GameRemote.prototype.join = function(data, cb) {
  */
 GameRemote.prototype.leave = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||leave||离开游戏失败, 玩家已下线||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.LEAVE.NOT_IN_GAME});
             return;
@@ -73,7 +75,7 @@ GameRemote.prototype.leave = function(data, cb) {
  */
 GameRemote.prototype.ready = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||ready||准备失败, 玩家已下线||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_IN_GAME});
             return;
@@ -95,7 +97,7 @@ GameRemote.prototype.ready = function (data, cb) {
  */
 GameRemote.prototype.talk = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||talk||说话失败, 玩家已下线||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.READY.NOT_IN_GAME});
             return;
@@ -116,7 +118,7 @@ GameRemote.prototype.talk = function (data, cb) {
  */
 GameRemote.prototype.fan = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||fan||出牌失败, 玩家已下线||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
             return;
@@ -137,7 +139,7 @@ GameRemote.prototype.fan = function (data, cb) {
  */
 GameRemote.prototype.trusteeship = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||trusteeship||托管失败, 玩家已下线||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.ERR});
             return;
@@ -158,7 +160,7 @@ GameRemote.prototype.trusteeship = function (data, cb) {
  */
 GameRemote.prototype.cancelTrusteeship = function (data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
-        if (user == undefined || user == null) {
+        if (user === undefined || user == null) {
             logger.debug('game||trusteeship||取消托管失败, 玩家已下线||用户&ID: %j', user.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.TRUSTEESHIP.NOT_IN_GAME});
             return;

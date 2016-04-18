@@ -187,10 +187,6 @@ module.exports = function (app) {
     game.post('/addItems', function(req, res) {
         var data = req.body;
         try {
-            console.log(data.items);
-            console.log(!_.isArray(data.items));
-            console.log(data.items.length === 0);
-            console.log(data.items.length === 0);
             if (!data.uid || !data.type || !data.items || !_.isArray(data.items) || data.items.length === 0) {
                 res.sendStatus(400);
                 return;

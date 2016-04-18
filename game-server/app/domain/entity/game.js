@@ -768,6 +768,7 @@ Game.prototype.fan = function (data, cb) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
             break;
         default:
+            loggerErr.error("### test log error ---------------.. %j", {cards: cards});
             //玩家手牌中没有所出牌
             if (!actor.gameStatus.hasCards(cards)) {
                 logger.debug('game||fan||出牌错误，玩家没有该牌||用户&ID: %j', data.uid);
@@ -785,6 +786,7 @@ Game.prototype.fan = function (data, cb) {
                     return;
                 }
                 if (!result) {
+                    loggerErr.error("### test log error!.. %j", {cards: cards});
                     if (cards.length == 1 && cards[0] === 116) {
                         loggerErr.error("%j", {handler: "game.gameHandler.fan", cardRecognization: cardRecognization, lastFanCardRecognization: this.gameLogic.lastFanCardRecognization, maxActor: this.maxActor, appends: this.gameLogic.appends, desc: '玩家出方块3时, 打不了3/4'})
                     }

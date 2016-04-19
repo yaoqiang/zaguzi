@@ -168,7 +168,12 @@ gameService.getGameStatusDetailsById = function(data, cb)
         game: {lobbyId: game.lobbyId, roomId: game.roomId, gameId: game.gameId, gameType: game.maxActor, base: game.base},
         actors: actors,
         gameLogic: {
-            isBoss: game.gameLogic.currentBoss.uid === game.gameLogic.currentFanActor.uid,
+            isBoss: (function () {
+                if (game.gameLogic.currentPhase === consts.GAME.PHASE.FAN) {
+                    return game.gameLogic.currentBoss.uid === game.gameLogic.currentFanActor.uid
+                }
+                return false;
+            })(),
             currentPhase: game.gameLogic.currentPhase,
             currentFanActor: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? {} : {uid: game.gameLogic.currentFanActor.uid, actorNr: game.gameLogic.currentFanActor.actorNr},
             lastFanActor: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? {} : {uid: game.gameLogic.lastFanActor.uid, actorNr: game.gameLogic.lastFanActor.actorNr},

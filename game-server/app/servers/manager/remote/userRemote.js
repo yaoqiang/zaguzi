@@ -39,7 +39,7 @@ UserRemote.prototype.getProfileByUid = function (msg, cb) {
     this.getUserCacheByUid(msg.uid, function (ret) {
         if (ret.player === undefined) {
             var u = _.findWhere(pomelo.app.userCache, { uid: msg.uid });
-            loggerErr.error('%j', {handler: "connector.universalHandler.getProfile", uid: msg.uid, userInCache: u, desc: '根据uid查询玩家信息, 返回的是undefined.'});
+            loggerErr.debug('%j', {handler: "connector.universalHandler.getProfile", uid: msg.uid, userInCache: u, desc: '根据uid查询玩家信息, 返回的是undefined.'});
         }
         playerService.getUserInfo(msg.uid, function (result) {
             if (result) {

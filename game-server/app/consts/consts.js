@@ -220,6 +220,7 @@ module.exports = {
     EVENT: {
         CHAT: 'onChat',
         BROADCAST: 'onBroadcast',
+        BBS: 'onBBS',
         CHAT_PRIVATE: 'onChatPrivate',
         JOIN: 'onJoin',
         READY: 'onReady',
@@ -250,7 +251,8 @@ module.exports = {
     CHAT_SCOPE: {
       ALL: 'ALL',
       PRIVATE: 'PRIVATE',
-      GAME: 'GAME'  
+      GAME: 'GAME',
+      BBS: 'BBS'
     },
     CHAT_IN_GAME_TYPE: {
         QUICK: 1,

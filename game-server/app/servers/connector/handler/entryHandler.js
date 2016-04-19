@@ -114,7 +114,7 @@ handler.enter = function (msg, session, next) {
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
                             //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
-                            //sessionId的赋值就是id或undefined.
+                            //sessionId的赋值就是null.
                             if (!_.isNull(u.sessionId)) {
 
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后

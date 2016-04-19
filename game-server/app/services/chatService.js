@@ -85,7 +85,7 @@ ChatService.prototype.kick = function(uid) {
 };
 
 /**
- * Push message by the specified channel
+ * Push message by the specified channel  小喇叭
  *
  * @param  {String}   channelName channel name
  * @param  {Object}   msg         message json object
@@ -99,6 +99,23 @@ ChatService.prototype.pushByChannel = function(channelName, msg, cb) {
   }
 
   channel.pushMessage(Event.BROADCAST, msg, cb);
+};
+
+/**
+ * Push message by the specified channel for BBS 系统公告、互动类型
+ *
+ * @param  {String}   channelName channel name
+ * @param  {Object}   msg         message json object
+ * @param  {Function} cb          callback function
+ */
+ChatService.prototype.pushByChannelForBBS = function(channelName, msg, cb) {
+  var channel = this.app.get('channelService').getChannel(channelName);
+  if(!channel) {
+    cb(new Error('channel ' + channelName + ' dose not exist'));
+    return;
+  }
+
+  channel.pushMessage(Event.BBS, msg, cb);
 };
 
 /**

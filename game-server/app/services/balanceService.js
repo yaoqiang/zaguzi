@@ -6,6 +6,7 @@ var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var async = require('async');
 
@@ -188,9 +189,10 @@ balanceService.balanceCommon = function (game, cb) {
             pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
                 _.map(users, function (u) {
                     if (_.isNull(u.sessionId)) {
-                        logger.debug('移除掉线玩家：%j', u.uid);
+                      
+                        loggerErr.debug('%j', {method: "service.balanceService.balanceCommon", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '牌局结算完成, 移除掉线玩家-开始.'});
                         pomelo.app.rpc.manager.userRemote.onUserDisconnect(null, {uid: u.uid}, function () {
-
+                            loggerErr.debug('%j', {method: "service.balanceService.balanceCommon", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '牌局结算完成, 移除掉线玩家-成功.'});
                         });
                     }
                 });

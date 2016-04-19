@@ -33,3 +33,11 @@ ChatRemote.prototype.kick = function(uid, cb){
 	this.chatService.kick(uid);
 	cb();
 };
+
+/**
+ * 发送BBS: 公告类互动消息类
+ */
+ChatRemote.prototype.sendBBS = function(content, cb){
+	this.chatService.pushByChannelForBBS(content, channelName);
+	cb();
+};

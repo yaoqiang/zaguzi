@@ -103,7 +103,7 @@
     "online-record": "DEBUG",
     "payment": "DEBUG",
     "open-api": "DEBUG",
-    "error-all": "ERROR"
+    "error-all": "DEBUG"
   },
   "replaceConsole": true
 }

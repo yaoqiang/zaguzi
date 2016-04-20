@@ -583,6 +583,7 @@ playerService.setGameReference = function (uid, roomId, gameId, cb) {
 playerService.setUserSessionId = function (uid, sessionId) {
     var user = _.findWhere(pomelo.app.userCache, { uid: uid });
     user.sessionId = sessionId;
+    loggerErr.debug('%j', {method: "service.playerService.setUserSessionId", uid: uid, sessionId: sessionId, desc: '设置玩家sessionId'});
 }
 
 

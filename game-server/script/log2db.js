@@ -3,25 +3,24 @@ var Promise = require('promise');
 var fs = require('fs');
 var readline = require('readline');
 
-var db = mongojs('zgz', ['logGameRecord', 'logLoginRecord', 'logPaymentRecord', 'logGameAll', 'logOnlineUserAnalysis']);
+
+var db = mongojs('zgz', ['logGameRecord', 'logLoginRecord', 'logPaymentRecord', 'logOnlineRecord', 'logGameAll']);
 
 var glob = require("glob")
 
 
-var GAME_RECORD_FILE_NAME_PREFIX = "game-record.log";
-var GAME_RECORD_PREFIX = "game-record";
+// 处理log, 忽略pomelo的log；忽略调试&错误log；忽略当日log；
+glob("../logs/*", 
+    {"ignore": ['../logs/admin*', '../logs/con*', '../logs/crash*', '../logs/forward*', '../logs/pomelo*', '../logs/rpc*', 
+    '../logs/game-http*', '../logs/open-api*', '../logs/error*', '../logs/game-system*',
+    '../logs/game-all.log', '../logs/game-record.log', '../logs/login-record.log', '../logs/online-record.log', '../logs/payment.log']}, function(err, files) {
 
-
-
-
-
-// 处理GameRecord
-
-glob("./game-record.log*", {}, function (err, files) {
     if (files.length === 0) return;
 
-    var fileOpsGameRecord = files.map(function(f, index) {
-        if (f === "./game-record.log") return null;
+    var fileOps = files.map(function(f, index) {
+
+        console.log(f);
+
         return new Promise(function(resolve, reject) {
             var mongoOps = [];
 
@@ -29,46 +28,45 @@ glob("./game-record.log*", {}, function (err, files) {
                 input: fs.createReadStream(f),
                 terminal: false
             }).on('line', function(line) {
-                    var logArray = parse(line);
-                    // [ '2016-04-09 21:54:00.642', 'INFO', 'game-record', '-', '{"lobby":5,"roomId":11,"result":"RED_WIN","share":3,"meeting":false}' ]
-                    var gameRecord = {};
-                    gameRecord.createdAt = new Date(logArray[0]);
-                    gameRecord.logLevel = logArray[1];
-                    var detail = JSON.parse(logArray[4]);
-                    gameRecord.lobby = detail.lobby;
-                    gameRecord.roomId = detail.roomId;
-                    gameRecord.result = detail.result;
-                    gameRecord.share = detail.share;
-                    gameRecord.meeting = detail.meeting;
+                var logArray = parse(line);
+                // [ '2016-04-09 21:54:00.642', 'INFO', 'game-record', '-', '{"lobby":5,"roomId":11,"result":"RED_WIN","share":3,"meeting":false}' ]
+                var gameRecord = {};
+                gameRecord.createdAt = new Date(logArray[0]);
+                gameRecord.logLevel = logArray[1];
+                var detail = JSON.parse(logArray[4]);
+                gameRecord.lobby = detail.lobby;
+                gameRecord.roomId = detail.roomId;
+                gameRecord.result = detail.result;
+                gameRecord.share = detail.share;
+                gameRecord.meeting = detail.meeting;
 
-                    var mongoOp = new Promise(function(resolve, reject){
-                        db.logGameRecord.save(gameRecord, function(){
-                            resolve(null);
-                        });
-                    })
-                    mongoOps.push(mongoOp);
-                })
-                .on('close', function() {
-                    Promise.all(mongoOps).then(function(res){
-                        console.log(f + ' will delete log file!');
-
-                        fs.unlink(f, function() {
-                            resolve();
-                            console.log(f + 'did delete log file!');
-                        });
-                    })
-
+                var mongoOp = new Promise(function(resolve, reject){
+                    db.logGameRecord.save(gameRecord, function(){
+                        resolve(null);
+                    });  
                 });
+                mongoOps.push(mongoOp);
+            })
+            .on('close', function() {
+                Promise.all(mongoOps).then(function(res){
+                    console.log(f + ' will delete log file!');
+                    
+                    //fs.unlink(f, function() {
+                        resolve();
+                        console.log(f + 'did delete log file!');
+                    //});
+                })
+                 
+            });
 
         });
     });
 
-
-    Promise.all(fileOpsGameRecord).then(function(res){
+   Promise.all(fileOps).then(function(res){
         console.log("~~ All files handled ~~")
         db.close()
         process.exit()
-    })
+    });
 })
 
 function parse(str) {

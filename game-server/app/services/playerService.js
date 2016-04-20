@@ -115,7 +115,7 @@ playerService.onUserDisconnect = function (data, cb) {
     var u = _.findWhere(pomelo.app.userCache, { uid: data.uid });
 
     if (_.isUndefined(u)) {
-        logger.debug('玩家下线处理时，玩家已离线，玩家ID：%j', data.uid);
+        loggerErr.debug('%j', {method: "service.playerService.onUserDisconnect-1", uid: data.uid, data: data, desc: '玩家下线处理时，玩家已离线'});
         cb();
         return;
     }
@@ -135,7 +135,8 @@ playerService.onUserDisconnect = function (data, cb) {
         pomelo.app.rpcInvoke(room.serverId, getStatusParams, function (game) {
             //当玩家掉线时，并且玩家正在游戏中，则标识玩家为掉线，结算后再踢掉
             if (game.gameLogic != null && game.gameLogic.currentPhase != consts.GAME.PHASE.OVER) {
-                logger.debug("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid)
+                logger.debug("user-disconnect||%j||玩家掉线时还在游戏中, 用户ID:%j", data.uid, data.uid);
+                loggerErr.debug('%j', {method: "service.playerService.onUserDisconnect-2", uid: data.uid, data: data, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家掉线时还在游戏中'});
                 //set user session id = null.
                 playerService.setUserSessionId(data.uid, null);
 
@@ -162,6 +163,8 @@ playerService.onUserDisconnect = function (data, cb) {
                     u.player.flushAll();
 
                     pomelo.app.userCache = _.without(pomelo.app.userCache, u);
+                    
+                    loggerErr.debug('%j', {method: "service.playerService.onUserDisconnect-3", uid: data.uid, data: data, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家下线处理成功, 玩家下线时还在牌局中(未开始)'});
 
                     cb();
 
@@ -177,6 +180,7 @@ playerService.onUserDisconnect = function (data, cb) {
         u.player.flushAll();
 
         pomelo.app.userCache = _.without(pomelo.app.userCache, u);
+        loggerErr.debug('%j', {method: "service.playerService.onUserDisconnect-4", uid: data.uid, data: data, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家下线处理成功'});
         cb();
     }
 
@@ -579,6 +583,7 @@ playerService.setGameReference = function (uid, roomId, gameId, cb) {
 playerService.setUserSessionId = function (uid, sessionId) {
     var user = _.findWhere(pomelo.app.userCache, { uid: uid });
     user.sessionId = sessionId;
+    loggerErr.debug('%j', {method: "service.playerService.setUserSessionId", uid: uid, sessionId: sessionId, desc: '设置玩家sessionId'});
 }
 
 

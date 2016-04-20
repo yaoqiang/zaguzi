@@ -24,7 +24,7 @@ var GameRemote = function(app) {
 GameRemote.prototype.join = function(data, cb) {
     pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
         if (user === undefined || user == null) {
-            loggerErr.error('%j', {method: "game.gameRemote.join", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
+            loggerErr.debug('%j', {method: "game.gameRemote.join", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
             logger.debug('game||join||加入游戏失败, 玩家已下线||用户&ID: %j', data.uid);
             cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
             return;

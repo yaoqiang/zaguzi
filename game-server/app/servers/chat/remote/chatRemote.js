@@ -1,3 +1,5 @@
+var channelUtil = require('../../../util/channelUtil');
+
 module.exports = function(app) {
 	return new ChatRemote(app, app.get('chatService'));
 };
@@ -32,4 +34,11 @@ ChatRemote.prototype.leave =function(uid, channelName, cb){
 ChatRemote.prototype.kick = function(uid, cb){
 	this.chatService.kick(uid);
 	cb();
+};
+
+/**
+ * 发送BBS: 公告类互动消息类
+ */
+ChatRemote.prototype.sendBBS = function(content, cb){
+	this.chatService.pushByChannelForBBS(channelUtil.getGlobalChannelName(), content, cb);
 };

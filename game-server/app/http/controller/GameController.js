@@ -263,7 +263,26 @@ module.exports = function (app) {
         }
     });
 
-
+    /**
+     * 发送BBS: 公告类互动消息类
+     * req.body = {content: content} = ''
+     */
+    game.post('/sendBBS', function (req, res) {
+        try {
+            var data = req.body;
+            if (!data.content || data.content == '') {
+                res.sendStatus(400);
+                return;
+            }
+            app.rpc.chat.chatRemote.sendBBS(null, data.content, function (data) {
+                logger.debug('发送BBS成功');
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("发送BBS失败", {err: err, req: req.body});
+            res.sendStatus(500);
+        }
+    });
 
 
 

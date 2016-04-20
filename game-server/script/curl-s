@@ -26,6 +26,9 @@ curl -X GET http://127.0.0.1:1337/api/game/getExchangeListNew
 curl -X GET http://127.0.0.1:1337/api/game/getMyExchangeRecordList?uid=56ac9e72ba27df1c78df57fd
 curl -X GET http://127.0.0.1:1337/api/game/getRankingList
 
+
+curl -X POST http://127.0.0.1:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "asd"}'
+
 curl -X POST http://127.0.0.1:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "gold": 1000}'
 curl -X POST http://127.0.0.1:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "items": [{"id": 2, "value": 1}]}'
 curl -X POST http://127.0.0.1:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "fragment": 1}'

@@ -483,7 +483,8 @@ Player.prototype.getTaskGrant = function (taskId, cb) {
         if (nextTask.finished) {
             nextTask.current = nextTask.target;
         } else {
-            nextTask.current = task.current - task.target;
+            //如果任务当前值是1，而且是任务完成状态，那target也是1，为系列任务的任务值正确，需要为current+1，否则下一个任务值就是0。
+            nextTask.current = (task.current == 1 ? task.current + 1 : task.current) - task.target;
         }
 
 

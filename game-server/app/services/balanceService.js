@@ -6,6 +6,7 @@ var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var async = require('async');
 
@@ -185,10 +186,11 @@ balanceService.balanceCommon = function (game, cb) {
         }, function (result, callback) {
             logger.debug('结算结束, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除');
             var uids = _.pluck(details, 'uid');
+            loggerErr.debug('%j', {method: "service.balanceService.balanceCommon", uids: uids, desc: '结算结束, 如果有掉线玩家，此时结算结束将玩家离开房间，从缓存移除'});
             pomelo.app.rpc.manager.userRemote.getUsersCacheByUids(null, {uids: uids}, function (users) {
                 _.map(users, function (u) {
                     if (_.isNull(u.sessionId)) {
-                        logger.debug('移除掉线玩家：%j', u.uid);
+                      
                         pomelo.app.rpc.manager.userRemote.onUserDisconnect(null, {uid: u.uid}, function () {
 
                         });

@@ -9,6 +9,7 @@ var messageService = require('../../../services/messageService');
 var consts = require('../../../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var loggerLogin = require('log4js').getLogger(consts.LOG.LOGIN_RECORD);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var pomelo = require('pomelo');
 var _ = require('lodash');
 
@@ -114,20 +115,26 @@ handler.enter = function (msg, session, next) {
                             next(null, {code: Code.OK, player: player, isBackGame: true});
 
                             //如果玩家正常在线, 并且在游戏中, 则先踢掉原用户, 再发送重回游戏Event
-                            //sessionId的赋值就是id或undefined.
+                            //sessionId的赋值就是null.
                             if (!_.isNull(u.sessionId)) {
-
+                                loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录'});
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
                                 //先模拟掉线操作, 然后将原用户Kick掉
                                 doUserDisconnect(self.app, u.uid, function () {
-
+                                    loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 手动下线操作结束'});
+                                    //处理原session
+                                    var originalSession = sessionService.get(u.sessionId);
+                                    originalSession.unbind(uid);
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
                                         session.bind(uid);
                                         session.set('serverId', msg.serverId);
                                         session.on('closed', onUserDisconnect.bind(null, self.app));
                                         session.pushAll();
+
+                                        loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 设置新sessionId开始'});
                                         //原用户还在缓存, 直接设置新的sessionId
                                         pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+                                            loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 设置新sessionId成功'});
                                             sendBackGameEvent(uid, u, room, msg);
                                         });
                                         self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
@@ -136,6 +143,7 @@ handler.enter = function (msg, session, next) {
                                 });
                             }
                             else {
+                                loggerErr.debug('%j', {method: "connector.entryHandler.entry-2", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 是掉线状态'});
                                 //如果玩家掉线, 设置新的sessionId(在gameLogic逻辑处理中,如果掉线不会立即清空用户缓存,
                                 // 而会将sessionId设置为null, 结束后结算完才清空)
                                 session.bind(uid);
@@ -143,7 +151,9 @@ handler.enter = function (msg, session, next) {
                                 session.on('closed', onUserDisconnect.bind(null, self.app));
                                 session.pushAll();
 
+                                loggerErr.debug('%j', {method: "connector.entryHandler.entry-2", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 是掉线状态 -- 设置新sessionId开始'});
                                 pomelo.app.rpc.manager.userRemote.setUserSessionId(null, u.uid, session.id, function () {
+                                    loggerErr.debug('%j', {method: "connector.entryHandler.entry-2", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在游戏中, 是掉线状态 -- 设置新sessionId成功'});
                                     sendBackGameEvent(uid, u, room, msg);
                                 });
                                 self.app.rpc.chat.chatRemote.add(session, player.uid, player.nickName, channelUtil.getGlobalChannelName(), function () {
@@ -154,11 +164,14 @@ handler.enter = function (msg, session, next) {
                         else {
                             //如果玩家是正常在线, 并且在牌桌, 但是没有开始游戏, 则踢掉
                             if (!_.isNull(u.sessionId)) {
+                                loggerErr.debug('%j', {method: "connector.entryHandler.entry-3", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- 手动操作断线'});
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
                                 doUserDisconnect(self.app, u.uid, function () {
+                                    loggerErr.debug('%j', {method: "connector.entryHandler.entry-3", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- Kick原连接开始'});
 
-                                    //
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
+                                        loggerErr.debug('%j', {method: "connector.entryHandler.entry-3", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- Kick原连接成功'});
+
                                         onUserEnter(session, uid, msg, self, player, userData, next);
                                     });
                                 });
@@ -170,9 +183,12 @@ handler.enter = function (msg, session, next) {
                 else {
                     //如果玩家是正常在线, 则踢掉
                     if (!_.isNull(u.sessionId)) {
+                        loggerErr.debug('%j', {method: "connector.entryHandler.entry-4", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 不在游戏, 并且已在其他设备登录 -- 手动操作下线'});
                         doUserDisconnect(self.app, u.uid, function () {
+                            loggerErr.debug('%j', {method: "connector.entryHandler.entry-4", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 不游戏中, 并且已在其他设备登录 -- Kick原连接'});
 
                             sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
+                                loggerErr.debug('%j', {method: "connector.entryHandler.entry-4", uid: u.uid, serverId: u.serverId, sessionId: u.sessionId, desc: '玩家entry时, 不游戏中, 并且已在其他设备登录 -- Kick成功'});
                                 onUserEnter(session, uid, msg, self, player, userData, next);
                             });
                         });
@@ -181,6 +197,7 @@ handler.enter = function (msg, session, next) {
             }
             //玩家不在线
             else {
+                loggerErr.debug('%j', {method: "connector.entryHandler.entry-5", uid: uid, desc: '玩家entry时, 不在线'});
                 onUserEnter(session, uid, msg, self, player, userData, next);
             }
         });

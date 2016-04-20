@@ -228,12 +228,14 @@ var onUserDisconnect = function (app, session, reason) {
         return;
     }
 
-    doUserDisconnect(app, session.uid, function () {
+    var uid = session.uid;
 
+    doUserDisconnect(app, session.uid, function () {
+        session.unbind(uid);
     });
 
     //chat
-    app.rpc.chat.chatRemote.kick(session, session.uid, null);
+    app.rpc.chat.chatRemote.kick(session, uid, null);
 
 };
 

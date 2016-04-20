@@ -233,6 +233,7 @@ var onUserDisconnect = function (app, session, reason) {
     doUserDisconnect(app, session.uid, function () {
         loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect-3", uid: uid, sessionId: session.id, desc: '连接断开时(网络断开或kick),处理玩家状态结束 - unbind(uid)'});
         session.unbind(uid);
+        session.pushAll();
     });
 
     //chat

@@ -3,6 +3,7 @@ var Promise = require('promise');
 var fs = require('fs');
 var readline = require('readline');
 
+var consts = require('../app/consts/consts');
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 
@@ -41,7 +42,8 @@ try {
                                 // [ '2016-04-20 00:00:26.828', 'INFO', 'game-all', '-', '{"uid":"571655bc56dc2cab6c842587","type":"USER","action":"ADD_GOLD","message":"添加金币成功","created":"2016-04-19T16:00:26.828Z","detail":{"type":"GRANT","value":500}}' ]
 
                                 //因为有历史遗留日志(WARN), 顾只处理INFO级别
-                                if (logArray[1].logLevel === 'INFO') {
+                                //console.log(logArray[1].logLevel, logArray[1].logLevel == 'INFO')
+                                if (logArray[1].logLevel == 'INFO') {
                                     var userRecord = {};
                                     userRecord.createdAt = new Date(logArray[0]);
                                     userRecord.logLevel = logArray[1];
@@ -75,7 +77,7 @@ try {
                     });
 
                 }
-                else if (f.indexOf('../logs/game-record.log') == 0) {
+                else if (f.indexOf('../logs/game-record.log') == 10) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -118,7 +120,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/login-record.log') == 0) {
+                else if (f.indexOf('../logs/login-record.log') == 10) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -161,7 +163,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/online-record.log') == 0) {
+                else if (f.indexOf('../logs/online-record.log') == 10) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -201,7 +203,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/payment.log') == 0) {
+                else if (f.indexOf('../logs/payment.log') == 10) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -256,17 +258,20 @@ try {
         })
 } catch (e) {
     loggerErr.error('%j', {type: 'log2db', desc: '日志导入到Mongo时候发生错误.', error: e});
+    console.log(e);
 }
 
 function parse(str) {
     //log中包含嵌套Object, 如果是第一次出现'{', 才算开始, 嵌套Object的'{'忽略
     var isFirstObjectSymbol = true;
     //处理'[' and ']', 前两次出现才独立存储在数组中一位, (日期和INFO)
-    var startArraySymbol = 0;
+    var startLeftArraySymbol = 0;
+    var startRightArraySymbol = 0;
     function _parse(str, state, res) {
         if (str == '')
             return res;
         if (state == 0) { //parse by next space
+            //console.log(startLeftArraySymbol)
             if (str[0] == ' ') {
                 res.push('')
                 return _parse(str.slice(1), 0, res)
@@ -274,8 +279,8 @@ function parse(str) {
                 isFirstObjectSymbol = false;
                 res[res.length - 1] = res[res.length - 1] + str[0]
                 return _parse(str.slice(1), 1, res)
-            } else if (str[0] == '[' && startArraySymbol < 2) {
-                startArraySymbol++;
+            } else if (str[0] == '[' && startLeftArraySymbol < 2) {
+                startLeftArraySymbol++;
                 res[res.length - 1] = res[res.length - 1]
                 return _parse(str.slice(1), 1, res)
             } else {
@@ -299,8 +304,8 @@ function parse(str) {
             if (str[0] == suffix) {
                 res[res.length - 1] = res[res.length - 1] + str[0]
                 return _parse(str.slice(1), 0, res)
-            } else if (str[0] == ']' && startArraySymbol < 2) {
-                startArraySymbol++;
+            } else if (str[0] == ']' && startRightArraySymbol < 2) {
+                startRightArraySymbol++;
                 res[res.length - 1] = res[res.length - 1]
                 return _parse(str.slice(1), 0, res)
             } else {

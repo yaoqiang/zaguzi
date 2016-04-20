@@ -125,8 +125,7 @@ handler.enter = function (msg, session, next) {
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-完成'});
                                     //处理原session 添加处理逻辑针对玩家游戏状态已处理完成的状态, 防止多次处理
                                     var originalSession = sessionService.get(u.sessionId);
-                                    originalSession.set('didProcessUserState', true);
-                                    originalSession.push('didProcessUserState');
+                                    originalSession.unbind(u.uid);
                                     
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-1", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- Kick原连接开始'});
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
@@ -176,9 +175,9 @@ handler.enter = function (msg, session, next) {
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-3", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-完成'});
                                     //处理原session 添加对玩家游戏状态已处理完成的状态, 防止多次处理
                                     var originalSession = sessionService.get(u.sessionId);
-                                    originalSession.set('didProcessUserState', true);
-                                    originalSession.push('didProcessUserState');
-                                    
+                                    originalSession.unbind(u.uid);
+
+
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-3", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- Kick原连接开始'});
                                     
                                     sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
@@ -201,8 +200,8 @@ handler.enter = function (msg, session, next) {
 
                             //处理原session 添加对玩家游戏状态已处理完成的状态, 防止多次处理
                             var originalSession = sessionService.get(u.sessionId);
-                            originalSession.set('didProcessUserState', true);
-                            originalSession.push('didProcessUserState');
+                            originalSession.unbind(u.uid);
+
                             sessionService.kickBySessionId(u.sessionId, consts.GLOBAL.KICK_REASON.ANOTHER_LOGIN, function () {
                                 loggerErr.debug('%j', {method: "connector.entryHandler.entry-4", uid: u.uid, sessionId: u.sessionId, desc: '玩家entry时, 在线但不在牌桌, 并且已在其他设备登录 -- Kick成功'});
                                 onUserEnter(session, uid, msg, self, player, userData, next);
@@ -223,9 +222,9 @@ handler.enter = function (msg, session, next) {
 
 var onUserDisconnect = function (app, session, reason) {
     //如果session.uid已不存在, 则不处理; 目前使用场景是, 如果被踢下线, 手动处理了kick流程, 并且原session.uid会被设置为undefined
-    //：尝试为原session添加
-    if (_.isNull(session.uid) || _.isUndefined((session.uid)) || !session.get('didProcessUserState')) {
-        loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect", uid: session.uid, sessionId: session.id, desc: '连接断开时(网络断开或kick),已处理过玩家状态'});
+    loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect-1", uid: session.uid, sessionId: session.id, desc: '连接断开时(网络断开或kick),处理玩家状态'});
+    if (_.isNull(session.uid) || _.isUndefined(session.uid)) {
+        loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect-2", uid: session.uid, sessionId: session.id, desc: '连接断开时(网络断开或kick),已处理过玩家状态'});
         return;
     }
 

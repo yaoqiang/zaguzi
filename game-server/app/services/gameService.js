@@ -31,14 +31,24 @@ gameService.join = function(data, cb)
         return;
     }
 
-    //根据加入场次查找空闲牌局
-    var emptyGame = _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
+    //优先查找缺1人的牌局, 如果没有则直接加入第一个有空位的牌局
+    var emptyGame = (function(gGameList) {
+        var priorityGameList = _.filter(gGameList, function(g) {
+            return g.currentActorNum === g.maxActor - 1;
+        });
+
+        if (priorityGameList.length > 0) {
+            return _.first(priorityGameList);
+        }
+        return _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
+    })(gGameList);
+    
     //如果没有空闲牌局,则创建牌局
     var game;
-    if (!!emptyGame)
+    if (!_.isUndefined(emptyGame))
     {
         game = this.getGameById(emptyGame.gameId);
-        if (!!!game)
+        if (_.isUndefined(game))
         {
             cb({code: Code.FAIL, gameId: undefined});
             return;

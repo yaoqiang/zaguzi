@@ -2,6 +2,7 @@ var _ = require('lodash');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 
 var GameLogic = function (game) {
@@ -88,7 +89,7 @@ GameLogic.prototype.newGame = function () {
         this.currentPhase = consts.GAME.PHASE.TALKING;
 
     } catch (err) {
-        logger.error('%j', {gameId: this.game.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
+        loggerErr.error('%j', {gameId: this.game.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
             message: '游戏开始失败'+err.toString(), createdAt: new Date()});
     }
 

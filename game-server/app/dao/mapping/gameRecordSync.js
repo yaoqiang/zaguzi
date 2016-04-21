@@ -8,7 +8,6 @@ module.exports = {
         
         dbclient.gameRecord.save(val, function(err, doc) {
             if (err) {
-                logger.error('write gameRecord data to db failed! ' + JSON.stringify(val) + ': %o', err);
             }
             if(!!cb && typeof cb == 'function') {
                 cb(!!err);

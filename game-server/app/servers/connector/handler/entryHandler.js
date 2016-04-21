@@ -20,7 +20,7 @@ module.exports = function (app) {
 var Handler = function (app) {
     this.app = app;
     if (!this.app)
-        logger.error(app);
+        loggerErr.error(app);
 };
 
 var handler = Handler.prototype;

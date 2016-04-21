@@ -1,6 +1,6 @@
 var pomelo = require('pomelo');
 var consts = require('../consts/consts');
-var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var messageService = module.exports;
 
@@ -16,6 +16,6 @@ messageService.pushMessageToPlayer = function (uid, route, msg) {
 
 function errHandler(err, fails){
     if(!!err){
-        logger.error('Push Message error! %j', err.stack);
+        loggerErr.error('Push Message error! %j', err.stack);
     }
 }

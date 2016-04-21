@@ -3,6 +3,7 @@ var async = require('async');
 var utils = require('../../../util/utils');
 var consts = require('../../../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.NORMAL);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var _ = require('lodash');
 var pomelo = require('pomelo');
 
@@ -16,7 +17,7 @@ module.exports = function (app) {
 var Handler = function (app) {
     this.app = app;
     if (!this.app)
-        logger.error(app);
+        loggerErr.error(app);
 };
 
 var handler = Handler.prototype;

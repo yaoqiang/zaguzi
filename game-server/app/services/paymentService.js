@@ -37,7 +37,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
     //
     var product = _.findWhere(shopConf[data.device], { id: data.productId });
     if (product == undefined) {
-        logger.error('请求支付charge失败||%s||在服务器端没有找到该产品||%j', data.uid, { productId: data.productId, device: data.device, channel: data.channel });
+        logger.debug('请求支付charge失败||%s||在服务器端没有找到该产品||%j', data.uid, { productId: data.productId, device: data.device, channel: data.channel });
         cb({ code: Code.FAIL });
         return;
     }

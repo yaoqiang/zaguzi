@@ -154,7 +154,14 @@ userDao.createPlayer = function (uid, cb) {
 
     db.player.save(player, function (err, doc) {
         if (err || _.isNull(doc)) {
-            logger.error('create player failed! ' + err.message);
+            logger.error("%j", {
+                uid: uid,
+                type: consts.LOG.CONF.USER.TYPE,
+                action: consts.LOG.CONF.USER.ACTION.CREATE_PLAYER,
+                message: '账号创建Player失败, mongo存储失败',
+                created: new Date(),
+                detail: {error: err}
+            });
             utils.invokeCallback(cb, err.message, null);
             return;
         }

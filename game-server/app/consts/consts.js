@@ -395,6 +395,7 @@ module.exports = {
             USER: {
                 TYPE: 'USER',
                 ACTION: {
+                    CREATE_PLAYER: 'CREATE_PLAYER',
                     ADD_GOLD: 'ADD_GOLD',
                     ADD_FRAGMENT: 'ADD_FRAGMENT',
                     ADD_ITEM: 'ADD_ITEM',

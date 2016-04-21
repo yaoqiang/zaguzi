@@ -376,7 +376,7 @@ module.exports = {
         GAME_HTTP: 'game-http',
         ERROR: 'error-all',
         
-        //日志具体结果定义
+        //日志具体结果定义, 后来改造后, 貌似只有USER会用到, 其他单独走各自的log结构.
         CONF: {
             RECORD: {
                 TYPE: 'RECORD',
@@ -395,6 +395,7 @@ module.exports = {
             USER: {
                 TYPE: 'USER',
                 ACTION: {
+                    CREATE_PLAYER: 'CREATE_PLAYER',
                     ADD_GOLD: 'ADD_GOLD',
                     ADD_FRAGMENT: 'ADD_FRAGMENT',
                     ADD_ITEM: 'ADD_ITEM',

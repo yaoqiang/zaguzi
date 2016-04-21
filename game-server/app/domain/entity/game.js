@@ -26,6 +26,7 @@ var Game = function (roomId, gameId) {
     this.gameId = gameId;
     this.maxActor = this.room.maxActor;
     this.base = this.room.base;
+    this.useNoteCard = this.room.useNoteCard;   //是否可用记牌器
     this.currentActorNum = 0;
     this.actors = [];
     this.isFull = false;
@@ -233,8 +234,8 @@ Game.prototype.start = function () {
     //
     Promise.all(_.map(self.actors, function (actor) {
             var receiver = _.pick(actor, 'uid', 'sid');
-            //分别单独为每个人发消息，保证牌底只有各自接受各自的
-            self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor)}, [receiver], function () {
+            //分别单独为每个人发消息，保证牌底只有各自接受各自的, 如果有记牌器, 则添加记牌器
+            self.channelService.pushMessageByUids(consts.EVENT.START, {actor: gameResponse.generateActorRichResponse(actor, self.useNoteCard, self.gameLogic.originalCards)}, [receiver], function () {
             });
             return Promise.resolve;
         }))
@@ -822,6 +823,9 @@ Game.prototype.fan = function (data, cb) {
 
             //设置玩家相关属性
             actor.gameStatus.fanCards(cards);
+            
+            //设置全局牌记录
+            this.gameLogic.removeOriginalCards(cards);
 
             //设置游戏逻辑相关
             this.gameLogic.lastFanActor = actor;

@@ -12,7 +12,7 @@ var log4jsConf = require(__dirname + "/../../..//config/log4jsCustom.json");
 log4js.configure(log4jsConf, {});
 
 
-var logger = require('log4js').getLogger(consts.LOG.PAYMENT);
+var logger = require('log4js').getLogger(consts.LOG.GAME_HTTP);
 
 var pingpp = express.Router();
 

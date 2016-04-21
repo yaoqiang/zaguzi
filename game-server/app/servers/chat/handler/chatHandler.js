@@ -5,6 +5,7 @@ var SCOPE = require('../../../consts/consts').CHAT_SCOPE;
 var channelUtil = require('../../../util/channelUtil');
 var gameUtil = require('../../../util/gameUtil');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var utils = require('../../../util/utils');
 var pomelo = require('pomelo');
 var _ = require('lodash');
@@ -117,7 +118,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
 
                     self.chatService.pushByChannel(channelName, content, function (err, res) {
                         if (err) {
-                            logger.error(err.stack);
+                            loggerErr.error(err.stack);
                             code = Code.FAIL;
                         } else if (res) {
                             code = res;
@@ -141,7 +142,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
         utils.myPrint('Private ~ content = ', JSON.stringify(content));
         this.chatService.pushByPlayerName(msg.toName, content, function (err, res) {
             if (err) {
-                logger.error(err.stack);
+                loggerErr.error(err.stack);
                 code = Code.FAIL;
             } else if (res) {
                 code = res;

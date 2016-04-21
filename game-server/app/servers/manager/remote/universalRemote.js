@@ -58,7 +58,7 @@ UniversalRemote.prototype = {
     sendBindingSMS: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
-                logger.error("user-send SMS||%j||发送短信失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                logger.debug("user-send SMS||%j||发送短信失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
                 cb({code: Code.FAIL});
                 return;
             }
@@ -70,7 +70,7 @@ UniversalRemote.prototype = {
     bindingMobile: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
-                logger.error("user-binding mobile||%j||绑定失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                logger.debug("user-binding mobile||%j||绑定失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
                 cb({code: Code.FAIL});
                 return;
             }

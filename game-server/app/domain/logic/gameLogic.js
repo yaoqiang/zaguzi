@@ -2,12 +2,14 @@ var _ = require('lodash');
 var consts = require('../../consts/consts');
 var sorter = require('./cardSorter');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 
 var GameLogic = function (game) {
     logger.debug("game||start||初始化游戏逻辑,游戏ID:[%j]", game.gameId);
     this.game = game; //game
-    this.cards = [];    //牌
+    this.cards = [];    //牌: 初始化牌->洗牌->发牌, 最后为空数组
+    this.originalCards = []; //全局牌
 
     //玩家真实身份
     this.red = [];  //3家 {uid:xx, actorNr:xx, isFinished: true/false}
@@ -49,6 +51,8 @@ GameLogic.prototype.init = function () {
 
     this.cards = this.initialCards();
     this.cards = this.shuffleCards();
+    //记录全局牌
+    this.originalCards = sorter.sort(this.initialCards());
     this.currentPhase = consts.GAME.PHASE.STARTING;
 }
 
@@ -88,7 +92,7 @@ GameLogic.prototype.newGame = function () {
         this.currentPhase = consts.GAME.PHASE.TALKING;
 
     } catch (err) {
-        logger.error('%j', {gameId: this.game.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
+        loggerErr.error('%j', {gameId: this.game.gameId, type: consts.LOG.CONF.GAME.TYPE, action: consts.LOG.CONF.GAME.START,
             message: '游戏开始失败'+err.toString(), createdAt: new Date()});
     }
 
@@ -180,6 +184,19 @@ GameLogic.prototype.getNextActor = function (actor) {
         return _.findWhere(this.game.actors, {actorNr: actor.actorNr + 1})
     }
 }
+
+/**
+ * 在全局牌记录中移除已出的牌
+ * @param cards
+ */
+GameLogic.prototype.removeOriginalCards = function(cards)
+{
+    for (var v in cards)
+    {
+        this.originalCards = _.without(this.originalCards, cards[v]);
+    }
+}
+
 
 
 module.exports = GameLogic;

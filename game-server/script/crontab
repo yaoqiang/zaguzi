@@ -1,1 +1,2 @@
 0 0 * * * mongo < ~/workspace/dist/zgz/game-server/script/rankingTask.js
+30 0 * * * node ~/workspace/dist/zgz/game-server/script/log2db.js

@@ -1,5 +1,7 @@
 var _ = require('lodash');
 
+var gameUtil = require('../../util/gameUtil');
+
 var exp = module.exports;
 
 exp.generateActorsResponse = function (actors) {
@@ -10,8 +12,19 @@ exp.generateActorsResponse = function (actors) {
     return result;
 }
 
-exp.generateActorRichResponse = function (actor) {
+/**
+ * 干净的actor结果，with gameStatus, 没有连带properties（物品、任务等player属性）
+ * @param actor
+ * @param useNoteCard {Boolean} 是否生成带记牌器的Response
+ */
+exp.generateActorRichResponse = function (actor, useNoteCard, originalCards) {
     var act = this.generateActorResponse(actor);
+    if (useNoteCard) {
+        //如果玩家有记牌器, 才添加剩余牌属性
+        if (gameUtil.isItemExistAndNotExpired(actor.properties.items, {id: 3})) {
+            act.remainingCards = gameUtil.caculateRemainingCards(originalCards, actor.gameStatus.currentHoldingCards);
+        }
+    }
     act.gameStatus = {
         currentHoldingCards: actor.gameStatus.currentHoldingCards,
         outCards: actor.gameStatus.outCards,

@@ -5,7 +5,7 @@ var consts = require('../consts/consts');
 var open = require('../consts/open');
 var Code = require('../../../shared/code');
 
-var logger = require('log4js').getLogger(consts.LOG.SYSTEM);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var userDao = require('../dao/userDao');
 var commonDao = require('../dao/commonDao');
 
@@ -69,7 +69,7 @@ openService.sendSMS = function (data, cb) {
 
             request(options, function (err, response, body) {
                 if (err) {
-                    logger.error('open-sms||发送短信失败||');
+                    loggerErr.error('open-sms||发送短信失败||');
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
                     return;
                 }
@@ -77,7 +77,7 @@ openService.sendSMS = function (data, cb) {
                 var bodyJson = JSON.parse(body);
 
                 if (bodyJson.error_code != 0) {
-                    logger.error('open-sms||发送短信失败||');
+                    loggerErr.error('open-sms||发送短信失败||');
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
                     return;
                 }
@@ -113,7 +113,7 @@ openService.mobileRecharge = function (data, cb) {
 
     request(options, function (error, response, body) {
         if (error) {
-            logger.error('open-mobile recharge||调用充值接口失败||%j', {
+            loggerErr.error('open-mobile recharge||调用充值接口失败||%j', {
                 mobile: data.mobile,
                 number: data.number,
                 denomination: data.denomination,
@@ -125,7 +125,7 @@ openService.mobileRecharge = function (data, cb) {
 
         var bodyJson = JSON.parse(body);
         if (bodyJson.Code != 0) {
-            logger.error('open-mobile recharge||调用充值接口失败||%j', {
+            loggerErr.error('open-mobile recharge||调用充值接口失败||%j', {
                 mobile: data.mobile,
                 number: data.number,
                 denomination: data.denomination,

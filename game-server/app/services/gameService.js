@@ -170,7 +170,18 @@ gameService.getGameStatusDetailsById = function(data, cb)
         return _.assign(gameResponse.generateActorResponse(actor), {
             identity: actor.gameStatus.identity, append: actor.gameStatus.append,
             rank: actor.gameStatus.rank, isTrusteeship: actor.gameStatus.isTrusteeship,
-            currentHoldingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : []
+            currentHoldingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : [],
+            remainingCards: (function (actor, game) {
+                //如果房间可以使用记牌器
+                if (game.useNodteCard) {
+                    //如果玩家有记牌器, 才添加剩余牌属性
+                    if (gameUtil.isItemExistAndNotExpired(actor.properties.items, {id: 3})) {
+                        return gameUtil.caculateRemainingCards(originalCards, actor.gameStatus.currentHoldingCards);
+                    }
+                    return null;
+                }
+                return null;
+            })(actor, game)
         })
     });
 

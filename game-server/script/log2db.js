@@ -41,9 +41,9 @@ try {
                                 //解析后的日志格式
                                 // [ '2016-04-20 00:00:26.828', 'INFO', 'game-all', '-', '{"uid":"571655bc56dc2cab6c842587","type":"USER","action":"ADD_GOLD","message":"添加金币成功","created":"2016-04-19T16:00:26.828Z","detail":{"type":"GRANT","value":500}}' ]
 
-                                //因为有历史遗留日志(WARN), 顾只处理INFO级别
-                                //console.log(logArray[1].logLevel, logArray[1].logLevel == 'INFO')
-                                if (logArray[1].logLevel == 'INFO') {
+                                //因为有历史遗留日志(WARN), 顾只处理INFO ERROR级别, 现在已整理, 4.20日后的日志处理就不需要这个if了
+                                //console.log(logArray, logArray[1].logLevel, logArray[1] == 'INFO')
+                                if (logArray[1] == 'INFO' || logArray[1] == 'ERROR') {
                                     var userRecord = {};
                                     userRecord.createdAt = new Date(logArray[0]);
                                     userRecord.logLevel = logArray[1];
@@ -66,10 +66,10 @@ try {
                                 Promise.all(mongoOps).then(function (res) {
                                     console.log(f + ' will delete game-all log file!');
 
-                                    //fs.unlink(f, function() {
-                                    resolve();
-                                    console.log(f + 'did delete game-all log file!');
-                                    //});
+                                    fs.unlink(f, function() {
+                                        resolve();
+                                        console.log(f + 'did delete game-all log file!');
+                                    });
                                 })
 
                             });
@@ -77,7 +77,7 @@ try {
                     });
 
                 }
-                else if (f.indexOf('../logs/game-record.log') == 10) {
+                else if (f.indexOf('../logs/game-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -110,17 +110,17 @@ try {
                                 Promise.all(mongoOps).then(function (res) {
                                     console.log(f + ' will delete game-record log file!');
 
-                                    //fs.unlink(f, function() {
-                                    resolve();
-                                    console.log(f + 'did delete game-record log file!');
-                                    //});
+                                    fs.unlink(f, function() {
+                                        resolve();
+                                        console.log(f + 'did delete game-record log file!');
+                                    });
                                 })
 
                             });
 
                     });
                 }
-                else if (f.indexOf('../logs/login-record.log') == 10) {
+                else if (f.indexOf('../logs/login-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -153,17 +153,17 @@ try {
                                 Promise.all(mongoOps).then(function (res) {
                                     console.log(f + ' will delete login-record log file!');
 
-                                    //fs.unlink(f, function() {
-                                    resolve();
-                                    console.log(f + 'did delete login-record log file!');
-                                    //});
+                                    fs.unlink(f, function() {
+                                        resolve();
+                                        console.log(f + 'did delete login-record log file!');
+                                    });
                                 })
 
                             });
 
                     });
                 }
-                else if (f.indexOf('../logs/online-record.log') == 10) {
+                else if (f.indexOf('../logs/online-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -193,17 +193,17 @@ try {
                                 Promise.all(mongoOps).then(function (res) {
                                     console.log(f + ' will delete online-record log file!');
 
-                                    //fs.unlink(f, function() {
-                                    resolve();
-                                    console.log(f + 'did delete online-record log file!');
-                                    //});
+                                    fs.unlink(f, function() {
+                                        resolve();
+                                        console.log(f + 'did delete online-record log file!');
+                                    });
                                 })
 
                             });
 
                     });
                 }
-                else if (f.indexOf('../logs/payment.log') == 10) {
+                else if (f.indexOf('../logs/payment.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -236,10 +236,10 @@ try {
                                 Promise.all(mongoOps).then(function (res) {
                                     console.log(f + ' will delete payment-record log file!');
 
-                                    //fs.unlink(f, function() {
-                                    resolve();
-                                    console.log(f + 'did delete payment-record log file!');
-                                    //});
+                                    fs.unlink(f, function() {
+                                        resolve();
+                                        console.log(f + 'did delete payment-record log file!');
+                                    });
                                 })
 
                             });
@@ -289,21 +289,20 @@ function parse(str) {
             }
 
         } else { //parse by next
-            var suffix = '}';
-            //根据不同类型log结尾拼凑分隔符
-            if (res[2] == 'payment') {
-                suffix = '}}}'
-            }
-            else if (res[2] == 'game-all') {
-                suffix = '}}'
-            }
-            else if (res[2] == 'online-record') {
-                suffix= '}}';
-            }
-
-            if (str[0] == suffix) {
+            if (str[0] == '}') {
+                //根据不同类型log结尾拼凑分隔符, 现在只有'}}'或'}}}'结束的log, 如果有'}}}}'那需要添加if (str.length == 4)
+                if (str.length == 2) {
+                    res[res.length - 1] = res[res.length - 1] + str
+                    return _parse(str.slice(2), 0, res)
+                }
+                else if (str.length == 3) {
+                    res[res.length - 1] = res[res.length - 1] + str
+                    return _parse(str.slice(3), 0, res)
+                }
+                //default
                 res[res.length - 1] = res[res.length - 1] + str[0]
                 return _parse(str.slice(1), 0, res)
+
             } else if (str[0] == ']' && startRightArraySymbol < 2) {
                 startRightArraySymbol++;
                 res[res.length - 1] = res[res.length - 1]

@@ -231,7 +231,12 @@ Player.prototype.getTrumpetValue = function() {
     return 0;
 }
 
-Player.prototype.exist = function (item) {
+/**
+ * 获得道具是否存在并且有效（count>0 || term > now）
+ * @param item {id: Int} 物品ID
+ * @return true/false
+ */
+Player.prototype.isItemExistAndNotExpired = function (item) {
     if (_.isNull(this.items) || _.isUndefined(this.items)) {
         return false;
     }
@@ -244,9 +249,20 @@ Player.prototype.exist = function (item) {
         return false;
     }
 
-    var exist = _.findWhere(this.items, {id: item.id});
-
-    return !_.isUndefined(exist);
+    var existItem = _.findWhere(this.items, {id: item.id});
+    
+    if (_.isUndefined(existItem)) return false;
+    
+    if (existItem.mode === consts.GLOBAL.ITEM_MODE.TERM) {
+        //如果已过期, 则代表没有
+        if (new Date(existItem.value).isBefore(new Date())) {
+            return false;
+        } 
+        return true;
+    }
+    if (existItem.value <= 0) return false;
+    
+    return true;
 }
 
 

@@ -157,6 +157,7 @@ gameService.getGameStatusDetailsById = function(data, cb)
     // actors: [
     // {uid: 0, actorNr: 1, nickName: '', avatar: 1, identity: consts.GAME.IDENTITY, append: [116,216,316,416], rank: 0, isTrusteeship: false, holdingCards: []},
     // {}],
+    // selfUid: 自己id
     // gameLogic: {
     // currentPhase: consts.GAME.PHASE,
     // currentFanActor: {uid: 0, actorNr: 1},
@@ -172,11 +173,12 @@ gameService.getGameStatusDetailsById = function(data, cb)
             rank: actor.gameStatus.rank, isTrusteeship: actor.gameStatus.isTrusteeship,
             currentHoldingCards: actor.uid == data.uid ? actor.gameStatus.currentHoldingCards : [],
             remainingCards: (function (actor, game) {
+                if (actor.uid !== data.uid) return null;
                 //如果房间可以使用记牌器
-                if (game.useNodteCard) {
+                if (game.useNoteCard) {
                     //如果玩家有记牌器, 才添加剩余牌属性
                     if (gameUtil.isItemExistAndNotExpired(actor.properties.items, {id: 3})) {
-                        return gameUtil.caculateRemainingCards(originalCards, actor.gameStatus.currentHoldingCards);
+                        return gameUtil.calculateRemainingCards(game.gameLogic.originalCards, actor.gameStatus.currentHoldingCards);
                     }
                     return null;
                 }

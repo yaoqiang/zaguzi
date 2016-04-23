@@ -48,9 +48,24 @@ GameUtil.getJoinAvailable = function (roomId, player) {
  * 计算剩余牌
  * @param originalCards [] 全部剩余牌记录
  * @param holdingCards [] 手牌
+ * @return [{modValue: card%100, count: Int}, {}, ...]
  */
-GameUtil.caculateRemainingCards = function (originalCards, holdingCards) {
-    return _.difference(originalCards, holdingCards);
+GameUtil.calculateRemainingCards = function (originalCards, holdingCards) {
+    var remainingCards = _.difference(originalCards, holdingCards);
+    return _.reduce(remainingCards, function (memo, card) {
+        if (memo.length > 0) {
+            var exist = _.findWhere(memo, {modValue: card % 100});
+            if (!_.isUndefined(exist)) {
+                exist.count += 1;
+            }
+            else {
+                memo.push({modValue: card % 100, count: 1});
+            }
+            return memo;
+        }
+        memo.push({modValue: card % 100, count: 1});
+        return memo;
+    }, []);
 }
 
 /**
@@ -77,6 +92,7 @@ GameUtil.isItemExistAndNotExpired = function (playerItems, item) {
     
     if (existItem.mode === consts.GLOBAL.ITEM_MODE.TERM) {
         //如果已过期, 则代表没有
+        console.log('new Date(existItem.value).isBefore(new Date()) === ', new Date(existItem.value), new Date(), new Date(existItem.value).isBefore(new Date()))
         if (new Date(existItem.value).isBefore(new Date())) {
             return false;
         } 

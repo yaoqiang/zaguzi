@@ -468,6 +468,8 @@ playerService.addGold = function (data, cb) {
         else {
             user.player.addGold(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.gold, function (data) {
                 if (data.code === Code.OK) {
+                    user.player.save();
+
                     return cb({ code: Code.OK });
                 }
                 return cb({ code: Code.FAIL });
@@ -494,6 +496,7 @@ playerService.addItems = function (data, cb) {
         else {
             user.player.addItems(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.items, function (data) {
                 if (data.code === Code.OK) {
+                    user.player.saveItem();
                     return cb({ code: Code.OK });
                 }
                 return cb({ code: Code.FAIL });
@@ -523,6 +526,7 @@ playerService.addFragment = function (data, cb) {
         else {
             user.player.addFragment(data.type || consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, data.fragment, function (fragment) {
                 if (fragment) {
+                    user.player.save();
                     return cb({ code: Code.OK });
                 }
                 return cb({ code: Code.FAIL });

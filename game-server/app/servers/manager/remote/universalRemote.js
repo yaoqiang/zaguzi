@@ -546,7 +546,7 @@ UniversalRemote.prototype = {
             logger4payment.error("%j", {
                 uid: undefined,
                 orderSerialNumber: data.order_no,
-                type: consts.LOG.CONF.PAYMENT,
+                type: consts.LOG.CONF.PAYMENT.TYPE,
                 action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                 message: 'Pingpp Webhooks处理异常',
                 created: new Date(),

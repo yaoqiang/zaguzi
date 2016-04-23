@@ -169,8 +169,7 @@ Player.prototype.addItem = function (type, item) {
     }
     //查询玩家是否有该物品, i: player.items
     var i = _.findWhere(this.items, {id: item.id});
-    logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_ITEM,
-        message: '添加物品成功', created: new Date(), detail: {type: type, itemId: item.id, item: data.title, value: item.value}});
+
     var value;
     var now = new Date();
     //如果玩家没有该物品, 则添加; 否则叠加
@@ -200,6 +199,9 @@ Player.prototype.addItem = function (type, item) {
     } else {
         i.value = value;
     }
+
+    logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_ITEM,
+        message: '添加物品成功', created: new Date(), detail: {type: type, itemId: item.id, item: data.title, value: item.value}});
 
     return true;
 }

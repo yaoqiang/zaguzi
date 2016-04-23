@@ -22,7 +22,7 @@ exp.generateActorRichResponse = function (actor, useNoteCard, originalCards) {
     if (useNoteCard) {
         //如果玩家有记牌器, 才添加剩余牌属性
         if (gameUtil.isItemExistAndNotExpired(actor.properties.items, {id: 3})) {
-            act.remainingCards = gameUtil.caculateRemainingCards(originalCards, actor.gameStatus.currentHoldingCards);
+            act.remainingCards = gameUtil.calculateRemainingCards(originalCards, actor.gameStatus.currentHoldingCards);
         }
     }
     act.gameStatus = {

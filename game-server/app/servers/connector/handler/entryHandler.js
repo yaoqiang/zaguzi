@@ -122,7 +122,7 @@ handler.enter = function (msg, session, next) {
                                 loggerErr.debug('%j', {method: "connector.entryHandler.entry-1-2", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-开始'});
                                 doUserDisconnect(self.app, u.uid, function () {
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-1-3", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-完成'});
-                                    //处理原session 添加处理逻辑针对玩家游戏状态已处理完成的状态, 防止多次处理
+                                    //处理原session unbind(uid), 防止多次处理
                                     var originalSession = sessionService.get(u.sessionId).toFrontendSession();
                                     originalSession.unbind(u.uid);
                                     originalSession.pushAll();
@@ -173,7 +173,7 @@ handler.enter = function (msg, session, next) {
                                 //先手动执行用户断线后逻辑, 确保新登录用户处理登录后逻辑在前者执行完成后
                                 doUserDisconnect(self.app, u.uid, function () {
                                     loggerErr.debug('%j', {method: "connector.entryHandler.entry-3-2", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-完成'});
-                                    //处理原session 添加对玩家游戏状态已处理完成的状态, 防止多次处理
+                                    //处理原session unbind(uid), 防止多次处理
                                     var originalSession = sessionService.get(u.sessionId).toFrontendSession();
                                     originalSession.unbind(u.uid);
                                     originalSession.pushAll();
@@ -197,7 +197,7 @@ handler.enter = function (msg, session, next) {
                         loggerErr.debug('%j', {method: "connector.entryHandler.entry-4-1", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在线但不在牌桌, 并且已在其他设备登录 -- 手动处理用户状态-开始'});
                         doUserDisconnect(self.app, u.uid, function () {
                             loggerErr.debug('%j', {method: "connector.entryHandler.entry-4-2", uid: u.uid, originalSessionId: u.sessionId, sessionId: session.id, desc: '玩家entry时, 在牌桌,不在游戏中, 并且已在其他设备登录 -- 手动处理用户状态-完成'});
-                            //处理原session 添加对玩家游戏状态已处理完成的状态, 防止多次处理
+                            //处理原session unbind(uid), 防止多次处理
                             var originalSession = sessionService.get(u.sessionId).toFrontendSession();
                             originalSession.unbind(u.uid);
                             originalSession.pushAll();

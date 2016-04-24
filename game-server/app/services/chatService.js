@@ -2,6 +2,7 @@ var Code = require('../../../shared/code');
 var utils = require('../util/utils');
 var dispatcher = require('../util/dispatcher');
 var Event = require('../consts/consts').EVENT;
+var _ = require('lodash');
 
 var ChatService = function(app) {
   this.app = app;
@@ -73,11 +74,11 @@ ChatService.prototype.kick = function(uid) {
   if(channelNames && record) {
     // remove user from channels
     var channel;
-    for(var i = 0; i < channelNames.length; i++) {
-      channel = this.app.get('channelService').getChannel(channelNames[i]);
-      if(channel) {
-        channel.leave(uid, record.sid);
-      }
+    var channelName = channelNames.channelName;
+    channel = this.app.get('channelService').getChannel(channelName);
+
+    if(channel) {
+      channel.leave(uid, record.sid);
     }
   }
 
@@ -163,7 +164,7 @@ var addRecord = function(service, uid, name, sid, channelName) {
   if(!item) {
     item = service.channelMap[uid] = {};
   }
-  item[channelName] = 1;
+  item.channelName = channelName;
 };
 
 /**

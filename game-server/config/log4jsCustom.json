@@ -11,9 +11,9 @@
       "category": "game-system"
     },
     {
-      "type": "file",
+      "type": "dateFile",
       "filename": "./logs/error-all.log",
-      "maxLogSize": 1048576,
+      "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
       },

@@ -1,6 +1,7 @@
 var mongojs = require('mongojs');
 var Promise = require('promise');
 var fs = require('fs');
+var path = require('path');
 var readline = require('readline');
 var consts = require(__dirname + '/../app/consts/consts');
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
@@ -12,15 +13,16 @@ var glob = require("glob")
 
 try {
 
+    var logsFullPath = path.resolve(___dirname, '../logs');
 
 // game-all.log 是最早打算用来存储全局的,后来日志结构调整, 保留了命名: 现在应概念定义成:用户相关的日志.(userRecord)
 // 处理log, 忽略pomelo的log；忽略调试&错误log；忽略当日log；只处理INFO级别, 格式必须按照指定的
     glob(__dirname + "/../logs/*",
         {
-            cwd: __dirname,
-            "ignore": ['../logs/admin*', '../logs/con*', '../logs/crash*', '../logs/forward*', '../logs/pomelo*', '../logs/rpc*',
-                '../logs/game-http*', '../logs/open-api*', '../logs/error*', '../logs/game-system*',
-                '../logs/game-all.log', '../logs/game-record.log', '../logs/login-record.log', '../logs/online-record.log', '../logs/payment.log']
+            cwd: __dirname + '/../',
+            "ignore": [logsFullPath + '/admin*', logsFullPath + '/con*', logsFullPath + '/crash*', logsFullPath + '/forward*', logsFullPath + '/pomelo*', logsFullPath + '/rpc*',
+                logsFullPath + '/game-http*', logsFullPath + '/open-api*', logsFullPath + '/error*', logsFullPath + '/game-system*',
+                logsFullPath + '/game-all.log', logsFullPath + '/game-record.log', logsFullPath + '/login-record.log', logsFullPath + '/online-record.log', logsFullPath + '/payment.log']
         }, function (err, files) {
 
             if (files.length === 0) return;
@@ -29,7 +31,7 @@ try {
 
                 console.log(f);
 
-                if (f.indexOf('../logs/game-all.log') == 0) {
+                if (f.indexOf(logsFullPath + '/game-all.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -77,7 +79,7 @@ try {
                     });
 
                 }
-                else if (f.indexOf('../logs/game-record.log') == 0) {
+                else if (f.indexOf(logsFullPath + '/game-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -120,7 +122,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/login-record.log') == 0) {
+                else if (f.indexOf(logsFullPath + '/login-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -163,7 +165,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/online-record.log') == 0) {
+                else if (f.indexOf(logsFullPath + '/online-record.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 
@@ -203,7 +205,7 @@ try {
 
                     });
                 }
-                else if (f.indexOf('../logs/payment.log') == 0) {
+                else if (f.indexOf(logsFullPath + '/payment.log') == 0) {
                     return new Promise(function (resolve, reject) {
                         var mongoOps = [];
 

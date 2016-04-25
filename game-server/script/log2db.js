@@ -13,7 +13,7 @@ var glob = require("glob")
 
 try {
 
-    var logsFullPath = path.resolve(___dirname, '../logs');
+    var logsFullPath = path.resolve(__dirname, '../logs');
 
 // game-all.log 是最早打算用来存储全局的,后来日志结构调整, 保留了命名: 现在应概念定义成:用户相关的日志.(userRecord)
 // 处理log, 忽略pomelo的log；忽略调试&错误log；忽略当日log；只处理INFO级别, 格式必须按照指定的

@@ -6,9 +6,7 @@ var _ = require('lodash');
 
 var ChatService = function(app) {
   this.app = app;
-  this.uidMap = {};
-  this.nameMap = {};
-  this.channelMap = {};
+  this.uidMap = [];
 };
 
 module.exports = ChatService;
@@ -27,38 +25,21 @@ ChatService.prototype.add = function(uid, playerName, channelName) {
     return Code.CHAT.FA_UNKNOWN_CONNECTOR;
   }
 
-  if(checkDuplicate(this, uid, channelName)) {
+  if(checkDuplicate(this, uid)) {
     return Code.OK;
   }
 
-  utils.myPrint('channelName = ', channelName);
   var channel = this.app.get('channelService').getChannel(channelName, true);
   if(!channel) {
     return Code.CHAT.FA_CHANNEL_CREATE;
   }
-
   channel.add(uid, sid);
-  addRecord(this, uid, playerName, sid, channelName);
+  addRecord(this, uid, playerName, sid);
 
   return Code.OK;
 };
 
-/**
- * User leaves the channel
- *
- * @param  {String} uid         user id
- * @param  {String} channelName channel name
- */
-ChatService.prototype.leave = function(uid, channelName) {
-  var record = this.uidMap[uid];
-  var channel = this.app.get('channelService').getChannel(channelName, true);
 
-  if(channel && record) {
-    channel.leave(uid, record.sid);
-  }
-
-  removeRecord(this, uid, channelName);
-};
 
 /**
  * Kick user from chat service.
@@ -67,22 +48,19 @@ ChatService.prototype.leave = function(uid, channelName) {
  *
  * @param  {String} uid user id
  */
-ChatService.prototype.kick = function(uid) {
-  var channelNames = this.channelMap[uid];
-  var record = this.uidMap[uid];
-
-  if(channelNames && record) {
+ChatService.prototype.kick = function(uid, channelName) {
+  var record = _.findWhere(this.uidMap, {uid: uid});
+  if(record) {
     // remove user from channels
     var channel;
-    var channelName = channelNames.channelName;
     channel = this.app.get('channelService').getChannel(channelName);
 
     if(channel) {
       channel.leave(uid, record.sid);
+      this.uidMap = _.without(this.uidMap, record);
     }
   }
 
-  clearRecords(this, uid);
 };
 
 /**
@@ -119,22 +97,6 @@ ChatService.prototype.pushByChannelForBBS = function(channelName, msg, cb) {
   channel.pushMessage(Event.BBS, msg, cb);
 };
 
-/**
- * Push message to the specified player
- *
- * @param  {String}   playerName player's role name
- * @param  {Object}   msg        message json object
- * @param  {Function} cb         callback
- */
-ChatService.prototype.pushByPlayerName = function(playerName, msg, cb) {
-  var record = this.nameMap[playerName];
-  if(!record) {
-    cb(null, Code.CHAT.FA_USER_NOT_ONLINE);
-    return;
-  }
-
-  this.app.get('channelService').pushMessageByUids(Event.CHAT, msg, [{uid: record.uid, sid: record.sid}], cb);
-};
 
 ChatService.prototype.pushByUid = function(uid, msg, cb) {
   var record = this.uidMap[uid];
@@ -149,51 +111,24 @@ ChatService.prototype.pushByUid = function(uid, msg, cb) {
 /**
  * check whether the user has already in the channel
  */
-var checkDuplicate = function(service, uid, channelName) {
-  return !!service.channelMap[uid] && !!service.channelMap[uid][channelName];
+var checkDuplicate = function(service, uid) {
+  return !_.isUndefined(_.findWhere(service.uidMap, {uid: uid}));
 };
 
 /**
  * Add records for the specified user
  */
-var addRecord = function(service, uid, name, sid, channelName) {
+var addRecord = function(service, uid, name, sid) {
   var record = {uid: uid, name: name, sid: sid};
-  service.uidMap[uid] = record;
-  service.nameMap[name] = record;
-  var item = service.channelMap[uid];
-  if(!item) {
-    item = service.channelMap[uid] = {};
-  }
-  item.channelName = channelName;
+  service.uidMap.push(record);
 };
 
 /**
  * Remove records for the specified user and channel pair
  */
-var removeRecord = function(service, uid, channelName) {
-  delete service.channelMap[uid][channelName];
-  if(utils.size(service.channelMap[uid])) {
-    return;
-  }
-
-  // if user not in any channel then clear his records
-  clearRecords(service, uid);
+var removeRecord = function(service, uid) {
 };
 
-/**
- * Clear all records of the user
- */
-var clearRecords = function(service, uid) {
-  delete service.channelMap[uid];
-
-  var record = service.uidMap[uid];
-  if(!record) {
-    return;
-  }
-
-  delete service.uidMap[uid];
-  delete service.nameMap[record.name];
-};
 
 /**
  * Get the connector server id assosiated with the uid

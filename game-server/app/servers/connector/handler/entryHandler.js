@@ -225,6 +225,7 @@ handler.enter = function (msg, session, next) {
 };
 
 var onUserDisconnect = function (app, session, reason) {
+
     //如果session.uid已不存在, 则不处理; 目前使用场景是, 如果被踢下线, 手动处理了kick流程, 并且原session.uid会被设置为undefined
     loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect-1", uid: session.uid, sessionId: session.id, reason: reason, desc: '连接断开时(网络断开或kick),处理玩家状态'});
     if (_.isNull(session.uid) || _.isUndefined(session.uid)) {
@@ -234,12 +235,16 @@ var onUserDisconnect = function (app, session, reason) {
 
     var uid = session.uid;
 
+    //chat
+    app.rpc.chat.chatRemote.kick(session, uid, channelUtil.getGlobalChannelName(), function () {
+
+    });
+
     doUserDisconnect(app, session.uid, function () {
         loggerErr.debug('%j', {method: "connector.entryHandler.onUserDisconnect-3", uid: uid, sessionId: session.id, reason: reason, desc: '连接断开时(网络断开或kick),处理玩家状态结束 - unbind(uid)'});
     });
 
-    //chat
-    app.rpc.chat.chatRemote.kick(session, uid, null);
+
 
 };
 

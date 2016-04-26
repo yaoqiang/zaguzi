@@ -170,6 +170,14 @@ db.systemMessage.save({
     enabled: true,
     createdAt: new Date()
 });
+
+db.systemMessage.save({
+    title: '##必读## 即将迎来5.1新版发布, 安卓用户更新须知!!!',
+    content: '安卓用户请绑定手机号, 以免账号丢失, 详情关注公众号: 大同扎股子, ',
+    enabled: true,
+    createdAt: new Date()
+});
+
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

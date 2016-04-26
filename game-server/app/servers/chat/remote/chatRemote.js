@@ -31,8 +31,8 @@ ChatRemote.prototype.leave =function(uid, channelName, cb){
  * kick out user
  *
  */
-ChatRemote.prototype.kick = function(uid, cb){
-	this.chatService.kick(uid);
+ChatRemote.prototype.kick = function(uid, channelName, cb){
+	this.chatService.kick(uid, channelName);
 	cb();
 };
 

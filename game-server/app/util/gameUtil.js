@@ -22,9 +22,6 @@ GameUtil.getRoomById = function (id) {
  * @returns {*}
  */
 GameUtil.getJoinAvailable = function (roomId, player) {
-    if (player.gameId && player.gameId != undefined) {
-        return false;
-    }
 
     var room = this.getRoomById(roomId);
     //加入房间前检查

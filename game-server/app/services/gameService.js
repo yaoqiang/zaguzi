@@ -34,7 +34,7 @@ gameService.join = function(data, cb)
     //优先查找缺1人的牌局, 如果没有则直接加入第一个有空位的牌局
     var emptyGame = (function(gGameList) {
         var priorityGameList = _.filter(gGameList, function(g) {
-            return g.currentActorNum === g.maxActor - 1;
+            return g.currentActorNum === g.maxActor - 1 && g.roomId === data.roomId;
         });
 
         if (priorityGameList.length > 0) {

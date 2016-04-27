@@ -11,16 +11,6 @@
       "category": "game-system"
     },
     {
-      "type": "dateFile",
-      "filename": "./logs/error-all.log",
-      "pattern": "-yyyy-MM-dd",
-      "layout": {
-        "type": "basic"
-      },
-      "backups": 3,
-      "category": "error-all"
-    },
-    {
       "type": "file",
       "filename": "./logs/game-http.log",
       "maxLogSize": 1048576,
@@ -89,6 +79,15 @@
       },
       "backups": 3,
       "category": "online-record"
+    },
+    {
+      "type": "dateFile",
+      "filename": "./logs/error-all.log",
+      "pattern": "-yyyy-MM-dd",
+      "layout": {
+        "type": "basic"
+      },
+      "category": "error-all"
     },
     {
       "type": "console"

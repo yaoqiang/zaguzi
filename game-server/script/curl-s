@@ -5,7 +5,14 @@ curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: a
 //查询缓存中在线玩家的数据, uids=id,id,id
 curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
+//添加金币
 curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570d08a0d7958a093765d942", "type": "ACTIVITY", "gold": 7000}'
+
+//添加物品
+curl -X POST http://101.201.154.38:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "570e5741e63924c69f422701", "type": "ACTIVITY", "items": [{"id": 2, "value": 100}]}'
+
+//添加元宝
+curl -X POST http://101.201.154.38:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "57052049e55d335617be54d3", "type": "ACTIVITY", "fragment": 10}'
 
 
 //test server

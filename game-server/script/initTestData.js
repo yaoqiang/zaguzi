@@ -164,6 +164,15 @@ db.appReleaseRecord.save({
     releaseUrlApple: ''
 });
 
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.2',
+    createdAt: new Date(),
+    summary: '【新增】开启股神帮赢大奖!\n【改进】完善游戏,修复bug',
+    releaseUrlAndroid: 'http://www.pgyer.com/zgza',
+    releaseUrlApple: ''
+});
+
 db.systemMessage.save({
     title: '大同扎股子公测版上线啦！',
     content: '全球首款大同扎股子手游已登录地球，尽情享受吧！',

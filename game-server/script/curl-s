@@ -5,6 +5,9 @@ curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: a
 //查询缓存中在线玩家的数据, uids=id,id,id
 curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
+
+//问题ID: 加入房间不准备, 退出立刻再加入..一天...::: 5720c365522185076f79c427
+
 //添加金币
 curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570d08a0d7958a093765d942", "type": "ACTIVITY", "gold": 7000}'
 

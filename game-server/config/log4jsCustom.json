@@ -81,12 +81,13 @@
       "category": "online-record"
     },
     {
-      "type": "dateFile",
+      "type": "file",
       "filename": "./logs/error-all.log",
-      "pattern": "-yyyy-MM-dd",
+      "maxLogSize": 1048576,
       "layout": {
         "type": "basic"
       },
+      "backups": 3,
       "category": "error-all"
     },
     {
@@ -102,7 +103,7 @@
     "online-record": "INFO",
     "payment": "INFO",
     "open-api": "INFO",
-    "error-all": "DEBUG"
+    "error-all": "ERROR"
   },
   "replaceConsole": true
 }

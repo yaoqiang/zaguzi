@@ -187,6 +187,20 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##必读## 股子们, 福利来了!!!',
+    content: '为回馈近期充值的朋友,赠送3天记牌器+3喇叭,感谢支持!',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '##必读## 股子们, 第一波活动来袭!!!',
+    content: '5.1期间冲股神榜有奖活动开启,关注公众号: 大同扎股子',
+    enabled: true,
+    createdAt: new Date()
+});
+
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

@@ -6,16 +6,23 @@ curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: a
 curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
 
+///
 //问题ID: 加入房间不准备, 退出立刻再加入..一天...::: 5720c365522185076f79c427
+///
+
 
 //添加金币
-curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570d08a0d7958a093765d942", "type": "ACTIVITY", "gold": 7000}'
+curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570da7add7958a093765d945", "type": "ACTIVITY", "gold": 10000}'
 
 //添加物品
-curl -X POST http://101.201.154.38:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "570e5741e63924c69f422701", "type": "ACTIVITY", "items": [{"id": 2, "value": 100}]}'
+curl -X POST http://101.201.154.38:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "570da7add7958a093765d945", "type": "ACTIVITY", "items": [{"id": 2, "value": 10}]}'
 
 //添加元宝
 curl -X POST http://101.201.154.38:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "57052049e55d335617be54d3", "type": "ACTIVITY", "fragment": 10}'
+
+//BBS
+curl -X POST http://101.201.154.38:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "近期充值的股子们, 福利已发放, 感谢支持!"}'
+curl -X POST http://101.201.154.38:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "冲榜活动开始了,截止5.20日,凡是上<股神榜>就有奖!有了元宝想兑什么兑什么!"}'
 
 
 //test server

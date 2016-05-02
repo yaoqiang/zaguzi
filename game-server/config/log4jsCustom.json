@@ -81,9 +81,9 @@
       "category": "online-record"
     },
     {
-      "type": "file",
+      "type": "dateFile",
       "filename": "./logs/error-all.log",
-      "maxLogSize": 1048576,
+      "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
       },
@@ -103,7 +103,7 @@
     "online-record": "INFO",
     "payment": "INFO",
     "open-api": "INFO",
-    "error-all": "ERROR"
+    "error-all": "DEBUG"
   },
   "replaceConsole": true
 }

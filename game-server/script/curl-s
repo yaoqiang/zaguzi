@@ -12,10 +12,10 @@ curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
 
 //添加金币
-curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "570da7add7958a093765d945", "type": "ACTIVITY", "gold": 10000}'
+curl -X POST http://101.201.154.38:1337/api/game/addGold -H 'Content-Type: application/json' -d '{"uid": "57268a9a71a6127e39a67198", "type": "ACTIVITY", "gold": 18000}'
 
 //添加物品
-curl -X POST http://101.201.154.38:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "570da7add7958a093765d945", "type": "ACTIVITY", "items": [{"id": 2, "value": 10}]}'
+curl -X POST http://101.201.154.38:1337/api/game/addItems -H 'Content-Type: application/json' -d '{"uid": "57268a9a71a6127e39a67198", "type": "ACTIVITY", "items": [{"id": 2, "value": 100}, {"id": 3, "value": 100}]}'
 
 //添加元宝
 curl -X POST http://101.201.154.38:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "57052049e55d335617be54d3", "type": "ACTIVITY", "fragment": 10}'

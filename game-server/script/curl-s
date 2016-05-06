@@ -23,6 +23,7 @@ curl -X POST http://101.201.154.38:1337/api/game/addFragment -H 'Content-Type: a
 //BBS
 curl -X POST http://101.201.154.38:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "近期充值的股子们, 福利已发放, 感谢支持!"}'
 curl -X POST http://101.201.154.38:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "冲榜活动开始了,截止5.20日,凡是上<股神榜>就有奖!有了元宝想兑什么兑什么!"}'
+curl -X POST http://101.201.154.38:1337/api/game/sendBBS -H 'Content-Type: application/json' -d '{"content": "股子们,充值扣款成功,但是金币道具没有加上的,请联系客服0352-7963773!给您带来不便,请谅解!"}'
 
 
 //test server
@@ -55,7 +56,8 @@ curl -X POST http://127.0.0.1:1337/api/game/addItems -H 'Content-Type: applicati
 curl -X POST http://127.0.0.1:1337/api/game/addFragment -H 'Content-Type: application/json' -d '{"uid": "56ac9e72ba27df1c78df57fd", "type": "ACTIVITY", "fragment": 1}'
 
 
-//
-mama:570d08a0d7958a093765d942
+//mama's ID...
+570d08a0d7958a093765d942
+57268a9a71a6127e39a67198
 
 db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 11245}});

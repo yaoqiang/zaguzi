@@ -210,12 +210,19 @@ handler.enter = function (msg, session, next) {
                             });
                         });
                     }
+                    //玩家不在线(牌局里2次没人说话,强制解散情况下, 玩家掉线时,gameId和sessionId都被设置为null, 也没有像结算后T掉掉线玩家)
+                    else {
+                        sessionService.kick(uid, function () {
+                            loggerErr.debug('%j', {method: "connector.entryHandler.entry-5.1", uid: uid, sessionId: session.id, desc: '玩家entry时, 不在线'});
+                            onUserEnter(session, uid, msg, self, player, userData, next);
+                        })
+                    }
                 }
             }
             //玩家不在线
             else {
                 sessionService.kick(uid, function () {
-                    loggerErr.debug('%j', {method: "connector.entryHandler.entry-5", uid: uid, sessionId: session.id, desc: '玩家entry时, 不在线'});
+                    loggerErr.debug('%j', {method: "connector.entryHandler.entry-5.2", uid: uid, sessionId: session.id, desc: '玩家entry时, 不在线'});
                     onUserEnter(session, uid, msg, self, player, userData, next);
                 })
             }

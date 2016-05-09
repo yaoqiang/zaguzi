@@ -35,13 +35,13 @@ GameRemote.prototype.join = function(data, cb) {
             return;
         }
         data.player = user.player;
-        pomelo.app.rpc.manager.userRemote.onUserJoin(null, data.uid, data.roomId, ret.gameId, function (setStateResult) {
-            if (setStateResult.code === Code.FAIL) {
-                loggerErr.error('%j', {method: "game.gameRemote.join-2", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
-                cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
-                return;
-            }
-            gameService.join(data, function(ret) {
+        gameService.join(data, function(ret) {
+            pomelo.app.rpc.manager.userRemote.onUserJoin(null, data.uid, data.roomId, ret.gameId, function (setStateResult) {
+                if (setStateResult.code === Code.FAIL) {
+                    loggerErr.error('%j', {method: "game.gameRemote.join-2", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
+                    return;
+                }
                 cb(ret);
             });
         });

@@ -1,6 +1,9 @@
 var pomelo = require('pomelo');
 var routeUtil = require('./app/util/routeUtil');
 var sync = require('pomelo-sync-plugin');
+
+var wsrpc = require('pomelo-rpc-ws');
+
 var log4js = require('log4js');
 var log4jsConf = require('./config/log4jsCustom.json');
 
@@ -69,18 +72,26 @@ app.configure('production|development', function () {
     //app.enable('systemMonitor');
 
 
-    // proxy configures
+    //// proxy configures
+    //app.set('proxyConfig', {
+    //    cacheMsg: true,
+    //    interval: 30,
+    //    lazyConnection: true
+    //    // enableRpcLog: true
+    //});
+    //
+    //// remote configures
+    //app.set('remoteConfig', {
+    //    cacheMsg: true,
+    //    interval: 30
+    //});
+
     app.set('proxyConfig', {
-        cacheMsg: true,
-        interval: 30,
-        lazyConnection: true
-        // enableRpcLog: true
+        rpcClient: wsrpc.client
     });
 
-    // remote configures
     app.set('remoteConfig', {
-        cacheMsg: true,
-        interval: 30
+        rpcServer: wsrpc.server
     });
 
     // filter configures

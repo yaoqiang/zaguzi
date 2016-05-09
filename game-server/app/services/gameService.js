@@ -42,14 +42,6 @@ gameService.join = function(data, cb)
             return _.first(priorityGameList);
         }
         
-        //优先缺2人
-        var priorityGameListTwo = _.filter(gGameList, function(g) {
-            return g.currentActorNum === g.maxActor - 2 && g.roomId === data.roomId;
-        });
-
-        if (priorityGameListTwo.length > 0) {
-            return _.first(priorityGameListTwo);
-        }
         return _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
     })(gGameList);
     

@@ -201,6 +201,13 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##必读## 近期充值遇到问题的请关注!!!',
+    content: '充值扣款成功未添加金币道具的,联系:0352-7963773,给您带来不便请谅解',
+    enabled: true,
+    createdAt: new Date()
+});
+
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

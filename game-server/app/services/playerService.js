@@ -577,9 +577,14 @@ playerService.getReceiverByUid = function (uid, cb) {
  */
 playerService.setGameReference = function (uid, roomId, gameId, cb) {
     var user = _.findWhere(pomelo.app.userCache, { uid: uid });
-    user.roomId = roomId;
-    user.gameId = gameId;
-    cb();
+    if (!_.isUndefined(user)) {
+        user.roomId = roomId;
+        user.gameId = gameId;
+        cb({code: Code.OK});
+        return;
+    }
+    loggerErr.error('%j', {method: "service.playerService.setGameReference", uid: data.uid, desc: '设置玩家房间状态时,玩家不在线'});
+    cb({code: Code.FAIL});
 };
 
 /**

@@ -31,8 +31,9 @@ gameService.join = function(data, cb)
         return;
     }
 
-    //优先查找缺1人的牌局, 如果没有则直接加入第一个有空位的牌局
+    //优先查找缺人的牌局, 如果没有则直接加入第一个有空位的牌局
     var emptyGame = (function(gGameList) {
+        //优先缺1人
         var priorityGameList = _.filter(gGameList, function(g) {
             return g.currentActorNum === g.maxActor - 1 && g.roomId === data.roomId;
         });
@@ -40,6 +41,7 @@ gameService.join = function(data, cb)
         if (priorityGameList.length > 0) {
             return _.first(priorityGameList);
         }
+        
         return _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
     })(gGameList);
     
@@ -202,7 +204,8 @@ gameService.getGameStatusDetailsById = function(data, cb)
             lastFanActor: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? {} : {uid: game.gameLogic.lastFanActor.uid, actorNr: game.gameLogic.lastFanActor.actorNr},
             lastFanCardRecognization: game.gameLogic.currentPhase != consts.GAME.PHASE.FAN ? null : game.gameLogic.lastFanCardRecognization,
             currentTalker: game.gameLogic.currentPhase != consts.GAME.PHASE.TALKING ? {} : {uid: game.gameLogic.currentTalker.uid, actorNr: game.gameLogic.currentTalker.actorNr},
-            share: game.gameLogic.share
+            share: game.gameLogic.share,
+            appends: game.gameLogic.appends
         }});
 
 }

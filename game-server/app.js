@@ -108,7 +108,8 @@ app.configure('production|development', 'game', function () {
         useProtobuf: true
     });
 
-    app.route('game', routeUtil.game);
+    // remove game routing
+    // app.route('game', routeUtil.game);
 
 });
 

@@ -218,7 +218,8 @@ UniversalRemote.prototype = {
                                 uid: data.uid,
                                 sid: dispatcher(data.uid, connectors).id
                             }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                            cb();
+                            //返回客户端非法凭证, 客户端将该凭证从本地存储移除, 不再后续继续重试
+                            cb({code: Code.FAIL, detail: Code.PAYMENT.INVALID_RECEIPT});
                             return;
                         }
 
@@ -280,7 +281,8 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                cb();
+                //返回客户端非法凭证, 客户端将该凭证从本地存储移除, 不再后续继续重试
+                cb({code: Code.FAIL, detail: Code.PAYMENT.INVALID_RECEIPT});
                 return;
             }
         } catch (error) {
@@ -292,7 +294,8 @@ UniversalRemote.prototype = {
                 created: new Date(),
                 detail: {productId: data.productId, device: 'ios'}
             });
-            cb();
+            //返回客户端非法凭证, 客户端将该凭证从本地存储移除, 不再后续继续重试
+            cb({code: Code.FAIL, detail: Code.PAYMENT.INVALID_RECEIPT});
             return;
         }
 
@@ -314,7 +317,8 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                cb();
+                //返回客户端非法凭证, 客户端将该凭证从本地存储移除, 不再后续继续重试
+                cb({code: Code.FAIL, detail: Code.PAYMENT.INVALID_RECEIPT});
                 return;
             }
 
@@ -342,7 +346,7 @@ UniversalRemote.prototype = {
                     detail: {productId: data.productId, device: 'ios'}
                 });
 
-                cb();
+                cb({code: Code.OK});
             });
         });
     },
@@ -596,7 +600,7 @@ UniversalRemote.prototype = {
                 action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
                 message: '充值成功, 并完成商品添加',
                 created: new Date(),
-                detail: {productId: data.productId, device: 'ios'}
+                detail: {productId: data.productId, device: data.device}
             });
 
             cb({code: Code.OK});

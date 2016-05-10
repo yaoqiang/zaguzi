@@ -17,5 +17,9 @@ module.exports = {
         FA_CHANNEL_NOT_EXIST: 	3002,
         FA_UNKNOWN_CONNECTOR: 	3003,
         FA_USER_NOT_ONLINE: 	3004
+    },
+    
+    PAYMENT: {
+        INVALID_RECEIPT: 4001
     }
 };

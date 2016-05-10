@@ -47,7 +47,7 @@
         "connector": [
             {
                 "id": "connector-server-1",
-                "host": "101.200.128.237",
+                "host": "101.201.154.38",
                 "port": 3150,
                 "clientPort": 3010,
                 "frontend": true
@@ -56,20 +56,20 @@
         "gate": [
             {
                 "id": "gate-server-1",
-                "host": "101.200.128.237",
+                "host": "101.201.154.38",
                 "clientPort": 3014,
                 "frontend": true,
                 "args": ""
             }
         ],
         "chat": [
-            {"id": "chat-server-1", "host": "101.200.128.237", "port": 3250}
+            {"id": "chat-server-1", "host": "101.201.154.38", "port": 3250}
         ],
         "auth": [
-            {"id": "auth-server-1", "host": "101.200.128.237", "port": 3350}
+            {"id": "auth-server-1", "host": "101.201.154.38", "port": 3350}
         ],
         "game": [
-            {"id": "game-server-1", "host": "101.200.128.237", "port": 3450}
+            {"id": "game-server-1", "host": "101.201.154.38", "port": 3450}
         ],
         "manager": [
             {"id": "manager-server-1", "host": "101.201.154.38", "port": 3550}

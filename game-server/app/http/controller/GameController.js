@@ -33,16 +33,7 @@ module.exports = function (app) {
         res.sendStatus(200);
     });
 
-    /**
-     * 为玩家充值，使用场景：当玩家通过人工转账方式充值，则需要客服人员在业务系统操作
-     * req.body {JSON} = {uid: String, productId: Int, device: String}
-     * 注：productId和device要配置正确, 1xxxx均为android, 2xxxxx为ios. 否则会找不到商品
-     */
-    game.post('/payment4OSS', function (req, res) {
-        loggerPayment.debug('payment4OSS  route....');
-        //参数
-        var paymentData = req.body;
-
+    function authenticationIpAddress(req, res, next) {
         //NOTE: 身份验证(线上IP验证)
         var ipAddress = utils.getIpAddress(req.connection.remoteAddress);
         loggerPayment.debug('# from ip -> %s', ipAddress);
@@ -60,6 +51,48 @@ module.exports = function (app) {
             res.sendStatus(401);
             return;
         }
+        next();
+    }
+    
+    /**
+     * Apple IAP充值回调改为HTTP方式, 防止漏单情况(充值成功后,但是游戏连接断开)
+     */
+    game.post('/payment4AppleIAP', function (req, res) {
+        loggerPayment.debug('payment4AppleIAP  route....');
+        
+        //参数
+        var paymentData = req.body;
+        
+        if (paymentData.uid == null || paymentData.uid == undefined || 
+        paymentData.productId == null || paymentData.productId == undefined ||
+        paymentData.product == null || paymentData.product == undefined) {
+            res.sendStatus(400);
+            return;
+        }
+        
+        
+        //remote call
+        try {
+            app.rpc.manager.universalRemote.payment4IAP(null, paymentData, function (data) {
+                loggerPayment.debug('处理Apple IAP的支付逻辑 rpc invoke finished.');
+                res.sendStatus(data.code);
+            });
+        } catch (err) {
+            loggerPayment.error("处理Apple IAP的支付逻辑时候发生异常 %j", {err: err, req: {body: req.body}});
+            res.sendStatus(500);
+        }
+        
+    })
+    
+    /**
+     * 为玩家充值，使用场景：当玩家通过人工转账方式充值，则需要客服人员在业务系统操作
+     * req.body {JSON} = {uid: String, productId: Int, device: String}
+     * 注：productId和device要配置正确, 1xxxx均为android, 2xxxxx为ios. 否则会找不到商品
+     */
+    game.post('/payment4OSS', authenticationIpAddress, function (req, res) {
+        loggerPayment.debug('payment4OSS  route....');
+        //参数
+        var paymentData = req.body;
 
         if (paymentData.uid == null || paymentData.uid == undefined || paymentData.productId == null || paymentData.productId == undefined) {
             res.sendStatus(400);
@@ -108,7 +141,7 @@ module.exports = function (app) {
     });
 
     //获得商城列表
-    game.get('/getShopList', function (req, res) {
+    game.get('/getShopList', authenticationIpAddress, function (req, res) {
         var data = {device: req.query.device || 'android'};
         app.rpc.manager.universalRemote.getShopList(null, data, function (data) {
             logger.debug('获取商城列表 rpc invoke finished.');
@@ -117,7 +150,7 @@ module.exports = function (app) {
     });
     
     //获得物品信息
-    game.get('/getItemList', function (req, res) {
+    game.get('/getItemList', authenticationIpAddress, function (req, res) {
         app.rpc.manager.universalRemote.getItemList(null, null, function (data) {
             logger.debug('获取物品列表 rpc invoke finished.');
                 res.send(data);
@@ -125,7 +158,7 @@ module.exports = function (app) {
     });
     
     //获得兑换列表
-    game.get('/getExchangeListNew', function (req, res) {
+    game.get('/getExchangeListNew', authenticationIpAddress, function (req, res) {
         app.rpc.manager.universalRemote.getExchangeListNew(null, {os: 'android'}, function (data) {
             logger.debug('获得兑换列表 rpc invoke finished.');
                 res.send(data);
@@ -133,7 +166,7 @@ module.exports = function (app) {
     });
     
     //根据uid获得玩家兑换记录
-    game.get('/getMyExchangeRecordList', function (req, res) {
+    game.get('/getMyExchangeRecordList', authenticationIpAddress, function (req, res) {
         if (!req.query.uid) {
             res.sendStatus(400);
             return;
@@ -145,7 +178,7 @@ module.exports = function (app) {
     });
     
     //根据排行榜类型获得排行榜信息： type: const.RANKING_LIST.x
-    game.get('/getRankingList', function (req, res) {
+    game.get('/getRankingList', authenticationIpAddress, function (req, res) {
         if (!req.query.type) {
             res.sendStatus(400);
             return;
@@ -161,7 +194,7 @@ module.exports = function (app) {
      * 为玩家添加金币：不走订单系统；使用场景：活动奖励，内部人士等
      * @param data: {uid: String, type: const.GLOBAL.ADD_GOLD_TYPE.x, gold: Int}
      */
-    game.post('/addGold', function (req, res) {
+    game.post('/addGold', authenticationIpAddress, function (req, res) {
         var data = req.body;
         try {
             if (!data.uid || !data.type || !data.gold) {
@@ -184,7 +217,7 @@ module.exports = function (app) {
      * 为玩家添加物品：不走订单系统；使用场景：活动奖励，内部人士等
      * @param data: {JSON} = {uid: String, type: const.GLOBAL.ADD_GOLD_TYPE.x, items: [{id: Int, value: Int}]}
      */
-    game.post('/addItems', function(req, res) {
+    game.post('/addItems', authenticationIpAddress, function(req, res) {
         var data = req.body;
         try {
             if (!data.uid || !data.type || !data.items || !_.isArray(data.items) || data.items.length === 0) {
@@ -206,7 +239,7 @@ module.exports = function (app) {
      * 为玩家添加元宝：不走订单系统；使用场景：活动奖励，内部人士等
      * @param data: {JSON} = {uid: String, type: const.GLOBAL.ADD_FRAGMENT_TYPE, fragment: Int}
      */
-    game.post('/addFragment', function(req, res) {
+    game.post('/addFragment', authenticationIpAddress, function(req, res) {
         var data = req.body;
         try {
             if (!data.uid || !data.type || !data.fragment) {
@@ -223,17 +256,12 @@ module.exports = function (app) {
             res.sendStatus(500);
         }
     });
-    
-    //发送公告信息
-    game.post('/BBS', function(req, res) {
-        
-    });
 
 
     /**
      * 获取游戏服务器缓存中在线人数总数
      */
-    game.get('/getOnlineUserTotal', function (req, res) {
+    game.get('/getOnlineUserTotal', authenticationIpAddress, function (req, res) {
         try {
             app.rpc.manager.userRemote.getAllOnlineUser(null, function (data) {
                 logger.debug('获取当前在线用户情况成功');
@@ -249,7 +277,7 @@ module.exports = function (app) {
      * 获取游戏服务器缓存中指定uids的玩家信息
      * req.query = {uids: String} = 'id,id,id'
      */
-    game.get('/getOnlineUserByUids', function (req, res) {
+    game.get('/getOnlineUserByUids', authenticationIpAddress, function (req, res) {
         try {
             var uids = req.query.uids;
             uids = uids.split(',');
@@ -267,7 +295,7 @@ module.exports = function (app) {
      * 发送BBS: 公告类互动消息类
      * req.body = {content: content} = ''
      */
-    game.post('/sendBBS', function (req, res) {
+    game.post('/sendBBS', authenticationIpAddress, function (req, res) {
         try {
             var data = req.body;
             if (!data.content || data.content == '') {

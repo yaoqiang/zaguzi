@@ -40,11 +40,11 @@ module.exports = function (app) {
 
         if (!_.contains(acceptIpList, ipAddress)) {
             loggerPayment.error("%j", {
-                uid: paymentData.uid,
+                //uid: paymentData.uid,
                 orderSerialNumber: null,
                 type: consts.LOG.CONF.PAYMENT,
-                action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
-                message: '非法IP直接操作HTTP，为玩家充值',
+                action: 'ALL',
+                message: '非法IP直接操作HTTP',
                 created: new Date(),
                 detail: {ipAddress: ipAddress}
             });

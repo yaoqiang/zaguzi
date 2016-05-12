@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var Code = require('../../../../../shared/code');
 
 var playerService = require('../../../services/playerService');

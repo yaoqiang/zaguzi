@@ -6,7 +6,7 @@ var consts = require('../../../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var _ = require('lodash');
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 
 var messageService = require('../../../services/messageService');
 

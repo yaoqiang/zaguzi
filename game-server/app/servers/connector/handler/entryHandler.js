@@ -10,7 +10,7 @@ var consts = require('../../../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var loggerLogin = require('log4js').getLogger(consts.LOG.LOGIN_RECORD);
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var _ = require('lodash');
 
 module.exports = function (app) {

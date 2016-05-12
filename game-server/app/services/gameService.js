@@ -2,7 +2,7 @@
  * Module dependencies
  */
 var _ = require('lodash');
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 
 var consts = require('../consts/consts');
 var Code = require('../../../shared/code');

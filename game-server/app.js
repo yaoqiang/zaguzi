@@ -1,4 +1,4 @@
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var routeUtil = require('./app/util/routeUtil');
 var sync = require('pomelo-sync-plugin');
 

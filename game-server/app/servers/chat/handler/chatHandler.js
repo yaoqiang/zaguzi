@@ -7,7 +7,7 @@ var gameUtil = require('../../../util/gameUtil');
 var logger = require('log4js').getLogger(consts.LOG.GAME);
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var utils = require('../../../util/utils');
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var _ = require('lodash');
 
 

@@ -1,6 +1,6 @@
 var consts = require('../consts/consts');
 var logger = require('log4js').getLogger(consts.LOG.USER);
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var _ = require('lodash');
 
 var async = require('async');

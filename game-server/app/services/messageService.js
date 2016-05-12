@@ -1,4 +1,4 @@
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 var consts = require('../consts/consts');
 var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 

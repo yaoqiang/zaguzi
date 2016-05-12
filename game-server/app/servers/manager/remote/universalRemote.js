@@ -7,7 +7,7 @@ var open = require('../../../consts/open');
 var itemConf = require('../../../../config/data/item');
 
 
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 
 var logger = require('log4js').getLogger(consts.LOG.USER);
 var logger4payment = require('log4js').getLogger(consts.LOG.PAYMENT);

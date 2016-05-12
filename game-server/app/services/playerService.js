@@ -1,6 +1,6 @@
 
 var _ = require('lodash');
-var pomelo = require('pomelo');
+var pomelo = require('pomelo-rt');
 
 //constants
 var consts = require('../consts/consts');

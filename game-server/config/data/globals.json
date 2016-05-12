@@ -15,36 +15,36 @@
     "checkIn": [
         {
             "day": 1,
-            "gold": 500
-        },
-        {
-            "day": 2,
-            "gold": 600
-        },
-        {
-            "day": 3,
-            "gold": 700
-        },
-        {
-            "day": 4,
-            "gold": 800
-        },
-        {
-            "day": 5,
-            "gold": 900
-        },
-        {
-            "day": 6,
             "gold": 1000
         },
         {
+            "day": 2,
+            "gold": 1100
+        },
+        {
+            "day": 3,
+            "gold": 1200
+        },
+        {
+            "day": 4,
+            "gold": 1300
+        },
+        {
+            "day": 5,
+            "gold": 1400
+        },
+        {
+            "day": 6,
+            "gold": 1500
+        },
+        {
             "day": 7,
-            "gold": 1100,
+            "gold": 1600,
             "items": []
         }
     ],
     "bankruptcyGrant": {
-        "times": 2,
+        "times": 3,
         "threshold": 1000,
         "gold": 1000
     }

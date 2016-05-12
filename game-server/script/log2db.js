@@ -9,6 +9,32 @@ var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var db = mongojs('zgz', ['logGameRecord', 'logLoginRecord', 'logPaymentRecord', 'logOnlineRecord', 'logUserRecord']);
 
+
+db.logGameRecord.ensureIndex({roomId: 1});
+db.logGameRecord.ensureIndex({result: 1});
+db.logGameRecord.ensureIndex({meeting: 1});
+db.logGameRecord.ensureIndex({createdAt: 1});
+db.logGameRecord.ensureIndex({roomId: 1, result: 1, meeting: 1});
+
+
+db.logLoginRecord.ensureIndex({uid: 1});
+db.logLoginRecord.ensureIndex({createdAt: 1});
+db.logLoginRecord.ensureIndex({os: 1});
+db.logLoginRecord.ensureIndex({uid: 1, createdAt: 1});
+db.logLoginRecord.ensureIndex({uid: 1, createdAt: 1, os: 1});
+
+db.logPaymentRecord.ensureIndex({uid: 1});
+db.logPaymentRecord.ensureIndex({createdAt: 1});
+
+db.logOnlineRecord.ensureIndex({createdAt: 1});
+db.logOnlineRecord.ensureIndex({'data.total': 1});
+db.logOnlineRecord.ensureIndex({createdAt: 1, 'data.total': 1});
+
+db.logUserRecord.ensureIndex({uid: 1});
+db.logUserRecord.ensureIndex({createdAt: 1});
+
+
+
 var glob = require("glob")
 
 try {

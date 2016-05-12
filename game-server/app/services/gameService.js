@@ -8,6 +8,7 @@ var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 
 var logger = require('log4js').getLogger(consts.LOG.GAME);
+var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 
 var Game = require('../domain/entity/game');
 var gameResponse = require('../domain/response/gameResponse');
@@ -106,6 +107,11 @@ gameService.ready = function(data, cb)
         return;
     }
     var game = this.getGameById(data.gameId);
+
+    if (_.isUndefined(game)) {
+        loggerErr.error('%j', {method: "service.gameService.ready", uid: data.uid, gameId: data.gameId, desc: '玩家准备时, 客户端传入的gameId不存在牌局实例', gGameList: {gGameListLength: _.size(gGameList), gGameIdList: _.pluck(gGameList, 'gameId')}});
+    }
+
     //如果玩家已准备，则返回已准备
     var actor = _.findWhere(game.actors, {uid: data.uid});
     if (actor.isReady) {

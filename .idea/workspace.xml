@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ac4255f5-d838-46ee-9688-1bb605ce6c7a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app.js" afterPath="$PROJECT_DIR$/game-server/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app/http/controller/GameController.js" afterPath="$PROJECT_DIR$/game-server/app/http/controller/GameController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app/servers/manager/remote/universalRemote.js" afterPath="$PROJECT_DIR$/game-server/app/servers/manager/remote/universalRemote.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/config/data/room.json" afterPath="$PROJECT_DIR$/game-server/config/data/room.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/config/servers.json" afterPath="$PROJECT_DIR$/game-server/config/servers.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shared/code.js" afterPath="$PROJECT_DIR$/shared/code.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app/dao/mongodb.js" afterPath="$PROJECT_DIR$/game-server/app/dao/mongodb.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app/servers/game/remote/gameRemote.js" afterPath="$PROJECT_DIR$/game-server/app/servers/game/remote/gameRemote.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/app/services/gameService.js" afterPath="$PROJECT_DIR$/game-server/app/services/gameService.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/game-server/script/log2db.js" afterPath="$PROJECT_DIR$/game-server/script/log2db.js" />
     </list>
     <ignored path="zgz.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,41 +26,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="entryHandler.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="240" column="5" selection-start-line="240" selection-start-column="5" selection-end-line="240" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="log4jsCustom.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game-server/config/log4jsCustom.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.875">
-              <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="servers.json" pinned="false" current-in-tab="false">
+      <file leaf-file-name="servers.json" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game-server/config/servers.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-23.75">
-              <caret line="40" column="6" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
+            <state vertical-scroll-proportion="1.8289474">
+              <caret line="77" column="1" selection-start-line="77" selection-start-column="1" selection-end-line="77" selection-end-column="1" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gameLogic.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game-server/app/domain/logic/gameLogic.js">
+      <file leaf-file-name="log2db.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/script/log2db.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.925926">
-              <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
+            <state vertical-scroll-proportion="-5.740741">
+              <caret line="140" column="46" selection-start-line="140" selection-start-column="46" selection-end-line="140" selection-end-column="46" />
+              <folding>
+                <marker date="1463011360000" expanded="true" signature="1269:14273" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="1332:1470" placeholder="//..." />
+                <marker date="1463011360000" expanded="true" signature="1514:2060" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="1575:2050" placeholder="[...]" />
+                <marker date="1463011360000" expanded="true" signature="2084:14270" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="2188:14073" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="2292:4920" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="2360:4899" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="2455:2585" placeholder="{&quot;terminal&quot;: false...}" />
+                <marker date="1463011360000" expanded="true" signature="2614:4344" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="2708:2974" placeholder="//..." />
+                <marker date="1463011360000" expanded="true" signature="3008:3173" placeholder="//..." />
+                <marker date="1463011360000" expanded="true" signature="3259:4314" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="3988:4218" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="4076:4178" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="4399:4874" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="4475:4842" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="4626:4806" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="4997:7124" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="5065:7104" placeholder="{...}" />
+                <marker date="1463011360000" expanded="true" signature="5160:5290" placeholder="{&quot;terminal&quot;: false...}" />
+                <marker date="1463011360000" expanded="true" signature="5319:6543" placeholder="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="userRemote.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/servers/manager/remote/userRemote.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="89" column="28" selection-start-line="89" selection-start-column="21" selection-end-line="89" selection-end-column="28" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="playerService.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/services/playerService.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.5555553">
+              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -71,18 +92,61 @@
       <file leaf-file-name="game.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game-server/app/domain/entity/game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.5925927">
-              <caret line="307" column="13" selection-start-line="307" selection-start-column="11" selection-end-line="307" selection-end-column="13" />
+            <state vertical-scroll-proportion="-1.1481482">
+              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/game-server/app.js">
+      <file leaf-file-name="balanceService.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/services/balanceService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4430693">
-              <caret line="153" column="3" selection-start-line="153" selection-start-column="3" selection-end-line="153" selection-end-column="3" />
+            <state vertical-scroll-proportion="-27.814816">
+              <caret line="187" column="38" selection-start-line="187" selection-start-column="31" selection-end-line="187" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gameService.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/services/gameService.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="44.25926">
+              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+              <folding>
+                <marker date="1463011360000" expanded="true" signature="0:30" placeholder="/** Module dependencies ...*/" />
+                <marker date="1463011360000" expanded="true" signature="3167:3466" placeholder="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gameRemote.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/servers/game/remote/gameRemote.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.5925927">
+              <caret line="132" column="45" selection-start-line="132" selection-start-column="45" selection-end-line="132" selection-end-column="45" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="consts.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/app/consts/consts.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="366" column="19" selection-start-line="366" selection-start-column="8" selection-end-line="366" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="simpleRun.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game-server/script/simpleRun.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-1.6666666">
+              <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -122,6 +186,7 @@
         <option value="$PROJECT_DIR$/game-server/script/initTestData.js" />
         <option value="$PROJECT_DIR$/game-server/config/log4jsCustom.json" />
         <option value="$PROJECT_DIR$/game-server/app.js" />
+        <option value="$PROJECT_DIR$/game-server/config/servers.json" />
       </list>
     </option>
   </component>
@@ -194,6 +259,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="game-server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="zgz" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="zgz" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game-server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="script" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -401,12 +484,12 @@
     <frame x="4" y="23" width="1276" height="777" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2565737" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2565737" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32846716" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2671533" sideWeight="0.5059761" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25547445" sideWeight="0.4948207" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36934307" sideWeight="0.49402392" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36934307" sideWeight="0.49402392" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3211679" sideWeight="0.49721116" order="12" side_tool="false" content_ui="tabs" x="1373" y="787" width="1898" height="247" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3211679" sideWeight="0.49561754" order="8" side_tool="false" content_ui="tabs" />
@@ -459,7 +542,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/game-server/app/services/gameService.js</url>
-          <line>22</line>
+          <line>23</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
@@ -468,56 +551,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo-collection/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/node_modules/socket.io/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/lib/common/remote/backend/msgRemote.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.560166">
-          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/lib/components/remote.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.186722">
-          <caret line="6" column="16" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/lib/pomelo.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.5925927">
-          <caret line="29" column="16" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="16" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/lib/util/constants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31120333">
-          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo/lib/application.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-6.148148">
@@ -720,22 +753,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/servers/game/remote/gameRemote.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="46" column="11" selection-start-line="46" selection-start-column="11" selection-end-line="46" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/services/balanceService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="187" column="12" selection-start-line="187" selection-start-column="12" selection-end-line="187" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/node_modules/pomelo-rpc-ws/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2393617">
@@ -826,14 +843,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/domain/entity/game.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.5925927">
-          <caret line="307" column="13" selection-start-line="307" selection-start-column="11" selection-end-line="307" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/domain/logic/gameLogic.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.925926">
@@ -866,18 +875,116 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/config/servers.json">
+    <entry file="file://$PROJECT_DIR$/game-server/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-23.75">
-          <caret line="40" column="6" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="153" column="3" selection-start-line="153" selection-start-column="3" selection-end-line="153" selection-end-column="3" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app.js">
+    <entry file="file://$PROJECT_DIR$/game-server/script/simpleRun.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4430693">
-          <caret line="153" column="3" selection-start-line="153" selection-start-column="3" selection-end-line="153" selection-end-column="3" />
+        <state vertical-scroll-proportion="-1.6666666">
+          <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/consts/consts.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="366" column="19" selection-start-line="366" selection-start-column="8" selection-end-line="366" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/servers/manager/remote/userRemote.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="89" column="28" selection-start-line="89" selection-start-column="21" selection-end-line="89" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/script/log2db.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.740741">
+          <caret line="140" column="46" selection-start-line="140" selection-start-column="46" selection-end-line="140" selection-end-column="46" />
+          <folding>
+            <marker date="1463011360000" expanded="true" signature="1269:14273" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="1332:1470" placeholder="//..." />
+            <marker date="1463011360000" expanded="true" signature="1514:2060" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="1575:2050" placeholder="[...]" />
+            <marker date="1463011360000" expanded="true" signature="2084:14270" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="2188:14073" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="2292:4920" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="2360:4899" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="2455:2585" placeholder="{&quot;terminal&quot;: false...}" />
+            <marker date="1463011360000" expanded="true" signature="2614:4344" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="2708:2974" placeholder="//..." />
+            <marker date="1463011360000" expanded="true" signature="3008:3173" placeholder="//..." />
+            <marker date="1463011360000" expanded="true" signature="3259:4314" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="3988:4218" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="4076:4178" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="4399:4874" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="4475:4842" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="4626:4806" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="4997:7124" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="5065:7104" placeholder="{...}" />
+            <marker date="1463011360000" expanded="true" signature="5160:5290" placeholder="{&quot;terminal&quot;: false...}" />
+            <marker date="1463011360000" expanded="true" signature="5319:6543" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/playerService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.5555553">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/balanceService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-27.814816">
+          <caret line="187" column="38" selection-start-line="187" selection-start-column="31" selection-end-line="187" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/domain/entity/game.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.1481482">
+          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/gameService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="44.25926">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <marker date="1463011360000" expanded="true" signature="0:30" placeholder="/** Module dependencies ...*/" />
+            <marker date="1463011360000" expanded="true" signature="3167:3466" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/servers/game/remote/gameRemote.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.5925927">
+          <caret line="132" column="45" selection-start-line="132" selection-start-column="45" selection-end-line="132" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/config/servers.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.8289474">
+          <caret line="77" column="1" selection-start-line="77" selection-start-column="1" selection-end-line="77" selection-end-column="1" />
           <folding />
         </state>
       </provider>

@@ -133,6 +133,10 @@ GameRemote.prototype.fan = function (data, cb) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.ERR});
             return;
         }
+        if (data.gameId !== user.gameId) {
+            loggerErr.error('%j', {method: "game.gameRemote.fan", uid: data.uid, data: data, userGameId: user.gameId, desc: '出牌时, 客户端传入的gameId和用户缓存的user.gameId不一致'});
+            //data.gameId = user.gameId;
+        }
         gameService.fan(data, cb);
     });
 }

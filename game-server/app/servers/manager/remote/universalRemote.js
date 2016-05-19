@@ -172,7 +172,7 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                cb();
+                cb({code: Code.FAIL});
                 return;
             }
             
@@ -200,7 +200,7 @@ UniversalRemote.prototype = {
                                 uid: data.uid,
                                 sid: dispatcher(data.uid, connectors).id
                             }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                            cb();
+                            cb({code: Code.FAIL});
                             return;
                         }
                         
@@ -241,7 +241,7 @@ UniversalRemote.prototype = {
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                    cb();
+                    cb({code: Code.FAIL});
                 }
                 return;
             }

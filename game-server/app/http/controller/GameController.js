@@ -75,7 +75,7 @@ module.exports = function (app) {
         try {
             app.rpc.manager.universalRemote.payment4IAP(null, paymentData, function (data) {
                 loggerPayment.debug('处理Apple IAP的支付逻辑 rpc invoke finished.');
-                res.sendStatus(data.code);
+                res.send(data);
             });
         } catch (err) {
             loggerPayment.error("处理Apple IAP的支付逻辑时候发生异常 %j", {err: err, req: {body: req.body}});

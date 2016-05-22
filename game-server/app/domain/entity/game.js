@@ -94,12 +94,12 @@ Game.prototype.join = function (data, cb) {
 
 Game.prototype.ready = function (data, cb) {
 
-    for (var i in data) {
-        if (!data[i] || data[i] <= 0) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ERR});
-            return;
-        }
-    }
+    //for (var i in data) {
+    //    if (!data[i] || data[i] <= 0) {
+    //        cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ERR});
+    //        return;
+    //    }
+    //}
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {

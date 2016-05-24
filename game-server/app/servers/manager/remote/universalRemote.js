@@ -55,6 +55,9 @@ UniversalRemote.prototype = {
     },
 
 
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
     sendBindingSMS: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
@@ -63,10 +66,21 @@ UniversalRemote.prototype = {
                 return;
             }
             data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.MOBILE_BINDING;
-            openService.sendSMS(data, cb);
+            openService.sendBindingSMS(data, cb);
         });
     },
+    
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
+    sendResetPasswordSMS: function (data, cb) {
+        data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.RESET_PASSWORD;
+        openService.sendResetPasswordSMS(data, cb);
+    },
 
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
     bindingMobile: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
@@ -84,6 +98,13 @@ UniversalRemote.prototype = {
                 cb(data);
             });
         });
+    },
+    
+    /**
+     * @param data: { captcha: String, mobile: String, password: String }
+     */
+    resetPassword: function (data, cb) {
+        commonService.resetPassword(data, cb);
     },
 
     //////////////////////////////////

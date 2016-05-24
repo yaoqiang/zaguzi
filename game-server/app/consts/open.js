@@ -6,7 +6,8 @@ module.exports = {
             METHOD: 'GET',
             CONTENT_TYPE: 'JSON',
             TEMPLATE_ID: {
-                MOBILE_BINDING: 9903
+                MOBILE_BINDING: 9903,
+                RESET_PASSWORD: 14191
             }
         }
     },

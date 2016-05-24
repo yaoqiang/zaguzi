@@ -31,7 +31,55 @@ var openService = module.exports
  */
 openService.sendSMS = function (data, cb) {
     //mobile=手机号码&tpl_id=短信模板ID&tpl_value=%23code%23%3D654654&key=
-    if (_.isElement(data.mobile)) {
+
+    //调用第三方平台发送短信验证码, 4位数字
+    var captcha = Math.floor(Math.random() * (9999 - 1000) + 1000);
+
+    commonDao.updateCaptchaCode({mobile: data.mobile, captcha: captcha}, function (updateResult) {
+        if (!updateResult) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+            return;
+        }
+
+        //request paramters
+        data.tpl_id = data.tplId;
+        data.tpl_value = '%23code%23%3D' + captcha;
+        data.key = open.JUHE.SMS_API.APP_KEY;
+
+        var options = {
+            method: open.JUHE.SMS_API.METHOD,
+            url: open.JUHE.SMS_API.URL,
+            qs: data
+        };
+
+        request(options, function (err, response, body) {
+            if (err) {
+                loggerErr.error('open-sms||发送短信失败||');
+                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+                return;
+            }
+
+            var bodyJson = JSON.parse(body);
+
+            if (bodyJson.error_code != 0) {
+                loggerErr.error('open-sms||发送短信失败||');
+                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+                return;
+            }
+
+            cb({code: Code.OK});
+        });
+
+    });
+
+}
+
+/**
+ * 发送绑定手机短信验证码
+ */
+openService.sendBindingSMS = function (data, cb) {
+    
+    if (data.mobile == '' || _.isNull(data.mobile)) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_BLANK});
         return;
     }
@@ -40,55 +88,42 @@ openService.sendSMS = function (data, cb) {
         cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_VALIDATE});
         return;
     }
-
+    
     userDao.findByMobile(data.mobile, function (err, result) {
         if (result) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_ALREADY_BINDING});
             return;
         }
-
-        //调用第三方平台发送短信验证码, 4位数字
-        var captcha = Math.floor(Math.random() * (9999 - 1000) + 1000);
-
-        commonDao.updateCaptchaCode({mobile: data.mobile, captcha: captcha}, function (updateResult) {
-            if (!updateResult) {
-                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
-                return;
-            }
-
-            //request paramters
-            data.tpl_id = data.tplId;
-            data.tpl_value = '%23code%23%3D' + captcha;
-            data.key = open.JUHE.SMS_API.APP_KEY;
-
-            var options = {
-                method: open.JUHE.SMS_API.METHOD,
-                url: open.JUHE.SMS_API.URL,
-                qs: data
-            };
-
-            request(options, function (err, response, body) {
-                if (err) {
-                    loggerErr.error('open-sms||发送短信失败||');
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
-                    return;
-                }
-
-                var bodyJson = JSON.parse(body);
-
-                if (bodyJson.error_code != 0) {
-                    loggerErr.error('open-sms||发送短信失败||');
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
-                    return;
-                }
-
-                cb({code: Code.OK});
-            });
-
-        });
-
+        
+        openService.sendSMS(data, cb);
+        
     });
+}
 
+/**
+ * 发送找回密码短信验证码
+ */
+openService.sendResetPasswordSMS = function (data, cb) {
+    
+    if (data.mobile == '' || _.isNull(data.mobile)) {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_BLANK});
+        return;
+    }
+
+    if (!utils.mobileValidate(data.mobile)) {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_VALIDATE});
+        return;
+    }
+    
+    userDao.findByMobile(data.mobile, function (err, result) {
+        if (!result) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_FOUNT});
+            return;
+        }
+        
+        openService.sendSMS(data, cb);
+        
+    });
 }
 
 //data: {mobile: xx, denomination: xx, number: xx}

@@ -227,6 +227,38 @@ commonDao.bindingMobile = function (data, cb) {
 }
 
 
+commonDao.resetPassword = function (data, cb) {
+    db.captcha.findOne({
+        mobile: data.mobile
+    }, function (err, doc) {
+        if (err || doc == null) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
+        if (doc.captcha != data.captcha) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
+
+        var password = passwordHash.generate(data.password);
+
+        db.user.findAndModify({
+            query: {
+                mobile: data.mobile
+            }, update: {
+                $set: {password: password}
+            }, new: true,
+        }, function (err, doc) {
+            if (err) {
+                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+            }
+            else {
+                cb({code: Code.OK});
+            }
+        })
+    })
+}
+
 //生成序列号消息
 commonDao.generateSerialCodeByType = function (data, cb) {
     var initNumber = 100000001;

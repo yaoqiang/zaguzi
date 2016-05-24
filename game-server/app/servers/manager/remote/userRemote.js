@@ -43,7 +43,7 @@ UserRemote.prototype.getProfileByUid = function (msg, cb) {
         }
         playerService.getUserInfo(msg.uid, function (result) {
             if (result) {
-                cb({player: ret.player, userInfo: {mobile: result.mobile}});
+                cb({player: ret.player, userInfo: {mobile: result.mobile, shortid: result.shortid}});
                 return;
             }
             cb({player: ret.player});

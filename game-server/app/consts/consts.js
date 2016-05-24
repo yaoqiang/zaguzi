@@ -135,7 +135,8 @@ module.exports = {
             MOBILE_NOT_VALIDATE: 9302,
             MOBILE_ALREADY_BINDING: 9303,
             CAPTCHA_ERR: 9304,
-            ERR: 9305
+            ERR: 9305,
+            MOBILE_NOT_FOUNT: 9306
         }
     },
     ERR_MESSAGE: {
@@ -210,6 +211,7 @@ module.exports = {
         9303: "该手机已绑定",
         9304: "验证码错误",
         9305: "操作失败",
+        9306: "您输入的手机号没有绑定游戏帐号"
 
     },
     MESSAGE: {

@@ -97,7 +97,22 @@ commonService.bindingMobile = function (data, cb) {
 
         commonDao.bindingMobile(data, cb);
     });
+}
 
+commonService.resetPassword = function (data, cb) {
+    if (!data.captcha || !data.mobile || !data.password) {
+        cb({code: Code.FAIL});
+        return;
+    }
+
+    userDao.findByMobile(data.mobile, function (err, result) {
+        if (!result) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_VALIDATE});
+            return;
+        }
+
+        commonDao.resetPassword(data, cb);
+    });
 
 }
 

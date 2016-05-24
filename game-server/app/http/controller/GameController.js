@@ -312,7 +312,36 @@ module.exports = function (app) {
         }
     });
 
-
+    //---------------------------
+    // 
+    //---------------------------
+    //发送找回密码验证码
+    game.post('/sendResetPasswordSMS', function (req, res) {
+        try {
+            var data = req.body;
+            
+            this.app.rpc.manager.universalRemote.sendResetPasswordSMS(session, msg, function (data) {
+                next(null, data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+    });
+    
+    //重置密码
+    game.post('/sendResetPasswordSMS', function (req, res) {
+        try {
+            var data = req.body;
+            
+            this.app.rpc.manager.universalRemote.resetPassword(session, msg, function (data) {
+                next(null, data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+    })
 
 
     return game;

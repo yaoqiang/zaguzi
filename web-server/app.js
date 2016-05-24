@@ -16,6 +16,8 @@ var methodOverride = require('method-override');
 
 var passwordHash = require('password-hash');
 
+var shortid = require('shortid');
+
 
 app.use(methodOverride('_method'));
 app.use(cookieParser());
@@ -47,7 +49,7 @@ app.post('/autoLogin', function (req, res) {
     var data = req.body;
 
     var os = data.os || 'unknown';
-    
+
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {
         username: '',
@@ -55,7 +57,8 @@ app.post('/autoLogin', function (req, res) {
         os: os,
         loginCount: 1,
         lastLoginAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
+        shortid: shortid.generate()
     };
     db.user.save(user, function (err, doc) {
         logger.debug('A new user was created! --' + doc._id);
@@ -92,7 +95,7 @@ app.post('/loginByToken', function (req, res) {
         });
         return;
     }
-    
+
     //result: [uid, timestamp, password]
     var result = Token.parse(data.token, secret);
     if (result == null) {
@@ -178,7 +181,7 @@ app.post('/login', function (req, res) {
         }
 
         //密码加密
-        
+
         if (!passwordHash.verify(pwd.toString(), user.password.toString())) {
             // TODO code
             // password is wrong

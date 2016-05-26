@@ -445,6 +445,36 @@ playerService.getMyItemList = function (data, cb) {
     });
 }
 
+/**
+ * 处理邀请奖励
+ * @param mobile 被邀请人(新人)绑定手机号码
+ * @param uid 邀请人uid(绑定时输入的邀请码的用户)
+ */
+playerService.getInviteGrant = function (mobile, uid, cb) {
+    var inviteGrantData = globals.inviteGrant;
+    var data = {uid: uid, gold: inviteGrantData.gold, items: inviteGrantData.items, type: consts.GLOBAL.ADD_GOLD_TYPE.INVITE};
+    new Promise(function (resolve, reject) {
+        playerService.addGold(data, function (addGoldResult) {
+            resolve(addGoldResult);
+        })
+    })
+    .then(function (addGoldResult) {
+        if (addGoldResult.code !== Code.OK) {
+            cb(addGoldResult);
+            return;
+        }
+        playerService.addItems(data, function (addItemsResult) {
+            if (addItemsResult.code !== Code.OK) {
+                cb(addItemsResult);
+                return;
+            }
+            var inviteRecord = {uid: uid, mobile: mobile, createdAt: new Date(), state: consts.INVITE.STATE.FINISHED}
+            commonDao.saveInviteRecord(inviteRecord, function (saveInviteRecordResult) {
+                cb({code: Code.OK});
+            })
+        })
+    })
+}
 
 /////////////////////////////////////////////////////////////
 // 特殊情况：不走订单系统，为玩家处理金币、道具和元宝。比如活动

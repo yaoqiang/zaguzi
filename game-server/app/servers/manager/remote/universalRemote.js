@@ -5,6 +5,7 @@ var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
 var itemConf = require('../../../../config/data/item');
+var globals = require('../../../../config/data/globals');
 
 
 var pomelo = require('pomelo-rt');
@@ -91,7 +92,7 @@ UniversalRemote.prototype = {
             commonService.bindingMobile(data, function (data) {
                 //添加绑定手机金币奖励
                 if (data.code == Code.OK) {
-                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, consts.GLOBAL.BINDING_MOBILE_GRANT, function () {
+                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, global.bindingMobileGrant, function () {
 
                     });
                 }
@@ -129,6 +130,9 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
+    getInviteRecordListByUid: function (data, cb) {
+        commonService.getInviteRecordListByUid(data, cb);
+    },
     /**
      * Apple IAP支付完成后调用, 以便存储订单
      * IAP错误代码信息（方便查阅）

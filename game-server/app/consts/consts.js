@@ -6,7 +6,6 @@ module.exports = {
             FEMALE: 'FEMALE'
         },
         GOLD_INIT: 5000,
-        BINDING_MOBILE_GRANT: 1800,
         JOIN_MIN_GOLD: 1000,
         
         ADD_GOLD_TYPE: {
@@ -14,6 +13,7 @@ module.exports = {
             BATTLE: 'BATTLE',
             TASK: 'TASK',
             ACTIVITY: 'ACTIVITY',
+            INVITE: 'INVITE',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
@@ -24,6 +24,7 @@ module.exports = {
             BATTLE: 'BATTLE',
             TASK: 'TASK',
             ACTIVITY: 'ACTIVITY',
+            INVITE: 'INVITE',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
@@ -136,7 +137,8 @@ module.exports = {
             MOBILE_ALREADY_BINDING: 9303,
             CAPTCHA_ERR: 9304,
             ERR: 9305,
-            MOBILE_NOT_FOUNT: 9306
+            MOBILE_NOT_FOUNT: 9306,
+            INVITE_NOT_FOUNT: 9307
         }
     },
     ERR_MESSAGE: {
@@ -211,7 +213,8 @@ module.exports = {
         9303: "该手机已绑定",
         9304: "验证码错误",
         9305: "操作失败",
-        9306: "您输入的手机号没有绑定游戏帐号"
+        9306: "您输入的手机号没有绑定游戏帐号",
+        9307: "您输入邀请码不存在,请确认大小写无误"
 
     },
     MESSAGE: {
@@ -293,7 +296,7 @@ module.exports = {
             NOT_READY: 15,
             TALK: 15,
             FAN: 15,
-            TRUSTEESHIP: 2
+            TRUSTEESHIP: 1  //托管出牌时间
         },
         PHASE: {
             STARTING: 0,
@@ -302,7 +305,7 @@ module.exports = {
             OVER: 3
         },
         TRUSTEESHIP: {
-            TIMEOUT_TIMES: 2
+            TIMEOUT_TIMES: 1    //超时出牌N次后自动托管
         },
         RESULT: {
             RED_WIN: 'RED_WIN',
@@ -342,6 +345,13 @@ module.exports = {
             REFUND_SUCCESS: "REFUND_SUCCESS",
             REFUND_FAILED: "REFUND_FAILED"
         }
+    },
+    
+    INVITE: {
+        STATE: {
+            FINISHED: "FINISHED",
+            ERR: 'ERR'
+        }  
     },
 
     RANKING_LIST: {

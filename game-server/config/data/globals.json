@@ -1,16 +1,80 @@
 {
-    "defaultNickname":  ["钻石王老五","扎股子用户","西门吹雪","大唐哥","股民","专业扎股子","扎股子专业户","帅到没朋友","楚留香","北漂","亮3亮到天亮","我是帅哥","赌棍","扎一股","你说啥我说啥","灰个跑","大油","正男","大同人","游客","拧人","西门外","云冈后生","喜人火","乃心火"],
+    "defaultNickname": [
+        "钻石王老五",
+        "扎股子用户",
+        "西门吹雪",
+        "大唐哥",
+        "股民",
+        "专业扎股子",
+        "扎股子专业户",
+        "帅到没朋友",
+        "楚留香",
+        "北漂",
+        "亮3亮到天亮",
+        "我是帅哥",
+        "赌棍",
+        "扎一股",
+        "你说啥我说啥",
+        "灰个跑",
+        "大油",
+        "正男",
+        "大同人",
+        "游客",
+        "拧人",
+        "西门外",
+        "云冈后生",
+        "喜人火",
+        "乃心火",
+        "破车不挡道",
+        "狗娃儿",
+        "就是扎",
+        "无名",
+        "毛油",
+        "大哥家",
+        "哈货",
+        "烂股子"
+    ],
     "defaultAvatar": [
-        ["#touxiang_09.png","#touxiang_09_2.png"],
-        ["#touxiang_10.png","#touxiang_10_2.png"],
-        ["#touxiang_11.png","#touxiang_11_2.png"],
-        ["#touxiang_12.png","#touxiang_12_2.png"],
-        ["#touxiang_13.png","#touxiang_13_2.png"],
-        ["#touxiang_14.png","#touxiang_14_2.png"],
-        ["#touxiang_15.png","#touxiang_15_2.png"],
-        ["#touxiang_16.png","#touxiang_16_2.png"],
-        ["#touxiang_nan.png","#touxiang_nan_2.png"],
-        ["#touxiang_nv.png","#touxiang_nv_2.png"]
+        [
+            "#touxiang_09.png",
+            "#touxiang_09_2.png"
+        ],
+        [
+            "#touxiang_10.png",
+            "#touxiang_10_2.png"
+        ],
+        [
+            "#touxiang_11.png",
+            "#touxiang_11_2.png"
+        ],
+        [
+            "#touxiang_12.png",
+            "#touxiang_12_2.png"
+        ],
+        [
+            "#touxiang_13.png",
+            "#touxiang_13_2.png"
+        ],
+        [
+            "#touxiang_14.png",
+            "#touxiang_14_2.png"
+        ],
+        [
+            "#touxiang_15.png",
+            "#touxiang_15_2.png"
+        ],
+        [
+            "#touxiang_16.png",
+            "#touxiang_16_2.png"
+        ],
+        [
+            "#touxiang_nan.png",
+            "#touxiang_nan_2.png"
+        ],
+        [
+            "#touxiang_nv.png",
+            "#touxiang_nv_2.png"
+        ]
     ],
     "checkIn": [
         {
@@ -40,13 +104,35 @@
         {
             "day": 7,
             "gold": 1600,
-            "items": []
+            "items": [
+                {
+                    "id": 2,
+                    "value": 1
+                },
+                {
+                    "id": 3,
+                    "value": 1
+                }
+            ]
         }
     ],
     "bankruptcyGrant": {
         "times": 3,
         "threshold": 1000,
         "gold": 1000
+    },
+    "bindingMobileGrant": 1800,
+    "inviteGrant": {
+        "gold": 3000,
+        "items": [
+            {
+                "id": 2,
+                "value": 1
+            },
+            {
+                "id": 3,
+                "value": 1
+            }
+        ]
     }
-
 }

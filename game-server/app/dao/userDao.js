@@ -368,3 +368,23 @@ userDao.findByMobile = function (mobile, cb) {
         }
     });
 }
+
+/**
+ * 根据shortid查询用户是否存在，true: 存在，false: 不存在
+ */
+userDao.findByShortid = function (shortid, cb) {
+    db.user.findOne({
+        shortid: shortid
+    }, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err.message, null);
+            return;
+        }
+
+        if (doc) {
+            utils.invokeCallback(cb, null, doc);
+        } else {
+            utils.invokeCallback(cb, null, null);
+        }
+    });
+}

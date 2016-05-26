@@ -58,10 +58,10 @@ handler.getProfile = function (msg, session, next) {
  */
 handler.getProfileByUid = function (msg, session, next) {
     if (_.isUndefined(msg.uid)) {
-        next(null, {code: Code.FAIL});
+        next(null, { code: Code.FAIL });
         return;
     }
-    
+
     this.app.rpc.manager.userRemote.getUserCacheByUid(session, msg.uid, function (data) {
         var profile = {};
         if (!_.isUndefined(data)) {
@@ -85,11 +85,11 @@ handler.getProfileByUid = function (msg, session, next) {
  * 获取个人物品
  */
 handler.getItems = function (msg, session, next) {
-    
+
     msg.uid = session.uid
-    
+
     this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
-        next(null, {items: data.player.items});
+        next(null, { items: data.player.items });
     });
 }
 
@@ -275,12 +275,11 @@ handler.getRankingList = function (msg, session, next) {
 handler.getShopList = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.universalRemote.getShopList(session, msg, function (data) {
-        if (data.code === Code.FAIL)
-        {
-            next(null, {code: Code.FAIL, err: data.err});
+        if (data.code === Code.FAIL) {
+            next(null, { code: Code.FAIL, err: data.err });
             return;
         }
-        next(null, {code: Code.OK, shopList: data.shopList});
+        next(null, { code: Code.OK, shopList: data.shopList });
     })
 }
 
@@ -307,8 +306,8 @@ handler.requestPaymentByPingpp = function (msg, session, next) {
     this.app.rpc.manager.universalRemote.requestPaymentByPingpp(session, msg, function (data) {
         next(null, data);
     });
-    
-    
+
+
 }
 
 
@@ -336,7 +335,7 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
-    
+
     next();
 }
 
@@ -368,6 +367,15 @@ handler.bindingMobile = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.bindingMobile(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getInviteRecordListByUid = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getInviteRecordListByUid(session, msg, function (data) {
         next(null, data);
     });
 }

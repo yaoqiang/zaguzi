@@ -1,9 +1,11 @@
 var _ = require('lodash');
 var pomelo = require('pomelo-rt');
 
+var globals = require('../../config/data/globals');
 var consts = require('../consts/consts');
 var Code = require('../../../shared/code');
 var messageService = require('./messageService');
+var playerService = require('./playerService');
 var commonDao = require('../dao/commonDao');
 var userDao = require('../dao/userDao');
 
@@ -16,7 +18,7 @@ commonService.getRankingList = function (data, cb) {
     commonDao.getRankingList(data, function (err, doc) {
 
         if (err) {
-            cb({code: Code.OK, rankingList: []});
+            cb({ code: Code.OK, rankingList: [] });
             return;
         }
         if (doc && _.size(doc) > 0) {
@@ -30,10 +32,10 @@ commonService.getRankingList = function (data, cb) {
                 rankingList = _.sortBy(rankingList, 'totalAmount').reverse();
             }
 
-            cb({code: Code.OK, rankingList: rankingList});
+            cb({ code: Code.OK, rankingList: rankingList });
         }
         else {
-            cb({code: Code.OK, rankingList: []});
+            cb({ code: Code.OK, rankingList: [] });
         }
     });
 
@@ -57,14 +59,14 @@ commonService.getTopOfAppReleaseRecord = function (data, cb) {
                 messageService.pushMessageToPlayer({
                     uid: data.uid,
                     sid: data.sid
-                }, consts.EVENT.VERSION_UPGRADE, {isNew: true});
+                }, consts.EVENT.VERSION_UPGRADE, { isNew: true });
             }
         }
         else {
             messageService.pushMessageToPlayer({
                 uid: data.uid,
                 sid: data.sid
-            }, consts.EVENT.VERSION_UPGRADE, {isNew: true});
+            }, consts.EVENT.VERSION_UPGRADE, { isNew: true });
         }
     });
     cb();
@@ -73,10 +75,10 @@ commonService.getTopOfAppReleaseRecord = function (data, cb) {
 commonService.getSystemMessage = function (data, cb) {
     commonDao.getSystemMessage(data, function (err, doc) {
         if (doc) {
-            cb({code: Code.OK, systemMessageList: doc});
+            cb({ code: Code.OK, systemMessageList: doc });
         }
         else {
-            cb({code: Code.FAIL});
+            cb({ code: Code.FAIL });
         }
 
     })
@@ -85,29 +87,54 @@ commonService.getSystemMessage = function (data, cb) {
 
 commonService.bindingMobile = function (data, cb) {
     if (!data.captcha || !data.mobile || !data.password || !data.uid) {
-        cb({code: Code.FAIL});
+        cb({ code: Code.FAIL });
         return;
     }
 
+    //这段懒得搞Promise了, 不优雅了...
     userDao.findByMobile(data.mobile, function (err, result) {
         if (result) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_ALREADY_BINDING});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_ALREADY_BINDING });
             return;
         }
 
-        commonDao.bindingMobile(data, cb);
+        //如果输入了邀请码，验证邀请码
+        if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
+            userDao.findByShortid(data.shortid, function (err, doc) {
+                if (!doc) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_NOT_FOUNT});
+                    return;
+                }
+            })
+        }
+        commonDao.bindingMobile(data, function (bindingResult) {
+            //如果绑定成功, 处理邀请码相关奖励
+            if (bindingResult.code === Code.OK) {
+                if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
+                    userDao.findByShortid(data.shortid, function (err, doc) {
+                        if (doc) {
+                            playerService.getInviteGrant(data.mobile, doc._uid, function (getInviteGrantResult) {
+                            })
+                        }
+                    })
+                }
+            }
+            cb(bindingResult);
+        });
+        
     });
 }
 
+
 commonService.resetPassword = function (data, cb) {
     if (!data.captcha || !data.mobile || !data.password) {
-        cb({code: Code.FAIL});
+        cb({ code: Code.FAIL });
         return;
     }
 
     userDao.findByMobile(data.mobile, function (err, result) {
         if (!result) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_VALIDATE});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.MOBILE_NOT_VALIDATE });
             return;
         }
 
@@ -116,10 +143,19 @@ commonService.resetPassword = function (data, cb) {
 
 }
 
+
+commonService.getInviteRecordListByUid = function (data, cb) {
+    commonDao.getInviteRecordListByUid(data, cb);
+}
+
+
+//-----------------------
+// 订单相关
+//-----------------------
 commonService.setOrderStateByNumber = function (orderSerialNumber, state, charge, cb) {
     if (orderSerialNumber == '' || orderSerialNumber == undefined || orderSerialNumber == null) {
         //utils.invokeCallback
-        cb({code: Code.FAIL}, null);
+        cb({ code: Code.FAIL }, null);
         return;
     }
 
@@ -134,7 +170,7 @@ commonService.setOrderStateByNumber = function (orderSerialNumber, state, charge
 
 commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
     if (orderSerialNumber == '' || orderSerialNumber == undefined || orderSerialNumber == null) {
-        cb({code: Code.FAIL}, null);
+        cb({ code: Code.FAIL }, null);
         return;
     }
 
@@ -143,7 +179,7 @@ commonService.searchOrderByNumber = function (orderSerialNumber, cb) {
 
 commonService.searchLastOrderByUid = function (uid, cb) {
     if (uid == '' || uid == undefined || uid == null) {
-        cb({code: Code.FAIL}, null);
+        cb({ code: Code.FAIL }, null);
         return;
     }
 
@@ -152,7 +188,7 @@ commonService.searchLastOrderByUid = function (uid, cb) {
             cb(null, doc[0]);
         }
         else {
-            cb({code: Code.FAIL}, null);
+            cb({ code: Code.FAIL }, null);
         }
     });
 }
@@ -160,7 +196,7 @@ commonService.searchLastOrderByUid = function (uid, cb) {
 
 commonService.searchOrderByTransactionId = function (transactionId, cb) {
     if (transactionId == '' || transactionId == undefined || transactionId == null) {
-        cb({code: Code.FAIL}, null);
+        cb({ code: Code.FAIL }, null);
         return;
     }
 

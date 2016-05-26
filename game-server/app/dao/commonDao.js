@@ -259,6 +259,24 @@ commonDao.resetPassword = function (data, cb) {
     })
 }
 
+
+commonDao.saveInviteRecord = function (data) {
+    db.inviteRecord.save(data, function (err, doc) {
+        if (err) {
+            cb(err, null);
+            return;
+        }
+        cb(null, doc);
+    })
+}
+
+commonDao.getInviteRecordListByUid = function (data, cb) {
+    db.inviteRecord.find({uid: data.uid}).sort({_id: -1}).limit(20, function (err, docs) {
+        cb({code: Code.OK, inviteRecordList: docs});
+    })
+}
+
+
 //生成序列号消息
 commonDao.generateSerialCodeByType = function (data, cb) {
     var initNumber = 100000001;

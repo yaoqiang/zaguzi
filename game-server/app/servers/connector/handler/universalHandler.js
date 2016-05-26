@@ -285,7 +285,7 @@ handler.getShopList = function (msg, session, next) {
 }
 
 /**
- * 发送支付结果（Apple IAP使用）
+ * 发送支付结果（Apple IAP使用） --- 为v1.2前版本保留, v1.3以后客户端改为http方式
  */
 handler.sendPaymentResult = function (msg, session, next) {
     msg.uid = session.uid;

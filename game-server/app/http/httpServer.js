@@ -69,6 +69,16 @@ var httpStart = function (app) {
     // parse application/json
     server.use(bodyParser.json())
 
+    //设置跨域访问
+    server.all('*', function (req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Token");
+        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+        res.header("X-Powered-By", ' 4.13.3')
+        res.header("Content-Type", "application/json; charset=utf-8");
+        next();
+    });
+
 
     //router
     server.use('/callback/apix', require('./controller/APiXController')(app));

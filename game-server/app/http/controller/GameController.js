@@ -320,8 +320,8 @@ module.exports = function (app) {
         try {
             var data = req.body;
             
-            this.app.rpc.manager.universalRemote.sendResetPasswordSMS(session, msg, function (data) {
-                next(null, data);
+            app.rpc.manager.universalRemote.sendResetPasswordSMS(null, data, function (data) {
+                res.send(data);
             });
         } catch (err) {
             logger.error("", {err: err, req: req.body});
@@ -330,12 +330,12 @@ module.exports = function (app) {
     });
     
     //重置密码
-    game.post('/sendResetPasswordSMS', function (req, res) {
+    game.post('/resetPassword', function (req, res) {
         try {
             var data = req.body;
             
-            this.app.rpc.manager.universalRemote.resetPassword(session, msg, function (data) {
-                next(null, data);
+            app.rpc.manager.universalRemote.resetPassword(null, data, function (data) {
+                res.send(data);
             });
         } catch (err) {
             logger.error("", {err: err, req: req.body});

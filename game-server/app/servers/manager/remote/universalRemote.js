@@ -638,7 +638,7 @@ UniversalRemote.prototype = {
 
 
     getShopList: function (data, cb) {
-        cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
+        cb({code: Code.OK, shopList: shopService.getShopList(data.device, data.type)});
     },
     
     getItemList: function (data, cb) {

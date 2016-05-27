@@ -2,22 +2,25 @@ var pomelo = require('pomelo-rt');
 
 var exp = module.exports;
 
+var EVENT = {
+    FIRST_TIME_LOGIN_IN_DAY: 'FIRST_TIME_LOGIN_IN_DAY',
+    HIGHLIGHT_PROFILE: 'HIGHLIGHT_PROFILE',
+    HIGHLIGHT_DAILY_TODO: 'HIGHLIGHT_DAILY_TODO',
+    HIGHLIGHT_SYSTEM_MAIL: 'HIGHLIGHT_SYSTEM_MAIL',
+    HIGHLIGHT_SETTING: 'HIGHLIGHT_SETTING',
+    HIGHLIGHT_SHOP: 'HIGHLIGHT_SHOP',
+    HIGHLIGHT_RANKING_LIST: 'HIGHLIGHT_RANKING_LIST',
+    HIGHLIGHT_TASK: 'HIGHLIGHT_TASK',
+    HIGHLIGHT_EXCHANGE: 'HIGHLIGHT_EXCHANGE',
+    HIGHLIGHT_ACTIVITY: 'HIGHLIGHT_ACTIVITY'
+}
+
 /**
  * Listen player event
  */
 exp.addPlayerEvent = function (entity) {
     addPlayerSaveEvent(entity);
 };
-
-/**
- * listen gameRecord event
- */
-exp.addGameRecordEvent = function (entity) {
-    var app = pomelo.app;
-    entity.on('save', function () {
-        app.get('sync').exec('gameRecordSync.insert', null, entity);
-    });
-}
 
 /**
  * Add save event for player

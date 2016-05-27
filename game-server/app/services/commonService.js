@@ -98,29 +98,36 @@ commonService.bindingMobile = function (data, cb) {
             return;
         }
 
-        //如果输入了邀请码，验证邀请码
+        //如果输入了邀请码，验证邀请码，并处理邀请奖励
         if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
             userDao.findByShortid(data.shortid, function (err, doc) {
                 if (!doc) {
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_NOT_FOUNT});
                     return;
                 }
-            })
-        }
-        commonDao.bindingMobile(data, function (bindingResult) {
-            //如果绑定成功, 处理邀请码相关奖励
-            if (bindingResult.code === Code.OK) {
-                if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
-                    userDao.findByShortid(data.shortid, function (err, doc) {
-                        if (doc) {
-                            playerService.getInviteGrant(data.mobile, doc._uid, function (getInviteGrantResult) {
+                if (doc._uid == data.uid) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_CAN_NOT_BE_SELF});
+                    return;
+                }
+                commonDao.bindingMobile(data, function (bindingResult) {
+                    //如果绑定成功, 处理邀请码相关奖励
+                    if (bindingResult.code === Code.OK) {
+                        if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
+                            userDao.findByShortid(data.shortid, function (err, doc) {
+                                if (doc) {
+                                    playerService.getInviteGrant(data.mobile, doc._uid, function (getInviteGrantResult) {
+                                    })
+                                }
                             })
                         }
-                    })
-                }
-            }
-            cb(bindingResult);
-        });
+                    }
+                    cb(bindingResult);
+                });
+            })
+        }
+        else {
+            commonDao.bindingMobile(data, cb);
+        }
         
     });
 }

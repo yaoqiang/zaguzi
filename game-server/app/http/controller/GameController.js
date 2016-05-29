@@ -8,6 +8,7 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 var consts = require('../../consts/consts');
+var open = require('../../consts/open');
 var utils = require('../../util/utils');
 
 var log4js = require('log4js');
@@ -17,6 +18,13 @@ log4js.configure(log4jsConf, {});
 
 var logger = require('log4js').getLogger(consts.LOG.GAME_HTTP);   //game-http
 var loggerPayment = require('log4js').getLogger(consts.LOG.PAYMENT);
+
+var qiniu = require("qiniu");
+
+
+qiniu.conf.ACCESS_KEY = open.QINIU.ACCESS_KEY;
+qiniu.conf.SECRET_KEY = open.QINIU.SECRET_KEY;
+
 
 
 var game = express.Router();
@@ -341,6 +349,14 @@ module.exports = function (app) {
             logger.error("", {err: err, req: req.body});
             res.send({code: 500});
         }
+    });
+
+
+    game.post('/avatar/upload', function (req, res) {
+        var putPolicy = new qiniu.rs.PutPolicy(open.QINIU.BUCKET);
+        //putPolicy.callbackUrl = 'http://your.domain.com/callback';
+        //putPolicy.callbackBody = 'filename=$(fname)&filesize=$(fsize)';
+        res.send({token: putPolicy.token()});
     })
 
 

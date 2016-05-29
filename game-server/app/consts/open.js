@@ -38,5 +38,10 @@ module.exports = {
             "currency": "cny",
             "channel": ["alipay", "alipay_wap", "alipay_qr", "alipay_pc_direct", "apple_pay", "upacp", "upacp_wap", "upacp_pc", "cp_b2b", "wx"]
         }
-     }
+     },
+    QINIU: {
+        ACCESS_KEY: 'DTSlTafJNacx8C-A-tRc4BNeLemcExBRSaVi64IT',
+        SECRET_KEY: 'mOamLq6goviZGluTZzgOrSm7IETbYRkhu6i3morn',
+        BUCKET: 'zaguzi'
+    }
 }

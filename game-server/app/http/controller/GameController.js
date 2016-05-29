@@ -352,7 +352,7 @@ module.exports = function (app) {
     });
 
 
-    game.post('/avatar/upload', function (req, res) {
+    game.post('/getQiniuToken', function (req, res) {
         var putPolicy = new qiniu.rs.PutPolicy(open.QINIU.BUCKET);
         //putPolicy.callbackUrl = 'http://your.domain.com/callback';
         //putPolicy.callbackBody = 'filename=$(fname)&filesize=$(fsize)';

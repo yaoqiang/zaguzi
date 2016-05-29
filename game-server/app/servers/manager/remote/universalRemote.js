@@ -92,7 +92,7 @@ UniversalRemote.prototype = {
             commonService.bindingMobile(data, function (data) {
                 //添加绑定手机金币奖励
                 if (data.code == Code.OK) {
-                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, global.bindingMobileGrant, function () {
+                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, globals.bindingMobileGrant, function () {
 
                     });
                 }

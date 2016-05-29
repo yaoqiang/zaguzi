@@ -260,7 +260,7 @@ commonDao.resetPassword = function (data, cb) {
 }
 
 
-commonDao.saveInviteRecord = function (data) {
+commonDao.saveInviteRecord = function (data, cb) {
     db.inviteRecord.save(data, function (err, doc) {
         if (err) {
             cb(err, null);

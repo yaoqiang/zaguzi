@@ -105,7 +105,7 @@ commonService.bindingMobile = function (data, cb) {
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_NOT_FOUNT});
                     return;
                 }
-                if (doc._uid == data.uid) {
+                if (doc._id == data.uid) {
                     cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_CAN_NOT_BE_SELF});
                     return;
                 }
@@ -115,7 +115,7 @@ commonService.bindingMobile = function (data, cb) {
                         if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
                             userDao.findByShortid(data.shortid, function (err, doc) {
                                 if (doc) {
-                                    playerService.getInviteGrant(data.mobile, doc._uid, function (getInviteGrantResult) {
+                                    playerService.getInviteGrant(data.mobile, doc._id.toString(), function (getInviteGrantResult) {
                                     })
                                 }
                             })

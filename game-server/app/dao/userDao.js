@@ -172,6 +172,25 @@ userDao.createPlayer = function (uid, cb) {
 
 
 /**
+ * 更新玩家头像
+ * data: {uid: xx, avatar: String}
+ */
+userDao.updateAvatar = function (data, cb) {
+    db.player.findAndModify({
+        query: {uid: mongojs.ObjectId(data.uid)},
+        update: {$set: {avatar: data.avatar}}
+    }, function (err, doc, lastErrorObject) {
+        if (err) {
+            
+            utils.invokeCallback(cb, err, null);
+        } else {
+            
+            utils.invokeCallback(cb, null, doc);
+        }
+    });
+}
+
+/**
  * 更新玩家金币
  * data: {uid: xx, gold: xx}
  */

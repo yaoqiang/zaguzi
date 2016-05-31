@@ -207,6 +207,26 @@ playerService.updateProfile = function (data, cb) {
     });
 }
 
+/**
+ * @param data: {uid: String, avatar: String}
+ */
+playerService.updateAvatar = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        //如果玩家不在线，直接userDao；否则走sync
+        if (user == null || user === undefined) {
+            userDao.updateAvatar({ uid: data.uid, avatar: data.avatar }, function (err, doc) {
+                if (err) {
+                    return cb({ code: Code.FAIL });
+                }
+                return cb({ code: Code.OK });
+            });
+        }
+        else {
+            user.player.updateAvatar({avatar: data.avatar}, cb);
+        }
+    });
+}
+
 playerService.consumeTrumpet = function (data, cb) {
     playerService.getUserCacheByUid(data.uid, function (user) {
         if (user == null || _.isUndefined(user)) {

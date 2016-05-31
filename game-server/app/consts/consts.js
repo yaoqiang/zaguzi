@@ -413,7 +413,8 @@ module.exports = {
                     ADD_GOLD: 'ADD_GOLD',
                     ADD_FRAGMENT: 'ADD_FRAGMENT',
                     ADD_ITEM: 'ADD_ITEM',
-                    EXCHANGE: 'EXCHANGE'
+                    EXCHANGE: 'EXCHANGE',
+                    UPDATE_PROFILE: 'UPDATE_PROFILE'
                 }
             },
             PAYMENT: {

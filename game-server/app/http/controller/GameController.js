@@ -358,6 +358,20 @@ module.exports = function (app) {
         //putPolicy.callbackBody = 'filename=$(fname)&filesize=$(fsize)';
         res.send({token: putPolicy.token()});
     })
+    
+    game.post('/updateAvatar', function (req, res) {
+        try {
+            var data = req.body;
+            
+            app.rpc.manager.userRemote.updateAvatar(null, data, function (data) {
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+        
+    });
 
 
     return game;

@@ -71,6 +71,18 @@ Player.prototype.updateProfile = function (data, cb) {
     cb({code: Code.OK, nickName: this.nickName, summary: this.summary});
 }
 
+/**
+ * 修改头像，只支持修改自定义头像上传，丢到七牛cdn，全格式为：http://domain/key，只存储key，以防将来切换domain（目测不会切换）
+ */
+Player.prototype.updateAvatar = function (data, cb) {
+
+    this.avatar = data.avatar;
+
+    logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
+    this.saveProfile();
+    cb({code: Code.OK});
+}
+
 Player.prototype.addGold = function (type, gold, cb) {
 
     try {

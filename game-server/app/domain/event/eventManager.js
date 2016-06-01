@@ -1,22 +1,13 @@
 var pomelo = require('pomelo-rt');
+var consts = require('../../consts/consts');
+var messageService = require('../../services/messageService');
+var dispatcher = require('../../util/dispatcher').dispatch;
+var _ = require('lodash');
+
 
 var exp = module.exports;
 
-var EVENT = {
-    HIGHLIGHT_PROFILE: 'HIGHLIGHT_PROFILE',
-    HIGHLIGHT_DAILY_TODO: 'HIGHLIGHT_DAILY_TODO',
-    HIGHLIGHT_SYSTEM_MAIL: 'HIGHLIGHT_SYSTEM_MAIL',
-    HIGHLIGHT_SETTING: 'HIGHLIGHT_SETTING',
-    HIGHLIGHT_SHOP: 'HIGHLIGHT_SHOP',
-    HIGHLIGHT_RANKING_LIST: 'HIGHLIGHT_RANKING_LIST',
-    HIGHLIGHT_TASK: 'HIGHLIGHT_TASK',
-    HIGHLIGHT_EXCHANGE: 'HIGHLIGHT_EXCHANGE',
-    HIGHLIGHT_ACTIVITY: 'HIGHLIGHT_ACTIVITY',
-    ALERT_DAILY_TODO: 'ALERT_DAILY_TODO',
-    ALERT_BANKRUPTCY_IN_GAME: 'ALERT_BANKRUPTCY_IN_GAME',
-    ALERT_QUICK_RECHARGE: 'ALERT_QUICK_RECHARGE',
-    
-}
+
 
 /**
  * Listen player event
@@ -35,7 +26,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').exec('playerSync.updatePlayerProfile', player.uid, player);
     });
 
-    //player基本信息(战绩之类)
+    //player基本信息(金币，战绩之类)
     player.on('save', function () {
         app.get('sync').exec('playerSync.update', player.uid, player);
     });
@@ -52,6 +43,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('playerSync.update', player.uid, player);
     });
 
+    //player基本信息(昵称，头像，签名，性别类)
     player.on('saveProperties', function () {
         app.get('sync').exec('propertiesSync.update', player.uid, player);
     });
@@ -79,6 +71,54 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('taskSync.update', player.uid, player);
         app.get('sync').flush('itemSync.update', player.uid, player);
         app.get('sync').flush('playerSync.updatePlayerProfile', player.uid, player);
-    })
+    });
+    
+    player.on(consts.EVENT.UI_ON_ENTRY_WRAPPER, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_DAILY_TODO, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_SYSTEM_MAIL, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_SETTING, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_UI_HIGHLIGHT_SHOP, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_RANKING_LIST, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_TASK, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_EXCHANGE, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_HIGHLIGHT_ACTIVITY, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_ALERT_DAILY_TODO, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_ALERT_BANKRUPTCY_IN_GAME, function () {
+        
+    });
+    
+    player.on(consts.EVENT.UI_ALERT_QUICK_RECHARGE, function () {
+        
+    });
 
 }

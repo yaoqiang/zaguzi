@@ -252,7 +252,23 @@ module.exports = {
         INGOT_CHANGE: 'onIngotChange',
         RESTART_GAME: 'onRestartGame',
         DISSOLVE_GAME: 'onDissolveGame',
-        PAYMENT_RESULT: 'onPaymentResult'
+        PAYMENT_RESULT: 'onPaymentResult',
+        UI_HIGHLIGHT_PROFILE: 'UI_HIGHLIGHT_PROFILE',
+        
+        //UI交互事件
+        UI_ON_ENTRY_WRAPPER: 'UI_ON_ENTRY_WRAPPER',    //进入大厅后的高亮wrapper
+        
+        UI_HIGHLIGHT_DAILY_TODO: 'UI_HIGHLIGHT_DAILY_TODO', //高亮每日必做
+        UI_HIGHLIGHT_SYSTEM_MAIL: 'UI_HIGHLIGHT_SYSTEM_MAIL',   //高亮系统邮件
+        UI_HIGHLIGHT_SETTING: 'UI_HIGHLIGHT_SETTING',   //高亮系统设置
+        UI_UI_HIGHLIGHT_SHOP: 'UI_UI_HIGHLIGHT_SHOP',   //高亮商城
+        UI_HIGHLIGHT_RANKING_LIST: 'UI_HIGHLIGHT_RANKING_LIST', //高亮排行榜
+        UI_HIGHLIGHT_TASK: 'UI_HIGHLIGHT_TASK', //高亮任务
+        UI_HIGHLIGHT_EXCHANGE: 'UI_HIGHLIGHT_EXCHANGE', //高亮兑换
+        UI_HIGHLIGHT_ACTIVITY: 'UI_HIGHLIGHT_ACTIVITY', //高亮活动
+        UI_ALERT_DAILY_TODO: 'UI_ALERT_DAILY_TODO', //弹出每日必做
+        UI_ALERT_BANKRUPTCY_IN_GAME: 'UI_ALERT_BANKRUPTCY_IN_GAME', //弹出牌局中领取破产补助框
+        UI_ALERT_QUICK_RECHARGE: 'UI_ALERT_QUICK_RECHARGE', //弹出快捷充值框
     },
 
     CHAT_SCOPE: {

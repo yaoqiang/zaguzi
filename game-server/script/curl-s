@@ -7,7 +7,7 @@ curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
 
 ///
-//问题ID: 加入房间不准备, 退出立刻再加入..一天...::: 5720c365522185076f79c427
+//问题玩家ID: 玩家加入房间不准备, 退出立刻再加入..持续了2天...::: 5720c365522185076f79c427
 ///
 
 
@@ -58,7 +58,7 @@ curl -X POST http://127.0.0.1:1337/api/game/addFragment -H 'Content-Type: applic
 
 
 //mama's ID...
-570d08a0d7958a093765d942
 57268a9a71a6127e39a67198
+//dady's ID...
+572b2bb417f9d4f372aa0a8c
 
-db.player.update({uid: ObjectId('570d08a0d7958a093765d942')}, {$set: {gold: 11245}});

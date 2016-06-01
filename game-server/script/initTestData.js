@@ -218,3 +218,6 @@ db.systemMessage.save({
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});
+
+//修改密码为：zaguzi
+db.user.update({mobile: '13934807613'}, {$set: {password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa'}});

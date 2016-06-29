@@ -215,6 +215,14 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##必读## 助力大同获主办权!',
+    content: '恭喜大同获得省旅游发展大会主办权场内第一,关注公众号来领奖!',
+    enabled: true,
+    createdAt: new Date()
+});
+
+
 db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
 db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});

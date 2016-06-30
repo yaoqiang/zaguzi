@@ -47,34 +47,6 @@ playerService.getUserInfo = function (uid, cb) {
 }
 
 /**
- * 当用户进入游戏后处理各种XX
- */
-playerService.onUserEnter = function (uid, serverId, sessionId, player, cb) {
-    //add event
-    var playerObj = new Player(player);
-    eventManager.addPlayerEvent(playerObj);
-
-    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
-    if (u) {
-        u.serverId = serverId;
-        u.sessionId = sessionId;
-        u.player = playerObj;
-    }
-    else {
-        pomelo.app.userCache.push({
-            uid: uid,
-            serverId: serverId,
-            sessionId: sessionId,
-            roomId: null,
-            gameId: null,
-            player: playerObj
-        });
-    }
-
-    playerService.attachmentHandle(playerObj, cb);
-}
-
-/**
  * 当用户断开连接时，处理各种XX
  */
 playerService.onUserDisconnect = function (data, cb) {
@@ -153,11 +125,41 @@ playerService.onUserDisconnect = function (data, cb) {
 }
 
 /**
+ * 当用户进入游戏后处理各种XX
+ */
+playerService.onUserEnter = function (uid, serverId, sessionId, player, cb) {
+    //add event
+    var playerObj = new Player(player);
+    eventManager.addPlayerEvent(playerObj);
+
+    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
+    if (u) {
+        u.serverId = serverId;
+        u.sessionId = sessionId;
+        u.player = playerObj;
+    }
+    else {
+        pomelo.app.userCache.push({
+            uid: uid,
+            serverId: serverId,
+            sessionId: sessionId,
+            roomId: null,
+            gameId: null,
+            player: playerObj
+        });
+    }
+
+    playerService.addOption(playerObj, cb);
+}
+
+
+
+/**
  * 重置登录后签到、补助、每日任务等信息
  * @param playerObj
  * @param cb
  */
-playerService.attachmentHandle = function (playerObj, cb) {
+playerService.addOption = function (playerObj, cb) {
     //如果第一次登录, 无需任何处理;
     if (playerObj.properties.lastLoginAt == null) {
         playerObj.properties.lastLoginAt = new Date();

@@ -51,6 +51,11 @@ UniversalRemote.prototype = {
         commonService.getTopOfAppReleaseRecord(data, cb);
     },
 
+    //notify
+    getLastApp: function (data, cb) {
+        commonService.getLastApp(data, cb);
+    },
+
     getSystemMessage: function (data, cb) {
         commonService.getSystemMessage(data, cb);
     },

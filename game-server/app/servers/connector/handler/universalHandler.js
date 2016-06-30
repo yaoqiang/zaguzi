@@ -350,7 +350,7 @@ handler.getLastApp = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
-    this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
+    this.app.rpc.manager.universalRemote.getLastApp(session, msg, null);
 
     next();
 }

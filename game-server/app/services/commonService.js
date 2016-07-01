@@ -72,6 +72,25 @@ commonService.getTopOfAppReleaseRecord = function (data, cb) {
     cb();
 }
 
+commonService.getLastApp = function (data, cb) {
+    commonDao.getTopOfAppReleaseRecord(data, function (err, doc) {
+        if (doc && doc.length > 0) {
+            //version: 1.0.0, 1.0.1, 1.0.2 ...
+            //a < b = -1, a == b: 0, a > b = 1;
+            var result = compareVersions(data.version, doc[0].version);
+            //如果客户端版本不是最新，则发送更新Event
+            if (result == -1) {
+                messageService.pushMessageToPlayer({
+                    uid: data.uid,
+                    sid: data.sid
+                }, consts.EVENT.VERSION_UPGRADE, doc[0]);
+            }
+        }
+        
+    });
+    cb();
+}
+
 commonService.getSystemMessage = function (data, cb) {
     commonDao.getSystemMessage(data, function (err, doc) {
         if (doc) {

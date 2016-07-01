@@ -326,7 +326,7 @@ handler.payment4PingppFromClient = function (msg, session, next) {
 }
 
 /**
- * 获得最新版本信息
+ * 获得最新版本信息, 客户端-设置-主动监测版本调用
  * @param msg
  * @param session
  * @param next
@@ -336,6 +336,21 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
+
+    next();
+}
+
+/**
+ * 获得最新版本信息, 客户端每日登陆调用一次, 如果客户的是最新版本无需返回消息
+ * @param msg
+ * @param session
+ * @param next
+ */
+handler.getLastApp = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLastApp(session, msg, null);
 
     next();
 }

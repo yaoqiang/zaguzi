@@ -206,7 +206,7 @@ handler.getMyItemList = function (msg, session, next) {
 }
 
 /**
- * 获得兑换列表
+ * 获得兑换列表, - 废弃,为支持ios开关. 客户端已使用下面接口: getExchangeListNew
  * @param msg
  * @param session
  * @param next

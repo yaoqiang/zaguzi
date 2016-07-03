@@ -1,2 +1,4 @@
 0 0 * * * mongo < ~/workspace/dist/zgz/game-server/script/rankingTask.js
 30 0 * * * /root/.nvm/versions/node/v4.4.0/bin/node ~/workspace/dist/zgz/game-server/script/log2db.js > ~/workspace/logs/log2dbCron.log
+0 4 * * * /root/workspace/shell/mongobak.sh > /root/workspace/logs/crontab_mongo_bak.log &
+5 4 * * * /root/workspace/shell/mongobakdelete.sh > /root/workspace/logs/crontab_mongo_bak_delete.log &

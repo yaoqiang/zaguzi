@@ -490,7 +490,8 @@ playerService.getInviteGrant = function (mobile, uid, cb) {
                 cb(addItemsResult);
                 return;
             }
-            var inviteRecord = {uid: uid, mobile: mobile, createdAt: new Date(), state: consts.INVITE.STATE.FINISHED}
+            //uid: 邀请人id, mobile: 新人手机号,
+            var inviteRecord = {uid: uid, mobile: mobile, createdAt: new Date(), items: inviteGrantData.items, state: consts.INVITE.STATE.FINISHED}
             commonDao.saveInviteRecord(inviteRecord, function (saveInviteRecordResult) {
                 cb({code: Code.OK});
             })

@@ -138,8 +138,8 @@ module.exports = {
             CAPTCHA_ERR: 9304,
             ERR: 9305,
             MOBILE_NOT_FOUNT: 9306,
-            INVITE_NOT_FOUNT: 9307,
-            INVITE_CAN_NOT_BE_SELF: 9308
+            INVITE_MOBILE_NOT_FOUNT: 9307,
+            INVITE_MOBILE_CAN_NOT_BE_SELF: 9308
         }
     },
     ERR_MESSAGE: {
@@ -215,8 +215,8 @@ module.exports = {
         9304: "验证码错误",
         9305: "操作失败",
         9306: "您输入的手机号没有绑定游戏帐号",
-        9307: "您输入邀请码不存在,请确认大小写无误",
-        9308: "不支持填写自己的邀请码"
+        9307: "您输入的手机号没有绑定游戏帐号",
+        9308: "不支持填写自己的手机号"
 
     },
     MESSAGE: {

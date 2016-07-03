@@ -118,21 +118,21 @@ commonService.bindingMobile = function (data, cb) {
         }
 
         //如果输入了邀请码，验证邀请码，并处理邀请奖励
-        if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
-            userDao.findByShortid(data.shortid, function (err, doc) {
+        if (!_.isUndefined(data.inviteMobile) && !_.isNull(data.inviteMobile) && data.inviteMobile != '') {
+            userDao.findOneByMobile(data.inviteMobile, function (err, doc) {
                 if (!doc) {
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_NOT_FOUNT});
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_MOBILE_NOT_FOUNT});
                     return;
                 }
                 if (doc._id == data.uid) {
-                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_CAN_NOT_BE_SELF});
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.INVITE_MOBILE_CAN_NOT_BE_SELF});
                     return;
                 }
                 commonDao.bindingMobile(data, function (bindingResult) {
                     //如果绑定成功, 处理邀请码相关奖励
                     if (bindingResult.code === Code.OK) {
-                        if (!_.isUndefined(data.shortid) && !_.isNull(data.shortid) && data.shortid != '') {
-                            userDao.findByShortid(data.shortid, function (err, doc) {
+                        if (!_.isUndefined(data.inviteMobile) && !_.isNull(data.inviteMobile) && data.inviteMobile != '') {
+                            userDao.findOneByMobile(data.inviteMobile, function (err, doc) {
                                 if (doc) {
                                     playerService.getInviteGrant(data.mobile, doc._id.toString(), function (getInviteGrantResult) {
                                     })

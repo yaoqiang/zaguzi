@@ -271,8 +271,17 @@ commonDao.saveInviteRecord = function (data, cb) {
 }
 
 commonDao.getInviteRecordListByUid = function (data, cb) {
+    var inviteGrantData = globals.inviteGrant;
     db.inviteRecord.find({uid: data.uid}).sort({_id: -1}).limit(20, function (err, docs) {
-        cb({code: Code.OK, inviteRecordList: docs});
+        if (docs && docs.length > 0) {
+            db.inviteRecord.count({uid: data.uid}, function (err, total) {
+                cb({code: Code.OK, inviteRecordList: docs, totalGold: inviteGrantData.gold * total,
+                    totalTrumpet: inviteGrantData.items[0].value * total, totalJipaiqi: inviteGrantData.items[1].value * total});
+            });
+        }
+        else {
+            cb({code: Code.OK, inviteRecordList: docs});
+        }
     })
 }
 

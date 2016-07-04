@@ -73,7 +73,7 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('playerSync.updatePlayerProfile', player.uid, player);
     });
     
-    player.on(consts.EVENT.UI_ON_ENTRY_WRAPPER, function () {
+    player.on(consts.EVENT.UI_ON_ENTRY_WRAPPER, function (args) {
         
     });
     

@@ -1,6 +1,7 @@
 module.exports = {
     GLOBAL: {
-        LOBBY: [0, 1, 2, 3],
+        //0：普通场，1：元宝场，2：比赛场，3：私人场，4：特殊场(亮王?等)
+        LOBBY: [0, 1, 2, 3, 4],
         GENDER: {
             MALE: 'MALE',
             FEMALE: 'FEMALE'

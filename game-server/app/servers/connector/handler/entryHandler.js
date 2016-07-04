@@ -323,7 +323,7 @@ handler.enterLobby = function (msg, session, next) {
     var lobbyId = msg.lobbyId;
     var self = this;
     self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
-        var roomsResult = _.map(rooms[lobbyId], function (room) {
+        var roomsResult = _.map(gameUtil.getRoomsByLobbyId(lobbyId), function (room) {
             if (!!data.online) {
                 _.each(data.online.room, function (onlineRoom) {
                     if (onlineRoom.id == room.id) {

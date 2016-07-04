@@ -122,3 +122,14 @@ handler.leave = function (msg, session, next) {
     });
 };
 
+/**
+ * 创建私人房间
+ * msg: {maxActor: Int, name: String, password: String, base: Int}
+ */
+handle.createPrivateGame = function (msg, session, next) {
+    msg.uid = session.uid;
+}
+
+handle.joinPrivateGame = function (msg, session, next) {
+    msg.uid = session.uid;
+}

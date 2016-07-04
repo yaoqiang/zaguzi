@@ -322,25 +322,30 @@ handler.enterIndex = function (msg, session, next) {
 handler.enterLobby = function (msg, session, next) {
     var lobbyId = msg.lobbyId;
     var self = this;
-    self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
-        var roomsResult = _.map(gameUtil.getRoomsByLobbyId(lobbyId), function (room) {
-            if (!!data.online) {
-                _.each(data.online.room, function (onlineRoom) {
-                    if (onlineRoom.id == room.id) {
-                        room.online = onlineRoom.online;
-                    }
-                });
-                return room;
-            }
-            else {
-                room.online = 0;
-            }
+    //如果是私人场，逻辑与其他场不同，需要根据gameList筛选出私人房间
+    if (lobbyId === 3) {
+        next(null, {code: Code.OK});
+    } else {
+        self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+            var roomsResult = _.map(gameUtil.getRoomsByLobbyId(lobbyId), function (room) {
+                if (!!data.online) {
+                    _.each(data.online.room, function (onlineRoom) {
+                        if (onlineRoom.id == room.id) {
+                            room.online = onlineRoom.online;
+                        }
+                    });
+                    return room;
+                }
+                else {
+                    room.online = 0;
+                }
+
+            });
+
+            next(null, {code: Code.OK, rooms: roomsResult});
 
         });
-
-        next(null, {code: Code.OK, rooms: roomsResult});
-
-    });
+    }
 
 };
 

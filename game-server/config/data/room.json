@@ -21,7 +21,7 @@
       "min": 20000,
       "max": 99999999,
       "fax": 200,
-      "lobbyId": 0,
+      "lobbyId": -1,
       "maxActor": 5,
       "useNoteCard": true,
       "serverId": "game-server-1"
@@ -34,7 +34,7 @@
       "min": 30000,
       "max": 99999999,
       "fax": 300,
-      "lobbyId": 0,
+      "lobbyId": 1,
       "maxActor": 5,
       "useNoteCard": false,
       "serverId": "game-server-1"
@@ -47,7 +47,7 @@
       "min": 100000,
       "max": 99999999,
       "fax": 500,
-      "lobbyId": 0,
+      "lobbyId": -1,
       "maxActor": 5,
       "useNoteCard": false,
       "serverId": "game-server-1"
@@ -62,7 +62,7 @@
       "min": 1000,
       "max": 99999999,
       "fax": 50,
-      "lobbyId": 1,
+      "lobbyId": 0,
       "maxActor": 6,
       "useNoteCard": true,
       "serverId": "game-server-1"
@@ -75,7 +75,7 @@
       "min": 20000,
       "max": 99999999,
       "fax": 200,
-      "lobbyId": 1,
+      "lobbyId": -1,
       "maxActor": 6,
       "useNoteCard": true,
       "serverId": "game-server-1"
@@ -101,7 +101,7 @@
       "min": 100000,
       "max": 99999999,
       "fax": 500,
-      "lobbyId": 1,
+      "lobbyId": -1,
       "maxActor": 6,
       "useNoteCard": false,
       "serverId": "game-server-1"
@@ -116,7 +116,7 @@
       "min": 1000,
       "max": 99999999,
       "fax": 50,
-      "lobbyId": 2,
+      "lobbyId": 0,
       "maxActor": 7,
       "useNoteCard": true,
       "serverId": "game-server-1"
@@ -129,7 +129,7 @@
       "min": 20000,
       "max": 99999999,
       "fax": 100,
-      "lobbyId": 2,
+      "lobbyId": -1,
       "maxActor": 7,
       "useNoteCard": true,
       "serverId": "game-server-1"
@@ -142,7 +142,7 @@
       "min": 30000,
       "max": 999999999,
       "fax": 300,
-      "lobbyId": 2,
+      "lobbyId": 1,
       "maxActor": 7,
       "useNoteCard": false,
       "serverId": "game-server-1"
@@ -155,9 +155,39 @@
       "min": 100000,
       "max": 999999999,
       "fax": 500,
-      "lobbyId": 2,
+      "lobbyId": -1,
       "maxActor": 7,
       "useNoteCard": false,
+      "serverId": "game-server-1"
+    }
+  ],
+  [
+    {
+      "id": 45,
+      "title": "私人场",
+      "icon": "imgId",
+      "base": 0,
+      "min": 1000,
+      "max": 999999999,
+      "fax": 100,
+      "lobbyId": 3,
+      "maxActor": -1,
+      "useNoteCard": -1,
+      "serverId": "game-server-1"
+    }
+  ],
+  [
+    {
+      "id": 56,
+      "title": "比赛场",
+      "icon": "imgId",
+      "base": 1000,
+      "min": 1000,
+      "max": 999999999,
+      "fax": 100,
+      "lobbyId": 3,
+      "maxActor": -1,
+      "useNoteCard": -1,
       "serverId": "game-server-1"
     }
   ]

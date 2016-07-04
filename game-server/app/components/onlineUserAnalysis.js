@@ -58,14 +58,21 @@ var getOnlineUserList = function (userList) {
 
     _.each(userList, function (user) {
         //lobby count
-        if (user.roomId > 0 && user.roomId < 20) {
+        //普通场
+        if (user.roomId % 10 == 1) {
             result.lobby[0].online += 1;
         }
-        else if (user.roomId > 20 && user.roomId < 30) {
+        //元宝场
+        else if (user.roomId % 10 == 2) {
             result.lobby[1].online += 1;
         }
-        else if (user.roomId > 30 && user.roomId < 40) {
+        //比赛场
+        else if (user.roomId % 10 == 5) {
             result.lobby[2].online += 1;
+        }
+        //私人场
+        else if (user.roomId % 10 == 6) {
+            result.lobby[3].online += 1;
         }
         //room count
         switch (user.roomId) {
@@ -105,6 +112,12 @@ var getOnlineUserList = function (userList) {
             case 34:
                 result.room[11].online += 1;
                 break;
+            case 45:
+                result.room[12].online += 1;
+                break;
+            case 56:
+                result.room[13].online += 1;
+                break;
         }
     });
     return result;
@@ -117,7 +130,8 @@ var initOnlineState = function () {
         lobby: [
             { id: 0, online: 0 },
             { id: 1, online: 0 },
-            { id: 2, online: 0 }
+            { id: 2, online: 0 },
+            { id: 3, online: 0 }
         ],
         room: [
             { id: 11, online: 0 },
@@ -131,7 +145,9 @@ var initOnlineState = function () {
             { id: 31, online: 0 },
             { id: 32, online: 0 },
             { id: 33, online: 0 },
-            { id: 34, online: 0 }
+            { id: 34, online: 0 },
+            { id: 45, online: 0 },
+            { id: 56, online: 0 }
         ]
     }
 }

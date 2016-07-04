@@ -1,6 +1,7 @@
 module.exports = {
     GLOBAL: {
-        LOBBY: [0, 1, 2, 3],
+        //0：普通场，1：元宝场，2：比赛场，3：私人场，4：特殊场(亮王?等)
+        LOBBY: [0, 1, 2, 3, 4],
         GENDER: {
             MALE: 'MALE',
             FEMALE: 'FEMALE'
@@ -311,9 +312,9 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 15,
-            TALK: 15,
-            FAN: 15,
+            NOT_READY: 10,
+            TALK: 10,
+            FAN: 10,
             TRUSTEESHIP: 1  //托管出牌时间
         },
         PHASE: {
@@ -335,8 +336,9 @@ module.exports = {
             LOSE: 'LOSE',
             TIE: 'TIE'
         },
-        DISSOLVE_NOBODY_TALK_TIME: 2
-
+        DISSOLVE_NOBODY_TALK_TIME: 2,   //N局没人说话, 自动解散牌局
+        PRIVATE_GAME_NUMBER_START: 90000,   //私人房间编号起始值
+        PRIVATE_GAME_BASE_MIN: 100,   //私人房间底注选择
 
     },
 

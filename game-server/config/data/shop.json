@@ -178,6 +178,22 @@
             "value": 100
           }
         ]
+      },
+      {
+        "id": 100013,
+        "title": "记牌器",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 6,
+        "desc": "7天记牌器,股神标配!",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 3,
+            "value": 7
+          }
+        ]
       }
     ]
   },
@@ -358,6 +374,22 @@
           {
             "id": 2,
             "value": 100
+          }
+        ]
+      },
+      {
+        "id": 200013,
+        "title": "记牌器",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 6,
+        "desc": "7天记牌器,股神标配!",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 3,
+            "value": 7
           }
         ]
       }

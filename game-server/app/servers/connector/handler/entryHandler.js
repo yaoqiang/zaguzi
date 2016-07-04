@@ -312,14 +312,62 @@ function sendBackGameEvent(uid, u, room, msg) {
     });
 }
 
+//兼容v1.3之前版
 handler.enterIndex = function (msg, session, next) {
+    this.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+        var lobby = [];
+        try {
+            lobby.push({id: 0, online: data.online.room[0].online + data.online.room[1].online + data.online.room[2].online + data.online.room[3].online});
+            lobby.push({id: 1, online: data.online.room[4].online + data.online.room[5].online + data.online.room[6].online + data.online.room[7].online});
+            lobby.push({id: 2, online: data.online.room[8].online + data.online.room[9].online + data.online.room[10].online + data.online.room[11].online});
+        } catch (e) {
+            lobby.push({id: 0, online: 119});
+            lobby.push({id: 1, online: 0});
+            lobby.push({id: 2, online: 0});
+        }
+
+        next(null, {code: Code.OK, onlineLobby: lobby})
+    });
+}
+
+handler.enterIndex_v_1_3 = function (msg, session, next) {
     this.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
         next(null, {code: Code.OK, onlineLobby: data.online.lobby})
     });
 }
 
-
+//兼容v1.3之前版
 handler.enterLobby = function (msg, session, next) {
+    var lobbyId = msg.lobbyId;
+    var self = this;
+    //如果是私人场，逻辑与其他场不同，需要根据gameList筛选出私人房间
+    if (lobbyId === 3) {
+        next(null, {code: Code.OK});
+    } else {
+        self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+            var roomsResult = _.map(rooms[lobbyId], function (room) {
+                if (!!data.online) {
+                    _.each(data.online.room, function (onlineRoom) {
+                        if (onlineRoom.id == room.id) {
+                            room.online = onlineRoom.online;
+                        }
+                    });
+                    return room;
+                }
+                else {
+                    room.online = 0;
+                }
+
+            });
+
+            next(null, {code: Code.OK, rooms: roomsResult});
+
+        });
+    }
+
+};
+
+handler.enterLobby_v_1_3 = function (msg, session, next) {
     var lobbyId = msg.lobbyId;
     var self = this;
     //如果是私人场，逻辑与其他场不同，需要根据gameList筛选出私人房间

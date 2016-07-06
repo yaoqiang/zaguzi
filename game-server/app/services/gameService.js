@@ -142,6 +142,10 @@ gameService.cancelTrusteeship = function (data, cb) {
     this.getGameById(data.gameId).cancelTrusteeship(data, cb)
 }
 
+gameService.giveUp = function (data) {
+    this.getGameById(data.gameId).giveUp(data);
+}
+
 gameService.chat = function (data, cb) {
     var game = this.getGameById(data.gameId);
     game.chat(data, cb);

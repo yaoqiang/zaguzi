@@ -1023,6 +1023,24 @@ Game.prototype.over = function () {
 }
 
 /**
+ * 5人局双三认输
+ * @param data: {uid: String}
+ */
+Game.property.giveUp = function (data) {
+    //如果不是5人局,则不处理
+    if (this.maxActor !== 5) return;
+    //如果玩家手牌没有方块3和红桃3, 则不处理
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+    var cards = actor.gameStatus.getHoldingCards();
+    if (!(_.contains(cards, 116) && _.contains(cards, 216))) return;
+
+    //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
+    this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;
+    this.gameLogic.share = 1;
+    this.over();
+}
+
+/**
  * 托管
  * @param data
  * @param cb

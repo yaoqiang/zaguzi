@@ -170,6 +170,21 @@ commonDao.getSystemMessage = function (data, cb) {
     })
 }
 
+//获取系统消息-最新一条, 为降低流量（只返回最新消息时间）, 客户端每日首次登陆时,请求接口, 与本地最新消息对比, 
+commonDao.getLastSystemMessageDate = function (data, cb) {
+    db.systemMessage.find({}).sort({_id: -1}).limit(1, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            if (doc && doc.length > 0) {
+                return utils.invokeCallback(cb, null, doc[0].createdAt);
+            }
+            utils.invokeCallback(cb, null, null);
+        }
+    })
+}
+
 
 //更新验证码
 commonDao.updateCaptchaCode = function (data, cb) {

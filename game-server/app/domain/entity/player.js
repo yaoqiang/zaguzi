@@ -99,6 +99,17 @@ Player.prototype.addGold = function (type, gold, cb) {
             sid: dispatcher(this.uid, this.connectors).id
         }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
 
+        //如果破产了,
+        if (this.gold < globals.bankruptcyGrant.threshold) {
+            //如果还可以领取破产补助，则直接发送可领取破产补助消息：客户端弹框(框的zIndex要比结算高,以免被结算挡住)
+            if (!getBankruptcyGrantRunOut) {
+                messageService.pushMessageToPlayer({
+                    uid: this.uid,
+                    sid: dispatcher(this.uid, this.connectors).id
+                }, consts.EVENT.UI_ALERT_BANKRUPTCY_IN_GAME, {});
+            }
+        }
+
         cb({code: Code.OK, gold: this.gold});
     } catch (err) {
         logger.error("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,

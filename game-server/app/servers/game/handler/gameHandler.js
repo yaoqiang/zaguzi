@@ -113,6 +113,15 @@ handler.cancelTrusteeship = function (msg, session, next) {
     })
 };
 
+/**
+ * 五人局双三认输
+ */
+handler.giveUp = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.giveUp(session, msg, null);
+    next();
+};
+
 handler.leave = function (msg, session, next) {
     msg.uid = session.uid;
 

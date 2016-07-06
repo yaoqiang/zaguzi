@@ -183,6 +183,26 @@ GameRemote.prototype.cancelTrusteeship = function (data, cb) {
     });
 }
 
+
+/**
+ * 五人局双三认输
+ */
+GameRemote.prototype.giveUp = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        if (user === undefined || user == null) {
+            cb({code: Code.FAIL});
+            return;
+        }
+        if (user.gameId == null) {
+            cb({code: Code.FAIL});
+            return;
+        }
+        gameService.giveUp(data);
+    });
+    cb();
+}
+
+
 /**
  * 牌局内聊天
  */

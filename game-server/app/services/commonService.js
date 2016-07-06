@@ -103,6 +103,19 @@ commonService.getSystemMessage = function (data, cb) {
     })
 }
 
+commonService.getLastSystemMessageDate = function (data, cb) {
+    commonDao.getLastSystemMessageDate(data, function (err, date) {
+        if (date) {
+            cb({ code: Code.OK, lastSystemMessageDate: date });
+        }
+        else {
+            cb({ code: Code.FAIL });
+        }
+
+    })
+}
+
+
 
 commonService.bindingMobile = function (data, cb) {
     if (!data.captcha || !data.mobile || !data.password || !data.uid) {

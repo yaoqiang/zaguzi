@@ -69,6 +69,8 @@ var rechargeRankingResult = [];
 
 if (rechargeList && rechargeList._batch.length > 0) {
     rechargeList._batch.forEach(function (item) {
+        //用户要求不要上榜..
+        if (item._id == '5743bc82a01f604f6ee433e6') return;
         var player = db.player.findOne({uid: ObjectId(item._id)});
         item.nickName = player.nickName;
         item.avatar = player.avatar;

@@ -102,7 +102,7 @@ Player.prototype.addGold = function (type, gold, cb) {
         //如果破产了,
         if (this.gold < globals.bankruptcyGrant.threshold) {
             //如果还可以领取破产补助，则直接发送可领取破产补助消息：客户端弹框(框的zIndex要比结算高,以免被结算挡住)
-            if (!getBankruptcyGrantRunOut) {
+            if (!this.properties.getBankruptcyGrantRunOut) {
                 messageService.pushMessageToPlayer({
                     uid: this.uid,
                     sid: dispatcher(this.uid, this.connectors).id

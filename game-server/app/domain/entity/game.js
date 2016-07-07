@@ -1026,7 +1026,7 @@ Game.prototype.over = function () {
  * 5人局双三认输
  * @param data: {uid: String}
  */
-Game.property.giveUp = function (data) {
+Game.prototype.giveUp = function (data) {
     //如果不是5人局,则不处理
     if (this.maxActor !== 5) return;
     //如果玩家手牌没有方块3和红桃3, 则不处理

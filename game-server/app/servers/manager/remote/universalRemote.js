@@ -60,6 +60,9 @@ UniversalRemote.prototype = {
         commonService.getSystemMessage(data, cb);
     },
 
+    getLastSystemMessageDate: function (data, cb) {
+        commonService.getLastSystemMessageDate(data, cb);
+    },
 
     /**
      * @param data: {uid: String, mobile: String}

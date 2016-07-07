@@ -366,6 +366,14 @@ handler.getSystemMessage = function (msg, session, next) {
     });
 }
 
+handler.getLastSystemMessageDate = function (msg, session, next) {
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLastSystemMessageDate(session, msg, function (result) {
+        next(null, result);
+    });
+}
+
 ////////////
 //
 ///////////

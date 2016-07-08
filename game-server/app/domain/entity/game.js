@@ -1034,9 +1034,22 @@ Game.prototype.giveUp = function (data) {
     var cards = actor.gameStatus.getHoldingCards();
     if (!(_.contains(cards, 116) && _.contains(cards, 216))) return;
 
+    var self = this;
+    //认输,取消所有schedule
+    _.each(this.jobQueue, function (job) {
+        if (!!job) {
+            schedule.cancelJob(job.jobId);
+            self.jobQueue = _.filter(self.jobQueue, function (j) {
+                return j.jobId != job.jobId;
+            });
+        }
+    });
+
+
     //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
     this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;
     this.gameLogic.share = 1;
+    this.gameLogic.isGiveUp = true;
     this.over();
 }
 

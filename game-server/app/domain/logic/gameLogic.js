@@ -43,6 +43,8 @@ var GameLogic = function (game) {
     this.giveLogicFanRound = 0;
     this.lastFanOverNextCountdownActor = null;  //第一个接风玩家
 
+    this.isGiveUp = false;  //是否是五人局认输情况
+
     this.init();
 
 }
@@ -111,24 +113,24 @@ GameLogic.prototype.deal = function (actor) {
 }
 
 //test deal...
-GameLogic.prototype.deal4test = function (actor) {
-    var cards1 = [105,205,305,405,107,207,307,407,108,208],
-        cards2 = [109,209,309,409,110,210,310,410,308,408],
-        cards3 = [111,211,311,411,112,212,312,412,113,213],
-        cards4 = [114,214,314,414,115,215,315,415,413,413],
-        cards5 = [116,216,316,416,117,217,317,417,18,19];
-
-    actor.gameStatus.addHoldingCards(cards1);
-    actor = this.getNextActor(actor);
-    actor.gameStatus.addHoldingCards(cards2);
-    actor = this.getNextActor(actor);
-    actor.gameStatus.addHoldingCards(cards3);
-    actor = this.getNextActor(actor);
-    actor.gameStatus.addHoldingCards(cards4);
-    actor = this.getNextActor(actor);
-    actor.gameStatus.addHoldingCards(cards5);
-
-}
+//GameLogic.prototype.deal = function (actor) {
+//    var cards1 = [105,205,305,405,107,207,307,407,108,208],
+//        cards2 = [109,209,309,409,110,210,310,410,308,408],
+//        cards3 = [111,211,311,411,112,212,312,412,113,213],
+//        cards4 = [114,214,314,414,115,215,315,415,413,413],
+//        cards5 = [116,216,316,416,117,217,317,417,18,19];
+//
+//    actor.gameStatus.addHoldingCards(cards1);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards2);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards3);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards4);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards5);
+//
+//}
 
 GameLogic.prototype.cardsSort = function (actors) {
     _.map(actors, function (actor) {

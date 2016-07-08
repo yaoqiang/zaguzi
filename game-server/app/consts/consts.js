@@ -143,6 +143,7 @@ module.exports = {
             INVITE_MOBILE_CAN_NOT_BE_SELF: 9308
         }
     },
+    //以下错误信息 客户端使用, 服务端只返回Code.
     ERR_MESSAGE: {
         1001: "您已在游戏中, 无法加入",   //在其他牌桌
         1002: "您的金币不足, 无法加入",

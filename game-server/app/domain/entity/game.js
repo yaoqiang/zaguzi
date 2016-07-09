@@ -1005,12 +1005,19 @@ Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
     this.nobodyTalkTime = 0;
 
+    //玩家剩余牌
+    var remainingCardsOfActors = [];
+    _.each(this.actors, function (act) {
+        remainingCardsOfActors.push({actorNr: act.actorNr, remainingCards: act.gameStatus.getHoldingCards()})
+    });
+
     var self = this;
     balanceService.balance(this, function (data) {
         logger.debug('游戏结束||%j||向客户端发送游戏结束消息', self.gameId);
         self.channel.pushMessage(consts.EVENT.OVER, {
             game: {result: self.gameLogic.result, share: self.gameLogic.share},
-            details: data.details
+            details: data.details,
+            remainingCardsOfActors: remainingCardsOfActors
         }, null, function () {
             _.map(self.actors, function (actor) {
                 actor.isReady = false;

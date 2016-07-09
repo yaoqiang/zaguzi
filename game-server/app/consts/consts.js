@@ -313,9 +313,9 @@ module.exports = {
             Spade3: 3
         },
         TIMER: {
-            NOT_READY: 10,
+            NOT_READY: 15,
             TALK: 10,
-            FAN: 10,
+            FAN: 15,
             TRUSTEESHIP: 1  //托管出牌时间
         },
         PHASE: {

@@ -231,12 +231,19 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##通告## 高倍区打伙牌作弊处理',
+    content: '股子们,游戏禁止打伙牌作弊,高倍伙牌玩家金币已清零.',
+    enabled: true,
+    createdAt: new Date()
+});
+
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 db.activityList.save({
     title: '股神榜-月排行榜',
     content: '当月游戏300局以上,就有资格上榜!',
-    detail: '第一名: 30元宝+10000金+3喇叭+3天记牌器\n第二名: 20元宝+6000金+3喇叭+3天记牌器\n第三名: 5元宝+5000金+3喇叭+3天记牌器\n第4-20名: 3000金',
+    detail: '第一名: 50元宝+10000金+3喇叭+3天记牌器\n第二名: 30元宝+6000金+3喇叭+3天记牌器\n第三名: 10元宝+5000金+3喇叭+3天记牌器\n第4-10名: 1元宝+3000金+1喇叭+1天记牌器\n第11-20名: 3000金',
     icon: '',
     name: 'GOD_MONTH',
     type: 'ROUND',

@@ -238,6 +238,15 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##置顶## 新版本发布啦!快来更新吧!',
+    content: '夏日炎炎,新版本发布啦,股神月榜等你来拿奖!点击查看详情',
+    url: 'http://www.zaguzi.com/app_release_1_3.html',
+    enabled: true,
+    createdAt: new Date()
+});
+
+
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 db.activityList.save({

@@ -181,6 +181,15 @@ db.appReleaseRecord.save({
     releaseUrlApple: ''
 });
 
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.3',
+    createdAt: new Date(),
+    summary: '【新增】各种新体验,股神月排行榜,月月拿奖!\n【改进】各种改进,bug修复!\n玩转新版本可点击系统邮件查看',
+    releaseUrlAndroid: 'http://www.zaguzi.com/download_android.html',
+    releaseUrlApple: ''
+});
+
 //系统消息
 db.systemMessage.save({
     title: '大同扎股子公测版上线啦！',

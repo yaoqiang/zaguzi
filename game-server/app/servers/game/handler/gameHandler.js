@@ -133,12 +133,29 @@ handler.leave = function (msg, session, next) {
 
 /**
  * 创建私人房间
- * msg: {maxActor: Int, name: String, password: String, base: Int}
+ * msg: {maxActor: Int, name: String, password: String, base: Int, useNoteCard: true/false/null}
  */
 handler.createPrivateGame = function (msg, session, next) {
+    msg.sid = session.get('serverId');
     msg.uid = session.uid;
+    msg.sessionId = session.id;
+    this.app.rpc.game.gameRemote.createPrivateGame(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.listPrivateGame = function (msg, session, next) {
+    msg.uid = session.uid;
+    this.app.rpc.game.gameRemote.listPrivateGame(session, msg, function (data) {
+        next(null, data);
+    });
 }
 
 handler.joinPrivateGame = function (msg, session, next) {
+    msg.sid = session.get('serverId');
     msg.uid = session.uid;
+    msg.sessionId = session.id;
+    this.app.rpc.game.gameRemote.joinPrivateGame(session, msg, function (data) {
+        next(null, data);
+    });
 }

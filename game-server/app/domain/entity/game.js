@@ -12,13 +12,21 @@ var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
 var balanceService = require('../../services/balanceService');
+var gameService = require('../../services/gameService');
 var gameResponse = require('../response/gameResponse');
 
 var async = require('async');
 var Promise = require('promise');
 
 
-var Game = function (roomId, gameId) {
+/**
+ *
+ * @param roomId
+ * @param gameId
+ * @param args 私人场参数
+ * @constructor
+ */
+var Game = function (roomId, gameId, args) {
     this.room = gameUtil.getRoomById(roomId);
 
     this.lobbyId = this.room.lobbyId;
@@ -42,6 +50,18 @@ var Game = function (roomId, gameId) {
 
     //几次没人说话, 3次解散房间, 3个地方会设置该值, 1: 初始化牌局(此处), 2: 都没人说话会++, 3: 游戏结束会重置为0
     this.nobodyTalkTime = 0;
+
+    this.isPrivate = false;
+
+    //私人场
+    if (args !== undefined && typeof args === 'object') {
+        this.isPrivate = true;
+        this.name = args.name || '';
+        this.password = args.password || null;
+        this.maxActor = args.maxActor;
+        this.base = args.base;
+        this.useNoteCard = args.useNoteCard || true;
+    }
 
     this.init();
 }
@@ -1195,6 +1215,14 @@ Game.prototype.leave = function (data, cb) {
     this.currentActorNum = this.currentActorNum - 1;
     this.isAllReady = false;
     this.isFull = false;
+
+    //如果房间没人
+    if (this.currentActorNum == 0) {
+        //如果是私人桌, 没人就移除缓存房间;
+        if (this.roomId === 45) {
+            gameService.removeGameById(this.gameId);
+        }
+    }
 
     pomelo.app.rpc.manager.userRemote.onUserLeave(null, data.uid, function () {
         cb({code: Code.OK});

@@ -211,6 +211,28 @@ GameRemote.prototype.chat = function (data, cb) {
     gameService.chat(data, cb);
 }
 
+GameRemote.prototype.createPrivateGame = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        data.player = user.player;
+        gameService.createPrivateGame(data, function (result) {
+            cb(result);
+        });
+    });
+}
+
+GameRemote.prototype.listPrivateGame = function (data, cb) {
+    gameService.listPrivateGame(data, cb);
+}
+
+GameRemote.prototype.joinPrivateGame = function (data, cb) {
+    pomelo.app.rpc.manager.userRemote.getUserCacheByUid(null, data.uid, function (user) {
+        data.player = user.player;
+        gameService.joinPrivateGame(data, function (result) {
+            cb(result);
+        });
+    });
+}
+
 
 /**
  * 通过游戏ID获得当前游戏状态

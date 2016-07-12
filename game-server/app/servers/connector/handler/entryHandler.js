@@ -372,7 +372,9 @@ handler.enterLobby_v_1_3 = function (msg, session, next) {
     var self = this;
     //如果是私人场，逻辑与其他场不同，需要根据gameList筛选出私人房间
     if (lobbyId === 3) {
-        next(null, {code: Code.OK});
+        this.app.rpc.game.gameRemote.listPrivateGame(session, msg, function (data) {
+            next(null, data);
+        });
     } else {
         self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
             var roomsResult = _.map(gameUtil.getRoomsByLobbyId(lobbyId), function (room) {

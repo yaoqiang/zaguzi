@@ -60,7 +60,7 @@ var Game = function (roomId, gameId, args) {
         this.password = args.password || null;
         this.maxActor = args.maxActor;
         this.base = args.base;
-        this.useNoteCard = args.useNoteCard || true;
+        this.useNoteCard = args.useNoteCard;
     }
 
     this.init();

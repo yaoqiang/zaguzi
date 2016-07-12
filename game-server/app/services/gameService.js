@@ -14,6 +14,7 @@ var Game = require('../domain/entity/game');
 var gameResponse = require('../domain/response/gameResponse');
 
 var gameUtil = require('../util/gameUtil');
+var utils = require('../util/utils');
 
 var gameService = module.exports;
 
@@ -91,11 +92,16 @@ gameService.createPrivateGame = function (data, cb) {
         return;
     }
 
+    data.name = utils.setContent(data.name);
+    data.name = utils.replaceContent(data.name);
+
     var game = new Game(data.roomId, ++gPrivateGameId, data);
 
     gGameList.push(game);
     data.gameId = game.gameId;
     data.password = game.password;
+
+
 
     gameService.joinPrivateGame(data, function (result) {
         if (result.code === Code.OK)
@@ -112,8 +118,16 @@ gameService.createPrivateGame = function (data, cb) {
 gameService.listPrivateGame = function (data, cb) {
     //如果是通过房间ID查询
     if (data.gameId) {
-        var game = _.findWhere(gGameList, {gameId: data.gameId});
-        cb({code: Code.OK, gameList: game === undefined ? [] : [game]});
+        //客户端丢过来的是string, 转为number
+        var gameId = -1;
+        try {
+            gameId = parseInt(data.gameId);
+        } catch (e) {
+            gameId = -1;
+        }
+        var g = _.findWhere(gGameList, {gameId: gameId});
+
+        cb({code: Code.OK, gameList: g === undefined ? [] : [{lobbyId: g.lobbyId, roomId: g.roomId, gameId: g.gameId, name: g.name, password: g.password, maxActor: g.maxActor, base: g.base, useNoteCard: g.useNoteCard, currentActorNum: g.currentActorNum}]});
         return;
     }
 

@@ -67,11 +67,11 @@ var getOnlineUserList = function (userList) {
             result.lobby[1].online += 1;
         }
         //比赛场
-        else if (user.roomId % 10 == 5) {
+        else if (user.roomId % 10 == 6) {
             result.lobby[2].online += 1;
         }
         //私人场
-        else if (user.roomId % 10 == 6) {
+        else if (user.roomId % 10 == 5) {
             result.lobby[3].online += 1;
         }
         //room count

@@ -141,6 +141,14 @@ module.exports = {
             MOBILE_NOT_FOUNT: 9306,
             INVITE_MOBILE_NOT_FOUNT: 9307,
             INVITE_MOBILE_CAN_NOT_BE_SELF: 9308
+        },
+        PRIVATE_GAME: {
+            CREATE_NOT_BLANK: 9401,
+            JOIN_PASSWORD_NOT_CORRECT: 9402,
+            JOIN_GAME_NOT_EXIST: 9403,
+            INVITE_BY_MOBILE_NOT_ONLINE: 9404,
+            ERR: 9405,
+            JOIN_GAME_IS_FULL: 9406,
         }
     },
     //以下错误信息 客户端使用, 服务端只返回Code.
@@ -218,7 +226,14 @@ module.exports = {
         9305: "操作失败",
         9306: "您输入的手机号没有绑定游戏帐号",
         9307: "您输入的手机号没有绑定游戏帐号",
-        9308: "不支持填写自己的手机号"
+        9308: "不支持填写自己的手机号",
+
+        9401: "请填写房间信息",
+        9402: "房间密码输入错误",
+        9403: "房间不存在,请刷新列表",
+        9404: "玩家不在线",
+        9405: "操作失败",
+        9406: "房间已满员",
 
     },
     MESSAGE: {

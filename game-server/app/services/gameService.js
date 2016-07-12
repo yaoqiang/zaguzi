@@ -21,6 +21,9 @@ var gameService = module.exports;
 var gGameId = 0;
 var gGameList = [];
 
+//私人房ID, ++
+var gPrivateGameId = 100000;
+
 
 
 gameService.join = function(data, cb)
@@ -36,14 +39,14 @@ gameService.join = function(data, cb)
     var emptyGame = (function(gGameList) {
         //优先缺1人
         var priorityGameList = _.filter(gGameList, function(g) {
-            return g.currentActorNum === g.maxActor - 1 && g.roomId === data.roomId;
+            return g.currentActorNum === g.maxActor - 1 && g.roomId === data.roomId && !g.isPrivate;
         });
 
         if (priorityGameList.length > 0) {
             return _.first(priorityGameList);
         }
         
-        return _.findWhere(gGameList, {roomId: data.roomId, isFull: false});
+        return _.findWhere(gGameList, {roomId: data.roomId, isFull: false, isPrivate: false});
     })(gGameList);
     
     //如果没有空闲牌局,则创建牌局
@@ -73,6 +76,108 @@ gameService.join = function(data, cb)
     });
 }
 
+
+gameService.createPrivateGame = function (data, cb) {
+
+    //检查金币是否可加入
+    var goldValidator = gameUtil.getJoinAvailable(data.roomId || 45, data.player);
+    if (goldValidator.code == Code.FAIL) {
+        cb(goldValidator);
+        return;
+    }
+
+    if (!data.maxActor || typeof data.base !== 'number') {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.CREATE_NOT_BLANK});
+        return;
+    }
+
+    var game = new Game(data.roomId, ++gPrivateGameId, data);
+
+    gGameList.push(game);
+    data.gameId = game.gameId;
+    data.password = game.password;
+
+    gameService.joinPrivateGame(data, function (result) {
+        if (result.code === Code.OK)
+        {
+            cb({code: Code.OK, lobbyId: game.lobbyId, roomId: data.roomId, gameId: game.gameId, gameType: game.maxActor, base: game.base, actors: result.actors});
+            return;
+        }
+        cb({code: Code.FAIL});
+    });
+
+}
+
+//列出私人房间
+gameService.listPrivateGame = function (data, cb) {
+    //如果是通过房间ID查询
+    if (data.gameId) {
+        var game = _.findWhere(gGameList, {gameId: data.gameId});
+        cb({code: Code.OK, gameList: game === undefined ? [] : [game]});
+        return;
+    }
+
+    //列出所有私人桌
+    var gameList = _.filter(gGameList, function (g) {
+        return g.roomId === 45;
+    });
+
+    gameList = _.map(gameList, function (g) {
+        return {lobbyId: g.lobbyId, roomId: g.roomId, gameId: g.gameId, name: g.name, password: g.password, maxActor: g.maxActor, base: g.base, useNoteCard: g.useNoteCard, currentActorNum: g.currentActorNum}
+    })
+    cb({code: Code.OK, gameList: gameList === undefined ? [] : gameList});
+}
+
+gameService.joinPrivateGame = function(data, cb) {
+    //检查金币是否可加入
+    var goldValidator = gameUtil.getJoinAvailable(data.roomId || 45, data.player);
+    if (goldValidator.code == Code.FAIL) {
+        cb(goldValidator);
+        return;
+    }
+
+    var game = _.findWhere(gGameList, {gameId: data.gameId});
+
+    //如果没有牌局
+    if (_.isUndefined(game))
+    {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.JOIN_GAME_NOT_EXIST});
+        return;
+    }
+    if (game.isFull) {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.JOIN_GAME_IS_FULL});
+        return;
+    }
+    //如果房间有密码
+    if (game.password) {
+        if (!data.password || data.password != game.password) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.JOIN_PASSWORD_NOT_CORRECT});
+            return;
+        }
+    }
+
+    game.join(data, function (result) {
+
+        if (result.code === Code.OK)
+        {
+
+            pomelo.app.rpc.manager.userRemote.onUserJoin(null, data.uid, data.roomId, game.gameId, function (setStateResult) {
+                if (setStateResult.code === Code.FAIL) {
+                    loggerErr.error('%j', {method: "game.gameRemote.join-2", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
+                    return;
+                }
+                cb({code: Code.OK, lobbyId: game.lobbyId, roomId: data.roomId, gameId: game.gameId, gameType: game.maxActor, base: game.base, actors: result.actors});
+
+            });
+
+            return;
+        }
+        cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.ERR});
+    });
+}
+
+
 gameService.leave = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
     //如果游戏状态不是 未开始或已结束，玩家不可以离开牌桌
@@ -92,8 +197,19 @@ gameService.leave = function (data, cb) {
 
         //如果房间没人
         if (game.currentActorNum == 0) {
-
+            //如果是私人桌, 没人就移除缓存房间;
+            if (game.roomId === 45) {
+                gGameList = _.filter(gGameList, function (g) {
+                    return g.gameId !== game.gameId;
+                });
+            }
         }
+    });
+}
+
+gameService.removeGameById = function (gameId) {
+    gGameList = _.filter(gGameList, function (g) {
+        return g.gameId !== gameId;
     });
 }
 

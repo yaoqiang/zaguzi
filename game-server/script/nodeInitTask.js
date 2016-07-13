@@ -13,5 +13,5 @@ var taskList = taskUtil.initTasks();
 
 db.player.update({}, {$set: {tasks: taskList}}, {multi: true}, function() {
     console.log('init finished...');
+    process.exit();
 })
-

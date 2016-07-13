@@ -2,13 +2,16 @@
 
 var mongojs = require('mongojs');
 
+var Promise = require('promise');
+
 var db = require('../app/dao/mongodb');
 
 var taskUtil = require('../app/domain/entity/task');
 
 var taskList = taskUtil.initTasks();
 
-db.player.update({}, {$set: {tasks: taskList}}, {multi: true}, function() {
 
+db.player.update({}, {$set: {tasks: taskList}}, {multi: true}, function() {
+    console.log('init finished...');
 })
 

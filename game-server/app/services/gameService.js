@@ -125,7 +125,7 @@ gameService.listPrivateGame = function (data, cb) {
         } catch (e) {
             gameId = -1;
         }
-        var g = _.findWhere(gGameList, {gameId: gameId});
+        var g = _.findWhere(gGameList, {gameId: gameId, isPrivate: true});
 
         cb({code: Code.OK, gameList: g === undefined ? [] : [{lobbyId: g.lobbyId, roomId: g.roomId, gameId: g.gameId, name: g.name, password: g.password, maxActor: g.maxActor, base: g.base, useNoteCard: g.useNoteCard, currentActorNum: g.currentActorNum}]});
         return;

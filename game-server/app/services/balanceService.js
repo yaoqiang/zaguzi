@@ -161,7 +161,7 @@ balanceService.balanceCommon = function (game, cb) {
                     uid: actor.uid, actorNr: actor.actorNr, actorName: actor.properties.nickName,
                     actorAvatar: actor.properties.avatar, actualIdentity: actor.gameStatus.actualIdentity,
                     result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank,
-                    meeting: meeting && actor.gameStatus.identity == consts.GAME.IDENTITY.HONG3
+                    meeting: meeting && !_.contains(actor.gameStatus.actualIdentity, consts.GAME.ACTUAL_IDENTITY.GUZI)
                 });
             });
 

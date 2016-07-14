@@ -458,7 +458,6 @@ Player.prototype.updateTask = function (roomId, outcome, attributes) {
             //如果任务类型是开会,则开会成功才更新任务状态
             else if (currentTask.type == "meeting") {
                 if (attributes.meeting) {
-                    //TODO 为player添加开会数据
                     currentTask.current += 1;
                 }
             }

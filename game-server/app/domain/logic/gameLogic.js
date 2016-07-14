@@ -112,12 +112,12 @@ GameLogic.prototype.deal = function (actor) {
     }
 }
 
-//test deal...
+//test deal... 5人
 //GameLogic.prototype.deal = function (actor) {
 //    var cards1 = [105,205,305,405,107,207,307,407,108,208],
 //        cards2 = [109,209,309,409,110,210,310,410,308,408],
 //        cards3 = [111,211,311,411,112,212,312,412,113,213],
-//        cards4 = [114,214,314,414,115,215,315,415,413,413],
+//        cards4 = [114,214,314,414,115,215,315,415,313,413],
 //        cards5 = [116,216,316,416,117,217,317,417,18,19];
 //
 //    actor.gameStatus.addHoldingCards(cards1);
@@ -131,6 +131,56 @@ GameLogic.prototype.deal = function (actor) {
 //    actor.gameStatus.addHoldingCards(cards5);
 //
 //}
+
+//test deal... 6人
+// GameLogic.prototype.deal = function (actor) {
+//    var cards1 = [105,205,305,405,107,207,307,407,108],
+//        cards2 = [109,209,309,409,110,210,310,410,308],
+//        cards3 = [111,211,311,411,112,212,312,412,113],
+//        cards4 = [114,214,314,414,115,215,315,415,313],
+//        cards5 = [116,216,316,416,117,217,317,417,18],
+//        cards6 = [106,206,306,406,208,408,213,413,19];
+
+//    actor.gameStatus.addHoldingCards(cards1);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards2);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards3);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards4);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards5);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards6);
+
+// }
+
+//test deal... 7人
+// GameLogic.prototype.deal = function (actor) {
+//    var cards1 = [105,205,305,405,107,207,307,407],
+//        cards2 = [109,209,309,409,110,210,310,410],
+//        cards3 = [111,211,311,411,112,212,312,412],
+//        cards4 = [114,214,314,414,115,215,315,415],
+//        cards5 = [116,216,316,416,117,217,317,417],
+//        cards6 = [106,206,306,406,208,408,213,413],
+//        cards7 = [108,308,113,313,18,408,19];
+
+//    actor.gameStatus.addHoldingCards(cards1);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards2);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards3);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards4);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards5);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards6);
+//    actor = this.getNextActor(actor);
+//    actor.gameStatus.addHoldingCards(cards7);
+
+// }
+
 
 GameLogic.prototype.cardsSort = function (actors) {
     _.map(actors, function (actor) {

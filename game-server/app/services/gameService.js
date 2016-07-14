@@ -81,7 +81,7 @@ gameService.join = function(data, cb)
 gameService.createPrivateGame = function (data, cb) {
 
     //检查金币是否可加入
-    var goldValidator = gameUtil.getJoinAvailable(data.roomId || 45, data.player);
+    var goldValidator = gameUtil.getJoinAvailableForPrivate(data.base || 100, data.player);
     if (goldValidator.code == Code.FAIL) {
         cb(goldValidator);
         return;
@@ -137,18 +137,13 @@ gameService.listPrivateGame = function (data, cb) {
     });
 
     gameList = _.map(gameList, function (g) {
-        return {lobbyId: g.lobbyId, roomId: g.roomId, gameId: g.gameId, name: g.name, password: g.password, maxActor: g.maxActor, base: g.base, useNoteCard: g.useNoteCard, currentActorNum: g.currentActorNum}
+        var min = gameUtil.getMinByBaseForPrivateRoom(g.base);
+        return {lobbyId: g.lobbyId, roomId: g.roomId, gameId: g.gameId, name: g.name, password: g.password, maxActor: g.maxActor, base: g.base, min: min, useNoteCard: g.useNoteCard, currentActorNum: g.currentActorNum}
     })
     cb({code: Code.OK, gameList: gameList === undefined ? [] : gameList});
 }
 
 gameService.joinPrivateGame = function(data, cb) {
-    //检查金币是否可加入
-    var goldValidator = gameUtil.getJoinAvailable(data.roomId || 45, data.player);
-    if (goldValidator.code == Code.FAIL) {
-        cb(goldValidator);
-        return;
-    }
 
     var game = _.findWhere(gGameList, {gameId: data.gameId});
 
@@ -168,6 +163,13 @@ gameService.joinPrivateGame = function(data, cb) {
             cb({code: Code.FAIL, err: consts.ERR_CODE.PRIVATE_GAME.JOIN_PASSWORD_NOT_CORRECT});
             return;
         }
+    }
+
+    //检查金币是否可加入
+    var goldValidator = gameUtil.getJoinAvailableForPrivate(game.base || 100, data.player);
+    if (goldValidator.code == Code.FAIL) {
+        cb(goldValidator);
+        return;
     }
 
     game.join(data, function (result) {

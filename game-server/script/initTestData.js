@@ -146,6 +146,30 @@ db.exchangeList.save({
     type: 'VIRTUAL'
 });
 
+//预先测试数据
+
+db.exchangeList.save({
+    name: 'iPhone 7',
+    denomination: 0,
+    icon: 'http://assets.zaguzi.com/mobile_pay.png',
+    inventory: 10,
+    fragment: 8888,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'OUTBOX'
+});
+
+db.exchangeList.save({
+    name: '柴米油盐',
+    denomination: 0,
+    icon: 'http://assets.zaguzi.com/mobile_pay.png',
+    inventory: 10,
+    fragment: 1,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'OUTBOX'
+});
+
 //苹果审核状态开关
 db.appleSetting.save({ inReview: false });
 

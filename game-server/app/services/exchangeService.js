@@ -231,7 +231,7 @@ exchangeService.exchange = function (data, cb) {
 
                 //存储兑换记录, 在后台跟进操作
                 exchangeDao.exchange(data.exchangeId, data.uid, data.number, data.productName, data.count, consts.ORDER.STATE.SUBMIT, doc.fragment, { mobile: data.mobile, contact: data.contact, address: data.address }, function (err, result) {
-                    if (err == null || result == null) {
+                    if (err || result == null) {
                         logger.error("%j", {uid: data.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.EXCHANGE,
                             message: '玩家兑换物品失败(实物)', created: new Date(), detail: {exchangeId: data.exchangeId, mobile: data.mobile, contact: data.contact, address: data.address}});
                         cb({ code: Code.FAIL, err: consts.ERR_CODE.EXCHANGE.NEED_CUSTOMER });

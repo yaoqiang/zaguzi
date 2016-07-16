@@ -313,19 +313,15 @@ playerService.tie = function (data, cb) {
  * 游戏结束后处理xx
  */
 playerService.battle = function (detail, cb) {
-
-    playerService.getUserCacheByUid(detail.uid, function (user) {
-        //处理结束后, 相关处理
-        user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting });
-    });
-
+    var ultimateGold = detail.gold;    
     switch (detail.result) {
         case consts.GAME.ACTOR_RESULT.WIN:
-            playerService.win({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold, meeting: detail.meeting }, function (data) {
+            playerService.win({ uid: detail.uid, roomId: detail.roomId, gold: ultimateGold, meeting: detail.meeting }, function (data) {
             });
             break;
         case consts.GAME.ACTOR_RESULT.LOSE:
-            playerService.lose({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1 }, function (data) {
+            ultimateGold = ultimateGold * -1;
+            playerService.lose({ uid: detail.uid, roomId: detail.roomId, gold: ultimateGold }, function (data) {
             });
             break;
         default:
@@ -333,6 +329,12 @@ playerService.battle = function (detail, cb) {
             });
             break;
     }
+
+    playerService.getUserCacheByUid(detail.uid, function (user) {
+        //处理结束后, 相关处理
+        user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting, gold: ultimateGold });
+    });
+
 
     cb();
 }

@@ -425,6 +425,9 @@ Player.prototype.getBankruptcyGrant = function (cb) {
  */
 Player.prototype.battle = function (roomId, outcome, attributes) {
     this.updateTask(roomId, outcome, attributes);
+    //添加battle record
+    var record = {uid: this.uid, roomId: roomId, result: outcome, meeting: attributes.meeting, gold: attributes.gold, createdAt: new Date()};
+    this.saveUserBattleRecord(record);
 }
 
 
@@ -597,6 +600,15 @@ Player.prototype.saveOnEnter = function () {
 
 Player.prototype.flushAll = function () {
     this.emit('flushAll');
+}
+
+//用户牌局记录
+Player.prototype.saveUserBattleRecord = function (record) {
+    this.emit('saveUserBattleRecord', record);
+}
+
+Player.prototype.flushUserBattleRecord = function (record) {
+    this.emit('flushUserBattleRecord', record);
 }
 
 

@@ -57,6 +57,14 @@ function addPlayerSaveEvent(player) {
         app.get('sync').exec('taskSync.update', player.uid, player);
     })
 
+    player.on('saveUserBattleRecord', function (record) {
+        app.get('sync').exec('userBattleRecordSync.insert', player.uid, record);
+    })
+
+    player.on('flushUserBattleRecord', function (record) {
+        app.get('sync').flush('userBattleRecordSync.insert', player.uid, record);
+    })
+
     player.on('saveAll', function () {
         app.get('sync').exec('playerSync.update', player.uid, player);
         app.get('sync').exec('propertiesSync.update', player.uid, player);
@@ -73,6 +81,9 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('playerSync.updatePlayerProfile', player.uid, player);
     });
     
+
+
+    //UI事件暂时不需要, 设计有些复杂了,粒度太小了
     player.on(consts.EVENT.UI_ON_ENTRY_WRAPPER, function (args) {
         
     });

@@ -2,8 +2,39 @@ var db = connect('zgz');
 
 var rankingList = db.rankingList;
 
+//helper
+var getDayOfMonth = function (y, Mm) {  
+    
+    if (typeof y == 'undefined') { y = (new Date()).getFullYear(); }  
+    if (typeof Mm == 'undefined') { Mm = (new Date()).getMonth(); }  
+    var Feb = (y % 4 == 0) ? 29 : 28;  
+    var aM = new Array(31, Feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);  
+    return  aM[Mm];  
+}; 
+
+var getDateOfPreMonth = function (dt) {  
+    
+    if (typeof dt == 'undefined') { dt = (new Date()); }  
+    var y = (dt.getMonth() == 0) ? (dt.getFullYear() - 1) : dt.getFullYear();  
+    var m = (dt.getMonth() == 0) ? 11 : dt.getMonth() - 1;  
+    var preM = getDayOfMonth(y, m);
+    var d = (preM < dt.getDate()) ? preM : dt.getDate();  
+    return new Date(y, m, d);
+};  
+
+var getLastDayInMonth = function (dt) {
+    var lastMonth = getDateOfPreMonth(dt);
+    lastMonth.setMonth(dt.getMonth());
+    lastMonth.setDate(0);
+    lastMonth.setHours(23);
+    lastMonth.setMinutes(59);
+    lastMonth.setSeconds(59);
+    return lastMonth;
+}
+
+
 //上榜临界值
-var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100;
+var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100, godMonthBattleThreshold = 0;
 var limit = 20;
 var yesterday = new Date((new Date()) - 24*60*60*1000);
 
@@ -37,19 +68,51 @@ var godRankingList = db.player.aggregate([
 rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date() });
 
 
-// db.order.remove({});
+var from = getLastDayInMonth(new Date());
+print(from)
+//股神榜月排行
+var godMonthRankingList = db.userBattleRecord.aggregate([
+        { $match: { createdAt: {$gt: from} } },
+        { $group:
+            {
+                _id: "$uid",
+                battleCount: {$sum: 1},
+                winNr: {
+                    $sum: { $cond: [ {  $eq: [ '$result' , 'WIN' ] }, 1, 0 ] }
+                },
+                loseNr: {
+                    $sum: { $cond: [ {  $eq: [ '$result' , 'LOSE' ] }, 1, 0 ] }
+                },
+            }
+        },
+        { $match: { battleCount: {$gt: godMonthBattleThreshold} }},
+        { 
+            $project: {
+                _id: 1, battleCount: 1, winNr: 1, loseNr: 1,
+                winning: {
+                    $divide: ["$winNr", {$cond: [{$eq: [{ $add: ["$winNr", "$loseNr"] }, 0]}, 1, {$add: ["$winNr", "$loseNr"]}]}]
+                } 
+            }
+        },
+        {$sort: {winning: -1}},
+        {$limit: limit}
+]);
 
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 1, productId: 1, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 2, productId: 2, amount: 2, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f52', orderSerialNumber: 3, productId: 1, amount: 3, state: 1, device: 1, channel: 1, player: {nickName: 'a', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 4, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 5, productId: 3, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 6, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 7, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f53', orderSerialNumber: 8, productId: 1, amount: 4, state: 1, device: 1, channel: 1, player: {nickName: 'b', avatar: 0}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 9, productId: 4, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 10, productId: 1, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
- //db.order.save({uid: '56927ea3cba744a3428a1f54', orderSerialNumber: 11, productId: 4, amount: 1, state: 1, device: 1, channel: 1, player: {nickName: 'c', avatar: 4}, createdAt: new Date()});
+var godMonthRankingResult = [];
+
+if (godMonthRankingList && godMonthRankingList._batch.length > 0) {
+    godMonthRankingList._batch.forEach(function (item) {
+        var player = db.player.findOne({uid: ObjectId(item._id)});
+        item.nickName = player.nickName;
+        item.avatar = player.avatar;
+        item.summary = player.summary;
+        godMonthRankingResult.push(item);
+    });
+}
+
+rankingList.insert({ ranking: godMonthRankingResult, type: "GOD_MONTH", date: new Date() });
+
+db.tmpRanking.save({ranking: godMonthRankingList._batch})
 
 
 //历史充值榜
@@ -80,3 +143,7 @@ if (rechargeList && rechargeList._batch.length > 0) {
 }
 
 rankingList.insert({ ranking: rechargeRankingResult, type: "RECHARGE", date: new Date() });
+
+
+
+

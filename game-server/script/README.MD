@@ -39,6 +39,9 @@ node nodeInitTask.js
 mongoIngotTaskRestore.js
 ```
 
+### nodeRemoveDaily.js
+由crontab调度，每天运行清理不需要的数据
+
 ### rankingTask.js
 由crontab调度，每天更新排行榜数据
 

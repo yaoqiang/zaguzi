@@ -4,7 +4,8 @@ var mongoConfig = require('../../../shared/config/mongo');
 var db = mongojs(mongoConfig.url,
     ['user', 'player', 'exchangeList', 'exchangeRecord', 'rankingList',
         'appReleaseRecord', 'order', 'captcha', 'systemMessage', 'serialCode',
-        'appleSetting', 'inviteRecord'
+        'appleSetting', 'inviteRecord', 'userBattleRecord',
+        'logUserRecord'
     ]);
 
 db.player.ensureIndex({uid: 1, meetingTimes: 1, createdAt: 1});
@@ -42,5 +43,8 @@ db.inviteRecord.ensureIndex({uid: 1});
 db.inviteRecord.ensureIndex({createdAt: 1});
 db.inviteRecord.ensureIndex({uid: 1, createdAt: 1});
 db.inviteRecord.ensureIndex({state: 1});
+
+db.userBattleRecord.ensureIndex({uid: 1});
+db.userBattleRecord.ensureIndex({createdAt: 1});
 
 module.exports = db;

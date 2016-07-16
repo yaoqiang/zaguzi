@@ -174,7 +174,7 @@ balanceService.balanceCommon = function (game, cb) {
             //处理结算数据
             pomelo.app.rpc.manager.userRemote.balance(null, {
                 gameRecord: {
-                    lobby: game.maxActor,
+                    lobby: game.lobbyId,
                     roomId: game.roomId,
                     result: game.gameLogic.result,
                     share: game.gameLogic.share,

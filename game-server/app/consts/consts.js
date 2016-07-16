@@ -394,7 +394,8 @@ module.exports = {
         RICH: 'RICH',
         GOD: 'GOD',
         RECHARGE: 'RECHARGE',
-        MEETING: 'MEETING'
+        MEETING: 'MEETING',
+        GOD_MONTH: 'GOD_MONTH'
     },
 
     // LOG: {

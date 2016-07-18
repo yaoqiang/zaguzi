@@ -24,7 +24,7 @@ new Promise(function (resolve, reject) {
 })
 .then(function (resolve, reject) {
     //删除创建时间为7天前的数据, 用户日志只保留7天。
-    db.logUserRecord.remove({createdAt: {$gt: lastSevenDay}}, function() {
+    db.logUserRecord.remove({createdAt: {$lte: lastSevenDay}}, function() {
         console.log('remove last 7 day logUserRecord finished...');
         process.exit();
     })

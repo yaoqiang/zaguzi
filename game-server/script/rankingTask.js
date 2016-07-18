@@ -22,7 +22,7 @@ var getDateOfPreMonth = function (dt) {
     return new Date(y, m, d);
 };  
 
-var getLastDayInMonth = function (dt) {
+var getLastDayInLastMonth = function (dt) {
     var lastMonth = getDateOfPreMonth(dt);
     lastMonth.setMonth(dt.getMonth());
     lastMonth.setDate(0);
@@ -68,8 +68,7 @@ var godRankingList = db.player.aggregate([
 rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date() });
 
 
-var from = getLastDayInMonth(new Date());
-print(from)
+var from = getLastDayInLastMonth(new Date());
 //股神榜月排行
 var godMonthRankingList = db.userBattleRecord.aggregate([
         { $match: { createdAt: {$gt: from} } },

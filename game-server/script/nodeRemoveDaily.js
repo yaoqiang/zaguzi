@@ -17,14 +17,14 @@ var lastSevenDay = moment(now).subtract(7, 'days').endOf('day').format('YYYY-MM-
 
 new Promise(function (resolve, reject) {
     //删除上月的用户牌局记录
-    db.userBattleRecord.remove({created: {$lte: lastMonth}}, function() {
+    db.userBattleRecord.remove({createdAt: {$gt: lastMonth}}, function() {
         console.log('remove last month userBattleRecord finished...');
         resolve();  
     })
 })
 .then(function (resolve, reject) {
     //删除创建时间为7天前的数据, 用户日志只保留7天。
-    db.logUserRecord.remove({created: {$lte: lastSevenDay}}, function() {
+    db.logUserRecord.remove({createdAt: {$gt: lastSevenDay}}, function() {
         console.log('remove last 7 day logUserRecord finished...');
         process.exit();
     })

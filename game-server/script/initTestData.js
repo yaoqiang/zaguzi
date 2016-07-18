@@ -321,7 +321,11 @@ db.activityList.save({
 });
 
 db.activityGrantRecord.save({
-
+    name: "GOD_MONTH",
+    uid: "",
+    state: "",
+    detail: {rank: 1},
+    createdAt: new Date(),
 });
 
 

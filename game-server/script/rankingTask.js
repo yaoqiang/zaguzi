@@ -36,7 +36,6 @@ var getLastDayInLastMonth = function (dt) {
 //上榜临界值
 var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100, godMonthBattleThreshold = 0;
 var limit = 20;
-var yesterday = new Date((new Date()) - 24*60*60*1000);
 
 
 //财富榜
@@ -68,6 +67,7 @@ var godRankingList = db.player.aggregate([
 rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date() });
 
 
+//上月最后一天23.59.59.
 var from = getLastDayInLastMonth(new Date());
 //股神榜月排行
 var godMonthRankingList = db.userBattleRecord.aggregate([

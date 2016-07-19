@@ -425,9 +425,11 @@ Player.prototype.getBankruptcyGrant = function (cb) {
  */
 Player.prototype.battle = function (roomId, outcome, attributes) {
     this.updateTask(roomId, outcome, attributes);
-    //添加battle record
-    var record = {uid: this.uid, roomId: roomId, result: outcome, meeting: attributes.meeting, gold: attributes.gold, createdAt: new Date()};
-    this.saveUserBattleRecord(record);
+    //添加battle record, 不包含私人场牌局（目前只有股神月排行榜用到record, 为了防止刷战绩等, 不能包含私人场）
+    if (roomId !== 45) {
+        var record = {uid: this.uid, roomId: roomId, result: outcome, meeting: attributes.meeting, gold: attributes.gold, createdAt: new Date()};
+        this.saveUserBattleRecord(record);
+    }
 }
 
 

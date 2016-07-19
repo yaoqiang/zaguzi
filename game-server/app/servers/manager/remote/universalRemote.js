@@ -755,7 +755,13 @@ UniversalRemote.prototype = {
             });
 
         });
+    },
 
+    isLatestActivityGodMonth: function (data, cb) {
+        commonService.isLatestActivityGodMonth(data, cb);
+    },
 
+    getLatestActivityGodMonth: function (data, cb) {
+        commonService.getLatestActivityGodMonth(data, cb);
     }
 }

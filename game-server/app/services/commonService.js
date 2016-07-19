@@ -241,3 +241,16 @@ commonService.searchOrderByTransactionId = function (transactionId, cb) {
 
     commonDao.searchOrderByTransactionId(transactionId, cb);
 }
+
+
+commonService.isLatestActivityGodMonth = function (data, cb) {
+    commonDao.isLatestActivityGodMonth(data, cb);
+}
+
+commonService.getLatestActivityGodMonth = function (data, cb) {
+    commonDao.getLatestActivityGodMonth(data, function(doc) {
+        if (!doc) return cb(activity: null);
+        return cb({activity: {content: doc.content, detail: doc.detail, name: doc.name, updatedAt: doc.updatedAt
+            threshold: doc.threshold.battle, enabled: doc.enabled, urlForRecord: doc.urlForRecord}}) 
+    });
+}

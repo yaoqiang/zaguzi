@@ -22,6 +22,8 @@ var utils = require('../util/utils');
 var Token = require('../../../shared/token');
 var secret = require('../../../shared/config/session').secret;
 
+var moment = require('moment');
+
 var commonDao = module.exports;
 
 
@@ -300,6 +302,33 @@ commonDao.getInviteRecordListByUid = function (data, cb) {
     })
 }
 
+/**
+ * 客户端通过客户端存储的最后条股神月排行榜活动更新时间 查询是否最新的
+ * @param data: {updatedAt: String} 
+ */
+commonDao.isLatestActivityGodMonth = function (data, cb) {
+    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+        if (err || !doc) {
+            return cb({isLatest: true});
+        }
+        try {
+            if (moment(doc.updatedAt).isSame(moment(data.updatedAt))) {
+                return cb({isLatest: true});
+            }
+        } catch (e) {
+        }
+        return cb({isLatest: false});
+    });
+}
+
+commonDao.getLatestActivityGodMonth = function (data, cb) {
+    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+        if (err) {
+            return cb({activity: null});
+        }
+        return cb({activity: doc});
+    });
+}
 
 //生成序列号消息
 commonDao.generateSerialCodeByType = function (data, cb) {

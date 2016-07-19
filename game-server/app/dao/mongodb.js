@@ -4,7 +4,7 @@ var mongoConfig = require('../../../shared/config/mongo');
 var db = mongojs(mongoConfig.url,
     ['user', 'player', 'exchangeList', 'exchangeRecord', 'rankingList',
         'appReleaseRecord', 'order', 'captcha', 'systemMessage', 'serialCode',
-        'appleSetting', 'inviteRecord', 'userBattleRecord',
+        'appleSetting', 'inviteRecord', 'userBattleRecord', 'activityList', 'activityGrantRecord',
         'logUserRecord'
     ]);
 
@@ -46,5 +46,13 @@ db.inviteRecord.ensureIndex({state: 1});
 
 db.userBattleRecord.ensureIndex({uid: 1});
 db.userBattleRecord.ensureIndex({createdAt: 1});
+
+db.activityList.ensureIndex({name: 1});
+
+db.activityGrantRecord.ensureIndex({name: 1});
+db.activityGrantRecord.ensureIndex({uid: 1});
+db.activityGrantRecord.ensureIndex({createdAt: 1});
+db.activityGrantRecord.ensureIndex({uid: 1, createdAt: 1});
+db.activityGrantRecord.ensureIndex({uid: 1, name:1, createdAt: 1});
 
 module.exports = db;

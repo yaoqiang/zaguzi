@@ -403,3 +403,21 @@ handler.getInviteRecordListByUid = function (msg, session, next) {
         next(null, data);
     });
 }
+
+handler.isLatestActivityGodMonth = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.isLatestActivityGodMonth(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getLatestActivityGodMonth = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getInviteRecordListByUid(session, msg, function (data) {
+        next(null, data);
+    });
+}

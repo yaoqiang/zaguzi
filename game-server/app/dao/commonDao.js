@@ -330,6 +330,23 @@ commonDao.getLatestActivityGodMonth = function (data, cb) {
     });
 }
 
+
+//获取上月的股神月排行榜获奖记录
+commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
+    var firstDayInMonth = moment().endOf('month').format('YYYY-MM-DD HH:mm:ss');
+    db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: firstDayInMonth}}).sort({'detail.rank': 1}, function(err, docs) {
+        // cb(docs);
+    });
+}
+
+
+
+
+
+
+
+
+
 //生成序列号消息
 commonDao.generateSerialCodeByType = function (data, cb) {
     var initNumber = 100000001;

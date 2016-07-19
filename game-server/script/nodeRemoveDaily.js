@@ -4,7 +4,7 @@ var mongojs = require('mongojs');
 
 var Promise = require('promise');
 
-var db = require('../app/dao/mongodb');
+var db = mongojs('zgz', ['userBattleRecord', 'logUserRecord']);
 
 var moment = require('moment');
 

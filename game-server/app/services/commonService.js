@@ -259,7 +259,6 @@ commonService.getLatestActivityGodMonth = function (data, cb) {
 
 commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     commonDao.getLatestActivityGrantRecordGodMonth(data, function(recordList) {
-        console.log('recordList -> ', recordList);
         try {
             var result = _.map(recordList, function(record) {
                 record.detail.winning = parseFloat(record.detail.winning).toFixed(2);

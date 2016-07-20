@@ -335,7 +335,7 @@ commonDao.getLatestActivityGodMonth = function (data, cb) {
 commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     //每月第一天凌晨1点生成上月股神排行榜的奖励记录，所以查询日期大于本月第一天的就可查到上月记录；即查询上月奖励接口延迟1小时。
     var firstDayInMonth = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
-    db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: firstDayInMonth}}).sort({'detail.rank': 1}, function(err, docs) {
+    db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: new Date(firstDayInMonth)}}).sort({'detail.rank': 1}, function(err, docs) {
         if (err) {
             cb({recordList: []});
             return;

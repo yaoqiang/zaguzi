@@ -261,7 +261,7 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     commonDao.getLatestActivityGrantRecordGodMonth(data, function(recordList) {
         try {
             var result = _.map(recordList, function(record) {
-                record.detail.winning = parseFloat(record.detail.winning).toFixed(2);
+                record.detail.winning = parseFloat(record.detail.winning).toFixed(2) * 100;
                 if (record.mobile != '') {
                     var reg = /1(\d{2})\d{4}(\d{4})/g;
                     record.mobile = record.mobile.replace(reg,"1$1****$2");

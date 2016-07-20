@@ -272,7 +272,7 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
 
             cb({recordList: result});
         } catch (e) {
-
+            console.log('err -> ', e);
         }
         
         cb({recordList: []});

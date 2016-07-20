@@ -340,7 +340,7 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
             cb({recordList: []});
             return;
         }
-        var getRecordDetialPromiseList = _.map(docs, function(record) {
+        var getRecordDetailPromiseList = _.map(docs, function(record) {
             return new Promise(function(resolve, reject) {
                 db.player.findOne({uid: mongojs.ObjectId(record.uid)}, function(err, player) {
                     db.user.findOne({_id:  mongojs.ObjectId(record.uid)}, function(err, user) {

@@ -69,7 +69,7 @@ rankingList.insert({ ranking: godRankingList._batch, type: "GOD", date: new Date
 
 //上月最后一天23.59.59.
 var from = getLastDayInLastMonth(new Date());
-//股神榜月排行
+//股神榜月排行, 游戏局数总数包括平局, 胜率不含平局
 var godMonthRankingList = db.userBattleRecord.aggregate([
         { $match: { createdAt: {$gt: from} } },
         { $group:

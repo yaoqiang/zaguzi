@@ -42,6 +42,10 @@ var UniversalRemote = function (app) {
 
 UniversalRemote.prototype = {
 
+    getOnlineUserList: function(data, cb) {
+        cb(pomelo.app.userCache);
+    },
+
     getRankingList: function (data, cb) {
         commonService.getRankingList(data, cb);
     },
@@ -763,5 +767,10 @@ UniversalRemote.prototype = {
 
     getLatestActivityGodMonth: function (data, cb) {
         commonService.getLatestActivityGodMonth(data, cb);
+    },
+
+    //获取上月的股神月排行榜获奖记录
+    getLatestActivityGrantRecordGodMonth: function (data, cb) {
+        commonService.getLatestActivityGrantRecordGodMonth(data, cb);
     }
 }

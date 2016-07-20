@@ -256,3 +256,7 @@ commonService.getLatestActivityGodMonth = function (data, cb) {
             threshold: doc.threshold.battle, enabled: doc.enabled, urlForRecord: doc.urlForRecord}) 
     });
 }
+
+commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
+    commonDao.getLatestActivityGrantRecordGodMonth(data, cb);
+}

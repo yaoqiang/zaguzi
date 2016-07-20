@@ -192,8 +192,22 @@ module.exports = function (app) {
             return;
         }
         app.rpc.manager.universalRemote.getRankingList(null, {uid: req.query.type}, function (data) {
-            logger.debug('获得玩家兑换记录 rpc invoke finished.');
-                res.send(data);
+            logger.debug('获得排行榜信息 rpc invoke finished.');
+            res.send(data);
+        });
+    });
+
+    //获取上月的股神月排行榜获奖记录
+    game.get('/getLatestActivityGrantRecordGodMonth', authenticationIpAddress, function (req, res) {
+        app.rpc.manager.universalRemote.getLatestActivityGrantRecordGodMonth(null, {}, function (data) {
+            logger.debug('获得上月的股神月排行榜获奖记录 rpc invoke finished.');
+            res.send(data);
+        });
+    });
+
+    game.get('/getOnlineUserList', authenticationIpAddress, function (req, res) {
+        app.rpc.manager.universalRemote.getOnlineUserList(null, {}, function (data) {
+            res.send(data);
         });
     });
     

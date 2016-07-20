@@ -15,8 +15,7 @@ var moment = require('moment');
 
 //测试查询上月股神排行榜获奖记录
 var firstDayInMonth = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
-console.log('firstDayInMonth -> ', firstDayInMonth);
-db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: firstDayInMonth}}).sort({'detail.rank': 1}, function(err, docs) {
+db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: new Date(firstDayInMonth)}}).sort({'detail.rank': 1}, function(err, docs) {
     if (err) {
         console.log(err);
         db.close();

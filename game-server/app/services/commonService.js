@@ -259,14 +259,22 @@ commonService.getLatestActivityGodMonth = function (data, cb) {
 
 commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     commonDao.getLatestActivityGrantRecordGodMonth(data, function(recordList) {
-        var result = _.map(recordList, function(record) {
-            record.detail.winning = parseFloat(record.detail.winning).toFixed(2);
-            if (record.mobile != '') {
-                var reg = /1(\d{2})\d{4}(\d{4})/g;
-                record.mobile = record.mobile.replace(reg,"1$1****$2");
-            }
-            return record;
-        });
-        cb({recordList: result});
+        console.log('recordList -> ', recordList);
+        try {
+            var result = _.map(recordList, function(record) {
+                record.detail.winning = parseFloat(record.detail.winning).toFixed(2);
+                if (record.mobile != '') {
+                    var reg = /1(\d{2})\d{4}(\d{4})/g;
+                    record.mobile = record.mobile.replace(reg,"1$1****$2");
+                }
+                return record;
+            });
+
+            cb({recordList: result});
+        } catch (e) {
+
+        }
+        
+        cb({recordList: []});
     });
 }

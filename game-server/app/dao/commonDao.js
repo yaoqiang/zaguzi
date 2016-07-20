@@ -337,7 +337,7 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     var firstDayInMonth = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
     db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: new Date(firstDayInMonth)}}).sort({'detail.rank': 1}, function(err, docs) {
         if (err) {
-            cb({recordList: []});
+            cb([]);
             return;
         }
         var getRecordDetailPromiseList = _.map(docs, function(record) {
@@ -353,7 +353,7 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
         });
 
         Promise.all(getRecordDetailPromiseList).then(function(res) {
-            cb({recordList: res});
+            cb(res);
         });
     });
 }

@@ -417,7 +417,7 @@ handler.getLatestActivityGodMonth = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;
 
-    this.app.rpc.manager.universalRemote.getInviteRecordListByUid(session, msg, function (data) {
+    this.app.rpc.manager.universalRemote.getLatestActivityGodMonth(session, msg, function (data) {
         next(null, data);
     });
 }

@@ -324,18 +324,18 @@ commonDao.isLatestActivityGodMonth = function (data, cb) {
 commonDao.getLatestActivityGodMonth = function (data, cb) {
     db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
         if (err) {
-            return cb({activity: null});
+            return cb(null);
         }
-        return cb({activity: doc});
+        return cb(doc);
     });
 }
 
-
+//TODO
 //获取上月的股神月排行榜获奖记录
 commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     var firstDayInMonth = moment().endOf('month').format('YYYY-MM-DD HH:mm:ss');
     db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: firstDayInMonth}}).sort({'detail.rank': 1}, function(err, docs) {
-        // cb(docs);
+        cb(docs);
     });
 }
 

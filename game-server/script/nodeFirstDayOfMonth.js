@@ -6,17 +6,16 @@ var Promise = require('promise');
 
 var request = require('request');
 
+var _ = require('lodash');
+
 var db = mongojs('zgz', ['rankingList', 'activityList', 'activityGrantRecord']);
 
 var moment = require('moment');
 
 
 
-//prod
-// var gameHttpUrl = "http://101.201.154.38:1337/";
 
-//dev
-var gameHttpUrl = "http://101.200.128.137:1337/";
+var gameHttpUrl = "http://127.0.0.1:1337/";
 
 
 //为股神月排行榜发放奖励，每月第一天执行时，拿到最新的排行榜数据就是月排行榜最终数据
@@ -27,7 +26,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
         process.exit();
     }
     else {
-        if (!docs || typeof docs !== 'array' || docs.length == 0) {
+        if (!docs || !_.isArray(docs) || docs.length == 0) {
             console.log('当月还没有产生排行榜数据，%o', new Date());
             db.close();
             process.exit();
@@ -61,7 +60,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
 
                     if (grant.fragment) {
                         options.url = gameHttpUrl + "api/game/addFragment"
-                        options.json = { uid: ranking.uid, type: 'ACTIVITY', fragment: grant.fragment };
+                        options.json = { uid: ranking._id, type: 'ACTIVITY', fragment: grant.fragment };
                         var optionPromise = new Promise(function (resolve, reject) {
                             request.post(options, function () {
                                 resolve(null);
@@ -71,7 +70,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
                     }
                     if (grant.items) {
                         options.url = gameHttpUrl + "api/game/addItems"
-                        options.json = { uid: ranking.uid, type: 'ACTIVITY', items: grant.items };
+                        options.json = { uid: ranking._id, type: 'ACTIVITY', items: grant.items };
                         var optionPromise = new Promise(function (resolve, reject) {
                             request.post(options, function () {
                                 resolve(null);
@@ -81,7 +80,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
                     }
                     if (grant.gold) {
                         options.url = gameHttpUrl + "api/game/addGold"
-                        options.json = { uid: ranking.uid, type: 'ACTIVITY', gold: grant.gold };
+                        options.json = { uid: ranking._id, type: 'ACTIVITY', gold: grant.gold };
                         var optionPromise = new Promise(function (resolve, reject) {
                             request.post(options, function () {
                                 resolve(null);
@@ -92,9 +91,13 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
 
                     Promise.all(optionPromiseList).then(function (res) {
                         //为玩家发放完奖励后，写入奖励记录
-                        var record = { name: "GOD_MONTH", uid: ranking.uid, state: 'FINISHED', detail: { rank: i + 1 }, createdAt: new Date() };
-                        db.activityGrantRecord.save(record);
-                        resolve();
+                        var record = { name: "GOD_MONTH", uid: ranking._id, state: 'FINISHED', detail: { rank: i + 1 }, createdAt: new Date() };
+                        db.activityGrantRecord.save(record, function () {
+                            console.log(1111, ranking)
+                            
+                            resolve();
+                        });
+                        
                     })
 
                 });

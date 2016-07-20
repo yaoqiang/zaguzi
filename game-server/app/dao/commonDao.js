@@ -354,7 +354,7 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
 
         Promise.all(getRecordDetailPromiseList).then(function(res) {
             cb({recordList: res});
-        })
+        });
     });
 }
 

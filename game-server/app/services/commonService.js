@@ -263,12 +263,10 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
             var result = _.map(recordList, function(record) {
                 record.detail.winning = parseFloat(record.detail.winning * 100).toFixed(2);
                 if (record.mobile != '') {
-                    var reg = /1(\d{2})\d{4}(\d{4})/g;
-
-                    console.log('before -> ', record.mobile);
-                    record.mobile = record.mobile.replace(reg, "1$1****$2");
-                    console.log('before -> ', record.mobile);
-
+                    var mobilePrefix = record.mobile.substring(0, 3);
+                    var mobileSuffix = record.mobile.substring(7, record.mobile.length);
+                    var mobile = mobilePrefix + "****" + mobileSuffix;
+                    record.mobile = mobile;
                 }
                 return record;
             });

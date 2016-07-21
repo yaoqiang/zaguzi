@@ -312,7 +312,7 @@ function sendBackGameEvent(uid, u, room, msg) {
     });
 }
 
-//兼容v1.3之前版
+//兼容v1.3之前版本
 handler.enterIndex = function (msg, session, next) {
     this.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
         var lobby = [];
@@ -336,7 +336,7 @@ handler.enterIndex_v_1_3 = function (msg, session, next) {
     });
 }
 
-//兼容v1.3之前版
+//兼容v1.3之前版本
 handler.enterLobby = function (msg, session, next) {
     var lobbyId = msg.lobbyId;
     var self = this;
@@ -345,6 +345,7 @@ handler.enterLobby = function (msg, session, next) {
         next(null, {code: Code.OK});
     } else {
         self.app.rpc.manager.userRemote.getOnlineUserResultCache(null, {}, function (data) {
+            //
             var roomsResult = _.map(rooms[lobbyId], function (room) {
                 if (!!data.online) {
                     _.each(data.online.room, function (onlineRoom) {

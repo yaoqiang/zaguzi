@@ -172,6 +172,10 @@ db.exchangeList.save({
 
 //苹果审核状态开关
 db.appleSetting.save({ inReview: false });
+//苹果审核中
+db.appleSetting.update({}, {$set: { inReview: true }});
+//苹果审核结束
+db.appleSetting.update({}, {$set: { inReview: false }});
 
 //兑换记录结构
 db.exchangeRecord.save({
@@ -285,12 +289,12 @@ db.systemMessage.save({
 db.activityList.save({
     title: '股神榜-月排行榜',
     content: '当月游戏300局以上,就有资格上榜!',
-    detail: '第一名: 50元宝+20000金+7喇叭+7天记牌器\n第二名: 30元宝+10000金+5喇叭+5天记牌器\n第三名: 10元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金',
+    detail: '第一名: 50元宝+20000金+7喇叭+7天记牌器\n第二名: 30元宝+10000金+5喇叭+5天记牌器\n第三名: 10元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金\n\n8月开启,来吧股神!奖励每月1号自动发放!',
     icon: '',
     name: 'GOD_MONTH',
     type: 'ROUND',
     unit: 'MONTH',
-    threshold: { battle: 300 },
+    threshold: { battle: 200 },
     enabled: true,
     visible: false,
     urlForIntro: 'http://www.zaguzi.com/activity_god_month.html',

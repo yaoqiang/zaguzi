@@ -91,7 +91,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
 
                     Promise.all(optionPromiseList).then(function (res) {
                         //为玩家发放完奖励后，写入奖励记录
-                        var record = { name: "GOD_MONTH", uid: ranking._id, state: 'FINISHED', detail: { rank: i + 1, winning: ranking.winning }, createdAt: new Date() };
+                        var record = { name: "GOD_MONTH", uid: ranking._id, state: 'FINISHED', detail: { rank: i + 1, winning: ranking.winning, winNr: ranking.winNr, loseNr: ranking.loseNr, battleNr: ranking.battleCount }, createdAt: new Date() };
                         db.activityGrantRecord.save(record, function () {
                             resolve();
                         });

@@ -198,7 +198,7 @@ module.exports = function (app) {
     });
 
     //获取上月的股神月排行榜获奖记录
-    game.get('/getLatestActivityGrantRecordGodMonth', authenticationIpAddress, function (req, res) {
+    game.get('/getLatestActivityGrantRecordGodMonth', function (req, res) {
         app.rpc.manager.universalRemote.getLatestActivityGrantRecordGodMonth(null, {}, function (data) {
             logger.debug('获得上月的股神月排行榜获奖记录 rpc invoke finished.');
             res.send(data);

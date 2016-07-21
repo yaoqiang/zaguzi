@@ -406,7 +406,7 @@ userDao.findOneByMobile = function (mobile, cb) {
 }
 
 /**
- * 根据shortid查询用户是否存在，true: 存在，false: 不存在
+ * 根据shortid查询用户是否存在，true: 存在，false: 不存在 - 废弃
  */
 userDao.findByShortid = function (shortid, cb) {
     db.user.findOne({

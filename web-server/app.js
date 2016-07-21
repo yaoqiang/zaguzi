@@ -16,8 +16,6 @@ var methodOverride = require('method-override');
 
 var passwordHash = require('password-hash');
 
-var shortid = require('shortid');
-
 
 app.use(methodOverride('_method'));
 app.use(cookieParser());
@@ -57,8 +55,7 @@ app.post('/autoLogin', function (req, res) {
         os: os,
         loginCount: 1,
         lastLoginAt: new Date(),
-        createdAt: new Date(),
-        shortid: shortid.generate()
+        createdAt: new Date()
     };
     db.user.save(user, function (err, doc) {
         logger.debug('A new user was created! --' + doc._id);

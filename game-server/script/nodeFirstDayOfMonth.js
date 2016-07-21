@@ -103,7 +103,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
             });
 
             Promise.all(requestPromiseList).then(function (res) {
-                console.log("~~ All options handled ~~");
+                console.log("~~ All options handled ~~", new Date());
                 db.close()
                 process.exit()
             });

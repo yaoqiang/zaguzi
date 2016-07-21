@@ -17,14 +17,15 @@ var lastTwoWeek = moment(now).subtract(14, 'days').endOf('day').format('YYYY-MM-
 new Promise(function (resolve, reject) {
     //删除上月的用户牌局记录
     db.userBattleRecord.remove({createdAt: {$lte: new Date(lastMonth)}}, function() {
-        console.log('remove userBattleRecord finished with the createdAt before last month...');
+        console.log('remove userBattleRecord finished with the createdAt before last month...', new Date());
         resolve();  
     })
 })
 .then(function (resolve, reject) {
     //删除创建时间为7天前的数据, 用户日志只保留7天。
     db.logUserRecord.remove({createdAt: {$lte: new Date(lastTwoWeek)}}, false, function() {
-        console.log('remove logUserRecord finished with the createdAt before last two weeks...');
+        console.log('remove logUserRecord finished with the createdAt before last two weeks...', new Date());
+        db.close();
         process.exit();
     })
 })

@@ -13,8 +13,7 @@ var Promise = require('promise');
 
 var mongojs = require('mongojs');
 
-//var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
-var pingpp = require('pingpp')(open.PAYMENT.PINGPP.liveSecretKey);
+var pingpp = require('pingpp')(open.PAYMENT.PINGPP.testSecretKey);
 pingpp.setPrivateKeyPath(__dirname + "/../../config/rsa_private_key.pem");
 
 var messageService = require('./messageService');

@@ -81,9 +81,9 @@
       "category": "online-record"
     },
     {
-      "type": "file",
+      "type": "dateFile",
       "filename": "./logs/error-all.log",
-      "maxLogSize": 1048576,
+      "pattern": "-yyyy-MM-dd",
       "layout": {
         "type": "basic"
       },
@@ -95,15 +95,15 @@
     }
   ],
   "levels": {
-    "game-system": "INFO",
-    "game-http": "INFO",
-    "game-all": "INFO",
-    "game-record": "INFO",
-    "login-record": "INFO",
-    "online-record": "INFO",
-    "payment": "INFO",
-    "open-api": "INFO",
-    "error-all": "ERROR"
+    "game-system": "DEBUG",
+    "game-http": "DEBUG",
+    "game-all": "DEBUG",
+    "game-record": "DEBUG",
+    "login-record": "DEBUG",
+    "online-record": "DEBUG",
+    "payment": "DEBUG",
+    "open-api": "DEBUG",
+    "error-all": "DEBUG"
   },
   "replaceConsole": true
 }

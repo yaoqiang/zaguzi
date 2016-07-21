@@ -44,10 +44,10 @@ module.exports = function (app) {
     function authenticationIpAddress(req, res, next) {
         //NOTE: 身份验证(线上IP验证)
         var ipAddress = utils.getIpAddress(req.connection.remoteAddress);
-        loggerPayment.debug('# from ip -> %s', ipAddress);
+        logger.debug('# from ip -> %s', ipAddress);
 
         if (!_.contains(acceptIpList, ipAddress)) {
-            loggerPayment.error("%j", {
+            logger.error("%j", {
                 //uid: paymentData.uid,
                 orderSerialNumber: null,
                 type: consts.LOG.CONF.PAYMENT,

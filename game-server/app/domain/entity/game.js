@@ -12,13 +12,21 @@ var Actor = require('./actor');
 var utils = require('../../util/utils');
 var gameUtil = require('../../util/gameUtil');
 var balanceService = require('../../services/balanceService');
+var gameService = require('../../services/gameService');
 var gameResponse = require('../response/gameResponse');
 
 var async = require('async');
 var Promise = require('promise');
 
 
-var Game = function (roomId, gameId) {
+/**
+ *
+ * @param roomId
+ * @param gameId
+ * @param args 私人场参数
+ * @constructor
+ */
+var Game = function (roomId, gameId, args) {
     this.room = gameUtil.getRoomById(roomId);
 
     this.lobbyId = this.room.lobbyId;
@@ -42,6 +50,18 @@ var Game = function (roomId, gameId) {
 
     //几次没人说话, 3次解散房间, 3个地方会设置该值, 1: 初始化牌局(此处), 2: 都没人说话会++, 3: 游戏结束会重置为0
     this.nobodyTalkTime = 0;
+
+    this.isPrivate = false;
+
+    //私人场
+    if (args !== undefined && typeof args === 'object') {
+        this.isPrivate = true;
+        this.name = args.name || '';
+        this.password = args.password || null;
+        this.maxActor = args.maxActor;
+        this.base = args.base;
+        this.useNoteCard = args.useNoteCard;
+    }
 
     this.init();
 }
@@ -94,12 +114,12 @@ Game.prototype.join = function (data, cb) {
 
 Game.prototype.ready = function (data, cb) {
 
-    for (var i in data) {
-        if (!data[i] || data[i] <= 0) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ERR});
-            return;
-        }
-    }
+    //for (var i in data) {
+    //    if (!data[i] || data[i] <= 0) {
+    //        cb({code: Code.FAIL, err: consts.ERR_CODE.READY.ERR});
+    //        return;
+    //    }
+    //}
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
     if (!actor) {
@@ -1005,12 +1025,19 @@ Game.prototype.over = function () {
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
     this.nobodyTalkTime = 0;
 
+    //玩家剩余牌
+    var remainingCardsOfActors = [];
+    _.each(this.actors, function (act) {
+        remainingCardsOfActors.push({actorNr: act.actorNr, remainingCards: act.gameStatus.getHoldingCards()})
+    });
+
     var self = this;
     balanceService.balance(this, function (data) {
         logger.debug('游戏结束||%j||向客户端发送游戏结束消息', self.gameId);
         self.channel.pushMessage(consts.EVENT.OVER, {
             game: {result: self.gameLogic.result, share: self.gameLogic.share},
-            details: data.details
+            details: data.details,
+            remainingCardsOfActors: remainingCardsOfActors
         }, null, function () {
             _.map(self.actors, function (actor) {
                 actor.isReady = false;
@@ -1020,6 +1047,37 @@ Game.prototype.over = function () {
 
     });
 
+}
+
+/**
+ * 5人局双三认输
+ * @param data: {uid: String}
+ */
+Game.prototype.giveUp = function (data) {
+    //如果不是5人局,则不处理
+    if (this.maxActor !== 5) return;
+    //如果玩家手牌没有方块3和红桃3, 则不处理
+    var actor = _.findWhere(this.actors, {uid: data.uid});
+    var cards = actor.gameStatus.getHoldingCards();
+    if (!(_.contains(cards, 116) && _.contains(cards, 216))) return;
+
+    var self = this;
+    //认输,取消所有schedule
+    _.each(this.jobQueue, function (job) {
+        if (!!job) {
+            schedule.cancelJob(job.jobId);
+            self.jobQueue = _.filter(self.jobQueue, function (j) {
+                return j.jobId != job.jobId;
+            });
+        }
+    });
+
+
+    //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
+    this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;
+    this.gameLogic.share = 1;
+    this.gameLogic.isGiveUp = true;
+    this.over();
 }
 
 /**
@@ -1157,6 +1215,14 @@ Game.prototype.leave = function (data, cb) {
     this.currentActorNum = this.currentActorNum - 1;
     this.isAllReady = false;
     this.isFull = false;
+
+    //如果房间没人
+    if (this.currentActorNum == 0) {
+        //如果是私人桌, 没人就移除缓存房间;
+        if (this.roomId === 45) {
+            gameService.removeGameById(this.gameId);
+        }
+    }
 
     pomelo.app.rpc.manager.userRemote.onUserLeave(null, data.uid, function () {
         cb({code: Code.OK});

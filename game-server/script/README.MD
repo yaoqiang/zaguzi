@@ -1,0 +1,52 @@
+# 脚本文件说明
+
+### crontab
+配置服务器的crontab内容
+
+### curl-s
+初期只有接口时, 一些测试和修改curl调用
+
+### genShortid.js - 废弃
+当初打算基于邀请码来支持邀请注册奖励功能, 后改为根据手机号邀请
+
+### initTestData.js
+初期的一些测试基础数据和正式线上的一些系统消息数据、兑换列表数据和app版本数据等（后续依旧会往里加：活动数据...）
+
+### log2db.js
+由crontab调度，每天凌晨把昨天的log写入MongoDB。
+
+### mongo.sh
+mongo性能监控的脚本, 暂时没有用到
+
+### mongobak.sh
+由crontab调度，每天备份mongodb数据
+
+### mongobakdelete.sh
+由crontab调度，每天删除超过存储期限的mongodb备份数据
+
+### 因V1.3版本，需重新初始化用户任务数据
+执行顺序如下：
+用来备份元宝任务相关的局数
+```
+mongo < mongoIngotTaskBackup.js
+```
+用来初始化新任务数据
+```
+node nodeInitTask.js
+```
+用来恢复元宝任务相关的局数
+```
+mongoIngotTaskRestore.js
+```
+
+### nodeRemoveDaily.js
+由crontab调度，每天运行清理不需要的数据
+
+### rankingTask.js
+由crontab调度，每天更新排行榜数据
+
+### simpleRun.sh
+简单的停服-更新-启动脚本
+
+### taskMerge.js
+暂时没有用到

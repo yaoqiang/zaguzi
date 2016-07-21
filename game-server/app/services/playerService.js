@@ -47,34 +47,6 @@ playerService.getUserInfo = function (uid, cb) {
 }
 
 /**
- * 当用户进入游戏后处理各种XX
- */
-playerService.onUserEnter = function (uid, serverId, sessionId, player, cb) {
-    //add event
-    var playerObj = new Player(player);
-    eventManager.addPlayerEvent(playerObj);
-
-    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
-    if (u) {
-        u.serverId = serverId;
-        u.sessionId = sessionId;
-        u.player = playerObj;
-    }
-    else {
-        pomelo.app.userCache.push({
-            uid: uid,
-            serverId: serverId,
-            sessionId: sessionId,
-            roomId: null,
-            gameId: null,
-            player: playerObj
-        });
-    }
-
-    playerService.attachmentHandle(playerObj, cb);
-}
-
-/**
  * 当用户断开连接时，处理各种XX
  */
 playerService.onUserDisconnect = function (data, cb) {
@@ -153,11 +125,41 @@ playerService.onUserDisconnect = function (data, cb) {
 }
 
 /**
+ * 当用户进入游戏后处理各种XX
+ */
+playerService.onUserEnter = function (uid, serverId, sessionId, player, cb) {
+    //add event
+    var playerObj = new Player(player);
+    eventManager.addPlayerEvent(playerObj);
+
+    var u = _.findWhere(pomelo.app.userCache, { uid: uid });
+    if (u) {
+        u.serverId = serverId;
+        u.sessionId = sessionId;
+        u.player = playerObj;
+    }
+    else {
+        pomelo.app.userCache.push({
+            uid: uid,
+            serverId: serverId,
+            sessionId: sessionId,
+            roomId: null,
+            gameId: null,
+            player: playerObj
+        });
+    }
+
+    playerService.addOption(playerObj, cb);
+}
+
+
+
+/**
  * 重置登录后签到、补助、每日任务等信息
  * @param playerObj
  * @param cb
  */
-playerService.attachmentHandle = function (playerObj, cb) {
+playerService.addOption = function (playerObj, cb) {
     //如果第一次登录, 无需任何处理;
     if (playerObj.properties.lastLoginAt == null) {
         playerObj.properties.lastLoginAt = new Date();
@@ -204,6 +206,26 @@ playerService.updateProfile = function (data, cb) {
 
         player.updateProfile(data, cb);
 
+    });
+}
+
+/**
+ * @param data: {uid: String, avatar: String}
+ */
+playerService.updateAvatar = function (data, cb) {
+    playerService.getUserCacheByUid(data.uid, function (user) {
+        //如果玩家不在线，直接userDao；否则走sync
+        if (user == null || user === undefined) {
+            userDao.updateAvatar({ uid: data.uid, avatar: data.avatar }, function (err, doc) {
+                if (err) {
+                    return cb({ code: Code.FAIL });
+                }
+                return cb({ code: Code.OK });
+            });
+        }
+        else {
+            user.player.updateAvatar({avatar: data.avatar}, cb);
+        }
     });
 }
 
@@ -291,19 +313,15 @@ playerService.tie = function (data, cb) {
  * 游戏结束后处理xx
  */
 playerService.battle = function (detail, cb) {
-
-    playerService.getUserCacheByUid(detail.uid, function (user) {
-        //处理结束后, 相关处理
-        user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting });
-    });
-
+    var ultimateGold = detail.gold;    
     switch (detail.result) {
         case consts.GAME.ACTOR_RESULT.WIN:
-            playerService.win({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold, meeting: detail.meeting }, function (data) {
+            playerService.win({ uid: detail.uid, roomId: detail.roomId, gold: ultimateGold, meeting: detail.meeting }, function (data) {
             });
             break;
         case consts.GAME.ACTOR_RESULT.LOSE:
-            playerService.lose({ uid: detail.uid, roomId: detail.roomId, gold: detail.gold * -1 }, function (data) {
+            ultimateGold = ultimateGold * -1;
+            playerService.lose({ uid: detail.uid, roomId: detail.roomId, gold: ultimateGold }, function (data) {
             });
             break;
         default:
@@ -311,6 +329,12 @@ playerService.battle = function (detail, cb) {
             });
             break;
     }
+
+    playerService.getUserCacheByUid(detail.uid, function (user) {
+        //处理结束后, 相关处理
+        user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting, gold: ultimateGold });
+    });
+
 
     cb();
 }
@@ -445,6 +469,37 @@ playerService.getMyItemList = function (data, cb) {
     });
 }
 
+/**
+ * 处理邀请奖励
+ * @param mobile 被邀请人(新人)绑定手机号码
+ * @param uid 邀请人uid(绑定时输入的邀请码的用户)
+ */
+playerService.getInviteGrant = function (mobile, uid, cb) {
+    var inviteGrantData = globals.inviteGrant;
+    var data = {uid: uid, gold: inviteGrantData.gold, items: inviteGrantData.items, type: consts.GLOBAL.ADD_GOLD_TYPE.INVITE};
+    new Promise(function (resolve, reject) {
+        playerService.addGold(data, function (addGoldResult) {
+            resolve(addGoldResult);
+        })
+    })
+    .then(function (addGoldResult) {
+        if (addGoldResult.code !== Code.OK) {
+            cb(addGoldResult);
+            return;
+        }
+        playerService.addItems(data, function (addItemsResult) {
+            if (addItemsResult.code !== Code.OK) {
+                cb(addItemsResult);
+                return;
+            }
+            //uid: 邀请人id, mobile: 新人手机号,
+            var inviteRecord = {uid: uid, mobile: mobile, createdAt: new Date(), grant: inviteGrantData, state: consts.INVITE.STATE.FINISHED}
+            commonDao.saveInviteRecord(inviteRecord, function (saveInviteRecordResult) {
+                cb({code: Code.OK});
+            })
+        })
+    })
+}
 
 /////////////////////////////////////////////////////////////
 // 特殊情况：不走订单系统，为玩家处理金币、道具和元宝。比如活动

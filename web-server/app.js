@@ -47,7 +47,7 @@ app.post('/autoLogin', function (req, res) {
     var data = req.body;
 
     var os = data.os || 'unknown';
-    
+
     var password = Math.floor(Math.random() * (999999 - 100000) + 100000);
     var user = {
         username: '',
@@ -92,7 +92,7 @@ app.post('/loginByToken', function (req, res) {
         });
         return;
     }
-    
+
     //result: [uid, timestamp, password]
     var result = Token.parse(data.token, secret);
     if (result == null) {
@@ -178,7 +178,7 @@ app.post('/login', function (req, res) {
         }
 
         //密码加密
-        
+
         if (!passwordHash.verify(pwd.toString(), user.password.toString())) {
             // TODO code
             // password is wrong

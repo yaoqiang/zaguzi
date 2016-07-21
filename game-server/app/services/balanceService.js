@@ -28,41 +28,43 @@ balanceService.balanceCommon = function (game, cb) {
 
     var details = [], meeting = false;
 
+    //如果不是认输, 才计算被抓股数; 如果是认输, 在game.giveUp函数中已为share赋值为1
+    if (!game.gameLogic.isGiveUp) {
+        //计算被抓股数
+        if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
+            var notFinishedActors = _.filter(game.gameLogic.black, function (act) {
+                return act.isFinished == false;
+            });
+            game.gameLogic.share += _.size(notFinishedActors);
 
-    //计算被抓股数
-    if (game.gameLogic.result == consts.GAME.RESULT.RED_WIN) {
-        var notFinishedActors = _.filter(game.gameLogic.black, function (act) {
-            return act.isFinished == false;
-        });
-        game.gameLogic.share += _.size(notFinishedActors);
-
-        //meeting?
-        if (game.gameLogic.red.length == 1) meeting = true;
-    }
-    else if (game.gameLogic.result == consts.GAME.RESULT.BLACK_WIN) {
-        var notFinishedActors = _.filter(game.gameLogic.red, function (act) {
-            return act.isFinished == false;
-        });
-        _.map(notFinishedActors, function (act) {
-            var actor = _.findWhere(game.actors, {uid: act.uid});
-            switch (game.maxActor) {
-                case consts.GAME.TYPE.SIX:
-                    game.gameLogic.share += 1;
-                    break;
-                default:
-                    if (_.contains(actor.gameStatus.actualIdentity, consts.GAME.ACTUAL_IDENTITY.Heart3)) {
-                        game.gameLogic.share += 2;
-                    }
-                    else {
+            //meeting?
+            if (game.gameLogic.red.length == 1) meeting = true;
+        }
+        else if (game.gameLogic.result == consts.GAME.RESULT.BLACK_WIN) {
+            var notFinishedActors = _.filter(game.gameLogic.red, function (act) {
+                return act.isFinished == false;
+            });
+            _.map(notFinishedActors, function (act) {
+                var actor = _.findWhere(game.actors, {uid: act.uid});
+                switch (game.maxActor) {
+                    case consts.GAME.TYPE.SIX:
                         game.gameLogic.share += 1;
-                    }
-                    break;
-            }
-        });
-    }
-    //平局，只返回身份信息，扣除税费
-    else {
+                        break;
+                    default:
+                        if (_.contains(actor.gameStatus.actualIdentity, consts.GAME.ACTUAL_IDENTITY.Heart3)) {
+                            game.gameLogic.share += 2;
+                        }
+                        else {
+                            game.gameLogic.share += 1;
+                        }
+                        break;
+                }
+            });
+        }
+        //平局，只返回身份信息，扣除税费
+        else {
 
+        }
     }
 
     //每份输赢金币数
@@ -159,7 +161,7 @@ balanceService.balanceCommon = function (game, cb) {
                     uid: actor.uid, actorNr: actor.actorNr, actorName: actor.properties.nickName,
                     actorAvatar: actor.properties.avatar, actualIdentity: actor.gameStatus.actualIdentity,
                     result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank,
-                    meeting: meeting && actor.gameStatus.identity == consts.GAME.IDENTITY.HONG3
+                    meeting: meeting && !_.contains(actor.gameStatus.actualIdentity, consts.GAME.ACTUAL_IDENTITY.GUZI)
                 });
             });
 
@@ -172,7 +174,7 @@ balanceService.balanceCommon = function (game, cb) {
             //处理结算数据
             pomelo.app.rpc.manager.userRemote.balance(null, {
                 gameRecord: {
-                    lobby: game.maxActor,
+                    lobby: game.lobbyId,
                     roomId: game.roomId,
                     result: game.gameLogic.result,
                     share: game.gameLogic.share,

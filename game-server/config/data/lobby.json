@@ -1,7 +1,0 @@
-[
-    ["id", "名称", "英文名称", "描述", "图片id"],
-    ["id", "name", "englishName", "desc", "imgId"],
-    ["1", "五人场", "lobbyOf5", "五人股子", "imgId"],
-    ["2", "七人场", "lobbyOf7", "七人股子", "imgId"],
-    ["3", "私人场", "lobbyOfPrivate", "私人对决", "imgId"]
-]

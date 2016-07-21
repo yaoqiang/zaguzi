@@ -8,6 +8,7 @@ var _ = require('lodash');
 var crypto = require('crypto');
 
 var consts = require('../../consts/consts');
+var open = require('../../consts/open');
 var utils = require('../../util/utils');
 
 var log4js = require('log4js');
@@ -17,6 +18,13 @@ log4js.configure(log4jsConf, {});
 
 var logger = require('log4js').getLogger(consts.LOG.GAME_HTTP);   //game-http
 var loggerPayment = require('log4js').getLogger(consts.LOG.PAYMENT);
+
+var qiniu = require("qiniu");
+
+
+qiniu.conf.ACCESS_KEY = open.QINIU.ACCESS_KEY;
+qiniu.conf.SECRET_KEY = open.QINIU.SECRET_KEY;
+
 
 
 var game = express.Router();
@@ -36,10 +44,10 @@ module.exports = function (app) {
     function authenticationIpAddress(req, res, next) {
         //NOTE: 身份验证(线上IP验证)
         var ipAddress = utils.getIpAddress(req.connection.remoteAddress);
-        loggerPayment.debug('# from ip -> %s', ipAddress);
+        logger.debug('# from ip -> %s', ipAddress);
 
         if (!_.contains(acceptIpList, ipAddress)) {
-            loggerPayment.error("%j", {
+            logger.error("%j", {
                 //uid: paymentData.uid,
                 orderSerialNumber: null,
                 type: consts.LOG.CONF.PAYMENT,
@@ -75,7 +83,7 @@ module.exports = function (app) {
         try {
             app.rpc.manager.universalRemote.payment4IAP(null, paymentData, function (data) {
                 loggerPayment.debug('处理Apple IAP的支付逻辑 rpc invoke finished.');
-                res.sendStatus(data.code);
+                res.send(data);
             });
         } catch (err) {
             loggerPayment.error("处理Apple IAP的支付逻辑时候发生异常 %j", {err: err, req: {body: req.body}});
@@ -184,8 +192,22 @@ module.exports = function (app) {
             return;
         }
         app.rpc.manager.universalRemote.getRankingList(null, {uid: req.query.type}, function (data) {
-            logger.debug('获得玩家兑换记录 rpc invoke finished.');
-                res.send(data);
+            logger.debug('获得排行榜信息 rpc invoke finished.');
+            res.send(data);
+        });
+    });
+
+    //获取上月的股神月排行榜获奖记录
+    game.get('/getLatestActivityGrantRecordGodMonth', function (req, res) {
+        app.rpc.manager.universalRemote.getLatestActivityGrantRecordGodMonth(null, {}, function (data) {
+            logger.debug('获得上月的股神月排行榜获奖记录 rpc invoke finished.');
+            res.send(data);
+        });
+    });
+
+    game.get('/getOnlineUserList', authenticationIpAddress, function (req, res) {
+        app.rpc.manager.universalRemote.getOnlineUserList(null, {}, function (data) {
+            res.send(data);
         });
     });
     
@@ -312,7 +334,58 @@ module.exports = function (app) {
         }
     });
 
+    //---------------------------
+    // 
+    //---------------------------
+    //发送找回密码验证码
+    game.post('/sendResetPasswordSMS', function (req, res) {
+        try {
+            var data = req.body;
+            
+            app.rpc.manager.universalRemote.sendResetPasswordSMS(null, data, function (data) {
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+    });
+    
+    //重置密码
+    game.post('/resetPassword', function (req, res) {
+        try {
+            var data = req.body;
+            
+            app.rpc.manager.universalRemote.resetPassword(null, data, function (data) {
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+    });
 
+
+    game.post('/getQiniuToken', function (req, res) {
+        var putPolicy = new qiniu.rs.PutPolicy(open.QINIU.BUCKET);
+        //putPolicy.callbackUrl = 'http://your.domain.com/callback';
+        //putPolicy.callbackBody = 'filename=$(fname)&filesize=$(fsize)';
+        res.send({token: putPolicy.token()});
+    })
+    
+    game.post('/updateAvatar', function (req, res) {
+        try {
+            var data = req.body;
+            
+            app.rpc.manager.userRemote.updateAvatar(null, data, function (data) {
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("", {err: err, req: req.body});
+            res.send({code: 500});
+        }
+        
+    });
 
 
     return game;

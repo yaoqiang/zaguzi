@@ -5,6 +5,7 @@ var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
 var itemConf = require('../../../../config/data/item');
+var globals = require('../../../../config/data/globals');
 
 
 var pomelo = require('pomelo-rt');
@@ -41,6 +42,10 @@ var UniversalRemote = function (app) {
 
 UniversalRemote.prototype = {
 
+    getOnlineUserList: function(data, cb) {
+        cb(pomelo.app.userCache);
+    },
+
     getRankingList: function (data, cb) {
         commonService.getRankingList(data, cb);
     },
@@ -50,11 +55,22 @@ UniversalRemote.prototype = {
         commonService.getTopOfAppReleaseRecord(data, cb);
     },
 
+    //notify
+    getLastApp: function (data, cb) {
+        commonService.getLastApp(data, cb);
+    },
+
     getSystemMessage: function (data, cb) {
         commonService.getSystemMessage(data, cb);
     },
 
+    getLastSystemMessageDate: function (data, cb) {
+        commonService.getLastSystemMessageDate(data, cb);
+    },
 
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
     sendBindingSMS: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
@@ -63,10 +79,21 @@ UniversalRemote.prototype = {
                 return;
             }
             data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.MOBILE_BINDING;
-            openService.sendSMS(data, cb);
+            openService.sendBindingSMS(data, cb);
         });
     },
+    
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
+    sendResetPasswordSMS: function (data, cb) {
+        data.tplId = open.JUHE.SMS_API.TEMPLATE_ID.RESET_PASSWORD;
+        openService.sendResetPasswordSMS(data, cb);
+    },
 
+    /**
+     * @param data: {uid: String, mobile: String}
+     */
     bindingMobile: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
@@ -77,13 +104,20 @@ UniversalRemote.prototype = {
             commonService.bindingMobile(data, function (data) {
                 //添加绑定手机金币奖励
                 if (data.code == Code.OK) {
-                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, consts.GLOBAL.BINDING_MOBILE_GRANT, function () {
+                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.TASK, globals.bindingMobileGrant, function () {
 
                     });
                 }
                 cb(data);
             });
         });
+    },
+    
+    /**
+     * @param data: { captcha: String, mobile: String, password: String }
+     */
+    resetPassword: function (data, cb) {
+        commonService.resetPassword(data, cb);
     },
 
     //////////////////////////////////
@@ -108,6 +142,9 @@ UniversalRemote.prototype = {
         exchangeService.exchange(data, cb);
     },
 
+    getInviteRecordListByUid: function (data, cb) {
+        commonService.getInviteRecordListByUid(data, cb);
+    },
     /**
      * Apple IAP支付完成后调用, 以便存储订单
      * IAP错误代码信息（方便查阅）
@@ -172,7 +209,7 @@ UniversalRemote.prototype = {
                     uid: data.uid,
                     sid: dispatcher(data.uid, connectors).id
                 }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                cb();
+                cb({code: Code.FAIL});
                 return;
             }
             
@@ -200,7 +237,7 @@ UniversalRemote.prototype = {
                                 uid: data.uid,
                                 sid: dispatcher(data.uid, connectors).id
                             }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                            cb();
+                            cb({code: Code.FAIL});
                             return;
                         }
                         
@@ -241,7 +278,7 @@ UniversalRemote.prototype = {
                         uid: data.uid,
                         sid: dispatcher(data.uid, connectors).id
                     }, consts.EVENT.PAYMENT_RESULT, {code: Code.FAIL});
-                    cb();
+                    cb({code: Code.FAIL});
                 }
                 return;
             }
@@ -617,7 +654,7 @@ UniversalRemote.prototype = {
 
 
     getShopList: function (data, cb) {
-        cb({code: Code.OK, shopList: shopService.getShopList(data.device)});
+        cb({code: Code.OK, shopList: shopService.getShopList(data.device, data.type)});
     },
     
     getItemList: function (data, cb) {
@@ -722,7 +759,18 @@ UniversalRemote.prototype = {
             });
 
         });
+    },
 
+    isLatestActivityGodMonth: function (data, cb) {
+        commonService.isLatestActivityGodMonth(data, cb);
+    },
 
+    getLatestActivityGodMonth: function (data, cb) {
+        commonService.getLatestActivityGodMonth(data, cb);
+    },
+
+    //获取上月的股神月排行榜获奖记录
+    getLatestActivityGrantRecordGodMonth: function (data, cb) {
+        commonService.getLatestActivityGrantRecordGodMonth(data, cb);
     }
 }

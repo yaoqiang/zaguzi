@@ -81,7 +81,7 @@ taskUtil.getNextTask = function (taskId, cb) {
       cb({taskConf: nextTask});
     }
     else {
-      currentTaskConf.finished = true;
+      currentTaskConf.finished = true;  //标识系列任务完成; FINISHED在阶段任务完成状态时,依旧是false, 直到领取完系列任务被设置为true
       cb({taskConf: currentTaskConf});
     }
   }

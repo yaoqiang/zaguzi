@@ -36,7 +36,7 @@ paymentService.requestChargesPingxx = function (data, cb) {
 
     data.productId = parseInt(data.productId);
     //
-    var product = _.findWhere(shopConf[data.device], { id: data.productId });
+    var product = _.findWhere(_.union(shopConf[data.device].gold, shopConf[data.device].prop), { id: data.productId });
     if (product == undefined) {
         logger.debug('请求支付charge失败||%s||在服务器端没有找到该产品||%j', data.uid, { productId: data.productId, device: data.device, channel: data.channel });
         cb({ code: Code.FAIL });
@@ -109,7 +109,7 @@ paymentService.payment = function (order, charge, cb) {
 
     playerService.getUserCacheByUid(order.uid, function (user) {
 
-        var product = _.findWhere(shopConf[order.device], { id: order.productId });
+        var product = _.findWhere(_.union(shopConf[order.device].gold, shopConf[order.device].prop), { id: order.productId });
         if (product == undefined) {
             logger.error("%j", {
                 uid: order.uid,

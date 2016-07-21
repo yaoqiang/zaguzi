@@ -1,12 +1,12 @@
 module.exports = {
     GLOBAL: {
-        LOBBY: [0, 1, 2, 3],
+        //0：普通场，1：元宝场，2：比赛场，3：私人场，4：特殊场(亮王?等)
+        LOBBY: [0, 1, 2, 3, 4],
         GENDER: {
             MALE: 'MALE',
             FEMALE: 'FEMALE'
         },
         GOLD_INIT: 5000,
-        BINDING_MOBILE_GRANT: 1800,
         JOIN_MIN_GOLD: 1000,
         
         ADD_GOLD_TYPE: {
@@ -14,6 +14,7 @@ module.exports = {
             BATTLE: 'BATTLE',
             TASK: 'TASK',
             ACTIVITY: 'ACTIVITY',
+            INVITE: 'INVITE',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
@@ -24,6 +25,7 @@ module.exports = {
             BATTLE: 'BATTLE',
             TASK: 'TASK',
             ACTIVITY: 'ACTIVITY',
+            INVITE: 'INVITE',
             MATCH: 'MATCH',
             GRANT: 'GRANT',
             RECHARGE_ROLLBACK: 'RECHARGE_ROLLBACK',
@@ -135,9 +137,21 @@ module.exports = {
             MOBILE_NOT_VALIDATE: 9302,
             MOBILE_ALREADY_BINDING: 9303,
             CAPTCHA_ERR: 9304,
-            ERR: 9305
+            ERR: 9305,
+            MOBILE_NOT_FOUNT: 9306,
+            INVITE_MOBILE_NOT_FOUNT: 9307,
+            INVITE_MOBILE_CAN_NOT_BE_SELF: 9308
+        },
+        PRIVATE_GAME: {
+            CREATE_NOT_BLANK: 9401,
+            JOIN_PASSWORD_NOT_CORRECT: 9402,
+            JOIN_GAME_NOT_EXIST: 9403,
+            INVITE_BY_MOBILE_NOT_ONLINE: 9404,
+            ERR: 9405,
+            JOIN_GAME_IS_FULL: 9406,
         }
     },
+    //以下错误信息 客户端使用, 服务端只返回Code.
     ERR_MESSAGE: {
         1001: "您已在游戏中, 无法加入",   //在其他牌桌
         1002: "您的金币不足, 无法加入",
@@ -210,6 +224,16 @@ module.exports = {
         9303: "该手机已绑定",
         9304: "验证码错误",
         9305: "操作失败",
+        9306: "您输入的手机号没有绑定游戏帐号",
+        9307: "您输入的手机号没有绑定游戏帐号",
+        9308: "不支持填写自己的手机号",
+
+        9401: "请填写房间信息",
+        9402: "房间密码输入错误",
+        9403: "房间不存在,请刷新列表",
+        9404: "玩家不在线",
+        9405: "操作失败",
+        9406: "房间已满员,请刷新列表",
 
     },
     MESSAGE: {
@@ -245,7 +269,23 @@ module.exports = {
         INGOT_CHANGE: 'onIngotChange',
         RESTART_GAME: 'onRestartGame',
         DISSOLVE_GAME: 'onDissolveGame',
-        PAYMENT_RESULT: 'onPaymentResult'
+        PAYMENT_RESULT: 'onPaymentResult',
+        UI_HIGHLIGHT_PROFILE: 'UI_HIGHLIGHT_PROFILE',
+        
+        //UI交互事件
+        UI_ON_ENTRY_WRAPPER: 'UI_ON_ENTRY_WRAPPER',    //进入大厅后的高亮wrapper
+        
+        UI_HIGHLIGHT_DAILY_TODO: 'UI_HIGHLIGHT_DAILY_TODO', //高亮每日必做
+        UI_HIGHLIGHT_SYSTEM_MAIL: 'UI_HIGHLIGHT_SYSTEM_MAIL',   //高亮系统邮件
+        UI_HIGHLIGHT_SETTING: 'UI_HIGHLIGHT_SETTING',   //高亮系统设置
+        UI_UI_HIGHLIGHT_SHOP: 'UI_UI_HIGHLIGHT_SHOP',   //高亮商城
+        UI_HIGHLIGHT_RANKING_LIST: 'UI_HIGHLIGHT_RANKING_LIST', //高亮排行榜
+        UI_HIGHLIGHT_TASK: 'UI_HIGHLIGHT_TASK', //高亮任务
+        UI_HIGHLIGHT_EXCHANGE: 'UI_HIGHLIGHT_EXCHANGE', //高亮兑换
+        UI_HIGHLIGHT_ACTIVITY: 'UI_HIGHLIGHT_ACTIVITY', //高亮活动
+        UI_ALERT_DAILY_TODO: 'UI_ALERT_DAILY_TODO', //弹出每日必做
+        UI_ALERT_BANKRUPTCY_IN_GAME: 'UI_ALERT_BANKRUPTCY_IN_GAME', //弹出牌局中领取破产补助框
+        UI_ALERT_QUICK_RECHARGE: 'UI_ALERT_QUICK_RECHARGE', //弹出快捷充值框
     },
 
     CHAT_SCOPE: {
@@ -289,9 +329,9 @@ module.exports = {
         },
         TIMER: {
             NOT_READY: 15,
-            TALK: 15,
+            TALK: 10,
             FAN: 15,
-            TRUSTEESHIP: 2
+            TRUSTEESHIP: 1  //托管出牌时间
         },
         PHASE: {
             STARTING: 0,
@@ -300,7 +340,7 @@ module.exports = {
             OVER: 3
         },
         TRUSTEESHIP: {
-            TIMEOUT_TIMES: 2
+            TIMEOUT_TIMES: 1    //超时出牌N次后自动托管
         },
         RESULT: {
             RED_WIN: 'RED_WIN',
@@ -312,8 +352,9 @@ module.exports = {
             LOSE: 'LOSE',
             TIE: 'TIE'
         },
-        DISSOLVE_NOBODY_TALK_TIME: 2
-
+        DISSOLVE_NOBODY_TALK_TIME: 2,   //N局没人说话, 自动解散牌局
+        PRIVATE_GAME_NUMBER_START: 90000,   //私人房间编号起始值
+        PRIVATE_GAME_BASE_MIN: 100,   //私人房间底注选择
 
     },
 
@@ -341,12 +382,20 @@ module.exports = {
             REFUND_FAILED: "REFUND_FAILED"
         }
     },
+    
+    INVITE: {
+        STATE: {
+            FINISHED: "FINISHED",
+            ERR: 'ERR'
+        }  
+    },
 
     RANKING_LIST: {
         RICH: 'RICH',
         GOD: 'GOD',
         RECHARGE: 'RECHARGE',
-        MEETING: 'MEETING'
+        MEETING: 'MEETING',
+        GOD_MONTH: 'GOD_MONTH'
     },
 
     // LOG: {
@@ -399,7 +448,8 @@ module.exports = {
                     ADD_GOLD: 'ADD_GOLD',
                     ADD_FRAGMENT: 'ADD_FRAGMENT',
                     ADD_ITEM: 'ADD_ITEM',
-                    EXCHANGE: 'EXCHANGE'
+                    EXCHANGE: 'EXCHANGE',
+                    UPDATE_PROFILE: 'UPDATE_PROFILE'
                 }
             },
             PAYMENT: {

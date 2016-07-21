@@ -1,2 +1,22 @@
-0 0 * * * mongo < ~/workspace/dist/zgz/game-server/script/rankingTask.js
+59 23 * * * mongo < ~/workspace/dist/zgz/game-server/script/rankingTask.js
 30 0 * * * /root/.nvm/versions/node/v4.4.0/bin/node ~/workspace/dist/zgz/game-server/script/log2db.js > ~/workspace/logs/log2dbCron.log
+0 2 * * * /root/.nvm/versions/node/v4.4.0/bin/node ~/workspace/dist/zgz/game-server/script/nodeRemoveDaily.js > ~/workspace/logs/nodeRemoveDaily.log
+0 4 * * * /root/workspace/shell/mongobak.sh > /root/workspace/logs/crontab_mongo_bak.log &
+5 4 * * * /root/workspace/shell/mongobakdelete.sh > /root/workspace/logs/crontab_mongo_bak_delete.log &
+0 1 1 * * /root/.nvm/versions/node/v4.4.0/bin/node ~/workspace/dist/zgz/game-server/script/nodeFirstDayOfMonth.js > ~/workspace/logs/nodeFirstDayOfMonth.log
+
+
+
+脚本顺序说明：
+1、每天23点59分59秒更新排行榜, 
+之前是0点更新, 因为加入月排行, 如果在每月第一天0点执行时, 获取上月最后一天就是昨天, 就没有数据了, 所以改成23.59.59
+
+2、每天0点30分，把昨天的log同步到mongodb
+
+3、每天凌晨2点，删除超出保留期限的数据（目前有：logUserRecord（用户操作记录数据，保留2周），userBattleRecord（用户游戏记录，保留一月））
+
+4、每天凌晨4点，备份数据库
+
+5、每天凌晨4点5分，删除超出保留期限的数据库备份
+
+6、每月1号执行的脚本（目前有：为股神月排行榜发放奖励）

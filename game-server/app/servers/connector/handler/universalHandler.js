@@ -58,10 +58,10 @@ handler.getProfile = function (msg, session, next) {
  */
 handler.getProfileByUid = function (msg, session, next) {
     if (_.isUndefined(msg.uid)) {
-        next(null, {code: Code.FAIL});
+        next(null, { code: Code.FAIL });
         return;
     }
-    
+
     this.app.rpc.manager.userRemote.getUserCacheByUid(session, msg.uid, function (data) {
         var profile = {};
         if (!_.isUndefined(data)) {
@@ -85,11 +85,11 @@ handler.getProfileByUid = function (msg, session, next) {
  * 获取个人物品
  */
 handler.getItems = function (msg, session, next) {
-    
+
     msg.uid = session.uid
-    
+
     this.app.rpc.manager.userRemote.getProfileByUid(session, msg, function (data) {
-        next(null, {items: data.player.items});
+        next(null, { items: data.player.items });
     });
 }
 
@@ -205,7 +205,7 @@ handler.getMyItemList = function (msg, session, next) {
 }
 
 /**
- * 获得兑换列表
+ * 获得兑换列表, - 废弃,为支持ios开关. 客户端已使用下面接口: getExchangeListNew
  * @param msg
  * @param session
  * @param next
@@ -275,17 +275,16 @@ handler.getRankingList = function (msg, session, next) {
 handler.getShopList = function (msg, session, next) {
     msg.uid = session.uid;
     this.app.rpc.manager.universalRemote.getShopList(session, msg, function (data) {
-        if (data.code === Code.FAIL)
-        {
-            next(null, {code: Code.FAIL, err: data.err});
+        if (data.code === Code.FAIL) {
+            next(null, { code: Code.FAIL, err: data.err });
             return;
         }
-        next(null, {code: Code.OK, shopList: data.shopList});
+        next(null, { code: Code.OK, shopList: data.shopList });
     })
 }
 
 /**
- * 发送支付结果（Apple IAP使用）
+ * 发送支付结果（Apple IAP使用） --- 为v1.2前版本保留, v1.3以后客户端改为http方式
  */
 handler.sendPaymentResult = function (msg, session, next) {
     msg.uid = session.uid;
@@ -307,8 +306,8 @@ handler.requestPaymentByPingpp = function (msg, session, next) {
     this.app.rpc.manager.universalRemote.requestPaymentByPingpp(session, msg, function (data) {
         next(null, data);
     });
-    
-    
+
+
 }
 
 
@@ -326,7 +325,7 @@ handler.payment4PingppFromClient = function (msg, session, next) {
 }
 
 /**
- * 获得最新版本信息
+ * 获得最新版本信息, 客户端-设置-主动监测版本调用
  * @param msg
  * @param session
  * @param next
@@ -336,7 +335,22 @@ handler.getTopOfAppReleaseRecord = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getTopOfAppReleaseRecord(session, msg, null);
-    
+
+    next();
+}
+
+/**
+ * 获得最新版本信息, 客户端每日登陆调用一次, 如果客户的是最新版本无需返回消息
+ * @param msg
+ * @param session
+ * @param next
+ */
+handler.getLastApp = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLastApp(session, msg, null);
+
     next();
 }
 
@@ -347,6 +361,14 @@ handler.getSystemMessage = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getSystemMessage(session, msg, function (result) {
+        next(null, result);
+    });
+}
+
+handler.getLastSystemMessageDate = function (msg, session, next) {
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLastSystemMessageDate(session, msg, function (result) {
         next(null, result);
     });
 }
@@ -368,6 +390,33 @@ handler.bindingMobile = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.bindingMobile(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getInviteRecordListByUid = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getInviteRecordListByUid(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.isLatestActivityGodMonth = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.isLatestActivityGodMonth(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getLatestActivityGodMonth = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLatestActivityGodMonth(session, msg, function (data) {
         next(null, data);
     });
 }

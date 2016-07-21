@@ -43,6 +43,13 @@ var users = new Array(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, yaoqiang, lvjianc
 
 initUser(users);
 
+
+
+
+//////////////////////////////////////////
+// 线上数据
+//////////////////////////////////////////
+
 //exchange list
 db.exchangeList.save({
     name: '1元充值卡',
@@ -100,8 +107,8 @@ db.exchangeList.save({
     name: '6888金+喇叭3+记', gold: 6888,
     items: [
         {
-        "id": 2,
-        "value": 3
+            "id": 2,
+            "value": 3
         },
         {
             "id": 3,
@@ -127,10 +134,10 @@ db.exchangeList.save({
 db.exchangeList.save({
     name: '记牌器7天', gold: 0,
     items: [
-    {
-        "id": 3,
-        "value": 7
-    }],
+        {
+            "id": 3,
+            "value": 7
+        }],
     icon: 'NOTE_CARD',
     inventory: 9999,
     fragment: 2,
@@ -139,9 +146,38 @@ db.exchangeList.save({
     type: 'VIRTUAL'
 });
 
+//预先测试数据
 
-db.appleSetting.save({inReview: false});
+db.exchangeList.save({
+    name: 'iPhone 7',
+    denomination: 0,
+    icon: 'http://assets.zaguzi.com/mobile_pay.png',
+    inventory: 10,
+    fragment: 8888,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'OUTBOX'
+});
 
+db.exchangeList.save({
+    name: '柴米油盐',
+    denomination: 0,
+    icon: 'http://assets.zaguzi.com/mobile_pay.png',
+    inventory: 10,
+    fragment: 1,
+    createdAt: new Date(),
+    enabled: true,
+    type: 'OUTBOX'
+});
+
+//苹果审核状态开关
+db.appleSetting.save({ inReview: false });
+//苹果审核中
+db.appleSetting.update({}, {$set: { inReview: true }});
+//苹果审核结束
+db.appleSetting.update({}, {$set: { inReview: false }});
+
+//兑换记录结构
 db.exchangeRecord.save({
     uid: ObjectId('56ac9e72ba27df1c78df57fb'),
     number: '1',
@@ -154,7 +190,7 @@ db.exchangeRecord.save({
     contact: ''
 });
 
-
+//版本发布记录
 db.appReleaseRecord.save({
     name: '',
     version: '1.0',
@@ -173,6 +209,16 @@ db.appReleaseRecord.save({
     releaseUrlApple: ''
 });
 
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.3',
+    createdAt: new Date(),
+    summary: '【新增】各种新体验,股神月排行榜,月月拿奖!\n【改进】各种改进,bug修复!\n【亮点】邀请奖励,私人场,双三可认等等..\n玩转新版本可点击系统邮件查看',
+    releaseUrlAndroid: 'http://www.zaguzi.com/download_android.html',
+    releaseUrlApple: ''
+});
+
+//系统消息
 db.systemMessage.save({
     title: '大同扎股子公测版上线啦！',
     content: '全球首款大同扎股子手游已登录地球，尽情享受吧！',
@@ -208,6 +254,89 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
-db.systemMessage.save({title: '开启全民扎股子时代！', content: '开启全民扎股子时代！', enabled: true, createdAt: new Date()});
-db.systemMessage.save({title: '5 6 7人场同步上线！', content: '根据自己爱好随意选场次, 嗨翻天!', enabled: true, createdAt: new Date()});
-db.systemMessage.save({title: '大同扎股子在苹果应用商店上线!！', content: '搜索扎股子, 独此一家!！', enabled: true, createdAt: new Date()});
+db.systemMessage.save({
+    title: '##必读## 股神榜活动圆满结束',
+    content: '股子们,股神榜活动奖励已发放,大家注意查收!奖品关注公众号',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '##必读## 助力大同获主办权!',
+    content: '恭喜大同获得省旅游发展大会主办权场内第一,关注公众号来领奖!',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '##通告## 高倍区打伙牌作弊处理',
+    content: '股子们,游戏禁止打伙牌作弊,高倍伙牌玩家金币已清零.',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '##置顶## 新版本发布啦!快来更新吧!',
+    content: '夏日炎炎,新版本发布啦,股神月榜等你来拿奖!点击查看详情',
+    url: 'http://www.zaguzi.com/app_release_1_3.html',
+    enabled: true,
+    createdAt: new Date()
+});
+
+
+
+//活动结构 {content: 游戏内显示, detail: 游戏内显示, }
+db.activityList.save({
+    title: '股神榜-月排行榜',
+    content: '当月游戏200局以上,就有资格上榜!',
+    detail: '第一名: 50元宝+20000金+7喇叭+7天记牌器\n第二名: 30元宝+10000金+5喇叭+5天记牌器\n第三名: 10元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金\n\n8月开启,来吧股神!奖励每月1号自动发放!',
+    icon: '',
+    name: 'GOD_MONTH',
+    type: 'ROUND',
+    unit: 'MONTH',
+    threshold: { battle: 200 },
+    enabled: true,
+    visible: false,
+    urlForIntro: 'http://www.zaguzi.com/activity_god_month.html',
+    urlForRecord: 'http://www.zaguzi.com/activity_god_month_record.html',
+    grant: [
+        { rank: 1, fragment: 50, gold: 20000, items: [{ id: 2, value: 7 }, { id: 3, value: 7 }] },
+        { rank: 2, fragment: 30, gold: 10000, items: [{ id: 2, value: 5 }, { id: 3, value: 5 }] },
+        { rank: 3, fragment: 10, gold: 7000, items: [{ id: 2, value: 3 }, { id: 5, value: 3 }] },
+        { rank: 4, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 5, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 6, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 7, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 8, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 9, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 10, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
+        { rank: 11, gold: 5000 },
+        { rank: 12, gold: 5000 },
+        { rank: 13, gold: 5000 },
+        { rank: 14, gold: 5000 },
+        { rank: 15, gold: 5000 },
+        { rank: 16, gold: 5000 },
+        { rank: 17, gold: 5000 },
+        { rank: 18, gold: 5000 },
+        { rank: 19, gold: 5000 },
+        { rank: 20, gold: 5000 },
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date()
+});
+
+db.activityGrantRecord.save({
+    name: "GOD_MONTH",
+    uid: "",
+    state: "",
+    detail: {rank: 1},
+    createdAt: new Date(),
+});
+
+
+
+
+
+
+//修改密码为：zaguzi
+db.user.update({ mobile: '13934807613' }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });

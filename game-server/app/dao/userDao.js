@@ -172,6 +172,25 @@ userDao.createPlayer = function (uid, cb) {
 
 
 /**
+ * 更新玩家头像
+ * data: {uid: xx, avatar: String}
+ */
+userDao.updateAvatar = function (data, cb) {
+    db.player.findAndModify({
+        query: {uid: mongojs.ObjectId(data.uid)},
+        update: {$set: {avatar: data.avatar}}
+    }, function (err, doc, lastErrorObject) {
+        if (err) {
+            
+            utils.invokeCallback(cb, err, null);
+        } else {
+            
+            utils.invokeCallback(cb, null, doc);
+        }
+    });
+}
+
+/**
  * 更新玩家金币
  * data: {uid: xx, gold: xx}
  */
@@ -365,6 +384,43 @@ userDao.findByMobile = function (mobile, cb) {
             utils.invokeCallback(cb, null, true);
         } else {
             utils.invokeCallback(cb, null, false);
+        }
+    });
+}
+
+userDao.findOneByMobile = function (mobile, cb) {
+    db.user.findOne({
+        mobile: mobile
+    }, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err.message, null);
+            return;
+        }
+
+        if (doc) {
+            utils.invokeCallback(cb, null, doc);
+        } else {
+            utils.invokeCallback(cb, null, null);
+        }
+    });
+}
+
+/**
+ * 根据shortid查询用户是否存在，true: 存在，false: 不存在 - 废弃
+ */
+userDao.findByShortid = function (shortid, cb) {
+    db.user.findOne({
+        shortid: shortid
+    }, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err.message, null);
+            return;
+        }
+
+        if (doc) {
+            utils.invokeCallback(cb, null, doc);
+        } else {
+            utils.invokeCallback(cb, null, null);
         }
     });
 }

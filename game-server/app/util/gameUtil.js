@@ -42,6 +42,42 @@ GameUtil.getJoinAvailable = function (roomId, player) {
 }
 
 /**
+ * 检查玩家金币是否能加入
+ * @param roomId
+ * @param player
+ * @returns {*}
+ */
+GameUtil.getJoinAvailableForPrivate = function (base, player) {
+    var min = GameUtil.getMinByBaseForPrivateRoom(base);
+    //加入房间前检查
+    if (player.gold < consts.GLOBAL.JOIN_MIN_GOLD) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_POOR};
+    }
+    
+    if (player.gold > 999999999) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_RICH};
+    }
+    
+    if (player.gold < min) {
+        return {code: Code.FAIL, err: consts.ERR_CODE.JOIN.TOO_POOR};
+    }
+    
+    return {code: Code.OK};
+
+}
+
+GameUtil.getMinByBaseForPrivateRoom = function (base) {
+    var min = 1000;
+    if (base == 1000) {
+        min = 10000;
+    }
+    else if (base == 5000) {
+        min = 30000;
+    }
+    return min;
+}
+
+/**
  * 计算剩余牌
  * @param originalCards [] 全部剩余牌记录
  * @param holdingCards [] 手牌

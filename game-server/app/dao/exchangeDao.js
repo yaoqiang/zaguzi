@@ -92,7 +92,7 @@ exchangeDao.getExchangeListById = function (id, cb) {
  * 根据uid获取兑换记录
  */
 exchangeDao.listExchangeRecordByUid = function (uid, cb) {
-    db.exchangeRecord.find({uid: mongojs.ObjectId(uid)}, function (err, docs) {
+    db.exchangeRecord.find({uid: mongojs.ObjectId(uid)}).sort({_id: -1}).limit(20, function (err, docs) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         } else {

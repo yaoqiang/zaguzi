@@ -1,370 +1,393 @@
 {
-    "android": [
-        {
-            "id": 100001,
-            "title": "1元夺金",
-            "currency": "RMB",
-            "gold": 1388,
-            "amount": 1,
-            "desc": "1元夺金",
-            "icon": "1",
-            "hot": true,
-            "items": []
-        },
-        {
-            "id": 100002,
-            "title": "经典套餐",
-            "currency": "RMB",
-            "gold": 2999,
-            "amount": 3,
-            "desc": "经典久久，买就送小喇叭 + 记牌器",
-            "icon": "1",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 1
-                },
-                {
-                    "id": 3,
-                    "value": 1
-                }
-            ]
-        },
-        {
-            "id": 100003,
-            "title": "经典套餐+",
-            "currency": "RMB",
-            "gold": 8888,
-            "amount": 6,
-            "desc": "买就送小喇叭 + 记牌器",
-            "icon": "2",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 1
-                },
-                {
-                    "id": 3,
-                    "value": 1
-                }
-            ]
-        },
-        {
-            "id": 100004,
-            "title": "超值金币包1",
-            "currency": "RMB",
-            "gold": 18888,
-            "amount": 12,
-            "desc": "超值金币包,多送1000金",
-            "icon": "2",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 100005,
-            "title": "超值金币包2",
-            "currency": "RMB",
-            "gold": 28888,
-            "amount": 18,
-            "desc": "超值金币包,多送2000金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 100006,
-            "title": "超值金币包3",
-            "currency": "RMB",
-            "gold": 46888,
-            "amount": 30,
-            "desc": "超值金币包,多送2000+金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 100007,
-            "title": "超值金币包4",
-            "currency": "RMB",
-            "gold": 118888,
-            "amount": 68,
-            "desc": "超值金币包,多送18000+金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 100008,
-            "title": "超值大礼包",
-            "currency": "RMB",
-            "gold": 208888,
-            "amount": 128,
-            "desc": "超值金币+小喇叭10个+记牌器7天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 10
-                },
-                {
-                    "id": 3,
-                    "value": 7
-                }
-            ]
-        },
-        {
-            "id": 100009,
-            "title": "超值大礼包2",
-            "currency": "RMB",
-            "gold": 338888,
-            "amount": 198,
-            "desc": "超值金币+小喇叭20个+记牌器14天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 20
-                },
-                {
-                    "id": 3,
-                    "value": 14
-                }
-            ]
-        },
-        {
-            "id": 100010,
-            "title": "超值大礼包3",
-            "currency": "RMB",
-            "gold": 508888,
-            "amount": 328,
-            "desc": "超值金币+小喇叭30个+记牌器30天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 30
-                },
-                {
-                    "id": 3,
-                    "value": 30
-                }
-            ]
-        },
-        {
-            "id": 100011,
-            "title": "小喇叭专卖",
-            "currency": "RMB",
-            "gold": 0,
-            "amount": 3,
-            "desc": "超值小喇叭10个,刷个不停",
-            "icon": "3",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 10
-                }
-            ]
-        },
-        {
-            "id": 100012,
-            "title": "小喇叭大礼包",
-            "currency": "RMB",
-            "gold": 0,
-            "amount": 30,
-            "desc": "超值小喇叭100个,刷个不停",
-            "icon": "3",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 100
-                }
-            ]
-        }
-
+  "android": {
+    "gold": [
+      {
+        "id": 100001,
+        "title": "1元夺金",
+        "currency": "RMB",
+        "gold": 1388,
+        "amount": 1,
+        "desc": "1元夺金",
+        "icon": "1",
+        "hot": true,
+        "items": []
+      },
+      {
+        "id": 100002,
+        "title": "经典套餐",
+        "currency": "RMB",
+        "gold": 2999,
+        "amount": 3,
+        "desc": "经典久久，买就送小喇叭 + 记牌器",
+        "icon": "1",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 1
+          },
+          {
+            "id": 3,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": 100003,
+        "title": "经典套餐+",
+        "currency": "RMB",
+        "gold": 8888,
+        "amount": 6,
+        "desc": "买就送小喇叭 + 记牌器",
+        "icon": "2",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 1
+          },
+          {
+            "id": 3,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": 100004,
+        "title": "超值金币包1",
+        "currency": "RMB",
+        "gold": 18888,
+        "amount": 12,
+        "desc": "超值金币包,多送1000金",
+        "icon": "2",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 100005,
+        "title": "超值金币包2",
+        "currency": "RMB",
+        "gold": 28888,
+        "amount": 18,
+        "desc": "超值金币包,多送2000金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 100006,
+        "title": "超值金币包3",
+        "currency": "RMB",
+        "gold": 46888,
+        "amount": 30,
+        "desc": "超值金币包,多送2000+金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 100007,
+        "title": "超值金币包4",
+        "currency": "RMB",
+        "gold": 118888,
+        "amount": 68,
+        "desc": "超值金币包,多送18000+金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 100008,
+        "title": "超值大礼包",
+        "currency": "RMB",
+        "gold": 208888,
+        "amount": 128,
+        "desc": "超值金币+小喇叭10个+记牌器7天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 10
+          },
+          {
+            "id": 3,
+            "value": 7
+          }
+        ]
+      },
+      {
+        "id": 100009,
+        "title": "超值大礼包2",
+        "currency": "RMB",
+        "gold": 338888,
+        "amount": 198,
+        "desc": "超值金币+小喇叭20个+记牌器14天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 20
+          },
+          {
+            "id": 3,
+            "value": 14
+          }
+        ]
+      },
+      {
+        "id": 100010,
+        "title": "超值大礼包3",
+        "currency": "RMB",
+        "gold": 508888,
+        "amount": 328,
+        "desc": "超值金币+小喇叭30个+记牌器30天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 30
+          },
+          {
+            "id": 3,
+            "value": 30
+          }
+        ]
+      }
     ],
-    "ios": [
-        {
-            "id": 200002,
-            "title": "经典套餐",
-            "currency": "RMB",
-            "gold": 2999,
-            "amount": 3,
-            "desc": "经典久久，买就送小喇叭 + 记牌器",
-            "icon": "1",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 1
-                },
-                {
-                    "id": 3,
-                    "value": 1
-                }
-            ]
-        },
-        {
-            "id": 200003,
-            "title": "经典套餐+",
-            "currency": "RMB",
-            "gold": 8888,
-            "amount": 6,
-            "desc": "买就送小喇叭 + 记牌器",
-            "icon": "2",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 1
-                },
-                {
-                    "id": 3,
-                    "value": 1
-                }
-            ]
-        },
-        {
-            "id": 200004,
-            "title": "超值金币包1",
-            "currency": "RMB",
-            "gold": 18888,
-            "amount": 12,
-            "desc": "超值金币包,多送1000金",
-            "icon": "2",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 200005,
-            "title": "超值金币包2",
-            "currency": "RMB",
-            "gold": 28888,
-            "amount": 18,
-            "desc": "超值金币包,多送2000金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 200006,
-            "title": "超值金币包3",
-            "currency": "RMB",
-            "gold": 46888,
-            "amount": 30,
-            "desc": "超值金币包,多送2000+金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 200007,
-            "title": "超值金币包4",
-            "currency": "RMB",
-            "gold": 118888,
-            "amount": 68,
-            "desc": "超值金币包,多送18000+金",
-            "icon": "3",
-            "hot": false,
-            "items": []
-        },
-        {
-            "id": 200008,
-            "title": "超值大礼包",
-            "currency": "RMB",
-            "gold": 208888,
-            "amount": 128,
-            "desc": "超值金币+小喇叭10个+记牌器7天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 10
-                },
-                {
-                    "id": 3,
-                    "value": 7
-                }
-            ]
-        },
-        {
-            "id": 200009,
-            "title": "超值大礼包2",
-            "currency": "RMB",
-            "gold": 338888,
-            "amount": 198,
-            "desc": "超值金币+小喇叭20个+记牌器14天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 20
-                },
-                {
-                    "id": 3,
-                    "value": 14
-                }
-            ]
-        },
-        {
-            "id": 200010,
-            "title": "超值大礼包3",
-            "currency": "RMB",
-            "gold": 508888,
-            "amount": 328,
-            "desc": "超值金币+小喇叭30个+记牌器30天",
-            "icon": "4",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 30
-                },
-                {
-                    "id": 3,
-                    "value": 30
-                }
-            ]
-        },
-        {
-            "id": 200011,
-            "title": "小喇叭专卖",
-            "currency": "RMB",
-            "gold": 0,
-            "amount": 3,
-            "desc": "超值小喇叭10个,刷个不停",
-            "icon": "3",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 10
-                }
-            ]
-        },
-        {
-            "id": 200012,
-            "title": "小喇叭大礼包",
-            "currency": "RMB",
-            "gold": 0,
-            "amount": 30,
-            "desc": "超值小喇叭100个,刷个不停",
-            "icon": "3",
-            "hot": true,
-            "items": [
-                {
-                    "id": 2,
-                    "value": 100
-                }
-            ]
-        }
+    "prop": [
+      {
+        "id": 100011,
+        "title": "小喇叭专卖",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 3,
+        "desc": "超值小喇叭10个,刷个不停",
+        "icon": "3",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": 100012,
+        "title": "小喇叭大礼包",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 30,
+        "desc": "超值小喇叭100个,刷个不停",
+        "icon": "3",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 100
+          }
+        ]
+      },
+      {
+        "id": 100013,
+        "title": "记牌器",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 6,
+        "desc": "7天记牌器,股神标配!",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 3,
+            "value": 7
+          }
+        ]
+      }
     ]
+  },
+  "ios": {
+    "gold": [
+      {
+        "id": 200002,
+        "title": "经典套餐",
+        "currency": "RMB",
+        "gold": 2999,
+        "amount": 3,
+        "desc": "经典久久，买就送小喇叭 + 记牌器",
+        "icon": "1",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 1
+          },
+          {
+            "id": 3,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": 200003,
+        "title": "经典套餐+",
+        "currency": "RMB",
+        "gold": 8888,
+        "amount": 6,
+        "desc": "买就送小喇叭 + 记牌器",
+        "icon": "2",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 1
+          },
+          {
+            "id": 3,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": 200004,
+        "title": "超值金币包1",
+        "currency": "RMB",
+        "gold": 18888,
+        "amount": 12,
+        "desc": "超值金币包,多送1000金",
+        "icon": "2",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 200005,
+        "title": "超值金币包2",
+        "currency": "RMB",
+        "gold": 28888,
+        "amount": 18,
+        "desc": "超值金币包,多送2000金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 200006,
+        "title": "超值金币包3",
+        "currency": "RMB",
+        "gold": 46888,
+        "amount": 30,
+        "desc": "超值金币包,多送2000+金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 200007,
+        "title": "超值金币包4",
+        "currency": "RMB",
+        "gold": 118888,
+        "amount": 68,
+        "desc": "超值金币包,多送18000+金",
+        "icon": "3",
+        "hot": false,
+        "items": []
+      },
+      {
+        "id": 200008,
+        "title": "超值大礼包",
+        "currency": "RMB",
+        "gold": 208888,
+        "amount": 128,
+        "desc": "超值金币+小喇叭10个+记牌器7天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 10
+          },
+          {
+            "id": 3,
+            "value": 7
+          }
+        ]
+      },
+      {
+        "id": 200009,
+        "title": "超值大礼包2",
+        "currency": "RMB",
+        "gold": 338888,
+        "amount": 198,
+        "desc": "超值金币+小喇叭20个+记牌器14天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 20
+          },
+          {
+            "id": 3,
+            "value": 14
+          }
+        ]
+      },
+      {
+        "id": 200010,
+        "title": "超值大礼包3",
+        "currency": "RMB",
+        "gold": 508888,
+        "amount": 328,
+        "desc": "超值金币+小喇叭30个+记牌器30天",
+        "icon": "4",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 30
+          },
+          {
+            "id": 3,
+            "value": 30
+          }
+        ]
+      }
+    ],
+    "prop": [
+      {
+        "id": 200011,
+        "title": "小喇叭专卖",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 3,
+        "desc": "超值小喇叭10个,刷个不停",
+        "icon": "3",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": 200012,
+        "title": "小喇叭大礼包",
+        "currency": "RMB",
+        "gold": 0,
+        "amount": 30,
+        "desc": "超值小喇叭100个,刷个不停",
+        "icon": "3",
+        "hot": true,
+        "items": [
+          {
+            "id": 2,
+            "value": 100
+          }
+        ]
+      }
+    ]
+  }
 }

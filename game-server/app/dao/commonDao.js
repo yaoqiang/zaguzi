@@ -22,6 +22,8 @@ var utils = require('../util/utils');
 var Token = require('../../../shared/token');
 var secret = require('../../../shared/config/session').secret;
 
+var moment = require('moment');
+
 var commonDao = module.exports;
 
 
@@ -170,6 +172,21 @@ commonDao.getSystemMessage = function (data, cb) {
     })
 }
 
+//获取系统消息-最新一条, 为降低流量（只返回最新消息时间）, 客户端每日首次登陆时,请求接口, 与本地最新消息对比, 
+commonDao.getLastSystemMessageDate = function (data, cb) {
+    db.systemMessage.find({}).sort({_id: -1}).limit(1, function (err, doc) {
+        if (err) {
+            utils.invokeCallback(cb, err, null);
+        }
+        else {
+            if (doc && doc.length > 0) {
+                return utils.invokeCallback(cb, null, doc[0].createdAt);
+            }
+            utils.invokeCallback(cb, null, null);
+        }
+    })
+}
+
 
 //更新验证码
 commonDao.updateCaptchaCode = function (data, cb) {
@@ -225,6 +242,128 @@ commonDao.bindingMobile = function (data, cb) {
         })
     })
 }
+
+
+commonDao.resetPassword = function (data, cb) {
+    db.captcha.findOne({
+        mobile: data.mobile
+    }, function (err, doc) {
+        if (err || doc == null) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
+        if (doc.captcha != data.captcha) {
+            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            return;
+        }
+
+        var password = passwordHash.generate(data.password);
+
+        db.user.findAndModify({
+            query: {
+                mobile: data.mobile
+            }, update: {
+                $set: {password: password}
+            }, new: true,
+        }, function (err, doc) {
+            if (err) {
+                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+            }
+            else {
+                cb({code: Code.OK});
+            }
+        })
+    })
+}
+
+
+commonDao.saveInviteRecord = function (data, cb) {
+    db.inviteRecord.save(data, function (err, doc) {
+        if (err) {
+            cb(err, null);
+            return;
+        }
+        cb(null, doc);
+    })
+}
+
+commonDao.getInviteRecordListByUid = function (data, cb) {
+    var inviteGrantData = globals.inviteGrant;
+    db.inviteRecord.find({uid: data.uid}).sort({_id: -1}).limit(20, function (err, docs) {
+        if (docs && docs.length > 0) {
+            db.inviteRecord.count({uid: data.uid}, function (err, total) {
+                cb({code: Code.OK, inviteRecordList: docs, totalGold: inviteGrantData.gold * total,
+                    totalTrumpet: inviteGrantData.items[0].value * total, totalJipaiqi: inviteGrantData.items[1].value * total});
+            });
+        }
+        else {
+            cb({code: Code.OK, inviteRecordList: docs});
+        }
+    })
+}
+
+/**
+ * 客户端通过客户端存储的最后条股神月排行榜活动更新时间 查询是否最新的
+ * @param data: {updatedAt: String} 
+ */
+commonDao.isLatestActivityGodMonth = function (data, cb) {
+    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+        if (err || !doc) {
+            return cb({isLatest: true});
+        }
+        try {
+            if (moment(doc.updatedAt).isSame(moment(data.updatedAt))) {
+                return cb({isLatest: true});
+            }
+        } catch (e) {
+        }
+        return cb({isLatest: false});
+    });
+}
+
+commonDao.getLatestActivityGodMonth = function (data, cb) {
+    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+        if (err) {
+            return cb(null);
+        }
+        return cb(doc);
+    });
+}
+
+
+//获取上月的股神月排行榜获奖记录
+commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
+    //每月第一天凌晨1点生成上月股神排行榜的奖励记录，所以查询日期大于本月第一天的就可查到上月记录；即查询上月奖励接口延迟1小时。
+    var firstDayInMonth = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
+    db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: new Date(firstDayInMonth)}}).sort({'detail.rank': 1}, function(err, docs) {
+        if (err) {
+            cb([]);
+            return;
+        }
+        var getRecordDetailPromiseList = _.map(docs, function(record) {
+            return new Promise(function(resolve, reject) {
+                db.player.findOne({uid: mongojs.ObjectId(record.uid)}, function(err, player) {
+                    db.user.findOne({_id:  mongojs.ObjectId(record.uid)}, function(err, user) {
+                        record.mobile = user.mobile || '';
+                        record.nickName = player.nickName;
+                        resolve(record);
+                    });
+                })
+            });
+        });
+
+        Promise.all(getRecordDetailPromiseList).then(function(res) {
+            cb(res);
+        });
+    });
+}
+
+
+
+
+
+
+
 
 
 //生成序列号消息

@@ -19,7 +19,6 @@ var User = function(opts) {
     this.from = opts.from || '';
     this.lastLoginTime = opts.lastLoginTime;
     this.mobile = opts.mobile;
-
 };
 
 /**

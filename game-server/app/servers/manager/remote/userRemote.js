@@ -62,6 +62,10 @@ UserRemote.prototype.updateProfile = function (msg, cb) {
     playerService.updateProfile(msg, cb);
 }
 
+UserRemote.prototype.updateAvatar = function (msg, cb) {
+    playerService.updateAvatar(msg, cb);
+}
+
 /**
  * msg: {uid: xx, value: Int}
  */

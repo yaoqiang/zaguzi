@@ -71,6 +71,18 @@ Player.prototype.updateProfile = function (data, cb) {
     cb({code: Code.OK, nickName: this.nickName, summary: this.summary});
 }
 
+/**
+ * 修改头像，只支持修改自定义头像上传，丢到七牛cdn，全格式为：http://domain/key，只存储key，以防将来切换domain（目测不会切换）
+ */
+Player.prototype.updateAvatar = function (data, cb) {
+
+    this.avatar = data.avatar;
+
+    logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
+    this.saveProfile();
+    cb({code: Code.OK});
+}
+
 Player.prototype.addGold = function (type, gold, cb) {
 
     try {
@@ -86,6 +98,17 @@ Player.prototype.addGold = function (type, gold, cb) {
             uid: this.uid,
             sid: dispatcher(this.uid, this.connectors).id
         }, consts.EVENT.GOLD_CHANGE, {gold: self.gold});
+
+        //如果破产了,
+        if (this.gold < globals.bankruptcyGrant.threshold) {
+            //如果还可以领取破产补助，则直接发送可领取破产补助消息：客户端弹框(框的zIndex要比结算高,以免被结算挡住)
+            if (!this.properties.getBankruptcyGrantRunOut) {
+                messageService.pushMessageToPlayer({
+                    uid: this.uid,
+                    sid: dispatcher(this.uid, this.connectors).id
+                }, consts.EVENT.UI_ALERT_BANKRUPTCY_IN_GAME, {});
+            }
+        }
 
         cb({code: Code.OK, gold: this.gold});
     } catch (err) {
@@ -402,6 +425,11 @@ Player.prototype.getBankruptcyGrant = function (cb) {
  */
 Player.prototype.battle = function (roomId, outcome, attributes) {
     this.updateTask(roomId, outcome, attributes);
+    //添加battle record, 不包含私人场牌局（目前只有股神月排行榜用到record, 为了防止刷战绩等, 不能包含私人场）
+    if (roomId !== 45) {
+        var record = {uid: this.uid, roomId: roomId, result: outcome, meeting: attributes.meeting, gold: attributes.gold, createdAt: new Date()};
+        this.saveUserBattleRecord(record);
+    }
 }
 
 
@@ -435,7 +463,6 @@ Player.prototype.updateTask = function (roomId, outcome, attributes) {
             //如果任务类型是开会,则开会成功才更新任务状态
             else if (currentTask.type == "meeting") {
                 if (attributes.meeting) {
-                    //TODO 为player添加开会数据
                     currentTask.current += 1;
                 }
             }
@@ -575,6 +602,15 @@ Player.prototype.saveOnEnter = function () {
 
 Player.prototype.flushAll = function () {
     this.emit('flushAll');
+}
+
+//用户牌局记录
+Player.prototype.saveUserBattleRecord = function (record) {
+    this.emit('saveUserBattleRecord', record);
+}
+
+Player.prototype.flushUserBattleRecord = function (record) {
+    this.emit('flushUserBattleRecord', record);
 }
 
 

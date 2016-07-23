@@ -63,7 +63,7 @@ var getOnlineUserList = function (userList) {
             result.lobby[0].online += 1;
         }
         //元宝场
-        else if (user.roomId % 10 == 2) {
+        else if (user.roomId % 10 == 3) {
             result.lobby[1].online += 1;
         }
         //比赛场

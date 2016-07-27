@@ -256,11 +256,10 @@ GameRemote.prototype.getGameStatusDetailsById = function (data, cb) {
 
 GameRemote.prototype.getGameById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
-    cb({game: game});
+    cb({gameId: game.gameId, actors: game.actors, currentActorNum: game.currentActorNum, isFull: game.isFull, isAllReady: game.isAllReady, gameLogic: game.gameLogic});
 }
 
-GameRemote.prototype.dissolveByGameId = function (data, cb) {
-    gameService.dissolveByGameId(data.gameId, cb);
-
+GameRemote.prototype.dissolveGameById = function (data, cb) {
+    gameService.dissolveGameById(data.gameId, cb);
 }
 

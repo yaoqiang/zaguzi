@@ -281,8 +281,12 @@ module.exports = function (app) {
 
 
     game.get('/getGameById', authenticationIpAddress, function (req, res) {
+        if (!req.query.gameId) {
+            res.sendStatus(400);
+            return;
+        }
         try {
-            app.rpc.manager.gameRemote.getGameById(null, function (data) {
+            app.rpc.game.gameRemote.getGameById(null, {gameId: parseInt(req.query.gameId)}, function (data) {
                 logger.debug('获取指定game情况成功');
                 res.send(data);
             });
@@ -292,9 +296,13 @@ module.exports = function (app) {
         }
     });
 
-    game.get('/dissolveByGameId', authenticationIpAddress, function (req, res) {
+    game.get('/dissolveGameById', authenticationIpAddress, function (req, res) {
+        if (!req.query.gameId) {
+            res.sendStatus(400);
+            return;
+        }
         try {
-            app.rpc.manager.gameRemote.dissolveByGameId(null, function () {
+            app.rpc.game.gameRemote.dissolveGameById(null, {gameId: parseInt(req.query.gameId)}, function () {
                 logger.debug('解散指定game情况成功');
                 res.sendStatus(200);
             });

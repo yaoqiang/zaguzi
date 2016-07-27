@@ -75,11 +75,18 @@ Game.prototype.init = function () {
     var self = this;
 
     //房间意外巡检..
-    schedule.scheduleJob({start: Date.now() + 60 * 1000}, function (jobData) {
+    schedule.scheduleJob({period: 30 * 1000}, function (jobData) {
+        //如果牌局是开始状态
         if (self.gameLogic && self.gameLogic.currentPhase !== consts.GAME.PHASE.OVER) {
-            // _.difference(_.pluck(a1, 'uid'), _.pluck(a2, 'uid'))
+            
+            //如果当前牌局玩家和gameLogic的玩家不同, 则表示出现问题了. 直接强制解散
+            //造成问题的原因是:当房间最后一位ready后 进入start逻辑, 这时游戏状态还未初始化完成, 恰巧有玩家离开.
+            //这时候凡是根据GameLogic找到玩家的消息依就会错乱.因为new GameLogic时候的玩家和当前不同, 导致僵尸房
+            if (_.size(_.difference(_.pluck(self.actors, 'uid'), _.pluck(self.gameLogic.game.actors, 'uid'))) > 0) {
+                loggerErr.error("检测出问题房间: %o", {gameId: self.gameId, gameLogic: self.gameLogic, actors: self.actors});
+                self.dissolve();
+            }
         }
-        loggerErr.error("检测出问题房间: %o", {gameId: self.gameId, gameLogic: self.gameLogic, actors: self.actors});
     }, {});
 }
 
@@ -182,23 +189,23 @@ Game.prototype.start = function () {
     //////// Note: 居然偶尔的偶尔会出现问题, 导致已经换人, 但是还计算出上把老大, 而且上把老大可能已下线, 总之导致僵尸房
     ///////////////
     //标识当前游戏局与上把局玩家是否变化
-    //var isActorsChanged = false;
-    //_.each(this.actors, function (act) {
-    //    if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
-    //            uid: act.uid,
-    //            actorNr: act.actorNr
-    //        }))) {
-    //        isActorsChanged = true;
-    //    }
-    //
-    //    //重置玩家牌局状态
-    //    act.gameStatus.reset()
-    //
-    //});
-    ////如果有变化，清空上把大油
-    //if (isActorsChanged) {
-    //    this.bigActorWithLastGame = null;
-    //}
+    var isActorsChanged = false;
+    _.each(this.actors, function (act) {
+       if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
+               uid: act.uid,
+               actorNr: act.actorNr
+           }))) {
+           isActorsChanged = true;
+       }
+    
+       //重置玩家牌局状态
+       act.gameStatus.reset()
+    
+    });
+    //如果有变化，清空上把大油
+    if (isActorsChanged) {
+       this.bigActorWithLastGame = null;
+    }
 
     //
     _.each(this.actors, function (act) {
@@ -207,17 +214,17 @@ Game.prototype.start = function () {
     });
 
     //标识上把大油=null,
-    this.bigActorWithLastGame = null;
+    // this.bigActorWithLastGame = null;
 
     //释放上局gameLogic
-    for (var i in this.gameLogic) {
-        delete this.gameLogic[i];
-    }
+    // for (var i in this.gameLogic) {
+    //     delete this.gameLogic[i];
+    // }
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {
         actors: this.actors,
-        bigActorWithLastGame: null,
+        bigActorWithLastGame: this.bigActorWithLastGame,
         maxActor: this.maxActor,
         gameId: this.gameId
     };

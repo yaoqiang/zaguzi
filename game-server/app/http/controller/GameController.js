@@ -280,6 +280,19 @@ module.exports = function (app) {
     });
 
 
+    game.get('/getGameById', authenticationIpAddress, function (req, res) {
+        try {
+            app.rpc.manager.gameRemote.getGameById(null, function (data) {
+                logger.debug('获取指定game情况成功');
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("获取指定game情况失败 %j", {err: err});
+            res.sendStatus(500);
+        }
+    })
+
+
     /**
      * 获取游戏服务器缓存中在线人数总数
      */

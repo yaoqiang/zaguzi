@@ -72,6 +72,15 @@ Game.prototype.init = function () {
     }
     this.createChannel();
 
+    var self = this;
+
+    //房间意外巡检..
+    schedule.scheduleJob({start: Date.now() + 60 * 1000}, function (jobData) {
+        if (self.gameLogic && self.gameLogic.currentPhase !== consts.GAME.PHASE.OVER) {
+            // _.difference(_.pluck(a1, 'uid'), _.pluck(a2, 'uid'))
+        }
+        loggerErr.error("检测出问题房间: %o", {gameId: self.gameId, gameLogic: self.gameLogic, actors: self.actors});
+    }, {});
 }
 
 Game.prototype.join = function (data, cb) {
@@ -327,7 +336,17 @@ Game.prototype.talkTimeout = function (actor) {
 Game.prototype.dissolve = function () {
     logger.debug('game||dissolve||牌局里重开次数达到上限,强制解散牌局 ||游戏&ID: %j', this.gameId);
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
+    
     var self = this;
+    //取消所有schedule
+    _.each(this.jobQueue, function (job) {
+        if (!!job) {
+            schedule.cancelJob(job.jobId);
+            self.jobQueue = _.filter(self.jobQueue, function (j) {
+                return j.jobId != job.jobId;
+            });
+        }
+    });
     _.map(this.actors, function (actor) {
         self.leave({uid: actor.uid}, function (data) {
 

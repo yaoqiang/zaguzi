@@ -72,6 +72,22 @@ Game.prototype.init = function () {
     }
     this.createChannel();
 
+    var self = this;
+
+    //房间意外巡检..
+    schedule.scheduleJob({period: 120 * 1000}, function (jobData) {
+        //如果牌局是开始状态
+        if (self.gameLogic && self.gameLogic.currentPhase !== consts.GAME.PHASE.OVER) {
+            
+            //如果当前牌局玩家和gameLogic的玩家不同, 则表示出现问题了. 直接强制解散
+            //造成问题的原因是:当房间最后一位ready后 进入start逻辑, 这时游戏状态还未初始化完成, 恰巧有玩家离开.
+            //这时候凡是根据GameLogic找到玩家的消息依就会错乱.因为new GameLogic时候的玩家和当前不同, 导致僵尸房
+            if (_.size(_.difference(_.pluck(self.actors, 'uid'), _.pluck(self.gameLogic.game.actors, 'uid'))) > 0) {
+                loggerErr.error("检测出问题房间: %o", {gameId: self.gameId, gameLogic: self.gameLogic, actors: self.actors});
+                self.dissolve();
+            }
+        }
+    }, {});
 }
 
 Game.prototype.join = function (data, cb) {
@@ -170,26 +186,28 @@ Game.prototype.ready = function (data, cb) {
 Game.prototype.start = function () {
     var self = this;
 
+    ////////////////////////////////////////////////////
     //////// Note: 居然偶尔的偶尔会出现问题, 导致已经换人, 但是还计算出上把老大, 而且上把老大可能已下线, 总之导致僵尸房
+    /////// Note2: 这个问题应该不少大油选举导致, 初步定位是顺序问题.
     ///////////////
     //标识当前游戏局与上把局玩家是否变化
-    //var isActorsChanged = false;
-    //_.each(this.actors, function (act) {
+    // var isActorsChanged = false;
+    // _.each(this.actors, function (act) {
     //    if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
     //            uid: act.uid,
     //            actorNr: act.actorNr
     //        }))) {
     //        isActorsChanged = true;
     //    }
-    //
+    
     //    //重置玩家牌局状态
     //    act.gameStatus.reset()
-    //
-    //});
-    ////如果有变化，清空上把大油
-    //if (isActorsChanged) {
+    
+    // });
+    // //如果有变化，清空上把大油
+    // if (isActorsChanged) {
     //    this.bigActorWithLastGame = null;
-    //}
+    // }
 
     //
     _.each(this.actors, function (act) {
@@ -200,15 +218,11 @@ Game.prototype.start = function () {
     //标识上把大油=null,
     this.bigActorWithLastGame = null;
 
-    //释放上局gameLogic
-    for (var i in this.gameLogic) {
-        delete this.gameLogic[i];
-    }
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {
         actors: this.actors,
-        bigActorWithLastGame: null,
+        bigActorWithLastGame: this.bigActorWithLastGame,
         maxActor: this.maxActor,
         gameId: this.gameId
     };
@@ -327,7 +341,17 @@ Game.prototype.talkTimeout = function (actor) {
 Game.prototype.dissolve = function () {
     logger.debug('game||dissolve||牌局里重开次数达到上限,强制解散牌局 ||游戏&ID: %j', this.gameId);
     this.gameLogic.currentPhase = consts.GAME.PHASE.OVER;
+    
     var self = this;
+    //取消所有schedule
+    _.each(this.jobQueue, function (job) {
+        if (!!job) {
+            schedule.cancelJob(job.jobId);
+            self.jobQueue = _.filter(self.jobQueue, function (j) {
+                return j.jobId != job.jobId;
+            });
+        }
+    });
     _.map(this.actors, function (actor) {
         self.leave({uid: actor.uid}, function (data) {
 
@@ -1071,7 +1095,6 @@ Game.prototype.giveUp = function (data) {
             });
         }
     });
-
 
     //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
     this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;

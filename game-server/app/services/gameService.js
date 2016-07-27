@@ -357,3 +357,9 @@ gameService.getGameById = function(gameId)
 {
     return _.findWhere(gGameList, {gameId: gameId});
 }
+
+gameService.dissolveGameById = function (gameId, cb) {
+    var game = gameService.getGameById(gameId);
+    game.dissolve();
+    cb();
+}

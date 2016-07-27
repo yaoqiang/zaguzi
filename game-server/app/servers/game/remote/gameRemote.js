@@ -253,3 +253,13 @@ GameRemote.prototype.getGameStatusDetailsById = function (data, cb) {
     gameService.getGameStatusDetailsById(data, cb);
 }
 
+
+GameRemote.prototype.getGameById = function (data, cb) {
+    var game = gameService.getGameById(data.gameId);
+    cb({gameId: game.gameId, actors: game.actors, currentActorNum: game.currentActorNum, isFull: game.isFull, isAllReady: game.isAllReady, gameLogic: game.gameLogic});
+}
+
+GameRemote.prototype.dissolveGameById = function (data, cb) {
+    gameService.dissolveGameById(data.gameId, cb);
+}
+

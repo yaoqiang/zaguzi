@@ -280,6 +280,39 @@ module.exports = function (app) {
     });
 
 
+    game.get('/getGameById', authenticationIpAddress, function (req, res) {
+        if (!req.query.gameId) {
+            res.sendStatus(400);
+            return;
+        }
+        try {
+            app.rpc.game.gameRemote.getGameById(null, {gameId: parseInt(req.query.gameId)}, function (data) {
+                logger.debug('获取指定game情况成功');
+                res.send(data);
+            });
+        } catch (err) {
+            logger.error("获取指定game情况失败 %j", {err: err});
+            res.sendStatus(500);
+        }
+    });
+
+    game.get('/dissolveGameById', authenticationIpAddress, function (req, res) {
+        if (!req.query.gameId) {
+            res.sendStatus(400);
+            return;
+        }
+        try {
+            app.rpc.game.gameRemote.dissolveGameById(null, {gameId: parseInt(req.query.gameId)}, function () {
+                logger.debug('解散指定game情况成功');
+                res.sendStatus(200);
+            });
+        } catch (err) {
+            logger.error("解散指定game情况失败 %j", {err: err});
+            res.sendStatus(500);
+        }
+    })
+
+
     /**
      * 获取游戏服务器缓存中在线人数总数
      */

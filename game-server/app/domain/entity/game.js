@@ -186,26 +186,28 @@ Game.prototype.ready = function (data, cb) {
 Game.prototype.start = function () {
     var self = this;
 
+    ////////////////////////////////////////////////////
     //////// Note: 居然偶尔的偶尔会出现问题, 导致已经换人, 但是还计算出上把老大, 而且上把老大可能已下线, 总之导致僵尸房
+    /////// Note2: 这个问题应该不少大油选举导致, 初步定位是顺序问题.
     ///////////////
     //标识当前游戏局与上把局玩家是否变化
-    var isActorsChanged = false;
-    _.each(this.actors, function (act) {
-       if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
-               uid: act.uid,
-               actorNr: act.actorNr
-           }))) {
-           isActorsChanged = true;
-       }
+    // var isActorsChanged = false;
+    // _.each(this.actors, function (act) {
+    //    if (_.isUndefined(_.findWhere(self.actorsWithLastGame, {
+    //            uid: act.uid,
+    //            actorNr: act.actorNr
+    //        }))) {
+    //        isActorsChanged = true;
+    //    }
     
-       //重置玩家牌局状态
-       act.gameStatus.reset()
+    //    //重置玩家牌局状态
+    //    act.gameStatus.reset()
     
-    });
-    //如果有变化，清空上把大油
-    if (isActorsChanged) {
-       this.bigActorWithLastGame = null;
-    }
+    // });
+    // //如果有变化，清空上把大油
+    // if (isActorsChanged) {
+    //    this.bigActorWithLastGame = null;
+    // }
 
     //
     _.each(this.actors, function (act) {
@@ -214,12 +216,8 @@ Game.prototype.start = function () {
     });
 
     //标识上把大油=null,
-    // this.bigActorWithLastGame = null;
+    this.bigActorWithLastGame = null;
 
-    //释放上局gameLogic
-    // for (var i in this.gameLogic) {
-    //     delete this.gameLogic[i];
-    // }
 
     //拼装GameLogic中需要的结构, 不直接传递game对象, 防止嵌套
     var gameInfo = {
@@ -1097,10 +1095,6 @@ Game.prototype.giveUp = function (data) {
             });
         }
     });
-
-    this.bigActorWithLastGame = {
-        uid: data.uid,
-    };
 
     //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
     this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;

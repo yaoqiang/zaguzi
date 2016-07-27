@@ -1098,6 +1098,9 @@ Game.prototype.giveUp = function (data) {
         }
     });
 
+    this.bigActorWithLastGame = {
+        uid: data.uid,
+    };
 
     //认输, 标识股子赢, 本局为一股子(即如果是100底注则认输是每人拿100, 如果是1000底则每人拿1000)
     this.gameLogic.result = consts.GAME.RESULT.BLACK_WIN;

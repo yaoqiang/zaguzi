@@ -75,7 +75,7 @@ Game.prototype.init = function () {
     var self = this;
 
     //房间意外巡检..
-    schedule.scheduleJob({period: 30 * 1000}, function (jobData) {
+    schedule.scheduleJob({period: 120 * 1000}, function (jobData) {
         //如果牌局是开始状态
         if (self.gameLogic && self.gameLogic.currentPhase !== consts.GAME.PHASE.OVER) {
             

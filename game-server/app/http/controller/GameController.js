@@ -290,6 +290,18 @@ module.exports = function (app) {
             logger.error("获取指定game情况失败 %j", {err: err});
             res.sendStatus(500);
         }
+    });
+
+    game.get('/dissolveByGameId', authenticationIpAddress, function (req, res) {
+        try {
+            app.rpc.manager.gameRemote.dissolveByGameId(null, function () {
+                logger.debug('解散指定game情况成功');
+                res.sendStatus(200);
+            });
+        } catch (err) {
+            logger.error("解散指定game情况失败 %j", {err: err});
+            res.sendStatus(500);
+        }
     })
 
 

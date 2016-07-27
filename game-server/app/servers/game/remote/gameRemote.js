@@ -258,3 +258,9 @@ GameRemote.prototype.getGameById = function (data, cb) {
     var game = gameService.getGameById(data.gameId);
     cb({game: game});
 }
+
+GameRemote.prototype.dissolveByGameId = function (data, cb) {
+    gameService.dissolveByGameId(data.gameId, cb);
+
+}
+

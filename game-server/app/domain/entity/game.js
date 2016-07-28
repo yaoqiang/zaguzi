@@ -174,21 +174,24 @@ Game.prototype.ready = function (data, cb) {
         actorNr: actor.actorNr
     }, null, null)
 
-    //向准备玩家发送准备成功响应
-    cb({code: Code.OK});
+   
 
     //检查玩家是否都准备, 如果都准备则开始游戏
     if (this.isAllReady) {
-        this.start();
+        this.start(cb);
+    }
+    else {
+        //向准备玩家发送准备成功响应
+        cb({code: Code.OK});
     }
 }
 
-Game.prototype.start = function () {
+Game.prototype.start = function (cb) {
     var self = this;
 
     ////////////////////////////////////////////////////
     //////// Note: 居然偶尔的偶尔会出现问题, 导致已经换人, 但是还计算出上把老大, 而且上把老大可能已下线, 总之导致僵尸房
-    /////// Note2: 这个问题应该不少大油选举导致, 初步定位是顺序问题.
+    /////// Note2: 这个问题应该不是大油选举导致, 初步定位是执行顺序问题.
     ///////////////
     //标识当前游戏局与上把局玩家是否变化
     // var isActorsChanged = false;
@@ -231,6 +234,9 @@ Game.prototype.start = function () {
     this.gameLogic.newGame();
 
     this.gameLogic.cardsSort(this.actors);
+
+    //在这里执行ready请求的callback, 保证游戏状态初始化完毕, 避免在ready后初始化游戏状态前, 客户端离开房间
+    cb({code: Code.OK});
 
     var self = this;
 

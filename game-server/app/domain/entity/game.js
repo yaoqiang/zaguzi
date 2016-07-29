@@ -236,7 +236,7 @@ Game.prototype.start = function (cb) {
     this.gameLogic.cardsSort(this.actors);
 
     //在这里执行ready请求的callback, 保证游戏状态初始化完毕, 避免在ready后初始化游戏状态前, 客户端离开房间
-    cb({code: Code.OK});
+    if (cb) cb({code: Code.OK});
 
     var self = this;
 

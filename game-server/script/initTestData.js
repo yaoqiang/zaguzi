@@ -283,6 +283,20 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '##号外## 苹果新版本上线啦!快来更新吧!',
+    content: '苹果新版本在游戏结束后偶尔不显示结算面板,请大家先克服.',
+    url: '',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '##通告## 严重禁止高倍区打伙牌作弊行为!',
+    content: '大家不要报侥幸心理,作弊被举报金币清零',
+    enabled: true,
+    createdAt: new Date()
+});
 
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
@@ -340,3 +354,4 @@ db.activityGrantRecord.save({
 
 //修改密码为：zaguzi
 db.user.update({ mobile: '13934807613' }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });
+db.user.update({ _id: ObjectId('570dbb8cd7958a093765d94b') }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });

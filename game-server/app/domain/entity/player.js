@@ -56,6 +56,10 @@ util.inherits(Player, Entity);
 
 Player.prototype.updateProfile = function (data, cb) {
 
+    logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.UPDATE_PROFILE,
+        message: '用户修改基本信息', created: new Date(),
+        detail: {nickName: this.nickName, nickNameAfter: data.nickName, gender: this.gender, genderAfter: data.gender, summary: this.summary, summaryAfter: data.summary}});
+
     this.nickName = data.nickName;
     this.avatar = data.avatar;
     this.gender = data.gender;
@@ -67,6 +71,7 @@ Player.prototype.updateProfile = function (data, cb) {
     this.summary = utils.replaceContent(this.summary);
 
     logger.debug("user-update profile||%j||用户修改了个人基本信息，用户ID:%j", this.uid, this.uid);
+
     this.saveProfile();
     cb({code: Code.OK, nickName: this.nickName, summary: this.summary});
 }

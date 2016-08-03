@@ -294,7 +294,7 @@ db.systemMessage.save({
 db.systemMessage.save({
     title: '绿色游戏  拒绝作弊',
     content: '作弊行为严惩不贷，点击查看详情',
-    url: '',
+    url: 'http://www.zaguzi.com/green_game_1.html',
     enabled: true,
     createdAt: new Date()
 });
@@ -362,3 +362,4 @@ db.activityGrantRecord.save({
 //修改密码为：zaguzi
 db.user.update({ mobile: '13934807613' }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });
 db.user.update({ _id: ObjectId('570dbb8cd7958a093765d94b') }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });
+db.user.update({ _id: ObjectId('57447b7aa01f604f6ee43447') }, { $set: { mobile: '18735223656' } });

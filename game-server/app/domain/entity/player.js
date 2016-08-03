@@ -61,7 +61,7 @@ Player.prototype.updateProfile = function (data, cb) {
         detail: {nickName: this.nickName, nickNameAfter: data.nickName, gender: this.gender, genderAfter: data.gender, summary: this.summary, summaryAfter: data.summary}});
 
     this.nickName = data.nickName;
-    this.avatar = data.avatar;
+    //this.avatar = data.avatar;
     this.gender = data.gender;
     this.summary = data.summary;
 

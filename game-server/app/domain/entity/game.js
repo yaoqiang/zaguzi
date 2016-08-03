@@ -401,6 +401,12 @@ Game.prototype.talk = function (data, cb) {
         return;
     }
 
+    if (this.gameLogic.currentPhase !== consts.GAME.PHASE.TALKING) {
+        cb({code: Code.FAIL, err: consts.ERR_CODE.TALK.NOT_IN_GAME})
+        logger.debug('game-talk||%j||说话失败, 玩家不在游戏中, 可能是网络状况导致客户端在结束状态时仍显示说话操作||用户&ID: %j', data.uid, data.uid);
+        return;
+    }
+
     switch (data.goal) {
         case consts.GAME.IDENTITY.UNKNOW:
 
@@ -755,6 +761,12 @@ Game.prototype.fan = function (data, cb) {
     if (this.gameLogic.currentFanActor.uid !== data.uid) {
         logger.debug('game||fan||出牌错误，此次不轮您出牌||用户&ID: %j', data.uid);
         cb({code: Code.FAIL, err: consts.ERR_CODE.FAN.FAN_REPEAT});
+        return;
+    }
+
+    if (this.gameLogic.currentPhase !== consts.GAME.PHASE.FAN) {
+        cb({code: Code.FAIL})
+        logger.debug('game||fan||出牌错误, 玩家不在游戏中, 可能是网络状况导致客户端在结束状态时仍显示说话操作||用户&ID: %j', data.uid);
         return;
     }
 

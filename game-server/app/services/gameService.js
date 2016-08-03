@@ -238,7 +238,18 @@ gameService.ready = function(data, cb)
         cb(goldValidator);
         return;
     }
+
+
     var game = this.getGameById(data.gameId);
+
+    if (data.roomId === 45) {
+        //检查金币是否可加入
+        goldValidator = gameUtil.getJoinAvailableForPrivate(game.base || 100, data.player);
+        if (goldValidator.code == Code.FAIL) {
+            cb(goldValidator);
+            return;
+        }
+    }
 
     if (_.isUndefined(game)) {
         loggerErr.error('%j', {method: "service.gameService.ready", uid: data.uid, gameId: data.gameId, desc: '玩家准备时, 客户端传入的gameId不存在牌局实例', gGameList: {gGameListLength: _.size(gGameList), gGameIdList: _.pluck(gGameList, 'gameId')}});

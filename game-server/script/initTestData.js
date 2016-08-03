@@ -292,14 +292,18 @@ db.systemMessage.save({
 });
 
 db.systemMessage.save({
-    title: '##通告## 严重禁止高倍区打伙牌作弊行为!',
-    content: '大家不要报侥幸心理,作弊被举报金币清零',
+    title: '绿色游戏  拒绝作弊',
+    content: '作弊行为严惩不贷，点击查看详情',
+    url: 'http://www.zaguzi.com/green_game_1.html',
     enabled: true,
     createdAt: new Date()
 });
 
 
+
+
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
+//updatedAt: 用于检测最新活动信息, 如果修改了信息, 则修改该字段, 客户端会检测如果本地不是最新的则拉取最新数据
 db.activityList.save({
     title: '股神榜-月排行榜',
     content: '当月游戏200局以上,就有资格上榜!',
@@ -339,6 +343,9 @@ db.activityList.save({
     updatedAt: new Date()
 });
 
+//设置股神榜月排行开关状态
+db.activityList.update({name: 'GOD_MONTH'}, {$set: {enabled: true}});
+
 db.activityGrantRecord.save({
     name: "GOD_MONTH",
     uid: "",
@@ -355,3 +362,4 @@ db.activityGrantRecord.save({
 //修改密码为：zaguzi
 db.user.update({ mobile: '13934807613' }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });
 db.user.update({ _id: ObjectId('570dbb8cd7958a093765d94b') }, { $set: { password: 'sha1$b211be4c$1$12a897ae563de0acab2e4eafaad3a5c373de32fa' } });
+db.user.update({ _id: ObjectId('57447b7aa01f604f6ee43447') }, { $set: { mobile: '18735223656' } });

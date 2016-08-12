@@ -1,0 +1,60 @@
+[
+    {
+        "id": 1,
+        "summary": "5元宝",
+        "icon": "",
+        "fragment": 5,
+        "gold": 0,
+        "items": []
+    },
+    {
+        "id": 2,
+        "summary": "1元宝",
+        "icon": "",
+        "fragment": 1,
+        "gold": 0,
+        "items": []
+    },
+    {
+        "id": 3,
+        "summary": "小喇叭",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": [
+            {
+                "id": 2,
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "summary": "记牌器",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": [
+            {
+                "id": 3,
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "summary": "5000金",
+        "icon": "",
+        "fragment": 0,
+        "gold": 5000,
+        "items": []
+    },
+    {
+        "id": 6,
+        "summary": "遗憾咯",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": []
+    }
+]

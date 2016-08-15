@@ -156,5 +156,8 @@
                 "value": 1
             }
         ]
+    },
+    "lottery": {
+        "capital": 2000
     }
 }

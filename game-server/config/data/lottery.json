@@ -5,7 +5,8 @@
         "icon": "",
         "fragment": 5,
         "gold": 0,
-        "items": []
+        "items": [],
+        "probability": 0.0001
     },
     {
         "id": 2,
@@ -13,7 +14,8 @@
         "icon": "",
         "fragment": 1,
         "gold": 0,
-        "items": []
+        "items": [],
+        "probability": 0.001
     },
     {
         "id": 3,
@@ -24,9 +26,10 @@
         "items": [
             {
                 "id": 2,
-                "value": 1
+                "value": 3
             }
-        ]
+        ],
+        "probability": 0.08
     },
     {
         "id": 4,
@@ -37,24 +40,27 @@
         "items": [
             {
                 "id": 3,
-                "value": 1
+                "value": 3
             }
-        ]
+        ],
+        "probability": 0.08
     },
     {
         "id": 5,
-        "summary": "5000金",
+        "summary": "3000金",
         "icon": "",
         "fragment": 0,
-        "gold": 5000,
-        "items": []
+        "gold": 3000,
+        "items": [],
+        "probability": 0.15
     },
     {
         "id": 6,
-        "summary": "遗憾咯",
+        "summary": "100金",
         "icon": "",
         "fragment": 0,
-        "gold": 0,
-        "items": []
+        "gold": 100,
+        "items": [],
+        "probability": 1
     }
 ]

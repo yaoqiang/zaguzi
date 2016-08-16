@@ -47,6 +47,7 @@ handler.getProfile = function (msg, session, next) {
             profile.summary = data.player.summary;
             profile.rank = data.player.rank;
             profile.mobile = data.userInfo ? data.userInfo.mobile : undefined;
+            profile.exp = data.player.exp;
         }
         next(null, profile);
     });

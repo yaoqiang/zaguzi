@@ -27,6 +27,9 @@ var paymentService = require('../../../services/paymentService');
 
 var messageService = require('../../../services/messageService');
 
+//
+var lottery = require('../domain/entity/lottery');
+
 
 ////////////////////////////////////////////
 // 一些无状态接口
@@ -772,5 +775,71 @@ UniversalRemote.prototype = {
     //获取上月的股神月排行榜获奖记录
     getLatestActivityGrantRecordGodMonth: function (data, cb) {
         commonService.getLatestActivityGrantRecordGodMonth(data, cb);
+    },
+
+    //抽奖
+    lottery: function (data, cb) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
+            if (user == null || _.isUndefined(user)) {
+                logger.debug("user-lottery||%j||抽奖失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                cb({code: Code.FAIL});
+                return;
+            }
+            if (player.gold < globals.lottery.capital) {
+                cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.TOO_POOR});
+                return;
+            }
+
+            //获得奖励
+            var gift = lottery.get();
+
+            new Promise(function(resolve, reject) {
+                player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -global.lottery.capital, function() {
+                    resolve();
+                });
+            })
+            .then(function() {
+                var msg = "恭喜您获得[";
+                if (gift.fragment > 0) {
+                    player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.ACTIVITY, gift.fragment, function() {
+                        msg += gift.fragment + "个元宝"
+                        Promise.resolve(msg);
+                    })
+                }
+                else {
+                    Promise.resolve(msg);
+                }
+            })
+            .then(function() {
+                if (gift.items.length > 0) {
+                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.ACTIVITY, gift.items, function() {
+                        gift.items.forEach(function(item) {
+                            if (item.id === 2) {
+                                msg += item.value + "个喇叭"
+                            }
+                            else if (item.id === 3) {
+                                msg += item.value + "天记牌器"
+                            }
+                        })
+                        Promise.resolve(msg);
+                    })
+                }
+                else {
+                    Promise.resolve(msg);
+                }
+            })
+            .then(function() {
+                if (gift.fragment > 0) {
+                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, gift.gold, function() {
+                        msg += gift.gold + "金币"
+                        cb({code: Code.OK, msg: msg});
+                    })
+                }
+                else {
+                    cb({code: Code.OK, msg: msg});
+                }
+            });
+
+        });
     }
 }

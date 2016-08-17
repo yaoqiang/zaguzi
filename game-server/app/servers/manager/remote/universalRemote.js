@@ -663,6 +663,20 @@ UniversalRemote.prototype = {
     getItemList: function (data, cb) {
         cb({code: Code.OK, itemList: itemConf});
     },
+    
+    getLotteryCard: function (data, cb) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
+            if (user == null || _.isUndefined(user)) {
+                logger.debug("user-lottery get||%j||获取抽奖卡失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                cb({code: Code.FAIL});
+                return;
+            }
+            
+            cb({code: Code.OK, item: _.findWhere(user.items, {id: 5})});
+        });
+        
+    },
+    
 
 
     //处理话费充值回调
@@ -785,18 +799,39 @@ UniversalRemote.prototype = {
                 cb({code: Code.FAIL});
                 return;
             }
-            if (player.gold < globals.lottery.capital) {
-                cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.TOO_POOR});
-                return;
+
+            //默认消耗金币
+            var consumeType = 0;    //0：金币，1：抽奖卡
+            //如果有抽奖卡则优先消耗抽奖卡
+            var lotteryCard = _.findWhere(player.items, {id: 5});
+            if (!_.isUndefined(lotteryCard) && lotteryCard.value > 0) {
+                consumeType = 1;
             }
+            else {
+                if (player.gold < globals.lottery.capital) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.TOO_POOR});
+                    return;
+                }
+            }
+
 
             //获得奖励
             var gift = lottery.get();
 
             new Promise(function(resolve, reject) {
-                player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -global.lottery.capital, function() {
-                    resolve();
-                });
+                if (consumeType === 0) {
+                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -global.lottery.capital, function() {
+                        resolve();
+                    });
+                }
+                else {
+                    var items = [{ id: 5, value: -1 }];
+
+                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, function() {
+                        resolve();
+                    });
+                }
+                
             })
             .then(function() {
                 var msg = "恭喜您获得[";
@@ -841,5 +876,9 @@ UniversalRemote.prototype = {
             });
 
         });
+    },
+
+    getAppleStoreApproveState: function (cb) {
+        commonService.getAppleSetting(cb);
     }
 }

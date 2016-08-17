@@ -283,3 +283,7 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
         cb({recordList: []});
     });
 }
+
+commonService.getAppleSetting = function (cb) {
+    commonDao.getAppleSetting(cb);
+}

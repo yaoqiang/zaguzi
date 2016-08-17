@@ -433,3 +433,20 @@ handler.lottery = function (msg, session, next) {
         next(null, data);
     });
 }
+
+handler.getLotteryCard = function (msg, session, next) {
+    
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getLotteryCard(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getAppleStoreApproveState = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getAppleStoreApproveState(session, msg, function (data) {
+        next(null, data);
+    });
+}

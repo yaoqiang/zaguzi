@@ -67,19 +67,21 @@ Lottery.get = function () {
 //-- for test
 //-----------------------
 
-// var count1 = 0, count2 = 0, count3 = 0, count4 = 0, count5 = 0, count6 = 0;
+var count1 = 0, count2 = 0, count3 = 0, count4 = 0, count5 = 0, count6 = 0, count7 = 0, count8 = 0;
 
-// for (var i = 0; i < 1000; i++) {
-//     var index = Lottery.get();
-//     if (index == 0) count1 += 1;
-//     if (index == 1) count2 += 1;
-//     if (index == 2) count3 += 1;
-//     if (index == 3) count4 += 1;
-//     if (index == 4) count5 += 1;
-//     if (index == 5) count6 += 1;
-// }
+for (var i = 0; i < 10000000; i++) {
+    var lottery = Lottery.get();
+    if (lottery.id == 1) count1 += 1;
+    if (lottery.id == 2) count2 += 1;
+    if (lottery.id == 3) count3 += 1;
+    if (lottery.id == 4) count4 += 1;
+    if (lottery.id == 5) count5 += 1;
+    if (lottery.id == 6) count6 += 1;
+    if (lottery.id == 7) count7 += 1;
+    if (lottery.id == 8) count8 += 1;
+}
 
-// console.log(count1, count2, count3, count4, count5, count6)
+console.log(count1, count2, count3, count4, count5, count6, count7, count8)
 
 
 module.exports = Lottery;

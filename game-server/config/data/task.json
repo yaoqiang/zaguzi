@@ -16,25 +16,6 @@
       ]
     },
     {
-      "groupId": 1003,
-      "tasks": [
-        {
-          "id": 100301,
-          "name": "在元宝场玩10把",
-          "desc": "每日参加元宝场，赢更多金币",
-          "target": 10,
-          "icon": "",
-          "roomId": [
-            13,
-            23,
-            33
-          ],
-          "type": "battle",
-          "grant": 1888
-        }
-      ]
-    },
-    {
       "groupId": 1004,
       "tasks": [
         {
@@ -45,7 +26,7 @@
           "icon": "",
           "roomId": [],
           "type": "meeting",
-          "grant": 1000
+          "grant": 888
         }
       ]
     },
@@ -61,25 +42,6 @@
           "roomId": [],
           "type": "win",
           "grant": 888
-        }
-      ]
-    },
-    {
-      "groupId": 1012,
-      "tasks": [
-        {
-          "id": 101201,
-          "name": "在元宝场赢10把",
-          "desc": "在元宝场获胜10局，赢更多金币",
-          "target": 10,
-          "icon": "",
-          "roomId": [
-            13,
-            23,
-            33
-          ],
-          "type": "win",
-          "grant": 2888
         }
       ]
     }

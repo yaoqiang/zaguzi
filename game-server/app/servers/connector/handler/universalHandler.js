@@ -9,6 +9,8 @@ var pomelo = require('pomelo-rt');
 
 var messageService = require('../../../services/messageService');
 
+var rankConf = require('../../../../config/data/rank');
+
 
 module.exports = function (app) {
     return new Handler(app);
@@ -48,6 +50,7 @@ handler.getProfile = function (msg, session, next) {
             profile.rank = data.player.rank;
             profile.mobile = data.userInfo ? data.userInfo.mobile : undefined;
             profile.exp = data.player.exp;
+            profile.nextUpgradeExp = _.findWhere(rankConf, {rank: data.player.rank}).exp;
         }
         next(null, profile);
     });

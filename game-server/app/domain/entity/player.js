@@ -170,9 +170,15 @@ Player.prototype.addFragment = function (type, fragment, cb) {
 
 Player.prototype.addExp = function (exp, args) {
 
+    var rank = _.findWhere(ranks, {rank: this.rank});
+
     this.exp += exp;
 
-    var rank = _.findWhere(ranks, {rank: this.rank});
+    //如果是满级, 经验也不涨了
+    if (this.exp >= ranks[ranks.length-1].exp) this.exp = ranks[ranks.length-1].exp;
+
+    //满级就不升了
+    if (this.rank === ranks.length) return;
     if (this.exp > rank.exp) {
         this.upgrade();
     }

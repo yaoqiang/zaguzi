@@ -10,5 +10,8 @@
 	},
 	{
 		"id": 4, "name": "vip", "title": "VIP", "icon": "", "mode": "term"
+	},
+	{
+		"id": 5, "name": "lotteryCard", "title": "抽奖卡", "icon": "", "mode": "count"
 	}
 ]

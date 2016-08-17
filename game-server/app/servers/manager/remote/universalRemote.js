@@ -28,7 +28,7 @@ var paymentService = require('../../../services/paymentService');
 var messageService = require('../../../services/messageService');
 
 //
-var lottery = require('../domain/entity/lottery');
+var lottery = require('../../../domain/entity/lottery');
 
 
 ////////////////////////////////////////////

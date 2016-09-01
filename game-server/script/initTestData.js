@@ -300,19 +300,27 @@ db.systemMessage.save({
 });
 
 
+db.systemMessage.save({
+    title: '8月股神榜排名揭晓！',
+    content: '奖励已发放, 请注意查收，点击查看详情',
+    url: 'http://www.zaguzi.com/activity_god_month_record.html',
+    enabled: true,
+    createdAt: new Date()
+});
+
 
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 //updatedAt: 用于检测最新活动信息, 如果修改了信息, 则修改该字段, 客户端会检测如果本地不是最新的则拉取最新数据
 db.activityList.save({
     title: '股神榜-月排行榜',
-    content: '当月游戏200局以上,就有资格上榜!',
+    content: '当月游戏300局以上,就有资格上榜!',
     detail: '第一名: 50元宝+20000金+7喇叭+7天记牌器\n第二名: 30元宝+10000金+5喇叭+5天记牌器\n第三名: 10元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金\n\n来吧股神!作弊取消资格并严惩!!',
     icon: '',
     name: 'GOD_MONTH',
     type: 'ROUND',
     unit: 'MONTH',
-    threshold: { battle: 200 },
+    threshold: { battle: 300 },
     enabled: true,
     visible: false,
     urlForIntro: 'http://www.zaguzi.com/activity_god_month.html',

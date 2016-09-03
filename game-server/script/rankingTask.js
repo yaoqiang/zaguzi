@@ -34,7 +34,7 @@ var getLastDayInLastMonth = function (dt) {
 
 
 //上榜临界值
-var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100, godMonthBattleThreshold = 200;
+var goldThreshold = 0, battleThreshold = 100, rechargeThreshold = 100, godMonthBattleThreshold = 300;
 var limit = 20;
 
 

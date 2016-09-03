@@ -27,6 +27,9 @@ var paymentService = require('../../../services/paymentService');
 
 var messageService = require('../../../services/messageService');
 
+//
+var lottery = require('../../../domain/entity/lottery');
+
 
 ////////////////////////////////////////////
 // 一些无状态接口
@@ -660,6 +663,20 @@ UniversalRemote.prototype = {
     getItemList: function (data, cb) {
         cb({code: Code.OK, itemList: itemConf});
     },
+    
+    getLotteryCard: function (data, cb) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
+            if (user == null || _.isUndefined(user)) {
+                logger.debug("user-lottery get||%j||获取抽奖卡失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                cb({code: Code.FAIL});
+                return;
+            }
+            
+            cb({code: Code.OK, item: _.findWhere(user.items, {id: 5})});
+        });
+        
+    },
+    
 
 
     //处理话费充值回调
@@ -772,5 +789,96 @@ UniversalRemote.prototype = {
     //获取上月的股神月排行榜获奖记录
     getLatestActivityGrantRecordGodMonth: function (data, cb) {
         commonService.getLatestActivityGrantRecordGodMonth(data, cb);
+    },
+
+    //抽奖
+    lottery: function (data, cb) {
+        playerService.getUserCacheByUid(data.uid, function (user) {
+            if (user == null || _.isUndefined(user)) {
+                logger.debug("user-lottery||%j||抽奖失败, 玩家不在线, 用户ID:%j", data.uid, data.uid)
+                cb({code: Code.FAIL});
+                return;
+            }
+
+            //默认消耗金币
+            var consumeType = 0;    //0：金币，1：抽奖卡
+            //如果有抽奖卡则优先消耗抽奖卡
+            var lotteryCard = _.findWhere(player.items, {id: 5});
+            if (!_.isUndefined(lotteryCard) && lotteryCard.value > 0) {
+                consumeType = 1;
+            }
+            else {
+                if (player.gold < globals.lottery.capital) {
+                    cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.TOO_POOR});
+                    return;
+                }
+            }
+
+
+            //获得奖励
+            var gift = lottery.get();
+
+            new Promise(function(resolve, reject) {
+                if (consumeType === 0) {
+                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -global.lottery.capital, function() {
+                        resolve();
+                    });
+                }
+                else {
+                    var items = [{ id: 5, value: -1 }];
+
+                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, function() {
+                        resolve();
+                    });
+                }
+                
+            })
+            .then(function() {
+                var msg = "恭喜您获得[";
+                if (gift.fragment > 0) {
+                    player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.ACTIVITY, gift.fragment, function() {
+                        msg += gift.fragment + "个元宝"
+                        Promise.resolve(msg);
+                    })
+                }
+                else {
+                    Promise.resolve(msg);
+                }
+            })
+            .then(function() {
+                if (gift.items.length > 0) {
+                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.ACTIVITY, gift.items, function() {
+                        gift.items.forEach(function(item) {
+                            if (item.id === 2) {
+                                msg += item.value + "个喇叭"
+                            }
+                            else if (item.id === 3) {
+                                msg += item.value + "天记牌器"
+                            }
+                        })
+                        Promise.resolve(msg);
+                    })
+                }
+                else {
+                    Promise.resolve(msg);
+                }
+            })
+            .then(function() {
+                if (gift.fragment > 0) {
+                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, gift.gold, function() {
+                        msg += gift.gold + "金币"
+                        cb({code: Code.OK, msg: msg});
+                    })
+                }
+                else {
+                    cb({code: Code.OK, msg: msg});
+                }
+            });
+
+        });
+    },
+
+    getAppleStoreApproveState: function (cb) {
+        commonService.getAppleSetting(cb);
     }
 }

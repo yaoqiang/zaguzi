@@ -9,6 +9,8 @@ var pomelo = require('pomelo-rt');
 
 var messageService = require('../../../services/messageService');
 
+var rankConf = require('../../../../config/data/rank');
+
 
 module.exports = function (app) {
     return new Handler(app);
@@ -47,6 +49,8 @@ handler.getProfile = function (msg, session, next) {
             profile.summary = data.player.summary;
             profile.rank = data.player.rank;
             profile.mobile = data.userInfo ? data.userInfo.mobile : undefined;
+            profile.exp = data.player.exp;
+            profile.nextUpgradeExp = _.findWhere(rankConf, {rank: data.player.rank}).exp;
         }
         next(null, profile);
     });
@@ -417,6 +421,32 @@ handler.getLatestActivityGodMonth = function (msg, session, next) {
     msg.uid = session.uid;
 
     this.app.rpc.manager.universalRemote.getLatestActivityGodMonth(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.lottery = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.lottery(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getLotteryCard = function (msg, session, next) {
+    
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getLotteryCard(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
+handler.getAppleStoreApproveState = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getAppleStoreApproveState(session, msg, function (data) {
         next(null, data);
     });
 }

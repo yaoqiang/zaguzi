@@ -265,7 +265,7 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
                 if (record.mobile != '') {
                     try {
                         var mobilePrefix = record.mobile.substring(0, 3);
-                        var mobileSuffix = record.mobile.substring(6, 11);
+                        var mobileSuffix = record.mobile.substring(7, 11);
                         var mobile = mobilePrefix + "****" + mobileSuffix;
                         record.mobile = mobile;
                     } catch (e) {
@@ -282,4 +282,8 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
         
         cb({recordList: []});
     });
+}
+
+commonService.getAppleSetting = function (cb) {
+    commonDao.getAppleSetting(cb);
 }

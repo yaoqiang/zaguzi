@@ -114,20 +114,7 @@ db.rankingList.find({ type: 'GOD_MONTH' }).sort({ _id: -1 }).limit(1, function (
     }
 });
 
-function getGodMonthGrantDetailByRanking(ranking, cb) {
-    db.activityList.findOne({ name: "GOD_MONTH" }, function (err, doc) {
-        if (err) {
-            cb(null);
-            return;
-        }
-        try {
-            cb(doc.grant[i]);
-        } catch (e) {
-            cb(null);
-        }
 
-    })
-}
 
 function getActivityGodMonth(cb) {
     db.activityList.findOne({ name: "GOD_MONTH" }, function (err, doc) {

@@ -105,7 +105,7 @@ ChannelHandler.prototype.send = function (msg, session, next) {
                     return;
                 }
 
-                content = {from: user.player.nickName, msg: msg.content};
+                content = {from: user.player.nickName, msg: msg.content, uid: user.player.uid};
 
                 pomelo.app.rpc.manager.userRemote.consumeTrumpet(null, {
                     uid: msg.uid,

@@ -149,6 +149,9 @@ module.exports = {
             INVITE_BY_MOBILE_NOT_ONLINE: 9404,
             ERR: 9405,
             JOIN_GAME_IS_FULL: 9406,
+        },
+        LOTTERY: {
+            TOO_POOR: 9501
         }
     },
     //以下错误信息 客户端使用, 服务端只返回Code.

@@ -132,14 +132,14 @@
                     "value": 1
                 },
                 {
-                    "id": 3,
+                    "id": 5,
                     "value": 1
                 }
             ]
         }
     ],
     "bankruptcyGrant": {
-        "times": 3,
+        "times": 2,
         "threshold": 1000,
         "gold": 1000
     },
@@ -156,5 +156,8 @@
                 "value": 1
             }
         ]
+    },
+    "lottery": {
+        "capital": 2000
     }
 }

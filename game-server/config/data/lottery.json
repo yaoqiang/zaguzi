@@ -1,0 +1,89 @@
+[
+    {
+        "id": 1,
+        "summary": "10元宝",
+        "icon": "",
+        "fragment": 10,
+        "gold": 0,
+        "items": [],
+        "probability": 0.000005
+    },
+    {
+        "id": 2,
+        "summary": "100小喇叭",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": [
+            {
+                "id": 2,
+                "value": 100
+            }
+        ],
+        "probability": 0.000005
+    },
+    {
+        "id": 3,
+        "summary": "5元宝",
+        "icon": "",
+        "fragment": 5,
+        "gold": 0,
+        "items": [],
+        "probability": 0.00001
+    },
+    {
+        "id": 4,
+        "summary": "1元宝",
+        "icon": "",
+        "fragment": 1,
+        "gold": 0,
+        "items": [],
+        "probability": 0.001
+    },
+    {
+        "id": 5,
+        "summary": "3小喇叭",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": [
+            {
+                "id": 2,
+                "value": 3
+            }
+        ],
+        "probability": 0.09
+    },
+    {
+        "id": 6,
+        "summary": "3记牌器",
+        "icon": "",
+        "fragment": 0,
+        "gold": 0,
+        "items": [
+            {
+                "id": 3,
+                "value": 3
+            }
+        ],
+        "probability": 0.09
+    },
+    {
+        "id": 7,
+        "summary": "3000金",
+        "icon": "",
+        "fragment": 0,
+        "gold": 3000,
+        "items": [],
+        "probability": 0.15
+    },
+    {
+        "id": 8,
+        "summary": "100金",
+        "icon": "",
+        "fragment": 0,
+        "gold": 100,
+        "items": [],
+        "probability": 1
+    }
+]

@@ -67,6 +67,15 @@ module.exports = function (app) {
      */
     game.post('/payment4AppleIAP', function (req, res) {
         loggerPayment.debug('payment4AppleIAP  route....');
+
+        loggerPayment.info("%j", {
+                    uid: paymentData.uid,
+                    type: consts.LOG.CONF.PAYMENT.TYPE,
+                    action: consts.LOG.CONF.PAYMENT.ACTION.PAID_OPTION,
+                    message: 'Apple IAP流程开始,准备请求Apple Server验证和处理后续支付逻辑',
+                    created: new Date(),
+                    detail: paymentData
+                });
         
         //参数
         var paymentData = req.body;
@@ -81,6 +90,7 @@ module.exports = function (app) {
         
         //remote call
         try {
+            
             app.rpc.manager.universalRemote.payment4IAP(null, paymentData, function (data) {
                 loggerPayment.debug('处理Apple IAP的支付逻辑 rpc invoke finished.');
                 res.send(data);

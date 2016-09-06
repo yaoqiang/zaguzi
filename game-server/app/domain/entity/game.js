@@ -101,14 +101,14 @@ Game.prototype.join = function (data, cb) {
     if (!this.doAddActor(data)) {
         logger.debug("###doAddActor error -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
-        //return;
+        return;
     }
 
     logger.debug("###addActor2Channel start -> ")
     if (!this.addActor2Channel(data)) {
         logger.debug("###addActor2Channel err -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
-        //return;
+        return;
     }
 
     var actor = _.findWhere(this.actors, {uid: data.uid});

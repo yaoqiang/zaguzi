@@ -101,12 +101,14 @@ Game.prototype.join = function (data, cb) {
     if (!this.doAddActor(data)) {
         logger.debug("###doAddActor error -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
+        //return;
     }
 
     logger.debug("###addActor2Channel start -> ")
     if (!this.addActor2Channel(data)) {
         logger.debug("###addActor2Channel err -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
+        //return;
     }
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
@@ -1353,6 +1355,7 @@ Game.prototype.doAddActor = function (data) {
     //如果玩家已加入
     var actorExist = _.findWhere(this.actors, {uid: data.uid});
     if (actorExist && actorExist != undefined) {
+        logger.debug("###doAddActor 2 -> ", this.actors, actorExist);
         return false;
     }
 

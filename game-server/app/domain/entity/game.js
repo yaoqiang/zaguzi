@@ -92,7 +92,7 @@ Game.prototype.init = function () {
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
-        loggerErr.debug('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
+        logger.debug('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
         return;
     }

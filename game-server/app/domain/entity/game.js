@@ -97,13 +97,15 @@ Game.prototype.join = function (data, cb) {
         return;
     }
 
+    logger.debug("###doAddActor start -> ")
     if (!this.doAddActor(data)) {
-        logger.debug("doAddActor -> ")
+        logger.debug("###doAddActor error -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
     }
 
+    logger.debug("###addActor2Channel start -> ")
     if (!this.addActor2Channel(data)) {
-        logger.debug("addActor2Channel -> ")
+        logger.debug("###addActor2Channel err -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
     }
 
@@ -127,6 +129,7 @@ Game.prototype.join = function (data, cb) {
     }
 
     cb({code: Code.OK, actors: gameResponse.generateActorsResponse(this.actors)});
+    logger.debug("###join end -> ")
 }
 
 

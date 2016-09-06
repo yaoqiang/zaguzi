@@ -98,10 +98,12 @@ Game.prototype.join = function (data, cb) {
     }
 
     if (!this.doAddActor(data)) {
+        logger.debug("doAddActor -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
     }
 
     if (!this.addActor2Channel(data)) {
+        logger.debug("addActor2Channel -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
     }
 

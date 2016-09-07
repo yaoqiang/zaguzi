@@ -69,10 +69,10 @@ GameUtil.getJoinAvailableForPrivate = function (base, player) {
 GameUtil.getMinByBaseForPrivateRoom = function (base) {
     var min = 1000;
     if (base == 1000) {
-        min = 10000;
+        min = 30000;
     }
     else if (base == 5000) {
-        min = 30000;
+        min = 100000;
     }
     return min;
 }

@@ -43,11 +43,11 @@
       "id": 14,
       "title": "巅峰之战 - 赢元宝",
       "icon": "imgId",
-      "base": 2000,
+      "base": 5000,
       "min": 100000,
       "max": 99999999,
       "fax": 500,
-      "lobbyId": -1,
+      "lobbyId": 1,
       "maxActor": 5,
       "useNoteCard": false,
       "serverId": "game-server-1"

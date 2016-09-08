@@ -425,6 +425,15 @@ handler.getLatestActivityGodMonth = function (msg, session, next) {
     });
 }
 
+handler.getLotteryItemList = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+
+    this.app.rpc.manager.universalRemote.getLotteryItemList(session, msg, function (data) {
+        next(null, data);
+    });
+}
+
 handler.lottery = function (msg, session, next) {
     msg.sid = session.get('serverId');
     msg.uid = session.uid;

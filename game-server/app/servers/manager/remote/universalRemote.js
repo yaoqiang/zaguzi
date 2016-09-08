@@ -5,6 +5,7 @@ var consts = require('../../../consts/consts');
 var open = require('../../../consts/open');
 
 var itemConf = require('../../../../config/data/item');
+var lotteryItemConf = require('../../../../config/data/lottery');
 var globals = require('../../../../config/data/globals');
 
 
@@ -17,6 +18,8 @@ var utils = require('../../../util/utils');
 var dispatcher = require('../../../util/dispatcher').dispatch;
 
 var request = require('request');
+
+var Promise = require('promise');
 
 var playerService = require('../../../services/playerService');
 var openService = require('../../../services/openService');
@@ -791,6 +794,11 @@ UniversalRemote.prototype = {
         commonService.getLatestActivityGrantRecordGodMonth(data, cb);
     },
 
+    //获得抽奖列表
+    getLotteryItemList: function (data, cb) {
+        cb({lotteryItemList: lotteryItemConf});
+    },
+
     //抽奖
     lottery: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
@@ -818,9 +826,11 @@ UniversalRemote.prototype = {
             //获得奖励
             var gift = lottery.get();
 
+            var msg = "恭喜您获得[";
+
             new Promise(function(resolve, reject) {
                 if (consumeType === 0) {
-                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -global.lottery.capital, function() {
+                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -globals.lottery.capital, function() {
                         resolve();
                     });
                 }
@@ -834,7 +844,7 @@ UniversalRemote.prototype = {
                 
             })
             .then(function() {
-                var msg = "恭喜您获得[";
+
                 if (gift.fragment > 0) {
                     player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.ACTIVITY, gift.fragment, function() {
                         msg += gift.fragment + "个元宝"
@@ -877,6 +887,7 @@ UniversalRemote.prototype = {
 
         });
     },
+
 
     getAppleStoreApproveState: function (cb) {
         commonService.getAppleSetting(cb);

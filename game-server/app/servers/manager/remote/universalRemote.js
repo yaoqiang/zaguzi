@@ -666,7 +666,12 @@ UniversalRemote.prototype = {
     getItemList: function (data, cb) {
         cb({code: Code.OK, itemList: itemConf});
     },
-    
+
+    /**
+     * 获取玩家的抽奖卡数量和抽奖金币费用
+     * @param data
+     * @param cb
+     */
     getLotteryCard: function (data, cb) {
         playerService.getUserCacheByUid(data.uid, function (user) {
             if (user == null || _.isUndefined(user)) {
@@ -674,10 +679,9 @@ UniversalRemote.prototype = {
                 cb({code: Code.FAIL});
                 return;
             }
-            
-            cb({code: Code.OK, item: _.findWhere(user.items, {id: 5})});
+
+            cb({code: Code.OK, item: _.findWhere(user.player.items, {id: 5}), capital: globals.lottery.capital});
         });
-        
     },
     
 
@@ -796,7 +800,7 @@ UniversalRemote.prototype = {
 
     //获得抽奖列表
     getLotteryItemList: function (data, cb) {
-        cb({lotteryItemList: lotteryItemConf});
+        cb({lotteryItemList: _.map(lotteryItemConf, function(item) {return {id: item.id, summary: item.summary, icon: item.icon}})});
     },
 
     //抽奖
@@ -811,12 +815,12 @@ UniversalRemote.prototype = {
             //默认消耗金币
             var consumeType = 0;    //0：金币，1：抽奖卡
             //如果有抽奖卡则优先消耗抽奖卡
-            var lotteryCard = _.findWhere(player.items, {id: 5});
+            var lotteryCard = _.findWhere(user.player.items, {id: 5});
             if (!_.isUndefined(lotteryCard) && lotteryCard.value > 0) {
                 consumeType = 1;
             }
             else {
-                if (player.gold < globals.lottery.capital) {
+                if (user.player.gold < globals.lottery.capital) {
                     cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.TOO_POOR});
                     return;
                 }
@@ -830,14 +834,14 @@ UniversalRemote.prototype = {
 
             new Promise(function(resolve, reject) {
                 if (consumeType === 0) {
-                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -globals.lottery.capital, function() {
+                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, -globals.lottery.capital, function() {
                         resolve();
                     });
                 }
                 else {
                     var items = [{ id: 5, value: -1 }];
 
-                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, function() {
+                    user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.CONSUME, items, function() {
                         resolve();
                     });
                 }
@@ -846,7 +850,7 @@ UniversalRemote.prototype = {
             .then(function() {
 
                 if (gift.fragment > 0) {
-                    player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.ACTIVITY, gift.fragment, function() {
+                    user.player.addFragment(consts.GLOBAL.ADD_FRAGMENT_TYPE.ACTIVITY, gift.fragment, function() {
                         msg += gift.fragment + "个元宝"
                         Promise.resolve(msg);
                     })
@@ -857,13 +861,16 @@ UniversalRemote.prototype = {
             })
             .then(function() {
                 if (gift.items.length > 0) {
-                    player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.ACTIVITY, gift.items, function() {
+                    user.player.addItems(consts.GLOBAL.ADD_ITEM_TYPE.ACTIVITY, gift.items, function() {
                         gift.items.forEach(function(item) {
                             if (item.id === 2) {
                                 msg += item.value + "个喇叭"
                             }
                             else if (item.id === 3) {
                                 msg += item.value + "天记牌器"
+                            }
+                            else if (item.id === 5) {
+                                msg += item.value + "张抽奖卡"
                             }
                         })
                         Promise.resolve(msg);
@@ -874,14 +881,16 @@ UniversalRemote.prototype = {
                 }
             })
             .then(function() {
-                if (gift.fragment > 0) {
-                    player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, gift.gold, function() {
-                        msg += gift.gold + "金币"
-                        cb({code: Code.OK, msg: msg});
+                if (gift.gold > 0) {
+                    user.player.addGold(consts.GLOBAL.ADD_GOLD_TYPE.ACTIVITY, gift.gold, function() {
+                        msg += gift.gold + "金币";
+                        msg += "]";
+                        cb({code: Code.OK, msg: msg, giftId: gift.id, consumeType: consumeType});
                     })
                 }
                 else {
-                    cb({code: Code.OK, msg: msg});
+                    msg += "]";
+                    cb({code: Code.OK, msg: msg, giftId: gift.id, consumeType: consumeType});
                 }
             });
 

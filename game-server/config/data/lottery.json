@@ -33,17 +33,17 @@
     },
     {
         "id": 4,
-        "summary": "抽奖卡",
-        "icon": "ic_macth_chuangguanjiangli_duijiangjuan.png",
-        "fragment": 1,
+        "summary": "50小喇叭",
+        "icon": "#common_icon_laba.png",
+        "fragment": 0,
         "gold": 0,
         "items": [
             {
-                "id": 5,
-                "value": 1
+                "id": 2,
+                "value": 50
             }
         ],
-        "probability": 0.1
+        "probability": 0.07
     },
     {
         "id": 5,
@@ -54,10 +54,10 @@
         "items": [
             {
                 "id": 2,
-                "value": 3
+                "value": 10
             }
         ],
-        "probability": 0.09
+        "probability": 0.1
     },
     {
         "id": 6,
@@ -68,27 +68,27 @@
         "items": [
             {
                 "id": 3,
-                "value": 3
+                "value": 7
             }
         ],
-        "probability": 0.09
+        "probability": 0.1
     },
     {
         "id": 7,
         "summary": "1000金",
-        "icon": "#common_icon_gold_12.png",
+        "icon": "#common_icon_gold_3.png",
         "fragment": 0,
         "gold": 1000,
         "items": [],
-        "probability": 0.15
+        "probability": 0.18
     },
     {
         "id": 8,
         "summary": "100金",
-        "icon": "#common_icon_gold11.png",
+        "icon": "#common_icon_gold_1.png",
         "fragment": 0,
         "gold": 100,
         "items": [],
-        "probability": 1
+        "probability": 0.9
     }
 ]

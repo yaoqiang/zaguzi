@@ -898,7 +898,16 @@ UniversalRemote.prototype = {
     },
 
 
-    getAppleStoreApproveState: function (cb) {
+    getAppleStoreApproveState: function (data, cb) {
         commonService.getAppleSetting(cb);
+    },
+
+    /**
+     * 获取本月用户牌局记录, 返回战绩/胜率.
+     * @param data
+     * @param cb
+     */
+    getUserBattleRecordAnalysis: function (data, cb) {
+
     }
 }

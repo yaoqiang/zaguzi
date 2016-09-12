@@ -94,7 +94,7 @@ Player.prototype.addGold = function (type, gold, cb) {
         gold = parseInt(gold);
         var self = this;
         logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_GOLD,
-            message: '添加金币成功', created: new Date(), detail: {type: type, value: gold}});
+            message: '添加金币成功', created: new Date(), detail: {type: type, value: gold, current: this.gold}});
         this.gold += gold;
 
         this.gold = this.gold < 0 ? 0 : this.gold;
@@ -159,7 +159,7 @@ Player.prototype.tie = function (roomId, cb) {
 Player.prototype.addFragment = function (type, fragment, cb) {
     this.fragment += fragment;
     logger.info("%j", {uid: this.uid, type: consts.LOG.CONF.USER.TYPE, action: consts.LOG.CONF.USER.ACTION.ADD_FRAGMENT,
-        message: '添加元宝成功', created: new Date(), detail: {type: type, value: fragment}});
+        message: '添加元宝成功', created: new Date(), detail: {type: type, value: fragment, current: this.fragment}});
     cb({fragment: this.fragment});
     var self = this;
     messageService.pushMessageToPlayer({

@@ -177,18 +177,6 @@ db.appleSetting.update({}, {$set: { inReview: true }});
 //苹果审核结束
 db.appleSetting.update({}, {$set: { inReview: false }});
 
-//兑换记录结构
-db.exchangeRecord.save({
-    uid: ObjectId('56ac9e72ba27df1c78df57fb'),
-    number: '1',
-    createdAt: new Date(),
-    exchangeId: 1,
-    productName: '1元话费',
-    state: 'FINISHED',
-    mobile: '18600000000',
-    address: '',
-    contact: ''
-});
 
 //版本发布记录
 db.appReleaseRecord.save({
@@ -215,6 +203,15 @@ db.appReleaseRecord.save({
     createdAt: new Date(),
     summary: '【新增】各种新体验,股神月排行榜,月月拿奖!\n【改进】各种改进,bug修复!\n【亮点】邀请奖励,私人场,双三可认等等..\n玩转新版本可点击系统邮件查看',
     releaseUrlAndroid: 'http://www.zaguzi.com/download_android.html',
+    releaseUrlApple: ''
+});
+
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.4',
+    createdAt: new Date(),
+    summary: '【新增】幸运抽奖游戏!\n【优化】各种改进,bug修复!\n',
+    releaseUrlAndroid: '',
     releaseUrlApple: ''
 });
 
@@ -364,6 +361,18 @@ db.activityGrantRecord.save({
 
 
 
+//兑换记录结构
+db.exchangeRecord.save({
+    uid: ObjectId('56ac9e72ba27df1c78df57fb'),
+    number: '1',
+    createdAt: new Date(),
+    exchangeId: 1,
+    productName: '1元话费',
+    state: 'FINISHED',
+    mobile: '18600000000',
+    address: '',
+    contact: ''
+});
 
 
 

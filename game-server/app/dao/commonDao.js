@@ -32,13 +32,13 @@ commonDao.getAppleSetting = function (cb) {
     db.appleSetting.findOne({}, function (err, doc) {
         if (doc) return cb(doc);
         //cb default
-        cb({inReview: true});
+        cb({ inReview: true });
     })
 }
 
 commonDao.setAppleSetting = function (data, cb) {
-    db.appleSetting.upsert({inReview: data.inReview}, function (err, doc) {
-        
+    db.appleSetting.upsert({ inReview: data.inReview }, function (err, doc) {
+
     });
 
     db.appleSetting.findAndModify({
@@ -49,15 +49,15 @@ commonDao.setAppleSetting = function (data, cb) {
     }, function (err, doc, lastErrorObject) {
         // doc.tag === 'maintainer'
         if (err) {
-            return cb({code: Code.FAIL});
+            return cb({ code: Code.FAIL });
         }
-        cb({code: Code.OK});
+        cb({ code: Code.OK });
     })
 }
 
 
 //单独为Player处理元宝
-commonDao.addFragment = function(data, cb) {
+commonDao.addFragment = function (data, cb) {
 
 }
 
@@ -66,11 +66,11 @@ commonDao.addFragment = function(data, cb) {
 // 1、如果是Apple IAP则在充值后生成；
 // 2、如果是走Pingxx则在发起支付时生成，支付完成后更新订单状态
 //////////////////////////////////////////////////////////////
-commonDao.saveOrUpdateOrder = function(data, charge, cb) {
+commonDao.saveOrUpdateOrder = function (data, charge, cb) {
     //data: { order: {uid: xx, orderSerialNumber: xx, productId: xx, amount: xx, state: xx, device: xx, channel: xx}, charge:{}
     //player: {nickName: xx, avatar: xx}}   //player info for rankingList
     if (_.isUndefined(charge) || _.isNull(charge)) {
-        db.order.save(data, function(err, doc) {
+        db.order.save(data, function (err, doc) {
             if (err) {
                 utils.invokeCallback(cb, err, null);
             }
@@ -81,27 +81,28 @@ commonDao.saveOrUpdateOrder = function(data, charge, cb) {
     }
     else {
         db.order.findAndModify({
-            query: {orderSerialNumber: data.orderSerialNumber},
+            query: { orderSerialNumber: data.orderSerialNumber },
             update: {
                 $set: {
                     state: data.state,
                     charge: charge
                 }
-            }}, function (err, doc) {
-                if (err) {
-                    utils.invokeCallback(cb, err, null);
-                }
-                else {
-                    utils.invokeCallback(cb, null, doc);
-                }
             }
+        }, function (err, doc) {
+            if (err) {
+                utils.invokeCallback(cb, err, null);
+            }
+            else {
+                utils.invokeCallback(cb, null, doc);
+            }
+        }
         );
     }
 
 }
 
 commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
-    db.order.findOne({orderSerialNumber: orderSerialNumber}, function (err, doc) {
+    db.order.findOne({ orderSerialNumber: orderSerialNumber }, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -112,7 +113,7 @@ commonDao.searchOrderByNumber = function (orderSerialNumber, cb) {
 }
 
 commonDao.searchLastOrderByUid = function (uid, cb) {
-    db.order.find({uid: uid}).sort({_id: -1}).limit(1, function (err, doc) {
+    db.order.find({ uid: uid }).sort({ _id: -1 }).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -124,7 +125,7 @@ commonDao.searchLastOrderByUid = function (uid, cb) {
 
 //for Apple IAP
 commonDao.searchOrderByTransactionId = function (transactionId, cb) {
-    db.order.findOne({transactionId: transactionId}, function (err, doc) {
+    db.order.findOne({ transactionId: transactionId }, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -137,7 +138,7 @@ commonDao.searchOrderByTransactionId = function (transactionId, cb) {
 
 //ranking list
 commonDao.getRankingList = function (data, cb) {
-    db.rankingList.find({type: data.type}).sort({_id: -1}).limit(1, function(err, doc) {
+    db.rankingList.find({ type: data.type }).sort({ _id: -1 }).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -150,7 +151,7 @@ commonDao.getRankingList = function (data, cb) {
 
 //版本检查
 commonDao.getTopOfAppReleaseRecord = function (data, cb) {
-    db.appReleaseRecord.find({}).sort({_id: -1}).limit(1, function (err, doc) {
+    db.appReleaseRecord.find({}).sort({ _id: -1 }).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -162,7 +163,7 @@ commonDao.getTopOfAppReleaseRecord = function (data, cb) {
 
 //获取系统消息
 commonDao.getSystemMessage = function (data, cb) {
-    db.systemMessage.find({}).sort({_id: -1}).limit(10, function (err, doc) {
+    db.systemMessage.find({}).sort({ _id: -1 }).limit(10, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -174,7 +175,7 @@ commonDao.getSystemMessage = function (data, cb) {
 
 //获取系统消息-最新一条, 为降低流量（只返回最新消息时间）, 客户端每日首次登陆时,请求接口, 与本地最新消息对比, 
 commonDao.getLastSystemMessageDate = function (data, cb) {
-    db.systemMessage.find({}).sort({_id: -1}).limit(1, function (err, doc) {
+    db.systemMessage.find({}).sort({ _id: -1 }).limit(1, function (err, doc) {
         if (err) {
             utils.invokeCallback(cb, err, null);
         }
@@ -214,11 +215,11 @@ commonDao.bindingMobile = function (data, cb) {
         mobile: data.mobile
     }, function (err, doc) {
         if (err || doc == null) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR });
             return;
         }
         if (doc.captcha != data.captcha) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR });
             return;
         }
 
@@ -228,16 +229,16 @@ commonDao.bindingMobile = function (data, cb) {
             query: {
                 _id: mongojs.ObjectId(data.uid)
             }, update: {
-                $set: {mobile: data.mobile, password: password}
+                $set: { mobile: data.mobile, password: password }
             }, new: true,
         }, function (err, doc) {
             if (err) {
-                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR });
             }
             else {
                 //生成Token，用于绑定后更新客户端Token.
                 var token = Token.create(data.uid, Date.now(), data.password.toString(), secret);
-                cb({code: Code.OK, token: token});
+                cb({ code: Code.OK, token: token });
             }
         })
     })
@@ -249,11 +250,11 @@ commonDao.resetPassword = function (data, cb) {
         mobile: data.mobile
     }, function (err, doc) {
         if (err || doc == null) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR });
             return;
         }
         if (doc.captcha != data.captcha) {
-            cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR});
+            cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.CAPTCHA_ERR });
             return;
         }
 
@@ -263,14 +264,14 @@ commonDao.resetPassword = function (data, cb) {
             query: {
                 mobile: data.mobile
             }, update: {
-                $set: {password: password}
+                $set: { password: password }
             }, new: true,
         }, function (err, doc) {
             if (err) {
-                cb({code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR});
+                cb({ code: Code.FAIL, err: consts.ERR_CODE.SMS.ERR });
             }
             else {
-                cb({code: Code.OK});
+                cb({ code: Code.OK });
             }
         })
     })
@@ -289,15 +290,17 @@ commonDao.saveInviteRecord = function (data, cb) {
 
 commonDao.getInviteRecordListByUid = function (data, cb) {
     var inviteGrantData = globals.inviteGrant;
-    db.inviteRecord.find({uid: data.uid}).sort({_id: -1}).limit(20, function (err, docs) {
+    db.inviteRecord.find({ uid: data.uid }).sort({ _id: -1 }).limit(20, function (err, docs) {
         if (docs && docs.length > 0) {
-            db.inviteRecord.count({uid: data.uid}, function (err, total) {
-                cb({code: Code.OK, inviteRecordList: docs, totalGold: inviteGrantData.gold * total,
-                    totalTrumpet: inviteGrantData.items[0].value * total, totalJipaiqi: inviteGrantData.items[1].value * total});
+            db.inviteRecord.count({ uid: data.uid }, function (err, total) {
+                cb({
+                    code: Code.OK, inviteRecordList: docs, totalGold: inviteGrantData.gold * total,
+                    totalTrumpet: inviteGrantData.items[0].value * total, totalJipaiqi: inviteGrantData.items[1].value * total
+                });
             });
         }
         else {
-            cb({code: Code.OK, inviteRecordList: docs});
+            cb({ code: Code.OK, inviteRecordList: docs });
         }
     })
 }
@@ -307,22 +310,22 @@ commonDao.getInviteRecordListByUid = function (data, cb) {
  * @param data: {updatedAt: String} 
  */
 commonDao.isLatestActivityGodMonth = function (data, cb) {
-    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+    db.activityList.findOne({ name: "GOD_MONTH" }, function (err, doc) {
         if (err || !doc) {
-            return cb({isLatest: true});
+            return cb({ isLatest: true });
         }
         try {
             if (moment(doc.updatedAt).isSame(moment(data.updatedAt))) {
-                return cb({isLatest: true});
+                return cb({ isLatest: true });
             }
         } catch (e) {
         }
-        return cb({isLatest: false});
+        return cb({ isLatest: false });
     });
 }
 
 commonDao.getLatestActivityGodMonth = function (data, cb) {
-    db.activityList.findOne({name: "GOD_MONTH"}, function (err, doc) {
+    db.activityList.findOne({ name: "GOD_MONTH" }, function (err, doc) {
         if (err) {
             return cb(null);
         }
@@ -335,15 +338,15 @@ commonDao.getLatestActivityGodMonth = function (data, cb) {
 commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
     //每月第一天凌晨1点生成上月股神排行榜的奖励记录，所以查询日期大于本月第一天的就可查到上月记录；即查询上月奖励接口延迟1小时。
     var firstDayInMonth = moment().startOf('month').format('YYYY-MM-DD HH:mm:ss');
-    db.activityGrantRecord.find({name: "GOD_MONTH", createdAt: {$gt: new Date(firstDayInMonth)}}).sort({'detail.rank': 1}, function(err, docs) {
+    db.activityGrantRecord.find({ name: "GOD_MONTH", createdAt: { $gt: new Date(firstDayInMonth) } }).sort({ 'detail.rank': 1 }, function (err, docs) {
         if (err) {
             cb([]);
             return;
         }
-        var getRecordDetailPromiseList = _.map(docs, function(record) {
-            return new Promise(function(resolve, reject) {
-                db.player.findOne({uid: mongojs.ObjectId(record.uid)}, function(err, player) {
-                    db.user.findOne({_id:  mongojs.ObjectId(record.uid)}, function(err, user) {
+        var getRecordDetailPromiseList = _.map(docs, function (record) {
+            return new Promise(function (resolve, reject) {
+                db.player.findOne({ uid: mongojs.ObjectId(record.uid) }, function (err, player) {
+                    db.user.findOne({ _id: mongojs.ObjectId(record.uid) }, function (err, user) {
                         record.mobile = user.mobile || '';
                         record.nickName = player.nickName;
                         resolve(record);
@@ -352,10 +355,28 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
             });
         });
 
-        Promise.all(getRecordDetailPromiseList).then(function(res) {
+        Promise.all(getRecordDetailPromiseList).then(function (res) {
             cb(res);
         });
     });
+}
+
+commonDao.getUserBattleRecordAnalysis = function (data, cb) {
+    try {
+        var now = moment();
+        //上月最后一天23:59:59
+        var from = moment(now).subtract(1, 'months').endOf('month').format('YYYY-MM-DD HH:mm:ss');
+        db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid }, function (err, battleCount) {
+            db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.WIN }, function (err, winCount) {
+                db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.LOSE }, function (err, loseCount) {
+                    cb({code: Code.OK, battleCount: battleCount, winCount: winCount, loseCount: loseCount, tieCount: battleCount-loseCount});
+                });
+            });
+        });
+    } catch (e) {
+        cb({ code: Code.FAIL })
+    }
+
 }
 
 
@@ -369,24 +390,24 @@ commonDao.getLatestActivityGrantRecordGodMonth = function (data, cb) {
 //生成序列号消息
 commonDao.generateSerialCodeByType = function (data, cb) {
     var initNumber = 100000001;
-    db.serialCode.findOne({type: data.type}, function (err, doc) {
+    db.serialCode.findOne({ type: data.type }, function (err, doc) {
         if (err) {
             cb(err, null);
         }
         else {
             if (doc) {
                 db.serialCode.findAndModify({
-                	query: {_id: mongojs.ObjectId(doc._id)},
-                	update: {$inc: {number: 1}},
-                	new: true
+                    query: { _id: mongojs.ObjectId(doc._id) },
+                    update: { $inc: { number: 1 } },
+                    new: true
                 },
-            	function (err, doc, lastErrorObject) {
-                	cb(null, {number: doc.type.concat(doc.number.toString())});
-            	});
+                    function (err, doc, lastErrorObject) {
+                        cb(null, { number: doc.type.concat(doc.number.toString()) });
+                    });
             }
             else {
-                db.serialCode.save({type: data.type, number: initNumber}, function (err, doc) {
-                    cb(null, {number: doc.type.concat(doc.number.toString())});
+                db.serialCode.save({ type: data.type, number: initNumber }, function (err, doc) {
+                    cb(null, { number: doc.type.concat(doc.number.toString()) });
                 });
             }
 

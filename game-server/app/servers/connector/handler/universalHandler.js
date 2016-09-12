@@ -459,3 +459,12 @@ handler.getAppleStoreApproveState = function (msg, session, next) {
         next(null, data);
     });
 }
+
+handler.getUserBattleRecordAnalysis = function (msg, session, next) {
+    msg.sid = session.get('serverId');
+    msg.uid = session.uid;
+    this.app.rpc.manager.universalRemote.getUserBattleRecordAnalysis(session, msg, function (data) {
+        next(null, data);
+    });
+    
+}

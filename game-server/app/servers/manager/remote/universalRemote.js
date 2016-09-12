@@ -908,6 +908,6 @@ UniversalRemote.prototype = {
      * @param cb
      */
     getUserBattleRecordAnalysis: function (data, cb) {
-
+        commonService.getUserBattleRecordAnalysis(data, cb);
     }
 }

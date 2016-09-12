@@ -287,3 +287,7 @@ commonService.getLatestActivityGrantRecordGodMonth = function (data, cb) {
 commonService.getAppleSetting = function (cb) {
     commonDao.getAppleSetting(cb);
 }
+
+commonService.getUserBattleRecordAnalysis = function (data, cb) {
+    commonDao.getUserBattleRecordAnalysis(data, cb);
+}

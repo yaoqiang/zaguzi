@@ -366,9 +366,9 @@ commonDao.getUserBattleRecordAnalysis = function (data, cb) {
         var now = moment();
         //上月最后一天23:59:59
         var from = moment(now).subtract(1, 'months').endOf('month').format('YYYY-MM-DD HH:mm:ss');
-        db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid }, function (err, battleCount) {
-            db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.WIN }, function (err, winCount) {
-                db.userBattleRecord.count({ createdAt: { $gt: from }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.LOSE }, function (err, loseCount) {
+        db.userBattleRecord.count({ createdAt: { $gt: new Date(from) }, uid: data.uid }, function (err, battleCount) {
+            db.userBattleRecord.count({ createdAt: { $gt: new Date(from) }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.WIN }, function (err, winCount) {
+                db.userBattleRecord.count({ createdAt: { $gt: new Date(from) }, uid: data.uid, result: consts.GAME.ACTOR_RESULT.LOSE }, function (err, loseCount) {
                     cb({code: Code.OK, battleCount: battleCount, winCount: winCount, loseCount: loseCount, tieCount: battleCount-loseCount});
                 });
             });

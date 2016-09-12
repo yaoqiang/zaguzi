@@ -601,7 +601,7 @@ Game.prototype.talk = function (data, cb) {
                     });
                 }
                 //response放在后面, 保证前置状态都处理完成
-                cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
+                cb({code: Code.OK, goal: data.goal, append: data.append, share: self.gameLogic.share});
                 return;
             }
             self.afterTalk();
@@ -614,7 +614,7 @@ Game.prototype.talk = function (data, cb) {
         }
 
         //response放在后面, 保证前置状态都处理完成
-        cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
+        cb({code: Code.OK, goal: data.goal, append: data.append, share: self.gameLogic.share});
 
     })
 

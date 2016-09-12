@@ -36,6 +36,12 @@ GameRemote.prototype.join = function(data, cb) {
         }
         data.player = user.player;
         gameService.join(data, function(ret) {
+            //如果加入失败，如金币/满员/意外等..
+            if (ret.code === Code.FAIL) {
+                cb(ret);
+                return;
+            }
+            //如果加入失败则不需要设置用户状态
             pomelo.app.rpc.manager.userRemote.onUserJoin(null, data.uid, data.roomId, ret.gameId, function (setStateResult) {
                 if (setStateResult.code === Code.FAIL) {
                     loggerErr.error('%j', {method: "game.gameRemote.join-2", uid: data.uid, data: data, desc: '加入房间时, uid不在用户缓存'});

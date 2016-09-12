@@ -5,6 +5,9 @@ curl -X POST http://101.201.154.38:1337/api/game/payment4OSS -H 'Content-Type: a
 //查询缓存中在线玩家的数据, uids=id,id,id
 curl -X GET http://101.201.154.38:1337/api/game/getOnlineUserByUids?uids=
 
+//
+curl -X GET http://101.201.154.38:1337/api/game/getGameById?gameId=
+
 
 ///
 //问题玩家ID: 玩家加入房间不准备, 退出立刻再加入..持续了2天...::: 5720c365522185076f79c427

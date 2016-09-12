@@ -92,17 +92,23 @@ Game.prototype.init = function () {
 
 Game.prototype.join = function (data, cb) {
     if (!data || typeof data !== 'object') {
-        loggerErr.debug('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
+        logger.debug('%j', {method: "entity.game.join", uid: data.uid, data: data, desc: '加入房间时, 参数不是object, 非法参数.'});
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
         return;
     }
 
+    logger.debug("###doAddActor start -> ")
     if (!this.doAddActor(data)) {
+        logger.debug("###doAddActor error -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.IN_GAME});
+        return;
     }
 
+    logger.debug("###addActor2Channel start -> ")
     if (!this.addActor2Channel(data)) {
+        logger.debug("###addActor2Channel err -> ")
         cb({code: Code.FAIL, err: consts.ERR_CODE.JOIN.ERR});
+        return;
     }
 
     var actor = _.findWhere(this.actors, {uid: data.uid});
@@ -125,6 +131,7 @@ Game.prototype.join = function (data, cb) {
     }
 
     cb({code: Code.OK, actors: gameResponse.generateActorsResponse(this.actors)});
+    logger.debug("###join end -> ")
 }
 
 
@@ -569,7 +576,6 @@ Game.prototype.talk = function (data, cb) {
     //设置actor已说话
     actor.gameStatus.hasTalk = true;
 
-    cb({code: Code.OK, goal: data.goal, append: data.append, share: this.gameLogic.share});
 
     this.channel.pushMessage(consts.EVENT.TALK, {
         uid: data.uid,
@@ -594,6 +600,8 @@ Game.prototype.talk = function (data, cb) {
                         self.start();
                     });
                 }
+                //response放在后面, 保证前置状态都处理完成
+                cb({code: Code.OK, goal: data.goal, append: data.append, share: self.gameLogic.share});
                 return;
             }
             self.afterTalk();
@@ -604,6 +612,10 @@ Game.prototype.talk = function (data, cb) {
 
             self.talkCountdown();
         }
+
+        //response放在后面, 保证前置状态都处理完成
+        cb({code: Code.OK, goal: data.goal, append: data.append, share: self.gameLogic.share});
+
     })
 
 };
@@ -780,9 +792,6 @@ Game.prototype.fan = function (data, cb) {
     //玩家不出（传空数组）
     if (cards.length == 0) {
 
-        //response
-        cb({code: Code.OK, cards: cards, cardRecognization: null});
-
         var job = _.findWhere(this.jobQueue, {uid: data.uid});
         //出牌成功, 取消fanCountdown schedule
         if (!!job) {
@@ -819,6 +828,8 @@ Game.prototype.fan = function (data, cb) {
             self.fanCountdown();
         });
 
+        //response放在更新游戏状态后, 否则会导致几乎同时的2个或2个以上请求被处理
+        cb({code: Code.OK, cards: cards, cardRecognization: null});
         return;
     }
 
@@ -896,7 +907,7 @@ Game.prototype.fan = function (data, cb) {
 
             this.gameLogic.round += 1;
 
-            cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
+
 
             var job = _.findWhere(this.jobQueue, {uid: data.uid});
             //出牌成功, 取消fanCountdown schedule
@@ -988,6 +999,8 @@ Game.prototype.fan = function (data, cb) {
                         //判断牌局是否结束
                         if (self.isOver()) {
                             self.over();
+                            //response放在更新游戏状态后, 否则会导致几乎同时的2个或2个以上请求被处理
+                            cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
                             return;
                         }
 
@@ -1010,6 +1023,8 @@ Game.prototype.fan = function (data, cb) {
                         }
 
                         self.fanCountdown()
+                        //response放在更新游戏状态后, 否则会导致几乎同时的2个或2个以上请求被处理
+                        cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
 
                     });
 
@@ -1025,6 +1040,8 @@ Game.prototype.fan = function (data, cb) {
                         nextFanActor = self.gameLogic.getNextActor(nextFanActor);
                     }
                     self.fanCountdown()
+                    //response放在更新游戏状态后, 否则会导致几乎同时的2个或2个以上请求被处理
+                    cb({code: Code.OK, cards: cards, cardRecognization: cardRecognization});
                 }
 
             });
@@ -1348,6 +1365,7 @@ Game.prototype.doAddActor = function (data) {
     //如果玩家已加入
     var actorExist = _.findWhere(this.actors, {uid: data.uid});
     if (actorExist && actorExist != undefined) {
+        logger.debug("###doAddActor 2 -> ", this.actors, actorExist);
         return false;
     }
 

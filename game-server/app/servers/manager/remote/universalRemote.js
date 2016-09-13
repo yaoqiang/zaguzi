@@ -832,7 +832,7 @@ UniversalRemote.prototype = {
 
             //同步抽奖记录
             var lotteryRecord = {uid: data.uid, gift: gift, createdAt: new Date()};
-            user.player.saveLotteryRecord();
+            user.player.saveLotteryRecord(lotteryRecord);
 
             var msg = "恭喜您获得[";
 

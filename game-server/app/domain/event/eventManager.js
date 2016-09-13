@@ -68,11 +68,11 @@ function addPlayerSaveEvent(player) {
 
     //用户抽奖记录
     player.on('saveLotteryRecord', function (record) {
-        app.get('sync').exec('saveLotteryRecord.insert', player.uid, record);
+        app.get('sync').exec('lotteryRecordSync.insert', player.uid, record);
     })
 
     player.on('flushLotteryRecord', function (record) {
-        app.get('sync').flush('flushLotteryRecord.insert', player.uid, record);
+        app.get('sync').flush('lotteryRecordSync.insert', player.uid, record);
     })
 
     player.on('saveAll', function () {

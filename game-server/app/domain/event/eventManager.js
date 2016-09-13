@@ -51,18 +51,28 @@ function addPlayerSaveEvent(player) {
     player.on('flushProperties', function () {
         app.get('sync').flush('propertiesSync.update', player.uid, player);
     });
-    
+
     player.on('saveOnEnter', function () {
         app.get('sync').exec('propertiesSync.update', player.uid, player);
         app.get('sync').exec('taskSync.update', player.uid, player);
     })
 
+    //用户对战记录
     player.on('saveUserBattleRecord', function (record) {
         app.get('sync').exec('userBattleRecordSync.insert', player.uid, record);
     })
 
     player.on('flushUserBattleRecord', function (record) {
         app.get('sync').flush('userBattleRecordSync.insert', player.uid, record);
+    })
+
+    //用户抽奖记录
+    player.on('saveLotteryRecord', function (record) {
+        app.get('sync').exec('saveLotteryRecord.insert', player.uid, record);
+    })
+
+    player.on('flushLotteryRecord', function (record) {
+        app.get('sync').flush('flushLotteryRecord.insert', player.uid, record);
     })
 
     player.on('saveAll', function () {
@@ -80,56 +90,56 @@ function addPlayerSaveEvent(player) {
         app.get('sync').flush('itemSync.update', player.uid, player);
         app.get('sync').flush('playerSync.updatePlayerProfile', player.uid, player);
     });
-    
+
 
 
     //UI事件暂时不需要, 设计有些复杂了,粒度太小了
     player.on(consts.EVENT.UI_ON_ENTRY_WRAPPER, function (args) {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_DAILY_TODO, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_SYSTEM_MAIL, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_SETTING, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_UI_HIGHLIGHT_SHOP, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_RANKING_LIST, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_TASK, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_EXCHANGE, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_HIGHLIGHT_ACTIVITY, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_ALERT_DAILY_TODO, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_ALERT_BANKRUPTCY_IN_GAME, function () {
-        
+
     });
-    
+
     player.on(consts.EVENT.UI_ALERT_QUICK_RECHARGE, function () {
-        
+
     });
 
 }

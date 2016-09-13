@@ -624,6 +624,14 @@ Player.prototype.flushUserBattleRecord = function (record) {
     this.emit('flushUserBattleRecord', record);
 }
 
+//用户抽奖记录
+Player.prototype.saveLotteryRecord = function (record) {
+    this.emit('saveLotteryRecord', record);
+}
+
+Player.prototype.flushLotteryRecord = function (record) {
+    this.emit('flushLotteryRecord', record);
+}
 
 module.exports = Player;
 

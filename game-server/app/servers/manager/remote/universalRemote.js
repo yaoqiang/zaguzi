@@ -830,6 +830,11 @@ UniversalRemote.prototype = {
             //获得奖励
             var gift = lottery.get();
 
+            //同步抽奖记录
+            var lotteryRecord = {uid: data.uid, gift: gift, createdAt: new Date()};
+            commonService.saveLotteryRecord(lotteryRecord, function () {
+            });
+
             var msg = "恭喜您获得[";
 
             new Promise(function(resolve, reject) {

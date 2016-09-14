@@ -5,7 +5,7 @@ var db = mongojs(mongoConfig.url,
     ['user', 'player', 'exchangeList', 'exchangeRecord', 'rankingList',
         'appReleaseRecord', 'order', 'captcha', 'systemMessage', 'serialCode',
         'appleSetting', 'inviteRecord', 'userBattleRecord', 'activityList', 'activityGrantRecord',
-        'logUserRecord'
+        'logUserRecord', 'lotteryRecord'
     ]);
 
 db.player.ensureIndex({uid: 1, meetingTimes: 1, createdAt: 1});
@@ -54,5 +54,14 @@ db.activityGrantRecord.ensureIndex({uid: 1});
 db.activityGrantRecord.ensureIndex({createdAt: 1});
 db.activityGrantRecord.ensureIndex({uid: 1, createdAt: 1});
 db.activityGrantRecord.ensureIndex({uid: 1, name:1, createdAt: 1});
+
+
+
+db.lotteryRecord.ensureIndex({uid: 1});
+db.lotteryRecord.ensureIndex({gift: 1});
+db.lotteryRecord.ensureIndex({createdAt: 1});
+db.lotteryRecord.ensureIndex({uid: 1, gift: 1});
+db.lotteryRecord.ensureIndex({uid: 1, createdAt: 1});
+db.lotteryRecord.ensureIndex({uid: 1, gift: 1, createdAt: 1});
 
 module.exports = db;

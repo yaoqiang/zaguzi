@@ -11,7 +11,6 @@ var loggerErr = require('log4js').getLogger(consts.LOG.ERROR);
 var async = require('async');
 
 var eventManager = require('../domain/event/eventManager');
-var GameRecord = require('../domain/entity/gameRecord');
 
 
 var balanceService = module.exports;

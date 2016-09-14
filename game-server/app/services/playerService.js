@@ -16,7 +16,6 @@ var loggerGameRecord = require('log4js').getLogger(consts.LOG.GAME_RECORD);
 var eventManager = require('../domain/event/eventManager');
 //entity
 var Player = require('../domain/entity/player');
-var GameRecord = require('../domain/entity/gameRecord');
 //service
 var messageService = require('./messageService')
 var openService = require('./openService');
@@ -333,6 +332,13 @@ playerService.battle = function (detail, cb) {
     playerService.getUserCacheByUid(detail.uid, function (user) {
         //处理结束后, 相关处理
         user.player.battle(detail.roomId, detail.result, { meeting: detail.meeting, gold: ultimateGold });
+        //添加battle record, 不包含私人场牌局（目前只有股神月排行榜用到record, 为了防止刷战绩等, 不能包含私人场）
+        if (detail.roomId !== 45) {
+            var record = {uid: detail.uid, roomId: detail.roomId, result: detail.result, meeting: detail.meeting, gold: ultimateGold, createdAt: new Date()};
+            commonDao.saveUserBattleRecord(record, function() {
+
+            });
+        }
     });
 
 
@@ -360,10 +366,7 @@ playerService.balance = function (data, cb) {
 
     // 日志存储游戏记录
     loggerGameRecord.info('%j', data.gameRecord);
-    // NOTE: 弃用
-    // var gameRecord = new GameRecord(data.gameRecord);
-    // eventManager.addGameRecordEvent(gameRecord);
-    // gameRecord.save();
+
 }
 
 playerService.getDailyTodoInfo = function (data, cb) {

@@ -291,3 +291,9 @@ commonService.getAppleSetting = function (cb) {
 commonService.getUserBattleRecordAnalysis = function (data, cb) {
     commonDao.getUserBattleRecordAnalysis(data, cb);
 }
+commonService.saveUserBattleRecord = function (data, cb) {
+    commonDao.saveUserBattleRecord(data, cb);
+}
+commonService.saveLotteryRecord = function (data, cb) {
+    commonDao.saveLotteryRecord(data, cb);
+}

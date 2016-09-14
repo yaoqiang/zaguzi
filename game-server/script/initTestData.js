@@ -211,7 +211,7 @@ db.appReleaseRecord.save({
     version: '1.4',
     createdAt: new Date(),
     summary: '【新增】幸运抽奖游戏!\n【优化】各种改进,bug修复!\n',
-    releaseUrlAndroid: '',
+    releaseUrlAndroid: 'http://www.zaguzi.com/download_android.html',
     releaseUrlApple: ''
 });
 

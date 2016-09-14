@@ -305,7 +305,13 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
-
+db.systemMessage.save({
+    title: '喜迎中秋  送好礼！',
+    content: '豆面团队在这里祝大家中秋快乐，阖家团圆！点击查看详情',
+    url: 'http://mp.weixin.qq.com/s?__biz=MzI4ODIzMjM1Mw==&mid=2660937874&idx=1&sn=58695bda011a8cc55a408f537cefa5ce&scene=0#rd',
+    enabled: true,
+    createdAt: new Date()
+});
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 //updatedAt: 用于检测最新活动信息, 如果修改了信息, 则修改该字段, 客户端会检测如果本地不是最新的则拉取最新数据

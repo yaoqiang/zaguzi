@@ -57,23 +57,6 @@ function addPlayerSaveEvent(player) {
         app.get('sync').exec('taskSync.update', player.uid, player);
     })
 
-    //用户对战记录
-    player.on('saveUserBattleRecord', function (record) {
-        app.get('sync').exec('userBattleRecordSync.insert', player.uid, record);
-    })
-
-    player.on('flushUserBattleRecord', function (record) {
-        app.get('sync').flush('userBattleRecordSync.insert', player.uid, record);
-    })
-
-    //用户抽奖记录
-    player.on('saveLotteryRecord', function (record) {
-        app.get('sync').exec('lotteryRecordSync.insert', player.uid, record);
-    })
-
-    player.on('flushLotteryRecord', function (record) {
-        app.get('sync').flush('lotteryRecordSync.insert', player.uid, record);
-    })
 
     player.on('saveAll', function () {
         app.get('sync').exec('playerSync.update', player.uid, player);

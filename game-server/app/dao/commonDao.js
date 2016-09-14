@@ -380,9 +380,25 @@ commonDao.getUserBattleRecordAnalysis = function (data, cb) {
 }
 
 
+commonDao.saveUserBattleRecord = function (data, cb) {
+    db.userBattleRecord.save(data, function(err, doc) {
+        if (err) {
+            cb({code: Code.FAIL});
+            return;
+        }
+        cb({code: Code.OK});
+    })
+}
 
-
-
+commonDao.saveLotteryRecord = function (data, cb) {
+    db.lotteryRecord.save(data, function(err, doc) {
+        if (err) {
+            cb({code: Code.FAIL});
+            return;
+        }
+        cb({code: Code.OK});
+    })
+}
 
 
 

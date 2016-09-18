@@ -812,6 +812,12 @@ UniversalRemote.prototype = {
                 return;
             }
 
+            if (user.player.rank < 3) {
+                logger.debug("user-lottery||%j||抽奖失败, 玩家级别不够, 用户ID:%j", data.uid, data.uid)
+                cb({code: Code.FAIL});
+                return;
+            }
+
             //默认消耗金币
             var consumeType = 0;    //0：金币，1：抽奖卡
             //如果有抽奖卡则优先消耗抽奖卡

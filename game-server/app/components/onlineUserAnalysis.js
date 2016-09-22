@@ -8,7 +8,7 @@ module.exports = function (app, opts) {
 };
 
 //var DEFAULT_INTERVAL = 10000; // print cycle
-var DEFAULT_INTERVAL = 60 * 1000 * 1; //scheduler setting
+var DEFAULT_INTERVAL = 60 * 1000 * 0.1; //scheduler setting
 
 var OnlineUserAnalysis = function (app, opts) {
     this.app = app;

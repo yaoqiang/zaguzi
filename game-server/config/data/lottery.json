@@ -61,14 +61,14 @@
     },
     {
         "id": 6,
-        "summary": "7记牌器",
+        "summary": "3记牌器",
         "icon": "#jipaiqi.png",
         "fragment": 0,
         "gold": 0,
         "items": [
             {
                 "id": 3,
-                "value": 7
+                "value": 3
             }
         ],
         "probability": 0.08

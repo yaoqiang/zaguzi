@@ -71,7 +71,8 @@ paymentService.requestChargesPingxx = function (data, cb) {
                     state: consts.ORDER.STATE.PENDING,
                     device: data.device,
                     channel: data.channel,
-                    player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+                    player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary },
+                    createdAt: new Date()
                 }
 
                 commonDao.saveOrUpdateOrder(order, null, function () {
@@ -198,7 +199,8 @@ paymentService.payment = function (order, charge, cb) {
                             channel: order.channel,
                             transactionId: order.transactionId,
                             certificate: order.certificate,
-                            player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary }
+                            player: { nickName: player.nickName, avatar: player.avatar, summary: player.summary },
+                            createdAt: new Date()
                         }
 
                         commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
@@ -315,7 +317,8 @@ paymentService.payment = function (order, charge, cb) {
                         channel: order.channel,
                         transactionId: order.transactionId,
                         certificate: order.certificate,
-                        player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary }
+                        player: { nickName: user.player.nickName, avatar: user.player.avatar, summary: user.player.summary },
+                        createdAt: new Date()
                     }
                     commonDao.saveOrUpdateOrder(orderData, charge, function (err, o) {
                         logger.debug("commonDao.saveOrUpdateOrder -> %j", {err: err, o: o});

@@ -527,7 +527,7 @@ UniversalRemote.prototype = {
                     return;
                 }
 
-                //use in payment service: NOTE: date.paid是pingpp回调参数(true/false)
+                //use in payment service: NOTE: data.paid是pingpp回调参数(true/false)
                 var order = {
                     uid: originalOrder.uid,
                     productId: originalOrder.productId,

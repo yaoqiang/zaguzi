@@ -109,19 +109,43 @@
         },
         {
             "day": 3,
-            "gold": 1200
+            "gold": 1200,
+            "items": [
+                {
+                    "id": 5,
+                    "value": 1
+                }
+            ]
         },
         {
             "day": 4,
-            "gold": 1300
+            "gold": 1300,
+            "items": [
+                {
+                    "id": 5,
+                    "value": 1
+                }
+            ]
         },
         {
             "day": 5,
-            "gold": 1400
+            "gold": 1400,
+            "items": [
+                {
+                    "id": 5,
+                    "value": 1
+                }
+            ]
         },
         {
             "day": 6,
-            "gold": 1500
+            "gold": 1500,
+            "items": [
+                {
+                    "id": 5,
+                    "value": 1
+                }
+            ]
         },
         {
             "day": 7,

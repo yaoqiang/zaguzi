@@ -68,6 +68,9 @@ module.exports = function (app) {
     game.post('/payment4AppleIAP', function (req, res) {
         loggerPayment.debug('payment4AppleIAP  route....');
 
+        //参数
+        var paymentData = req.body;
+
         loggerPayment.info("%j", {
                     uid: paymentData.uid,
                     type: consts.LOG.CONF.PAYMENT.TYPE,
@@ -77,8 +80,7 @@ module.exports = function (app) {
                     detail: paymentData
                 });
         
-        //参数
-        var paymentData = req.body;
+
         
         if (paymentData.uid == null || paymentData.uid == undefined || 
         paymentData.productId == null || paymentData.productId == undefined ||

@@ -285,7 +285,7 @@ try {
             });
         })
 } catch (e) {
-    loggerErr.error('%j', {type: 'log2db', desc: '日志导入到Mongo时候发生错误.', error: e});
+    console.log('%j', {type: 'log2db', desc: '日志导入到Mongo时候发生错误.', error: e});
     console.log(e);
 }
 

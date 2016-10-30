@@ -318,7 +318,7 @@ db.systemMessage.save({
 db.activityList.save({
     title: '股神榜-月排行榜',
     content: '当月游戏300局以上,就有资格上榜!',
-    detail: '第一名: 50元宝+20000金+7喇叭+7天记牌器\n第二名: 30元宝+10000金+5喇叭+5天记牌器\n第三名: 10元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金\n\n来吧股神!作弊取消资格并严惩!!',
+    detail: '第一名: 30元宝+20000金+7喇叭+7天记牌器\n第二名: 10元宝+10000金+5喇叭+5天记牌器\n第三名: 5元宝+7000金+3喇叭+3天记牌器\n第4-10名: 1元宝+5000金+1喇叭+1天记牌器\n第11-20名: 5000金\n\n来吧股神!作弊取消资格并严惩!!',
     icon: '',
     name: 'GOD_MONTH',
     type: 'ROUND',
@@ -329,9 +329,9 @@ db.activityList.save({
     urlForIntro: 'http://www.zaguzi.com/activity_god_month.html',
     urlForRecord: 'http://www.zaguzi.com/activity_god_month_record.html',
     grant: [
-        { rank: 1, fragment: 50, gold: 20000, items: [{ id: 2, value: 7 }, { id: 3, value: 7 }] },
-        { rank: 2, fragment: 30, gold: 10000, items: [{ id: 2, value: 5 }, { id: 3, value: 5 }] },
-        { rank: 3, fragment: 10, gold: 7000, items: [{ id: 2, value: 3 }, { id: 5, value: 3 }] },
+        { rank: 1, fragment: 30, gold: 20000, items: [{ id: 2, value: 7 }, { id: 3, value: 7 }] },
+        { rank: 2, fragment: 10, gold: 10000, items: [{ id: 2, value: 5 }, { id: 3, value: 5 }] },
+        { rank: 3, fragment: 5, gold: 7000, items: [{ id: 2, value: 3 }, { id: 5, value: 3 }] },
         { rank: 4, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
         { rank: 5, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },
         { rank: 6, fragment: 1, gold: 5000, items: [{ id: 2, value: 1 }, { id: 3, value: 1 }] },

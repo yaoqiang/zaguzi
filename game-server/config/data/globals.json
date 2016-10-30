@@ -145,7 +145,7 @@
         }
     ],
     "bankruptcyGrant": {
-        "times": 3,
+        "times": 2,
         "threshold": 1000,
         "gold": 1000
     },

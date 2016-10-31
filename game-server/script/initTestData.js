@@ -354,6 +354,8 @@ db.activityList.save({
     updatedAt: new Date()
 });
 
+db.activityList.remove({});
+
 //设置股神榜月排行开关状态
 db.activityList.update({name: 'GOD_MONTH'}, {$set: {enabled: true}});
 

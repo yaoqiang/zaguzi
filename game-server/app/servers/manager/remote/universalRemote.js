@@ -812,9 +812,9 @@ UniversalRemote.prototype = {
                 return;
             }
 
-            if (user.player.rank < 3) {
+            if (user.player.rank < 2) {
                 logger.debug("user-lottery||%j||抽奖失败, 玩家级别不够, 用户ID:%j", data.uid, data.uid)
-                cb({code: Code.FAIL});
+                cb({code: Code.FAIL, err: consts.ERR_CODE.LOTTERY.RANK_TOO_LOW});
                 return;
             }
 

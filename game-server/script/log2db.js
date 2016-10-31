@@ -344,3 +344,7 @@ function parse(str) {
 
     return _parse(str, 0, [''])
 }
+
+process.on('uncaughtException', function (err) {
+    console.error(' Caught exception: ', err);
+});

@@ -113,7 +113,7 @@ utils.mobileValidate = function (mobile) {
 
 utils.replaceContent = function (content) {
     var sensitiveWords = ["毛主席","毛泽东","江泽民","胡锦涛","邓小平","习近平","傻逼","你妈","你妈逼","妈逼",
-        "透你妈","透他妈","透你吗","透他吗","他妈的","你妈的","鸡巴","操","操你妈","操你爹"];
+        "透你妈","透他妈","透你吗","透他吗","他妈的","你妈的","鸡巴","操","操你妈","操你爹","吗B","妈B","傻B","舔J","舔B","舔逼"];
     var holdString = "**";
     sensitiveWords.forEach(function (word) {
        content = content.replace(word, holdString);

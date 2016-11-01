@@ -215,6 +215,17 @@ db.appReleaseRecord.save({
     releaseUrlApple: ''
 });
 
+db.appReleaseRecord.save({
+    name: '',
+    version: '1.4.1',
+    createdAt: new Date(),
+    summary: '进一步提高稳定性，\n让您在游戏中体验更好。',
+    releaseUrlAndroid: 'http://www.zaguzi.com/download_android.html',
+    releaseUrlApple: ''
+});
+
+
+
 //系统消息
 db.systemMessage.save({
     title: '大同扎股子公测版上线啦！',

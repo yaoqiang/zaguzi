@@ -175,6 +175,7 @@ balanceService.balanceCommon = function (game, cb) {
                 gameRecord: {
                     lobby: game.lobbyId,
                     roomId: game.roomId,
+                    gameId: game.gameId,
                     result: game.gameLogic.result,
                     share: game.gameLogic.share,
                     meeting: meeting

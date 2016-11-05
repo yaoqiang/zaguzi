@@ -159,7 +159,7 @@ balanceService.balanceCommon = function (game, cb) {
                 details.push({
                     uid: actor.uid, actorNr: actor.actorNr, actorName: actor.properties.nickName,
                     actorAvatar: actor.properties.avatar, actualIdentity: actor.gameStatus.actualIdentity,
-                    result: tmpRs, gold: tmpGold, roomId: game.roomId, rank: actor.gameStatus.rank,
+                    result: tmpRs, gold: tmpGold, roomId: game.roomId, gameId: game.gameId, rank: actor.gameStatus.rank,
                     meeting: meeting && !_.contains(actor.gameStatus.actualIdentity, consts.GAME.ACTUAL_IDENTITY.GUZI)
                 });
             });
@@ -175,6 +175,7 @@ balanceService.balanceCommon = function (game, cb) {
                 gameRecord: {
                     lobby: game.lobbyId,
                     roomId: game.roomId,
+                    gameId: game.gameId,
                     result: game.gameLogic.result,
                     share: game.gameLogic.share,
                     meeting: meeting

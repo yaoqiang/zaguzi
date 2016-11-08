@@ -121,13 +121,7 @@
         },
         {
             "day": 6,
-            "gold": 1500,
-            "items": [
-                {
-                    "id": 5,
-                    "value": 1
-                }
-            ]
+            "gold": 1500
         },
         {
             "day": 7,
@@ -145,7 +139,7 @@
         }
     ],
     "bankruptcyGrant": {
-        "times": 2,
+        "times": 3,
         "threshold": 1000,
         "gold": 1000
     },

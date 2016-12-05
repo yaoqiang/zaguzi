@@ -332,6 +332,13 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '重要通知',
+    content: '系统兑换即将调整！点击查看详情',
+    url: 'http://mp.weixin.qq.com/s/FgOderbF7vgQVARwdsWuCQ',
+    enabled: true,
+    createdAt: new Date()
+});
 
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 //updatedAt: 用于检测最新活动信息, 如果修改了信息, 则修改该字段, 客户端会检测如果本地不是最新的则拉取最新数据

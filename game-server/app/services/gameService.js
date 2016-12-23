@@ -94,7 +94,7 @@ gameService.createPrivateGame = function (data, cb) {
 
     data.name = utils.setContent(data.name);
     data.name = utils.replaceContent(data.name);
-    data.name = '豆面扎股子-私人房';
+    // data.name = '豆面扎股子-私人房';
 
     var game = new Game(data.roomId, ++gPrivateGameId, data);
 

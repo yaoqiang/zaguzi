@@ -53,6 +53,8 @@ var Game = function (roomId, gameId, args) {
 
     this.isPrivate = false;
 
+    this.notReadyCountDown = consts.GAME.TIMER.NOT_READY;
+
     //私人场
     if (args !== undefined && typeof args === 'object') {
         this.isPrivate = true;
@@ -61,6 +63,7 @@ var Game = function (roomId, gameId, args) {
         this.maxActor = args.maxActor;
         this.base = args.base;
         this.useNoteCard = args.useNoteCard;
+        this.notReadyCountDown = consts.GAME.TIMER.NOT_READY_PRIVATE;
     }
 
     this.init();
@@ -1292,8 +1295,8 @@ Game.prototype.leave = function (data, cb) {
 Game.prototype.scheduleNotReady = function (data) {
     var self = this;
     //如果玩家加入牌桌[?]秒内没准备则自动离开
-    var jobId = schedule.scheduleJob({start: Date.now() + consts.GAME.TIMER.NOT_READY * 1000}, function (jobData) {
-        logger.debug('game-ready||%j||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', data.uid, consts.GAME.TIMER.NOT_READY, jobData.uid);
+    var jobId = schedule.scheduleJob({start: Date.now() + self.notReadyCountDown * 1000}, function (jobData) {
+        logger.debug('game-ready||%j||玩家加入游戏后[%j]秒内未准备, 强制离开游戏, ||用户&ID: %j', data.uid, self.notReadyCountDown, jobData.uid);
         self.jobQueue = _.filter(self.jobQueue, function (j) {
             return j.uid != jobData.uid;
         });

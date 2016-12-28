@@ -338,6 +338,7 @@ module.exports = {
             NOT_READY: 15,
             TALK: 10,
             FAN: 15,
+            NOT_READY_PRIVATE: 120,
             TRUSTEESHIP: 1  //托管出牌时间
         },
         PHASE: {

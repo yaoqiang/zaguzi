@@ -324,6 +324,22 @@ db.systemMessage.save({
     createdAt: new Date()
 });
 
+db.systemMessage.save({
+    title: '立冬了！',
+    content: '豆面团队提醒大家注意保暖！点击查看详情',
+    url: 'http://mp.weixin.qq.com/s?__biz=MzI4ODIzMjM1Mw==&mid=2660937881&idx=1&sn=574a0c6c118b1fc165f7f4b09b554c3e&chksm=f0af9657c7d81f416c635be1bb37af30b780c54c517b00492d653c1d5a717790b588376bb7b4&scene=0#wechat_redirect',
+    enabled: true,
+    createdAt: new Date()
+});
+
+db.systemMessage.save({
+    title: '重要通知',
+    content: '系统兑换即将调整！点击查看详情',
+    url: 'http://mp.weixin.qq.com/s/FgOderbF7vgQVARwdsWuCQ',
+    enabled: true,
+    createdAt: new Date()
+});
+
 //活动结构 {content: 游戏内显示, detail: 游戏内显示, }
 //updatedAt: 用于检测最新活动信息, 如果修改了信息, 则修改该字段, 客户端会检测如果本地不是最新的则拉取最新数据
 db.activityList.save({

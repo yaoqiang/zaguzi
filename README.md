@@ -1,4 +1,4 @@
-# 大同扎股子 -- 基于[Pomelo](https://github.com/NetEase/pomelo/)
+# 豆面扎股子 -- 基于[Pomelo](https://github.com/NetEase/pomelo/)
 
 
 ## Directory -
